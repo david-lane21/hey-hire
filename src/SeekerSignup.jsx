@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import {View, Text, TextInput} from 'react-native'
 import {Picker} from '@react-native-community/picker'
+import {countries} from './utils/consts.js'
 
 function SeekerSignup({ navigation }){
   const [firstName, setFirstName] = useState('')
@@ -10,11 +11,16 @@ function SeekerSignup({ navigation }){
   const [state, setState]         = useState('')
   const [city, setCity]           = useState('')
   const [zipcode, setZipcode]     = useState('')
-  const [phCode, setPhCode]       = useState('')
+  const [phCode, setPhCode]       = useState('+1')
   const [phone, setPhone]         = useState('')
   const [email, setEmail]         = useState('')
   const [password, setPassword]   = useState('')
   const [password2, setPassword2] = useState('')
+
+  function onSelectCountry(country){
+    setCountry(country);
+    setPhCode(country);
+  }
 
   return(
     <View>
@@ -43,10 +49,13 @@ function SeekerSignup({ navigation }){
 
       <Picker
         style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-        onValueChange={(text, idx) => setCountry(text)}
+        onValueChange={(text, idx) => onSelectCountry(text)}
         selectedValue={country}> 
-        <Picker.Item label='Canada' value='ca' />
-        <Picker.Item label='United States' value='us' />
+          {countries.map(cnty => {
+            return(
+              <Picker.Item label={cnty.name} value={cnty.code} />
+            )
+          })}
       </Picker>
         
 
@@ -71,12 +80,16 @@ function SeekerSignup({ navigation }){
         value={zipcode}
       />
 
-      <TextInput
+      <Picker
         style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-        onChangeText={text => setPhCode(text)}
-        placeholder='PhCode'
-        value={phCode}
-      />
+        onValueChange={(text, idx) => setPhCode(text)}
+        selectedValue={phCode}>
+          {countries.map(cnty => {
+            return(
+              <Picker.Item label={cnty.dial_code} value={cnty.code} />
+            )
+          })}
+      </Picker>
 
       <TextInput
         style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
