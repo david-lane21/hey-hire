@@ -1,10 +1,12 @@
 import React from 'react'
-import {View, Text, Button} from 'react-native'
+import {View, Text, Button, StyleSheet} from 'react-native'
 
 function SeekerLogin({ navigation }){
   return(
-    <View>
+    <View style={styles.container}>
       <Text>SeekerLogin</Text>
+
+      
       <Button
         title="Signup"
         onPress={() => navigation.navigate('SeekerSignup')}
@@ -14,3 +16,13 @@ function SeekerLogin({ navigation }){
 }
 
 export default SeekerLogin;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: 20,
+    backgroundColor: 'white',
+  },
+});
