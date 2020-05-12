@@ -4,7 +4,7 @@ import {
   Text, 
   Modal, 
   StyleSheet, 
-  Platform, 
+  TextInput, 
   SafeAreaView, 
   Image, 
   TouchableOpacity, 
@@ -13,18 +13,53 @@ import {
 } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient';
 import {countries} from './utils/consts.js'
-// console.log(countries)
+import {postFormData} from './utils/network.js'
+import {
+  setUser,
+  setToken,
+} from './utils/utils.js';
+import * as Random from 'expo-random';
+
 function SeekerLogin({ navigation }){
   const [modalVisible, setModalVisible] = useState(false);
-  const [phCode, setPhCode] = useState('+1')
+  const [phCode, setPhCode] = useState('1')
+  const [phone, setPhone] = useState('(214) 9985600')
+  const [password, setPassword] = useState('12345678')
 
   function _onPress(item){
     setModalVisible(false)
     setPhCode(item.dial_code)
   }
-  function handleLogin(){
-    console.log('+++++++++++++++++')
+
+  function deviceToken(length) {
+    let chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    var result = '';
+    for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+    return result;
   }
+  
+  function handleLogin(){
+    let token = deviceToken(128)
+    let form = new FormData()
+    form.append('phone', phCode + ' ' + phone)
+    form.append('password', password)
+    form.append('user_type', '2')
+    form.append('device_tocken', token)
+    
+    postFormData('user_login', form)
+    .then(res => {
+      return res.json()
+    })
+    .then(json => {
+      // setUser(json.data)
+      // setToken(token)
+      console.log(json.data)
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  }
+  
   return(
     <LinearGradient 
       style={styles.container} 
@@ -73,7 +108,7 @@ function SeekerLogin({ navigation }){
 
         <View 
           style={{
-            flex: 3, 
+            flex: 2, 
             alignItems: 'center'}}>
           <Modal
             animationType="slide"
@@ -121,11 +156,29 @@ function SeekerLogin({ navigation }){
             </SafeAreaView>
           </Modal>
         
-          
-          <TouchableOpacity style={styles.code} onPress={() => setModalVisible(true)}>
-            <Image source={require('../assets/ic_call-1.png')} style={{width: 20, height: 20, marginRight: 5}} />
-            <Text style={{color: '#fff'}}>+{phCode}</Text>
-          </TouchableOpacity>
+          <View style={{flex: 1, flexDirection: 'row'}}>
+            <TouchableOpacity style={styles.code} onPress={() => setModalVisible(true)}>
+              <Image source={require('../assets/ic_call-1.png')} style={{width: 20, height: 20, marginRight: 5}} />
+              <Text style={{color: '#fff'}}>+{phCode}</Text>
+            </TouchableOpacity>
+
+            <TextInput
+              style={styles.code2}
+              onChangeText={text => setPhone(text)}
+              placeholder='Phone'
+              value={phone}
+            />
+          </View>
+        </View>
+
+        <View style={{flex: 2}}>
+          <TextInput
+              style={styles.code3}
+              secureTextEntry={true}
+              onChangeText={text => setPassword(text)}
+              placeholder='Password'
+              value={password}
+            />
         </View>
 
         <View style={{flex: 2, alignItems: 'center'}}>
@@ -189,7 +242,29 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingLeft: 10,
     color: '#fff',
-    width: 80,
+    width: '25%',
     height: 40
+  },
+  code2: {
+    flexDirection: 'row',
+    borderRadius: 25,
+    borderColor: '#fff',
+    borderWidth: 1,
+    padding: 10,
+    color: '#fff',
+    width: '70%',
+    height: 40,
+    marginLeft: '5%'
+  },
+  code3: {
+    flexDirection: 'row',
+    borderRadius: 25,
+    borderColor: '#fff',
+    borderWidth: 1,
+    padding: 10,
+    color: '#fff',
+    width: '100%',
+    height: 40,
+    // marginBottom: 20
   }
 });

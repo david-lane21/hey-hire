@@ -18,3 +18,23 @@ export async function setUser(user) {
     console.log('currentUser didn\'t set');
   }
 }
+
+
+export async function getToken() {
+  try {
+    const token = await AsyncStorage.getItem('token')
+    if(token !== null) {
+      return token
+    }
+  } catch(e) {
+    console.log('token didn\'t get');
+  }
+}
+
+export async function setToken(token) {
+  try {
+    await AsyncStorage.setItem('token', token)
+  } catch(e) {
+    console.log('token didn\'t set');
+  }
+}
