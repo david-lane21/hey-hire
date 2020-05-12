@@ -18,7 +18,6 @@ import {
   setUser,
   setToken,
 } from './utils/utils.js';
-import * as Random from 'expo-random';
 
 function SeekerLogin({ navigation }){
   const [modalVisible, setModalVisible] = useState(false);

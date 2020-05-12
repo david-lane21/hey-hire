@@ -1,6 +1,5 @@
 import React from 'react'
-import {StyleSheet, View, Image, TouchableOpacity} from 'react-native'
-import { Container, Content, Text } from 'native-base';
+import {StyleSheet, View, Image, Text, TouchableOpacity} from 'react-native'
 
 function HomeScreen({ navigation }){
   // let bgImage = require('../assets/splash.png')
@@ -17,8 +16,8 @@ function HomeScreen({ navigation }){
         <Text style={{paddingTop: 20, fontSize: 20, color: '#4834A6'}}> I want to use apployMe as a</Text>
       </View>
 
-      <Container style={{flex: 3, flexDirection: 'column', backgroundColor: '#F1F2F9'}}>
-        <Content style={{padding: 25}}>
+      <View style={{flex: 3, flexDirection: 'column', backgroundColor: '#F1F2F9'}}>
+        <View style={{flex: 1, padding: 25}}>
           <TouchableOpacity style={styles.button}
           onPress={() => navigation.navigate('SeekerLogin')}>
             <Image source={require('../assets/ic_user_dark.png')} style={{height: 20, width: 20}} />
@@ -29,8 +28,8 @@ function HomeScreen({ navigation }){
             <Image source={require('../assets/ic_open_black.png')} style={{height: 20, width: 25}} />
             <Text style={{fontSize: 20, color: '#4834A6', marginTop: 5}}>Employer</Text>
           </TouchableOpacity>
-        </Content>
-      </Container>
+        </View>
+      </View>
     </View>
   )
 }
