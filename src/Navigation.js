@@ -1,8 +1,10 @@
 import * as React from 'react';
-// import { View, Text } from 'react-native';
+import { View, Text, Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Ionicons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import {getUser} from './utils/utils.js';
 import HomeScreen from './HomeScreen';
@@ -74,8 +76,39 @@ function Navigation() {
 export default Navigation;
 
 function Seeker({navigation}){
+  let home = require('../assets/tabbar_home_active.png')
+  let home2 = require('../assets/tab_home_off.png')
+  let qr = require('../assets/tab_qr.png')
+  let qr2 = require('../assets/tab_qr_off.png')
+  let jobs = require('../assets/tab_jobs.png')
+  let jobs2 = require('../assets/tab_jobs_off.png')
+  let notification = require('../assets/tabbar_notification_active.png')
+  let notification2 = require('../assets/tab_notification_off.png')
   return(
-    <Tab.Navigator>
+    <Tab.Navigator
+    screenOptions={({ route }) => ({
+      tabBarIcon: ({ focused, color, size }) => {
+        let iconName;
+
+        if (route.name === 'SeekerHome') {
+          iconName = focused ? home : home2;
+        } else if (route.name === 'SeekerScanQrCode') {
+          iconName = focused ? qr : qr2;
+        }else if (route.name === 'SeekerAppliedJobs') {
+          iconName = focused ? jobs : jobs2;
+        }else if (route.name === 'SeekerNotifications') {
+          iconName = focused ? notification : notification2;
+        }
+
+        return <Image source={iconName} />;
+      },
+    })}
+    tabBarOptions={{
+      // activeTintColor: 'purple',
+      // inactiveTintColor: 'gray',
+      showLabel: false
+    }}
+    >
       <Tab.Screen name="SeekerHome" component={SeekerHome} />
       <Tab.Screen name="SeekerScanQrCode" component={SeekerScanQrCode} />
       <Tab.Screen name="SeekerAppliedJobs" component={SeekerAppliedJobs} />
@@ -85,8 +118,40 @@ function Seeker({navigation}){
 }
 
 function Business({navigation}){
+  let home = require('../assets/tab_home.png')
+  let home2 = require('../assets/tab_home_off.png')
+  let qr = require('../assets/tab_qr.png')
+  let qr2 = require('../assets/tab_qr_off.png')
+  let jobs = require('../assets/tab_jobs.png')
+  let jobs2 = require('../assets/tab_jobs_off.png')
+  let notification = require('../assets/tab_notification.png')
+  let notification2 = require('../assets/tab_notification_off.png')
+
   return(
-    <Tab.Navigator>
+    <Tab.Navigator
+    screenOptions={({ route }) => ({
+      tabBarIcon: ({ focused, color, size }) => {
+        let iconName;
+
+        if (route.name === 'BusinessHome') {
+          iconName = focused ? home : home2;
+        } else if (route.name === 'BusinessQrCodeScan') {
+          iconName = focused ? qr : qr2;
+        }else if (route.name === 'BusinessClosedJobs') {
+          iconName = focused ? jobs : jobs2;
+        }else if (route.name === 'BusinessNotifications') {
+          iconName = focused ? notification : notification2;
+        }
+
+        return <Image source={iconName} />;
+      },
+    })}
+    tabBarOptions={{
+      // activeTintColor: 'purple',
+      // inactiveTintColor: 'gray',
+      showLabel: false
+    }}
+    >
       <Tab.Screen name="BusinessHome" component={BusinessHome} />
       <Tab.Screen name="BusinessQrCodeScan" component={BusinessQrCodeScan} />
       <Tab.Screen name="BusinessClosedJobs" component={BusinessClosedJobs} />
