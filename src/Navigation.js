@@ -19,6 +19,7 @@ import BusinessPostNewJob from './BusinessPostNewJob';
 import BusinessPrinterOptions from './BusinessPrinterOptions';
 import BusinessQrCodeScan from './BusinessQrCodeScan';
 import BusinessReListJob from './BusinessReListJob';
+import BusinessClosedJobs from './BusinessClosedJobs';
 import BusinessSeekerProfile from './BusinessSeekerProfile';
 import BusinessVisitorDetail from './BusinessVisitorDetail';
 import SeekerScanQrCode from './SeekerScanQrCode';
@@ -48,12 +49,10 @@ function Navigation() {
         <Stack.Screen name="SeekerAddLang" component={SeekerAddLang} />
         <Stack.Screen name="SeekerAddPastPosition" component={SeekerAddPastPosition} />
 
-        <Stack.Screen name="BusinessHome" component={BusinessHome} />
+        <Stack.Screen name="Business" component={Business} />
         <Stack.Screen name="BusinessEditAccount" component={BusinessEditAccount} />
-        <Stack.Screen name="BusinessNotifications" component={BusinessNotifications} />
         <Stack.Screen name="BusinessPostNewJob" component={BusinessPostNewJob} />
         <Stack.Screen name="BusinessPrinterOptions" component={BusinessPrinterOptions} />
-        <Stack.Screen name="BusinessQrCodeScan" component={BusinessQrCodeScan} />
         <Stack.Screen name="BusinessReListJob" component={BusinessReListJob} />
         <Stack.Screen name="BusinessSeekerProfile" component={BusinessSeekerProfile} />
         <Stack.Screen name="BusinessVisitorDetail" component={BusinessVisitorDetail} />
@@ -81,6 +80,17 @@ function Seeker({navigation}){
       <Tab.Screen name="SeekerScanQrCode" component={SeekerScanQrCode} />
       <Tab.Screen name="SeekerAppliedJobs" component={SeekerAppliedJobs} />
       <Tab.Screen name="SeekerNotifications" component={SeekerNotifications} />
+    </Tab.Navigator>
+  )
+}
+
+function Business({navigation}){
+  return(
+    <Tab.Navigator>
+      <Tab.Screen name="BusinessHome" component={BusinessHome} />
+      <Tab.Screen name="BusinessQrCodeScan" component={BusinessQrCodeScan} />
+      <Tab.Screen name="BusinessClosedJobs" component={BusinessClosedJobs} />
+      <Tab.Screen name="BusinessNotifications" component={BusinessNotifications} />
     </Tab.Navigator>
   )
 }

@@ -13,6 +13,7 @@ function TestLinks({navigation}){
     {name: "SeekerNotifications"},
     {name: "SeekerAddLang"},
     {name: "SeekerAddPastPosition"},
+    {name: "Business"},
     {name: "BusinessHome"},
     {name: "BusinessEditAccount"},
     {name: "BusinessNotifications"},
