@@ -1,11 +1,21 @@
 import React from 'react'
-import {View, Text} from 'react-native'
+import {
+  SafeAreaView, 
+  View, 
+  Text,
+  TouchableOpacity,
+} from 'react-native'
 
-function SeekerEditProfile(){
+function SeekerEditProfile({navigation}){
   return(
-    <View>
-      <Text>SeekerEditProfile</Text>
-    </View>
+    <SafeAreaView>
+      <View>
+        <Text>SeekerEditProfile</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('HomeScreen')}>
+          <Text>Home</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   )
 }
 

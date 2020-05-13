@@ -1,11 +1,21 @@
 import React from 'react'
-import {View, Text} from 'react-native'
+import {
+  SafeAreaView, 
+  View, 
+  Text,
+  TouchableOpacity,
+} from 'react-native'
 
-function SeekerNotifications(){
+function SeekerNotifications({navigation}){
   return(
-    <View>
-      <Text>SeekerNotifications</Text>
-    </View>
+    <SafeAreaView>
+      <View>
+        <Text>SeekerNotifications</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('HomeScreen')}>
+          <Text>Home</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   )
 }
 

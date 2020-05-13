@@ -1,11 +1,21 @@
 import React from 'react'
-import {View, Text} from 'react-native'
+import {
+  SafeAreaView, 
+  View, 
+  Text,
+  TouchableOpacity,
+} from 'react-native'
 
-function ForgotPassword(){
+function ForgotPassword({navigation}){
   return(
-    <View>
-      <Text>ForgotPassword</Text>
-    </View>
+    <SafeAreaView>
+      <View>
+        <Text>ForgotPassword</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('HomeScreen')}>
+          <Text>Home</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   )
 }
 

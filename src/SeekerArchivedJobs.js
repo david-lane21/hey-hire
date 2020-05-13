@@ -1,11 +1,21 @@
 import React from 'react'
-import {View, Text} from 'react-native'
+import {
+  SafeAreaView, 
+  View, 
+  Text,
+  TouchableOpacity,
+} from 'react-native'
 
-function SeekerArchivedJobs(){
+function SeekerArchivedJobs({navigation}){
   return(
-    <View>
-      <Text>SeekerArchivedJobs</Text>
-    </View>
+    <SafeAreaView>
+      <View>
+        <Text>SeekerArchivedJobs</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('HomeScreen')}>
+          <Text>Home</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   )
 }
 

@@ -1,11 +1,21 @@
 import React from 'react'
-import {View, Text} from 'react-native'
+import {
+  SafeAreaView, 
+  View, 
+  Text,
+  TouchableOpacity,
+} from 'react-native'
 
-function SeekerScanQrCode(){
+function SeekerScanQrCode({navigation}){
   return(
-    <View>
-      <Text>SeekerScanQrCode</Text>
-    </View>
+    <SafeAreaView>
+      <View>
+        <Text>SeekerScanQrCode</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('HomeScreen')}>
+          <Text>Home</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   )
 }
 

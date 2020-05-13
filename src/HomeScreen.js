@@ -1,9 +1,14 @@
 import React from 'react'
-import {StyleSheet, View, Image, Text, TouchableOpacity} from 'react-native'
+import {
+  StyleSheet, 
+  View, 
+  Image, 
+  Text, 
+  TouchableOpacity
+} from 'react-native'
 
 function HomeScreen({ navigation }){
-  // let bgImage = require('../assets/splash.png')
-  // console.log(navigation)
+
   return(
     <View style={{flex: 1, flexDirection: 'column', backgroundColor: '#F1F2F9'}}>
       <View style={{flex: 6, flexDirection: 'column'}}>
@@ -27,6 +32,10 @@ function HomeScreen({ navigation }){
           onPress={() => navigation.navigate('BusinessLogin')}>
             <Image source={require('../assets/ic_open_black.png')} style={{height: 20, width: 25}} />
             <Text style={{fontSize: 20, color: '#4834A6', marginTop: 5}}>Employer</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+          onPress={() => navigation.navigate('TestLinks')}>
+            <Text style={{fontSize: 20, color: '#4834A6', marginTop: 5}}>Test Links</Text>
           </TouchableOpacity>
         </View>
       </View>

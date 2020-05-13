@@ -1,11 +1,21 @@
 import React from 'react'
-import {View, Text} from 'react-native'
+import {
+  SafeAreaView, 
+  View, 
+  Text,
+  TouchableOpacity,
+} from 'react-native'
 
-function BusinessHome(){
+function BusinessHome({navigation}){
   return(
-    <View>
-      <Text>BusinessHome</Text>
-    </View>
+    <SafeAreaView>
+      <View>
+        <Text>BusinessHome</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('HomeScreen')}>
+          <Text>Home</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   )
 }
 
