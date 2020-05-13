@@ -3,6 +3,7 @@ import {View, Text, TouchableOpacity, SafeAreaView, FlatList} from 'react-native
 
 function TestLinks({navigation}){
   let links = [
+    {name: "Seeker"},
     {name: "SeekerHome"},
     {name: "SeekerEditProfile"},
     {name: "SeekerScanQrCode"},
@@ -35,7 +36,7 @@ function TestLinks({navigation}){
       data={links}
       renderItem={({item, index}) => 
         <TouchableOpacity 
-        style={{padding: 10, borderBottomColor: '#333', borderBottomWidth: 1}}
+        style={{padding: 15, borderBottomColor: '#999', borderBottomWidth: 1}}
         onPress={() => navigation.navigate(item.name)}
         key={item.name}
         keyExtractor={(item, index) => item.name}>

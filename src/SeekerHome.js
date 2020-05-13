@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
 } from 'react-native'
 
+
+
 function SeekerHome({navigation}){
   return(
     <SafeAreaView>
