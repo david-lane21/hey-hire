@@ -42,7 +42,7 @@ function Navigation() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="HomeScreen" headerMode="none">
+      <Stack.Navigator initialRouteName="HomeScreen" >
         <Stack.Screen name="Seeker" component={Seeker} />
         {/* <Stack.Screen name="SeekerHome" component={SeekerHome} /> */}
         <Stack.Screen name="SeekerEditProfile" component={SeekerEditProfile} />
@@ -59,14 +59,22 @@ function Navigation() {
         <Stack.Screen name="BusinessSeekerProfile" component={BusinessSeekerProfile} />
         <Stack.Screen name="BusinessVisitorDetail" component={BusinessVisitorDetail} />
 
-        <Stack.Screen name="HomeScreen" component={HomeScreen} />
-        <Stack.Screen name="SeekerLogin" component={SeekerLogin} />
-        <Stack.Screen name="BusinessLogin" component={BusinessLogin} />
+        <Stack.Screen name="HomeScreen" component={HomeScreen} options={{
+          headerShown: false,
+          }} />
+        <Stack.Screen name="SeekerLogin" component={SeekerLogin} options={{
+          headerShown: false,
+          }} />
+        <Stack.Screen name="BusinessLogin" component={BusinessLogin} options={{
+          headerShown: false,
+          }} />
         <Stack.Screen name="SeekerSignup" component={SeekerSignup} />
         <Stack.Screen name="BusinessSignup" component={BusinessSignup} />
         <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{
-          headerMode: 'screen', 
-          headerTitle: 'Forgot password'
+          headerShown: true,
+          headerBackTitleVisible: false,
+          headerTitle: "Forgot Password",
+          
           }} />
 
         <Stack.Screen name="TestLinks" component={TestLinks} />
