@@ -64,7 +64,10 @@ function Navigation() {
         <Stack.Screen name="BusinessLogin" component={BusinessLogin} />
         <Stack.Screen name="SeekerSignup" component={SeekerSignup} />
         <Stack.Screen name="BusinessSignup" component={BusinessSignup} />
-        <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+        <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{
+          headerMode: 'screen', 
+          headerTitle: 'Forgot password'
+          }} />
 
         <Stack.Screen name="TestLinks" component={TestLinks} />
 

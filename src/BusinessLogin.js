@@ -70,7 +70,7 @@ function BusinessLogin({navigation}){
             onPress={() => navigation.goBack()}
           >
             <Image 
-              source={require('../assets/ic_back_w.png')} 
+              source={require('../assets/ic_back2.png')} 
               style={{
                 width: 40, 
                 height: 30, 

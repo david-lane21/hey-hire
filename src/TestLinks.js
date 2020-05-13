@@ -3,33 +3,33 @@ import {View, Text, TouchableOpacity, SafeAreaView, FlatList} from 'react-native
 
 function TestLinks({navigation}){
   let links = [
-    {name: "Seeker"},
-    {name: "SeekerHome"},
-    {name: "SeekerEditProfile"},
-    {name: "SeekerScanQrCode"},
-    {name: "SeekerAppliedJobs"},
-    {name: "SeekerArchivedJobs"},
-    {name: "SeekerJobDetail"},
-    {name: "SeekerNotifications"},
-    {name: "SeekerAddLang"},
-    {name: "SeekerAddPastPosition"},
-    {name: "Business"},
-    {name: "BusinessHome"},
-    {name: "BusinessEditAccount"},
-    {name: "BusinessNotifications"},
-    {name: "BusinessPostNewJob"},
-    {name: "BusinessPrinterOptions"},
-    {name: "BusinessQrCodeScan"},
-    {name: "BusinessReListJob"},
-    {name: "BusinessSeekerProfile"},
-    {name: "BusinessVisitorDetail"},
-    {name: "HomeScreen"},
-    {name: "SeekerLogin"},
-    {name: "BusinessLogin"},
-    {name: "SeekerSignup"},
-    {name: "BusinessSignup"},
-    {name: "ForgotPassword"},
-    {name: "TestLinks"},
+    {id: 1, name: "Seeker"},
+    // {id: 2, name: "SeekerHome"},
+    {id: 3, name: "SeekerEditProfile"},
+    // {id: 4, name: "SeekerScanQrCode"},
+    {id: 5, name: "SeekerAppliedJobs"},
+    {id: 6, name: "SeekerArchivedJobs"},
+    {id: 7, name: "SeekerJobDetail"},
+    // {id: 8, name: "SeekerNotifications"},
+    {id: 9, name: "SeekerAddLang"},
+    {id: 10, name: "SeekerAddPastPosition"},
+    {id: 11, name: "Business"},
+    // {id: 12, name: "BusinessHome"},
+    {id: 13, name: "BusinessEditAccount"},
+    // {id: 14, name: "BusinessNotifications"},
+    {id: 15, name: "BusinessPostNewJob"},
+    {id: 16, name: "BusinessPrinterOptions"},
+    // {id: 17, name: "BusinessQrCodeScan"},
+    {id: 18, name: "BusinessReListJob"},
+    {id: 19, name: "BusinessSeekerProfile"},
+    {id: 20, name: "BusinessVisitorDetail"},
+    {id: 21, name: "HomeScreen"},
+    {id: 22, name: "SeekerLogin"},
+    {id: 23, name: "BusinessLogin"},
+    {id: 24, name: "SeekerSignup"},
+    {id: 25, name: "BusinessSignup"},
+    {id: 26, name: "ForgotPassword"},
+    {id: 27, name: "TestLinks"},
   ]
   return(
     <SafeAreaView>
@@ -37,11 +37,10 @@ function TestLinks({navigation}){
       data={links}
       renderItem={({item, index}) => 
         <TouchableOpacity 
-        style={{padding: 15, borderBottomColor: '#999', borderBottomWidth: 1}}
-        onPress={() => navigation.navigate(item.name)}
-        key={item.name}
-        keyExtractor={(item, index) => item.name}>
-          <Text style={{}}>{item.name}</Text>
+          style={{padding: 15, borderBottomColor: '#999', borderBottomWidth: 1}}
+          onPress={() => navigation.navigate(item.name)}
+          keyExtractor={(item, index) => item.id} >
+            <Text style={{}}>{item.name}</Text>
         </TouchableOpacity>
       }
     />
