@@ -1,29 +1,22 @@
 import React, {useState} from 'react'
 import {
-  View, 
-  Text, 
-  Modal, 
-  StyleSheet, 
-  TextInput, 
   SafeAreaView, 
-  Image, 
-  TouchableOpacity, 
+  View, 
+  Text,
+  Modal,
+  Image,
   FlatList,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
   TouchableHighlight
 } from 'react-native'
-import { LinearGradient } from 'expo-linear-gradient';
 import {countries} from './utils/consts.js'
-import {postFormData} from './utils/network.js'
-import {
-  setUser,
-  setToken,
-} from './utils/utils.js';
 
-function BusinessLogin({navigation}){
+function BusinessForgotPassword({navigation}){
   const [modalVisible, setModalVisible] = useState(false);
   const [phCode, setPhCode] = useState('1')
   const [phone, setPhone] = useState('(214) 9985600')
-  const [password, setPassword] = useState('12345678')
 
   function _onPress(item){
     setModalVisible(false)
@@ -36,13 +29,12 @@ function BusinessLogin({navigation}){
     for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
     return result;
   }
-  
-  function handleLogin(){
+
+  function handleRequest(){
     let token = deviceToken(128)
     let form = new FormData()
     form.append('phone', phCode + ' ' + phone)
-    form.append('password', password)
-    form.append('user_type', '1')
+    form.append('user_type', '2')
     form.append('device_tocken', token)
     
     postFormData('user_login', form)
@@ -58,55 +50,20 @@ function BusinessLogin({navigation}){
       console.log(err)
     })
   }
-  
+
   return(
-    <View style={styles.container}>
-      <SafeAreaView style={{flex: 1, width: '90%'}}>
-        <View style={{
-          flex: 2, 
-          alignItems: 'flex-start'}}>
-          <TouchableOpacity
-            style={{height: 30, width: 40}}
-            onPress={() => navigation.goBack()}
-          >
-            <Image 
-              source={require('../assets/ic_back2.png')} 
-              style={{
-                width: 40, 
-                height: 30, 
-                marginTop: 20,
-                // position: 'absolute', 
-                // left: 0,
-                // top: 20
-                }} />
-          </TouchableOpacity>
-        </View>
-      
-        <View style={{
-          flex: 6, 
-          alignItems: 'center'}}>
-          <Image 
-            source={require('../assets/logo.png')} 
-            style={{
-              width: 200, 
-              height: 140, 
-              marginTop: 0}} />
-        </View>
-        
-        <View 
-          style={{
-            flex: 1, 
-            alignItems: 'center'}}>
-          <Text 
-            style={{
-              color: '#4834A6', 
-              fontSize: 18}}>Log in as a business</Text>
+    <View style={{flex: 1, alignItems:'center'}}>
+      <SafeAreaView>
+        <View style={{flex: 1, alignItems: 'center', paddingTop: 30, paddingBottom: 30}}>
+          <Text style={{fontSize: 20}}>Please enter the phone number</Text>
+          <Text style={{fontSize: 20}}>associated with your account below</Text>
         </View>
 
         <View 
           style={{
-            flex: 2, 
-            alignItems: 'center'}}>
+            flex: 1, 
+            alignItems: 'center',
+            padding: 20}}>
           <Modal
             animationType="slide"
             transparent={false}
@@ -114,7 +71,7 @@ function BusinessLogin({navigation}){
             onRequestClose={() => {
             // Alert.alert('Modal has been closed.');
           }}>
-            <SafeAreaView>
+            {/* <SafeAreaView> */}
               <View style={{ marginTop: 22 }}>
                 <View>
                   <FlatList
@@ -150,78 +107,40 @@ function BusinessLogin({navigation}){
                   />
                 </View>
               </View>
-            </SafeAreaView>
+            {/* </SafeAreaView> */}
           </Modal>
         
           <View style={{flex: 1, flexDirection: 'row'}}>
             <TouchableOpacity style={styles.code} onPress={() => setModalVisible(true)}>
-              <Image source={require('../assets/ic_call.png')} style={{width: 20, height: 20, marginRight: 5}} />
-              <Text style={{color: '#4834A6'}}>+{phCode}</Text>
+              <Image source={require('../assets/ic_phone.png')} style={{width: 20, height: 20, marginRight: 5}} />
+              <Text style={{color: '#4E35AE'}}>+{phCode}</Text>
             </TouchableOpacity>
 
             <TextInput
               style={styles.code2}
               onChangeText={text => setPhone(text)}
-              placeholder='Phone'
+              placeholder='Phone number'
               value={phone}
             />
           </View>
         </View>
 
-        <View style={{flex: 2}}>
-          <TextInput
-              style={styles.code3}
-              secureTextEntry={true}
-              onChangeText={text => setPassword(text)}
-              placeholder='Password'
-              value={password}
-            />
-        </View>
-
-        <View style={{flex: 2, alignItems: 'center'}}>
+        <View style={{flex: 1, alignItems: 'center', padding: 20}}>
           <TouchableOpacity 
-          style={{width:'100%', backgroundColor: '#4834A6', paddingTop: 12, paddingBottom: 12, borderRadius: 10,}}
-          onPress={() => handleLogin()}>
-            <Text style={{textAlign: 'center', fontSize: 18, color: '#fff'}}>Login</Text>
+          style={{width:'100%', backgroundColor: '#4834A6', paddingTop: 15, paddingBottom: 15, borderRadius: 25}}
+          onPress={() => handleRequest()}>
+            <Text style={{textAlign: 'center', fontSize: 18, color: '#fff'}}>Send</Text>
           </TouchableOpacity>
         </View>
 
-        <View style={{flex: 3, alignItems: 'center'}}>
-          <Text
-              style={{
-                marginLeft: 6, 
-                color: '#4834A6', 
-                textDecorationLine: 'underline', 
-                fontSize: 16}}
-              onPress={() => navigation.navigate('BusinessForgotPassword')}
-            >Forgot you password?</Text>
-        </View>
+        <View style={{flex: 8}}></View>
 
-        <View style={{flex: 1, alignItems: 'center'}}>
-          <Text style={{color: "#4834A6", fontSize: 20}}>Dont have an account?</Text>
-        </View>
-
-        <View style={{
-          flex: 1, 
-          alignItems: 'center'
-          }}>
-          <Text
-            style={{
-              marginLeft: 6, 
-              color: '#4834A6', 
-              textDecorationLine: 'underline', 
-              fontSize: 16}}
-            onPress={() => navigation.navigate('BusinessSignup')}
-            >Register Your Business</Text>
-        </View>
-        
-        <View style={{flex: 3, alignItems: 'center'}}></View>
       </SafeAreaView>
     </View>
   )
 }
 
-export default BusinessLogin;
+export default BusinessForgotPassword;
 
 const styles = StyleSheet.create({
   container: {
@@ -235,32 +154,34 @@ const styles = StyleSheet.create({
   code: {
     flexDirection: 'row',
     borderRadius: 25,
-    borderColor: '#4834A6',
+    borderColor: '#4E35AE',
     borderWidth: 1,
     paddingTop: 10,
     paddingLeft: 10,
-    color: '#4834A6',
+    color: '#4E35AE',
     width: '25%',
-    height: 40
+    height: 40,
+    backgroundColor: '#fff'
   },
   code2: {
     flexDirection: 'row',
     borderRadius: 25,
-    borderColor: '#4834A6',
+    borderColor: '#4E35AE',
     borderWidth: 1,
     padding: 10,
-    color: '#4834A6',
+    color: '#4E35AE',
     width: '70%',
     height: 40,
-    marginLeft: '5%'
+    marginLeft: '5%',
+    backgroundColor: '#fff'
   },
   code3: {
     flexDirection: 'row',
     borderRadius: 25,
-    borderColor: '#4834A6',
+    borderColor: '#fff',
     borderWidth: 1,
     padding: 10,
-    color: '#4834A6',
+    color: '#fff',
     width: '100%',
     height: 40,
     // marginBottom: 20

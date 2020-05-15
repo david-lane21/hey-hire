@@ -195,7 +195,7 @@ function SeekerLogin({ navigation }){
                 color: '#fff', 
                 textDecorationLine: 'underline', 
                 fontSize: 16}}
-              onPress={() => navigation.navigate('ForgotPassword')}
+              onPress={() => navigation.navigate('SeekerForgotPassword')}
             >Forgot you password?</Text>
         </View>
 

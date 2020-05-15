@@ -28,7 +28,8 @@ function TestLinks({navigation}){
     {id: 23, name: "BusinessLogin"},
     {id: 24, name: "SeekerSignup"},
     {id: 25, name: "BusinessSignup"},
-    {id: 26, name: "ForgotPassword"},
+    {id: 26, name: "SeekerForgotPassword"},
+    {id: 28, name: "BusinessForgotPassword"},
     {id: 27, name: "TestLinks"},
   ]
   return(

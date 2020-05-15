@@ -10,7 +10,8 @@ import {getUser} from './utils/utils.js';
 import HomeScreen from './HomeScreen';
 import SeekerLogin from './SeekerLogin';
 import BusinessLogin from './BusinessLogin';
-import ForgotPassword from './ForgotPassword';
+import SeekerForgotPassword from './SeekerForgotPassword';
+import BusinessForgotPassword from './SeekerForgotPassword';
 import SeekerSignup from './SeekerSignup';
 import BusinessSignup from './BusinessSignup';
 import SeekerHome from './SeekerHome';
@@ -70,11 +71,23 @@ function Navigation() {
           }} />
         <Stack.Screen name="SeekerSignup" component={SeekerSignup} />
         <Stack.Screen name="BusinessSignup" component={BusinessSignup} />
-        <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{
+        <Stack.Screen name="SeekerForgotPassword" component={SeekerForgotPassword} options={{
           headerShown: true,
           headerBackTitleVisible: false,
           headerTitle: "Forgot Password",
-          
+          headerStyle: {
+            backgroundColor: '#4E35AE',
+          },
+          headerTintColor: '#fff'
+          }} />
+        <Stack.Screen name="BusinessForgotPassword" component={BusinessForgotPassword} options={{
+          headerShown: true,
+          headerBackTitleVisible: false,
+          headerTitle: "Forgot Password",
+          headerStyle: {
+            backgroundColor: '#4E35AE',
+          },
+          headerTintColor: '#fff'
           }} />
 
         <Stack.Screen name="TestLinks" component={TestLinks} />
