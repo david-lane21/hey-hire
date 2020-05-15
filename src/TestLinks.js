@@ -17,10 +17,10 @@ function TestLinks({navigation}){
     // {id: 12, name: "BusinessHome"},
     {id: 13, name: "BusinessEditAccount"},
     // {id: 14, name: "BusinessNotifications"},
-    {id: 15, name: "BusinessPostNewJob"},
+    // {id: 15, name: "BusinessPostNewJob"},
     {id: 16, name: "BusinessPrinterOptions"},
     // {id: 17, name: "BusinessQrCodeScan"},
-    {id: 18, name: "BusinessReListJob"},
+    // {id: 18, name: "BusinessReListJob"},
     {id: 19, name: "BusinessSeekerProfile"},
     {id: 20, name: "BusinessVisitorDetail"},
     {id: 21, name: "HomeScreen"},
@@ -45,6 +45,25 @@ function TestLinks({navigation}){
         </TouchableOpacity>
       }
     />
+    {/* <TouchableOpacity 
+      style={{padding: 15, borderBottomColor: '#999', borderBottomWidth: 1}}
+      onPress={() => navigation.navigate('Business', {screen: 'ClosedJobs'})}
+      keyExtractor={(item, index) => item.id} >
+        <Text style={{}}>ClosedJobs</Text>
+    </TouchableOpacity>
+
+    <TouchableOpacity 
+      style={{padding: 15, borderBottomColor: '#999', borderBottomWidth: 1}}
+      onPress={() => navigation.navigate('Business', {
+        screen: 'ClosedJobs',
+        params: {
+          screen: 'BusinessPostNewJob'
+        }
+      })}
+      keyExtractor={(item, index) => item.id} >
+        <Text style={{}}>BusinessPostNewJob</Text>
+    </TouchableOpacity> */}
+
     </SafeAreaView>
   )
 }
