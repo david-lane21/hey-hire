@@ -52,7 +52,11 @@ function SeekerLogin({ navigation }){
     .then(json => {
       // setUser(json.data)
       // setToken(token)
-      console.log(json.data)
+      if(json.data.user_type == '2'){
+        navigation.navigate('Seeker')
+      }else{
+        console.log(json.data.user_type)
+      }
     })
     .catch(err => {
       console.log(err)

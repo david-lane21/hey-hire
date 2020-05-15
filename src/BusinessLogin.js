@@ -22,7 +22,7 @@ import {
 function BusinessLogin({navigation}){
   const [modalVisible, setModalVisible] = useState(false);
   const [phCode, setPhCode] = useState('1')
-  const [phone, setPhone] = useState('(214) 9985600')
+  const [phone, setPhone] = useState('(877) 9951411')
   const [password, setPassword] = useState('12345678')
 
   function _onPress(item){
@@ -52,7 +52,11 @@ function BusinessLogin({navigation}){
     .then(json => {
       // setUser(json.data)
       // setToken(token)
-      console.log(json.data)
+      if(json.data.user_type == '1'){
+        navigation.navigate('Business')
+      }else{
+        console.log(json.data.user_type)
+      }
     })
     .catch(err => {
       console.log(err)
