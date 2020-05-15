@@ -52,7 +52,9 @@ function Navigation() {
         <Stack.Screen name="SeekerAddLang" component={SeekerAddLang} />
         <Stack.Screen name="SeekerAddPastPosition" component={SeekerAddPastPosition} />
 
-        <Stack.Screen name="Business" component={Business} />
+        <Stack.Screen name="Business" component={Business} options={{
+          headerShown: false,
+          }} />
         <Stack.Screen name="BusinessEditAccount" component={BusinessEditAccount} />
         <Stack.Screen name="BusinessPostNewJob" component={BusinessPostNewJob} />
         <Stack.Screen name="BusinessPrinterOptions" component={BusinessPrinterOptions} />
