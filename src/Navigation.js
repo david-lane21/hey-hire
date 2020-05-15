@@ -36,6 +36,7 @@ import SeekerAddPastPosition from './SeekerAddPastPosition';
 import TestLinks from './TestLinks';
 
 const Stack = createStackNavigator();
+const Stack2 = createStackNavigator();
 const Tab = createBottomTabNavigator();
 // const currentUser = getUser()
 
@@ -56,11 +57,8 @@ function Navigation() {
           headerShown: false,
           }} />
         <Stack.Screen name="BusinessEditAccount" component={BusinessEditAccount} />
-        <Stack.Screen name="BusinessPostNewJob" component={BusinessPostNewJob} options={{
-          headerShown: false,
-          }} />
+        
         <Stack.Screen name="BusinessPrinterOptions" component={BusinessPrinterOptions} />
-        <Stack.Screen name="BusinessReListJob" component={BusinessReListJob} />
         <Stack.Screen name="BusinessSeekerProfile" component={BusinessSeekerProfile} />
         <Stack.Screen name="BusinessVisitorDetail" component={BusinessVisitorDetail} />
 
@@ -165,7 +163,7 @@ function Business({navigation}){
           iconName = focused ? home : home2;
         } else if (route.name === 'BusinessQrCodeScan') {
           iconName = focused ? qr : qr2;
-        }else if (route.name === 'BusinessClosedJobs') {
+        }else if (route.name === 'ClosedJobs') {
           iconName = focused ? jobs : jobs2;
         }else if (route.name === 'BusinessNotifications') {
           iconName = focused ? notification : notification2;
@@ -182,8 +180,25 @@ function Business({navigation}){
     >
       <Tab.Screen name="BusinessHome" component={BusinessHome} />
       <Tab.Screen name="BusinessQrCodeScan" component={BusinessQrCodeScan} />
-      <Tab.Screen name="BusinessClosedJobs" component={BusinessClosedJobs} />
+      <Tab.Screen name="ClosedJobs" component={ClosedJobs} />
       <Tab.Screen name="BusinessNotifications" component={BusinessNotifications} />
     </Tab.Navigator>
+  )
+}
+
+
+function ClosedJobs(){
+  return(
+    <Stack2.Navigator>
+      <Stack2.Screen name="BusinessClosedJobs" component={BusinessClosedJobs} options={{
+          headerShown: false,
+          }} />
+      <Stack2.Screen name="BusinessPostNewJob" component={BusinessPostNewJob} options={{
+          headerShown: false,
+          }} />
+      <Stack2.Screen name="BusinessReListJob" component={BusinessReListJob}  options={{
+          headerShown: false,
+          }} />
+    </Stack2.Navigator>
   )
 }
