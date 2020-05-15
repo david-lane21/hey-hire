@@ -56,7 +56,9 @@ function Navigation() {
           headerShown: false,
           }} />
         <Stack.Screen name="BusinessEditAccount" component={BusinessEditAccount} />
-        <Stack.Screen name="BusinessPostNewJob" component={BusinessPostNewJob} />
+        <Stack.Screen name="BusinessPostNewJob" component={BusinessPostNewJob} options={{
+          headerShown: false,
+          }} />
         <Stack.Screen name="BusinessPrinterOptions" component={BusinessPrinterOptions} />
         <Stack.Screen name="BusinessReListJob" component={BusinessReListJob} />
         <Stack.Screen name="BusinessSeekerProfile" component={BusinessSeekerProfile} />
