@@ -9,7 +9,8 @@ import {
   Image, 
   TouchableOpacity, 
   FlatList,
-  TouchableHighlight
+  TouchableHighlight,
+  ImageBackground
 } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient';
 import {countries} from './utils/consts.js'
@@ -50,8 +51,8 @@ function BusinessLogin({navigation}){
       return res.json()
     })
     .then(json => {
-      // setUser(json.data)
-      // setToken(token)
+      setUser(json.data)
+      setToken(token)
       if(json.data.user_type == '1'){
         navigation.navigate('Business')
       }else{
