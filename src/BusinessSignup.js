@@ -1,21 +1,17 @@
 import React from 'react'
-import {
-  SafeAreaView, 
-  View, 
-  Text,
-  TouchableOpacity,
-} from 'react-native'
+// import {
+//   SafeAreaView, 
+//   View, 
+//   Text,
+//   Image,
+//   TouchableOpacity,
+// } from 'react-native'
+import { WebView } from 'react-native-webview';
 
 function BusinessSignup({navigation}){
+
   return(
-    <SafeAreaView>
-      <View>
-        <Text>BusinessSignup</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('HomeScreen')}>
-          <Text>Home</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+    <WebView source={{ uri: 'https://app.apployme.com/register' }} style={{ }} />
   )
 }
 

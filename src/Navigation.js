@@ -50,10 +50,6 @@ function Navigation() {
         <Stack.Screen name="SeekerLinks" component={SeekerLinks} options={{
           headerShown: false,
           }} />
-        {/* <Stack.Screen name="SeekerArchivedJobs" component={SeekerArchivedJobs} />
-        <Stack.Screen name="SeekerJobDetail" component={SeekerJobDetail} />
-        <Stack.Screen name="SeekerAddLang" component={SeekerAddLang} />
-        <Stack.Screen name="SeekerAddPastPosition" component={SeekerAddPastPosition} /> */}
 
         <Stack.Screen name="Business" component={Business} options={{
           headerShown: false,
@@ -74,7 +70,15 @@ function Navigation() {
           headerShown: false,
           }} />
         <Stack.Screen name="SeekerSignup" component={SeekerSignup} />
-        <Stack.Screen name="BusinessSignup" component={BusinessSignup} />
+        <Stack.Screen name="BusinessSignup" component={BusinessSignup} options={{
+          headerShown: true,
+          headerBackTitleVisible: false,
+          headerTitle: "apployMe",
+          headerStyle: {
+            backgroundColor: '#4E35AE',
+          },
+          headerTintColor: '#fff'
+          }} />
         <Stack.Screen name="SeekerForgotPassword" component={SeekerForgotPassword} options={{
           headerShown: true,
           headerBackTitleVisible: false,
