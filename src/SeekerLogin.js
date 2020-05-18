@@ -50,9 +50,9 @@ function SeekerLogin({ navigation }){
       return res.json()
     })
     .then(json => {
-      // setUser(json.data)
-      // setToken(token)
       if(json.data.user_type == '2'){
+        setUser(json.data)
+        setToken(token)
         navigation.navigate('Seeker')
       }else{
         console.log(json.data.user_type)

@@ -13,7 +13,7 @@ export async function getUser() {
 
 export async function setUser(user) {
   try {
-    await AsyncStorage.setItem('currentUser', user)
+    await AsyncStorage.setItem('currentUser', JSON.stringify(user))
   } catch(e) {
     console.log('currentUser didn\'t set');
   }

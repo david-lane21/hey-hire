@@ -3,8 +3,6 @@ import { View, Text, Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons } from '@expo/vector-icons';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import {getUser} from './utils/utils.js';
 import HomeScreen from './HomeScreen';
@@ -45,8 +43,10 @@ function Navigation() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="HomeScreen" >
-        <Stack.Screen name="Seeker" component={Seeker} />
-        {/* <Stack.Screen name="SeekerHome" component={SeekerHome} /> */}
+        <Stack.Screen name="Seeker" component={Seeker} options={{
+          headerShown: false,
+          }} />
+        
         <Stack.Screen name="SeekerEditProfile" component={SeekerEditProfile} />
         <Stack.Screen name="SeekerArchivedJobs" component={SeekerArchivedJobs} />
         <Stack.Screen name="SeekerJobDetail" component={SeekerJobDetail} />
