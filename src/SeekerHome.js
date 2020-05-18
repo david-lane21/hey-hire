@@ -70,7 +70,7 @@ function SeekerHome({navigation}){
             <Image source={require('../assets/title_header.png')} style={{width: 120, height: 25}} />
           </View>
           <View style={{width: '33.3%'}}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
+            <TouchableOpacity onPress={() => navigation.navigate('SeekerLinks', { screen: 'SeekerEditProfile'})}>
               <Text style={{paddingRight: 10, textAlign: 'right', color: '#fff', fontSize: 18}}>Edit Profile</Text>
             </TouchableOpacity>
           </View>

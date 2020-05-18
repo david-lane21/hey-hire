@@ -71,7 +71,23 @@ function BusinessClosedJobs({navigation}){
   return(
     <ScrollView style={{flex: 1, backgroundColor: '#fff'}}>
       <SafeAreaView>
-        <Header />
+        <View style={{
+        flex: 1, 
+        flexDirection: 'row', 
+        alignItems: 'center', 
+        borderBottomWidth: 1, 
+        borderBottomColor: '#ccc', 
+        paddingBottom: 10
+        }}>
+          <View style={{width: '35%'}}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Text style={{paddingLeft: 10}}>Back</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={{width: '65%'}}>
+            <Text style={{ color: '#4834A6', fontSize: 18}}>Closed jobs</Text>
+          </View>
+        </View>
 
         <View style={{padding: 20}}>
           {list}
@@ -82,25 +98,3 @@ function BusinessClosedJobs({navigation}){
 }
 
 export default BusinessClosedJobs;
-
-function Header(){
-  return(
-    <View style={{
-    flex: 1, 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    borderBottomWidth: 1, 
-    borderBottomColor: '#ccc', 
-    paddingBottom: 10
-    }}>
-      <View style={{width: '35%'}}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={{paddingLeft: 10}}>Back</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={{width: '65%'}}>
-        <Text style={{ color: '#4834A6', fontSize: 18}}>Closed jobs</Text>
-      </View>
-    </View>
-  )
-}

@@ -47,11 +47,13 @@ function Navigation() {
           headerShown: false,
           }} />
         
-        <Stack.Screen name="SeekerEditProfile" component={SeekerEditProfile} />
-        <Stack.Screen name="SeekerArchivedJobs" component={SeekerArchivedJobs} />
+        <Stack.Screen name="SeekerLinks" component={SeekerLinks} options={{
+          headerShown: false,
+          }} />
+        {/* <Stack.Screen name="SeekerArchivedJobs" component={SeekerArchivedJobs} />
         <Stack.Screen name="SeekerJobDetail" component={SeekerJobDetail} />
         <Stack.Screen name="SeekerAddLang" component={SeekerAddLang} />
-        <Stack.Screen name="SeekerAddPastPosition" component={SeekerAddPastPosition} />
+        <Stack.Screen name="SeekerAddPastPosition" component={SeekerAddPastPosition} /> */}
 
         <Stack.Screen name="Business" component={Business} options={{
           headerShown: false,
@@ -140,6 +142,20 @@ function Seeker({navigation}){
       <Tab.Screen name="SeekerAppliedJobs" component={SeekerAppliedJobs} />
       <Tab.Screen name="SeekerNotifications" component={SeekerNotifications} />
     </Tab.Navigator>
+  )
+}
+
+function SeekerLinks({navigation}){
+  return(
+    <Stack2.Navigator>
+      <Stack.Screen name="SeekerEditProfile" component={SeekerEditProfile} options={{
+          headerShown: false,
+          }} />
+      <Stack.Screen name="SeekerArchivedJobs" component={SeekerArchivedJobs} />
+      <Stack.Screen name="SeekerJobDetail" component={SeekerJobDetail} />
+      <Stack.Screen name="SeekerAddLang" component={SeekerAddLang} />
+      <Stack.Screen name="SeekerAddPastPosition" component={SeekerAddPastPosition} />
+    </Stack2.Navigator>
   )
 }
 
