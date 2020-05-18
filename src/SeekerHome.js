@@ -9,6 +9,7 @@ import {
 } from 'react-native'
 import {getUser} from './utils/utils.js';
 import {postFormData} from './utils/network.js'
+import { LinearGradient } from 'expo-linear-gradient';
 
 function SeekerHome({navigation}){
   const [user, setUser] = useState({})
@@ -19,34 +20,39 @@ function SeekerHome({navigation}){
       let u2 = JSON.parse(u)
       // console.log(u2)
       setUser(u2)
+
+      let form = new FormData();
+      form.append('user_token', u2.user_token)
+      form.append('user_id', u2.user_id)
+
+      postFormData('user_profile', form)
+      .then(res => {
+        return res.json()
+      })
+      .then(json => {
+        // console.log(json.data)
+        setProfile(json.data)
+      })
+      .catch(err => {
+        console.log(err)
+      })
     })
   }, [])
 
   useEffect(()=>{
-    let form = new FormData();
-    form.append('user_token', user.user_token)
-    form.append('user_id', user.user_id)
-
-    postFormData('user_profile', form)
-    .then(res => {
-      return res.json()
-    })
-    .then(json => {
-      // console.log(json.data)
-      setProfile(json.data)
-    })
-    .catch(err => {
-      console.log(err)
-    })
+    
     // return () => setProfile({})
   }, [])
   
   
   return(
-    <ScrollView style={{flex: 1, backgroundColor: '#4E35AE',}}>
+    <LinearGradient 
+      style={{flex: 1, alignItems: 'center'}} 
+      colors={['#4E35AE', '#775ED7']}>
+    <ScrollView style={{flex: 1, }}>
       <SafeAreaView>
         <View style={{
-          backgroundColor: '#4E35AE',
+          // backgroundColor: '#4E35AE',
           flex: 1, 
           flexDirection: 'row', 
           alignItems: 'center', 
@@ -70,43 +76,43 @@ function SeekerHome({navigation}){
           </View>
         </View>
 
-        <View style={{flex: 1, alignItems: 'center', padding: 20, backgroundColor: '#573EB7'}}>
+        <View style={{flex: 1, alignItems: 'center', padding: 20, }}>
           <Image source={{uri: user.avatar_image}} style={{width: 100, height: 100, borderRadius: 50}} />
         </View>
 
-        <View style={{flex: 1, alignItems: 'center', backgroundColor: '#573EB7'}}>
+        <View style={{flex: 1, alignItems: 'center', }}>
           <Text style={{color: '#fff', fontSize: 22}}>{user.first_name} {user.last_name}</Text>
         </View>
 
-        <View style={{flex: 1, alignItems: 'center', backgroundColor: '#573EB7'}}>
+        <View style={{flex: 1, alignItems: 'center', }}>
           <Text style={{color: '#fff'}}>{user.education}</Text>
         </View>
 
-        <View style={{flex: 1, alignItems: 'center', backgroundColor: '#573EB7', paddingBottom: 40, borderBottomWidth: 1, 
+        <View style={{flex: 1, alignItems: 'center', paddingBottom: 40, borderBottomWidth: 1, 
           borderBottomColor: '#715FCB', }}>
           <Text style={{color: '#fff'}}>{user.city}, {user.state}, {user.country}</Text>
         </View>
 
-        <View style={{flex: 1, alignItems: 'flex-start', backgroundColor: '#654DC6', borderBottomWidth: 1, 
+        <View style={{flex: 1, alignItems: 'flex-start', borderBottomWidth: 1, 
           borderBottomColor: '#715FCB', }}>
           <Text style={{color: '#fff', fontSize: 18, paddingLeft: 15, paddingTop: 10}}>Bio</Text> 
           <Text style={{color: '#fff', padding: 30, }}>{user.bio}</Text>
         </View>
 
-        <View style={{flex: 1, alignItems: 'flex-start', backgroundColor: '#654DC6', borderBottomWidth: 1, 
+        <View style={{flex: 1, alignItems: 'flex-start', borderBottomWidth: 1, 
           borderBottomColor: '#715FCB', paddingBottom: 10}}>
           <Text style={{color: '#fff', fontSize: 18, paddingLeft: 15, paddingTop: 10, paddingBottom: 20}}>Past positions</Text> 
           {profile.position ? profile.position.map((position) => {
             return(
               <View style={{flex: 1, paddingLeft: 30, paddingTop: 5, paddingBottom: 5}} key={position.post_id}>
                 <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
-                  <Text style={{color: '#fff'}}>{position.from_date}</Text>
-                  <Text style={{color: '#fff'}}>{position.to_date}</Text>
+                  <Text style={{color: '#fff', fontSize: 14, paddingBottom: 3}}>{position.from_date} - </Text>
+                  <Text style={{color: '#fff', fontSize: 14, paddingBottom: 3}}>{position.to_date}</Text>
                 </View>
-                <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
-                  <Text style={{color: '#fff'}}>{position.category}</Text>
-                  <Text style={{color: '#fff'}}>{position.company_name}</Text>
-                  <Text style={{color: '#fff'}}>{position.city_name}</Text>
+                <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', width: '80%', flexWrap: 'wrap'}}>
+                  <Text style={{color: '#fff', fontSize: 14, paddingBottom: 3}}>{position.category} - </Text>
+                  <Text style={{color: '#fff', fontSize: 14, paddingBottom: 3}}>{position.company_name} - </Text>
+                  <Text style={{color: '#fff', fontSize: 14, paddingBottom: 3}}>{position.city_name}</Text>
                 </View>
                 <View style={{borderBottomColor: '#715FCB', borderBottomWidth: 1}}></View>
               </View>
@@ -123,6 +129,7 @@ function SeekerHome({navigation}){
       </SafeAreaView>
 
     </ScrollView>
+    </LinearGradient>
   )
 }
 
