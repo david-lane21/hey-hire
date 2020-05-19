@@ -69,7 +69,15 @@ function Navigation() {
         <Stack.Screen name="BusinessLogin" component={BusinessLogin} options={{
           headerShown: false,
           }} />
-        <Stack.Screen name="SeekerSignup" component={SeekerSignup} />
+        <Stack.Screen name="SeekerSignup" component={SeekerSignup} options={{
+          headerShown: true,
+          headerBackTitleVisible: false,
+          headerTitle: "REGISTRATION",
+          headerStyle: {
+            backgroundColor: '#fff',
+          },
+          headerTintColor: '#4E35AE'
+          }} />
         <Stack.Screen name="BusinessSignup" component={BusinessSignup} options={{
           headerShown: true,
           headerBackTitleVisible: false,

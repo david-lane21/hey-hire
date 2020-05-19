@@ -33,10 +33,10 @@ function HomeScreen({ navigation }){
             <Image source={require('../assets/ic_open_black.png')} style={{height: 20, width: 25}} />
             <Text style={{fontSize: 20, color: '#4834A6', marginTop: 5}}>Employer</Text>
           </TouchableOpacity>
-          <TouchableOpacity 
+          {/* <TouchableOpacity 
           onPress={() => navigation.navigate('TestLinks')}>
             <Text style={{fontSize: 20, color: '#4834A6', marginTop: 5}}>Test Links</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </View>
     </View>
