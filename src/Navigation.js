@@ -163,10 +163,18 @@ function SeekerLinks({navigation}){
       <Stack.Screen name="SeekerEditProfile" component={SeekerEditProfile} options={{
           headerShown: false,
           }} />
-      <Stack.Screen name="SeekerArchivedJobs" component={SeekerArchivedJobs} />
-      <Stack.Screen name="SeekerJobDetail" component={SeekerJobDetail} />
-      <Stack.Screen name="SeekerAddLang" component={SeekerAddLang} />
-      <Stack.Screen name="SeekerAddPastPosition" component={SeekerAddPastPosition} />
+      <Stack.Screen name="SeekerArchivedJobs" component={SeekerArchivedJobs} options={{
+          headerShown: false,
+          }} />
+      <Stack.Screen name="SeekerJobDetail" component={SeekerJobDetail} options={{
+          headerShown: false,
+          }} />
+      <Stack.Screen name="SeekerAddLang" component={SeekerAddLang} options={{
+          headerShown: false,
+          }} />
+      <Stack.Screen name="SeekerAddPastPosition" component={SeekerAddPastPosition} options={{
+          headerShown: false,
+          }} />
     </Stack2.Navigator>
   )
 }
