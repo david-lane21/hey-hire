@@ -15,9 +15,9 @@ function SeekerJobDetail({route, navigation}){
   // console.log(route.params.job)
   const [job, setJob] = useState(route.params.job)
 
-  useEffect(() => {
+  // useEffect(() => {
     
-  }, [])
+  // }, [])
 
   return(
     <LinearGradient 
@@ -82,9 +82,11 @@ function SeekerJobDetail({route, navigation}){
           <View style={{
             flex: 1, 
             alignItems: 'flex-start', 
-            padding: 15, 
-            backgroundColor: '#efefe', 
-            paddingBottom: 50
+            backgroundColor: '#efefef', 
+            paddingTop: 40,
+            paddingLeft: 15,
+            paddingRight: 15,
+            paddingBottom: 50,
             }}>
             <View style={{
               width: '100%',
