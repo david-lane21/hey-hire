@@ -1,6 +1,6 @@
 export function API_URL(url){
   // return process.env.REACT_APP_API_URL + 'api/' + url
-  return 'http://localhost:4000/apiv1/' + url
+  return 'http://192.168.10.198:4000/apiv1/' + url
 }
 
 export async function getRequest(url){
