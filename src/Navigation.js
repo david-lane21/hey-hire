@@ -134,7 +134,7 @@ function Seeker({navigation}){
           iconName = focused ? home : home2;
         } else if (route.name === 'SeekerScanQrCode') {
           iconName = focused ? qr : qr2;
-        }else if (route.name === 'SeekerAppliedJobs') {
+        }else if (route.name === 'SeekerAppliedJobs0') {
           iconName = focused ? jobs : jobs2;
         }else if (route.name === 'SeekerNotifications') {
           iconName = focused ? notification : notification2;
@@ -151,7 +151,7 @@ function Seeker({navigation}){
     >
       <Tab.Screen name="SeekerHome" component={SeekerHome} />
       <Tab.Screen name="SeekerScanQrCode" component={SeekerScanQrCode} />
-      <Tab.Screen name="SeekerAppliedJobs" component={SeekerAppliedJobs} />
+      <Tab.Screen name="SeekerAppliedJobs0" component={SeekerAppliedJobs0} />
       <Tab.Screen name="SeekerNotifications" component={SeekerNotifications} />
     </Tab.Navigator>
   )
@@ -160,19 +160,32 @@ function Seeker({navigation}){
 function SeekerLinks({navigation}){
   return(
     <Stack2.Navigator>
-      <Stack.Screen name="SeekerEditProfile" component={SeekerEditProfile} options={{
+      <Stack2.Screen name="SeekerEditProfile" component={SeekerEditProfile} options={{
           headerShown: false,
           }} />
-      <Stack.Screen name="SeekerArchivedJobs" component={SeekerArchivedJobs} options={{
+      <Stack2.Screen name="SeekerArchivedJobs" component={SeekerArchivedJobs} options={{
           headerShown: false,
           }} />
-      <Stack.Screen name="SeekerJobDetail" component={SeekerJobDetail} options={{
+      {/* <Stack2.Screen name="SeekerJobDetail" component={SeekerJobDetail} options={{
+          headerShown: false,
+          }} /> */}
+      <Stack2.Screen name="SeekerAddLang" component={SeekerAddLang} options={{
           headerShown: false,
           }} />
-      <Stack.Screen name="SeekerAddLang" component={SeekerAddLang} options={{
+      <Stack2.Screen name="SeekerAddPastPosition" component={SeekerAddPastPosition} options={{
           headerShown: false,
           }} />
-      <Stack.Screen name="SeekerAddPastPosition" component={SeekerAddPastPosition} options={{
+    </Stack2.Navigator>
+  )
+}
+
+function SeekerAppliedJobs0({navigation}){
+  return (
+    <Stack2.Navigator>
+      <Stack2.Screen name="SeekerAppliedJobs" component={SeekerAppliedJobs} options={{
+          headerShown: false,
+          }} />
+      <Stack2.Screen name="SeekerJobDetail" component={SeekerJobDetail} options={{
           headerShown: false,
           }} />
     </Stack2.Navigator>

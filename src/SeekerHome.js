@@ -67,7 +67,7 @@ function SeekerHome({navigation}){
           paddingTop: 15
         }}>
           <View style={{width: '33.3%'}}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
+            <TouchableOpacity onPress={() => navigation.navigate('HomeScreen')}>
               <Text style={{paddingLeft: 10, color: '#fff', fontSize: 18}}>Logout</Text>
             </TouchableOpacity>
           </View>

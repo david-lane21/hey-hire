@@ -39,14 +39,15 @@ function SeekerAppliedJobs({navigation}){
   }, [])
 
   const list = appliedJobs.map((item => {
+    // console.log(item)
     return (
-      <TouchableOpacity key={item.id} onPress={() => navigation.navigate('SeekerLinks', {
+      <TouchableOpacity key={item.id} onPress={() => navigation.navigate('SeekerAppliedJobs0', {
         screen: 'SeekerJobDetail', 
         params: {job: item}
         }
       )}>
         <View  style={{
-          backgroundColor: '#fff',
+          backgroundColor: '#F4F5FA',
           borderColor: '#eee',
           padding: 15,
           marginBottom: 15,
@@ -71,7 +72,13 @@ function SeekerAppliedJobs({navigation}){
           </View>
           <View style={{width: '80%'}}>
             <View style={{flex: 1}}>
-              <Text style={{fontSize: 18}}>{item.position}</Text>
+              <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
+                <Text style={{fontSize: 18}}>{item.position}</Text>
+                {item.aplied === '1' ? 
+                <Image source={require('../assets/ic_applied.png')} style={{width: 60, height: 15, marginLeft: 15,}} />
+                : null}
+              </View>
+              
               <Text style={{fontSize: 14, color: '#555'}}>{item.business.business_name}</Text>
               <Text style={{fontSize: 12, color: '#888'}}>{item.business.address}</Text>
             </View>
@@ -91,7 +98,7 @@ function SeekerAppliedJobs({navigation}){
         alignItems: 'center', 
         borderBottomWidth: 1, 
         borderBottomColor: '#ccc', 
-        paddingBottom: 10
+        paddingBottom: 10,
         }}>
           <View style={{width: '35%'}}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -103,7 +110,7 @@ function SeekerAppliedJobs({navigation}){
           </View>
         </View>
 
-        <View style={{padding: 20}}>
+        <View style={{padding: 20, backgroundColor: '#F4F5FA'}}>
           {list}
         </View>
       </SafeAreaView>

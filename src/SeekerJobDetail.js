@@ -82,7 +82,7 @@ function SeekerJobDetail({route, navigation}){
           <View style={{
             flex: 1, 
             alignItems: 'flex-start', 
-            backgroundColor: '#efefef', 
+            backgroundColor: '#f6f6f6', 
             paddingTop: 40,
             paddingLeft: 15,
             paddingRight: 15,
