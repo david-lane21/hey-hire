@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Button } from 'react-native';
+import { 
+  Text, 
+  View, 
+  StyleSheet, 
+  Button, 
+  Image,
+  ImageBackground
+} from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 function SeekerScanQrCode({navigation}){
   const [hasPermission, setHasPermission] = useState(null);
@@ -33,10 +41,12 @@ function SeekerScanQrCode({navigation}){
         flexDirection: 'column',
         justifyContent: 'flex-end',
       }}>
-      <BarCodeScanner
-        onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-        style={StyleSheet.absoluteFillObject}
-      />
+      
+        <BarCodeScanner
+          onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+          style={StyleSheet.absoluteFillObject}
+        />
+        <Image source={require('../assets/img_scan.png')} style={{width: '100%', height: '100%'}} />
 
       {scanned && <Button title={'Tap to Scan Again'} onPress={() => setScanned(false)} />}
     </View>
