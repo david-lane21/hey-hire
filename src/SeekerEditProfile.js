@@ -13,13 +13,15 @@ import {
   TouchableHighlight,
 } from 'react-native'
 import {countries} from './utils/consts.js'
-import {getUser} from './utils/utils.js';
+import {getUser, getToken} from './utils/utils.js';
 import {postFormData} from './utils/network.js'
 
 function SeekerEditProfile({navigation}){
   const [modalVisible, setModalVisible] = useState(false);
+  const [error, setError]               = useState('')
 
   const [user, setUser] = useState({})
+  const [deviceToken, setDeviceToken] = useState('')
   const [profile, setProfile] = useState({})
 
   const [firstName, setFirstName] = useState('')
@@ -52,7 +54,7 @@ function SeekerEditProfile({navigation}){
       let u2 = JSON.parse(u)
       // console.log(u2)
       setUser(u2)
-
+      getToken().then(t => setDeviceToken(t))
       let form = new FormData();
       form.append('user_token', u2.user_token)
       form.append('user_id', u2.user_id)
@@ -84,41 +86,44 @@ function SeekerEditProfile({navigation}){
   }, [])
 
   function handleUpdate(){
-
-    // let token = deviceToken(128)
-    let form = new FormData()
-    form.append('first_name', firstName)
-    form.append('last_name', lastName)
-    form.append('address', address)
-    form.append('email', email)
-    form.append('city', city)
-    form.append('state', state)
-    form.append('country', country)
-    form.append('phone', phCode + ' ' + phone)
-    form.append('user_type', '2')
-    form.append('password', password)
-    form.append('user_token', user.user_token)
-    form.append('user_id', user.user_id)
-    
-    postFormData('update_user_data', form)
-    .then(res => {
-      return res.json()
-    })
-    .then(json => {
-      console.log(json)
-      if(json.status_code == '300'){
-        // setUser(json.data)
-        // setToken(token)
-        setError(json.msg)
-      }else{
-        setError('')
+    // console.log(deviceToken)
+    if (password.length < 8){
+      setError('password must contain 8 or more charators')
+    }else{
+      let form = new FormData()
+      form.append('first_name', firstName)
+      form.append('last_name', lastName)
+      form.append('address', address)
+      form.append('email', email)
+      form.append('city', city)
+      form.append('state', state)
+      form.append('country', country)
+      form.append('phone', phCode + ' ' + phone)
+      form.append('user_type', '2')
+      form.append('password', password)
+      form.append('user_token', user.user_token)
+      form.append('user_id', user.user_id)
+      form.append('device_tocken', deviceToken)
+      
+      postFormData('update_user', form)
+      .then(res => {
+        return res.json()
+      })
+      .then(json => {
         console.log(json)
-        navigation.goBack()
-      }
-    })
-    .catch(err => {
-      console.log(err)
-    })
+        if(json.status_code != '200'){
+          // setUser(json.data)
+          // setToken(token)
+          setError(json.msg)
+        }else{
+          setError('Profile updated')
+          // console.log(json)
+        }
+      })
+      .catch(err => {
+        console.log(err)
+      })
+    }
   }
   
   return(
@@ -143,6 +148,7 @@ function SeekerEditProfile({navigation}){
           </View>
         </View>
 
+        <View style={{flex: 1}}>
         <View style={{flex: 1, alignItems: 'center', padding: 20, }}>
           <Image source={{uri: user.avatar_image}} style={{width: 100, height: 100, borderRadius: 50}} />
         </View>
@@ -373,8 +379,11 @@ function SeekerEditProfile({navigation}){
             secureTextEntry={true}
           />
         </View>
+        </View>
+        
 
-        <View style={{flex: 1}}>
+        <View style={{}}>
+          {error ? <Text style={{color: 'red', padding: 20}}>{error}</Text> : null}
           <TouchableOpacity 
           style={{
             flex: 1, 
