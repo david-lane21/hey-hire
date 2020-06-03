@@ -4,6 +4,7 @@ import {
   View, 
   Text,
   ScrollView,
+  TextInput,
   Image,
   TouchableOpacity,
 } from 'react-native'
@@ -12,7 +13,20 @@ import {getUser} from './utils/utils.js';
 
 function SeekerAppliedJobs({navigation}){
   const [appliedJobs, setAppliedJobs] = useState([])
+  const [filteredJobs, setFilteredJobs] = useState([])
   const [user, setUser] = useState({})
+  const [search, setSearch] = useState('')
+
+  function searchJobs(txt) {
+    let text = txt.toLowerCase()
+    setSearch(text)
+    if (text == ''){
+      setFilteredJobs(appliedJobs)
+    }else{
+      let jobs = appliedJobs.filter(j => j.position.includes(text))
+      setFilteredJobs(jobs)
+    }
+  }
 
   useEffect(() => {
     getUser().then(u => {
@@ -31,6 +45,7 @@ function SeekerAppliedJobs({navigation}){
       .then(json => {
         // console.log(json.data)
         setAppliedJobs(json.data)
+        setFilteredJobs(json.data)
       })
       .catch(err => {
         console.log(err)
@@ -38,7 +53,7 @@ function SeekerAppliedJobs({navigation}){
     })
   }, [])
 
-  const list = appliedJobs.map((item => {
+  const list = filteredJobs.map((item => {
     // console.log(item)
     return (
       <TouchableOpacity key={item.id} onPress={() => navigation.navigate('SeekerAppliedJobs0', {
@@ -70,7 +85,7 @@ function SeekerAppliedJobs({navigation}){
               source={{uri: item.business.avatar_image}} 
               style={{width: 40, height: 40, backgroundColor: '#444', borderRadius: 40, borderWidth: 1, borderColor: '#888' }} />
           </View>
-          <View style={{width: '80%'}}>
+          <View style={{width: '80%', backgroundColor: '#F4F5FA',}}>
             <View style={{flex: 1}}>
               <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
                 <Text style={{fontSize: 18}}>{item.position}</Text>
@@ -90,15 +105,16 @@ function SeekerAppliedJobs({navigation}){
   }))
   
   return(
-    <ScrollView style={{flex: 1, backgroundColor: '#fff'}}>
-      <SafeAreaView>
+    <ScrollView style={{flex: 1, backgroundColor: '#4E35AE',}}>
+      <SafeAreaView style={{flex: 1}}>
         <View style={{
         flex: 1, 
         flexDirection: 'row', 
         alignItems: 'center', 
         borderBottomWidth: 1, 
-        borderBottomColor: '#ccc', 
+        borderBottomColor: '#6652C2', 
         paddingBottom: 10,
+        backgroundColor: '#4E35AE',
         }}>
           <View style={{width: '35%'}}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -106,11 +122,25 @@ function SeekerAppliedJobs({navigation}){
             </TouchableOpacity>
           </View>
           <View style={{width: '65%'}}>
-            <Text style={{ color: '#4834A6', fontSize: 18}}>apployMe</Text>
+            <Text style={{ color: '#fff', fontSize: 18}}>apployMe</Text>
           </View>
         </View>
 
-        <View style={{padding: 20, backgroundColor: '#F4F5FA'}}>
+        <View style={{backgroundColor: '#F4F5FA', minHeight: 1000}}>
+          <View style={{backgroundColor: '#4E35AE', padding: 20, borderBottomLeftRadius: 7, borderBottomRightRadius: 7}}>
+            <View style={{flex: 1, flexDirection: 'row'}}>
+              <Image source={require('../assets/ic_search_w.png')} style={{alignSelf: 'flex-start'}}/>
+
+              <TextInput
+              style={{width: '85%', paddingLeft: 10, color: '#fff'}}
+              onChangeText={text => searchJobs(text)}
+              placeholder='Search...'
+              value={search} />
+
+              <Image source={require('../assets/ic_filter_w.png')} style={{}}/>
+            </View>
+          </View>
+
           {list}
         </View>
       </SafeAreaView>
