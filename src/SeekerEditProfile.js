@@ -272,16 +272,7 @@ function SeekerEditProfile({navigation}){
             </TouchableOpacity>
           </View>
         </View>
-          {/* <View style={styles.inputField}>
-            <Image source={require('../assets/ic_country.png')} style={{width: 20, height: 20}} />
-            <TextInput
-              style={{width: '100%', paddingLeft: 10}}
-              onChangeText={text => setCountry(text)}
-              placeholder='Country...'
-              value={country}
-            />
-          </View> */}
-
+          
           <View style={styles.inputField}>
             <Image source={require('../assets/ic_country.png')} style={{width: 20, height: 20}} />
             <TextInput
