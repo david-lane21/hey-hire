@@ -19,11 +19,6 @@ import {postFormData} from './utils/network.js'
 function SeekerEditProfile({navigation}){
   const [modalVisible, setModalVisible] = useState(false);
 
-  function _onPress(item){
-    setModalVisible(false)
-    setPhCode(item.dial_code)
-  }
-
   const [user, setUser] = useState({})
   const [profile, setProfile] = useState({})
 
@@ -34,11 +29,23 @@ function SeekerEditProfile({navigation}){
   const [state, setState]         = useState('')
   const [city, setCity]           = useState('')
   const [zipcode, setZipcode]     = useState('')
-  const [phCode, setPhCode]       = useState('+1')
+  const [phCode, setPhCode]       = useState('1')
   const [phone, setPhone]         = useState('')
   const [email, setEmail]         = useState('')
   const [password, setPassword]   = useState('')
   const [password2, setPassword2] = useState('')
+
+  function _onPress(item){
+    setModalVisible(false)
+    setCountry(item.name)
+    setPhCode(item.dial_code)
+  }
+
+  function _onPress2(item){
+    setModalVisible(false)
+    setPhCode(item.dial_code)
+    setCountry(item.name)
+  }
 
   useEffect(() => {
     getUser().then(u => {
@@ -55,14 +62,64 @@ function SeekerEditProfile({navigation}){
         return res.json()
       })
       .then(json => {
-        // console.log(json.data)
         setProfile(json.data)
+        let p = json.data.phone.split(' ')
+        let p1 = p[0].replace(/\+/g, '')
+        let p2 = p[1] + ' ' + p[2]
+        setFirstName(json.data.first_name)
+        setLastName(json.data.last_name)
+        setAddress(json.data.address)
+        setCountry(json.data.country)
+        setState(json.data.state)
+        setCity(json.data.city)
+        setZipcode(json.data.zip_code)
+        setPhCode(p1)
+        setPhone(p2)
+        setEmail(json.data.email)
       })
       .catch(err => {
         console.log(err)
       })
     })
   }, [])
+
+  function handleUpdate(){
+
+    // let token = deviceToken(128)
+    let form = new FormData()
+    form.append('first_name', firstName)
+    form.append('last_name', lastName)
+    form.append('address', address)
+    form.append('email', email)
+    form.append('city', city)
+    form.append('state', state)
+    form.append('country', country)
+    form.append('phone', phCode + ' ' + phone)
+    form.append('user_type', '2')
+    form.append('password', password)
+    form.append('user_token', user.user_token)
+    form.append('user_id', user.user_id)
+    
+    postFormData('update_user_data', form)
+    .then(res => {
+      return res.json()
+    })
+    .then(json => {
+      console.log(json)
+      if(json.status_code == '300'){
+        // setUser(json.data)
+        // setToken(token)
+        setError(json.msg)
+      }else{
+        setError('')
+        console.log(json)
+        navigation.goBack()
+      }
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  }
   
   return(
     <ScrollView style={{flex: 1, backgroundColor: '#fff'}}>
@@ -111,7 +168,7 @@ function SeekerEditProfile({navigation}){
         </View>
 
         <View style={styles.inputField}>
-          <Image source={require('../assets/ic_user.png')} style={{width: 20, height: 20}} />
+          <Image source={require('../assets/ic_address.png')} style={{width: 20, height: 20}} />
           <TextInput
             style={{width: '100%', paddingLeft: 10}}
             onChangeText={text => setAddress(text)}
@@ -120,18 +177,75 @@ function SeekerEditProfile({navigation}){
           />
         </View>
 
-        <View style={styles.inputField}>
-          <Image source={require('../assets/ic_user.png')} style={{width: 20, height: 20}} />
+        <View 
+        style={{
+          flex: 2, 
+          alignItems: 'center'}}>
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={modalVisible}
+          onRequestClose={() => {
+          // Alert.alert('Modal has been closed.');
+        }}>
+          <SafeAreaView>
+            <View style={{ marginTop: 22 }}>
+              <View>
+                <FlatList
+                  // ItemSeparatorComponent={<Separator />}
+                  data={countries}
+                  keyExtractor={(item) => item.code}
+                  renderItem={({item, index, separators}) => (
+                    <TouchableHighlight
+                      key={index}
+                      onPress={() => _onPress(item)}
+                      onShowUnderlay={separators.highlight}
+                      onHideUnderlay={separators.unhighlight}>
+                      <View style={{backgroundColor: 'white'}}>
+                        <View style={{
+                          flex: 1, 
+                          flexDirection: 'row', 
+                          justifyContent:'space-between', 
+                          padding: 10, 
+                          borderBottomWidth: 1, 
+                          borderBottomColor: '#eee',
+                          
+                          }}>
+                          <Text style={{
+                            fontSize: 20, 
+                            color: '#222'}}>{item.name}</Text>
+                          <Text style={{
+                            fontSize: 20, 
+                            color: '#666'}}>+{item.dial_code}</Text>
+                        </View>
+                      </View>
+                    </TouchableHighlight>
+                  )}
+                />
+              </View>
+            </View>
+          </SafeAreaView>
+        </Modal>
+      
+        <View style={{flex: 1, flexDirection: 'row'}}>
+          <TouchableOpacity style={styles.inputField} onPress={() => setModalVisible(true)}>
+            <Image source={require('../assets/ic_country.png')} style={{width: 20, height: 20, marginRight: 5}} />
+            <Text style={{}}>{country}</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+        {/* <View style={styles.inputField}>
+          <Image source={require('../assets/ic_country.png')} style={{width: 20, height: 20}} />
           <TextInput
             style={{width: '100%', paddingLeft: 10}}
             onChangeText={text => setCountry(text)}
             placeholder='Country...'
             value={country}
           />
-        </View>
+        </View> */}
 
         <View style={styles.inputField}>
-          <Image source={require('../assets/ic_user.png')} style={{width: 20, height: 20}} />
+          <Image source={require('../assets/ic_country.png')} style={{width: 20, height: 20}} />
           <TextInput
             style={{width: '100%', paddingLeft: 10}}
             onChangeText={text => setState(text)}
@@ -141,12 +255,22 @@ function SeekerEditProfile({navigation}){
         </View>
 
         <View style={styles.inputField}>
-          <Image source={require('../assets/ic_user.png')} style={{width: 20, height: 20}} />
+          <Image source={require('../assets/ic_country.png')} style={{width: 20, height: 20}} />
           <TextInput
             style={{width: '100%', paddingLeft: 10}}
             onChangeText={text => setCity(text)}
             placeholder='City...'
             value={city}
+          />
+        </View>
+
+        <View style={styles.inputField}>
+          <Image source={require('../assets/ic_zip.png')} style={{width: 20, height: 20}} />
+          <TextInput
+            style={{width: '100%', paddingLeft: 10}}
+            onChangeText={text => setZipcode(text)}
+            placeholder='Zip...'
+            value={zipcode}
           />
         </View>
 
@@ -168,7 +292,7 @@ function SeekerEditProfile({navigation}){
                     renderItem={({item, index, separators}) => (
                       <TouchableHighlight
                         key={index}
-                        onPress={() => _onPress(item)}
+                        onPress={() => _onPress2(item)}
                         onShowUnderlay={separators.highlight}
                         onHideUnderlay={separators.unhighlight}>
                         <View style={{backgroundColor: 'white'}}>
@@ -213,6 +337,55 @@ function SeekerEditProfile({navigation}){
 
         <View style={{flex: 1, marginLeft: 10}}>
           <Text style={{color: '#6E5FBD'}}>* For receiving interview calls</Text>
+        </View>
+
+        <View style={styles.inputField}>
+          <Image source={require('../assets/ic_mail.png')} style={{height: 20, width: 20}} />
+          <TextInput
+            style={{paddingLeft: 10, width: '100%'}}
+            onChangeText={text => setEmail(text)}
+            placeholder='Email'
+            value={email}
+            type='email'
+          />
+        </View>
+
+        
+        <View style={styles.inputField}>
+          <Image source={require('../assets/ic_password.png')} style={{height: 20, width: 20}} />
+          <TextInput
+            style={{paddingLeft: 10, width: '100%'}}
+            onChangeText={text => setPassword(text)}
+            placeholder='Enter Password'
+            value={password}
+            secureTextEntry={true}
+          />
+        </View>
+    
+        
+        <View style={styles.inputField}>
+          <Image source={require('../assets/ic_password.png')} style={{height: 20, width: 20}} />
+          <TextInput
+            style={{paddingLeft: 10, width: '100%'}}
+            onChangeText={text => setPassword2(text)}
+            placeholder='Confirm Password'
+            value={password2}
+            secureTextEntry={true}
+          />
+        </View>
+
+        <View style={{flex: 1}}>
+          <TouchableOpacity 
+          style={{
+            flex: 1, 
+            alignContent: 'center',
+            backgroundColor: '#5B42BB',
+            padding: 15,
+            
+          }}
+          onPress={() => handleUpdate()}>
+            <Text style={{color: '#fff', textAlign: 'center', fontSize: 18}}>Update Profile</Text>
+          </TouchableOpacity>
         </View>
         
 
@@ -266,14 +439,15 @@ const styles = StyleSheet.create({
     elevation: 4,
     flex: 1, 
     flexDirection: 'row',
-    alignItems: 'center',
-    width: '25%',
+    // alignItems: 'center',
+    // width: '25%',
   },
   code2: {
     backgroundColor: '#fff',
     borderColor: '#eee',
     padding: 13,
     marginBottom: 15,
+    marginRight: 10,
     borderWidth: 1,
     borderRadius: 10,
     shadowColor: "#bbb",
@@ -284,10 +458,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.23,
     shadowRadius: 2.62,
     elevation: 4,
-    flex: 1, 
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '60%',
-    marginLeft: '5%'
+    flex: 4, 
+    // flexDirection: 'row',
+    // alignItems: 'center',
+    // width: '50%',
+    marginLeft: 5
   },
 });
