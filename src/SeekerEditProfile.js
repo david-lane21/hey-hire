@@ -34,8 +34,6 @@ function SeekerEditProfile({navigation}){
   const [phCode, setPhCode]       = useState('1')
   const [phone, setPhone]         = useState('')
   const [email, setEmail]         = useState('')
-  const [password, setPassword]   = useState('')
-  const [password2, setPassword2] = useState('')
 
   function _onPress(item){
     setModalVisible(false)
@@ -86,44 +84,39 @@ function SeekerEditProfile({navigation}){
   }, [])
 
   function handleUpdate(){
-    // console.log(deviceToken)
-    if (password.length < 8){
-      setError('password must contain 8 or more charators')
-    }else{
-      let form = new FormData()
-      form.append('first_name', firstName)
-      form.append('last_name', lastName)
-      form.append('address', address)
-      form.append('email', email)
-      form.append('city', city)
-      form.append('state', state)
-      form.append('country', country)
-      form.append('phone', phCode + ' ' + phone)
-      form.append('user_type', '2')
-      form.append('password', password)
-      form.append('user_token', user.user_token)
-      form.append('user_id', user.user_id)
-      form.append('device_tocken', deviceToken)
-      
-      postFormData('update_user', form)
-      .then(res => {
-        return res.json()
-      })
-      .then(json => {
-        console.log(json)
-        if(json.status_code != '200'){
-          // setUser(json.data)
-          // setToken(token)
-          setError(json.msg)
-        }else{
-          setError('Profile updated')
-          // console.log(json)
-        }
-      })
-      .catch(err => {
-        console.log(err)
-      })
-    }
+    let form = new FormData()
+    form.append('first_name', firstName)
+    form.append('last_name', lastName)
+    form.append('address', address)
+    form.append('email', email)
+    form.append('city', city)
+    form.append('state', state)
+    form.append('country', country)
+    form.append('phone', phCode + ' ' + phone)
+    form.append('user_type', '2')
+    form.append('user_token', user.user_token)
+    form.append('user_id', user.user_id)
+    form.append('device_tocken', deviceToken)
+    
+    postFormData('update_user', form)
+    .then(res => {
+      return res.json()
+    })
+    .then(json => {
+      console.log(json)
+      if(json.status_code != '200'){
+        // setUser(json.data)
+        // setToken(token)
+        setError(json.msg)
+      }else{
+        setError('Profile updated')
+        // console.log(json)
+      }
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  
   }
   
   return(
@@ -356,31 +349,7 @@ function SeekerEditProfile({navigation}){
           />
         </View>
 
-        
-        <View style={styles.inputField}>
-          <Image source={require('../assets/ic_password.png')} style={{height: 20, width: 20}} />
-          <TextInput
-            style={{paddingLeft: 10, width: '100%'}}
-            onChangeText={text => setPassword(text)}
-            placeholder='Enter Password'
-            value={password}
-            secureTextEntry={true}
-          />
-        </View>
-    
-        
-        <View style={styles.inputField}>
-          <Image source={require('../assets/ic_password.png')} style={{height: 20, width: 20}} />
-          <TextInput
-            style={{paddingLeft: 10, width: '100%'}}
-            onChangeText={text => setPassword2(text)}
-            placeholder='Confirm Password'
-            value={password2}
-            secureTextEntry={true}
-          />
-        </View>
-        </View>
-        
+      </View>
 
         <View style={{}}>
           {error ? <Text style={{color: 'red', padding: 20}}>{error}</Text> : null}
