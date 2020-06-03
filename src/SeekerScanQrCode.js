@@ -46,7 +46,17 @@ function SeekerScanQrCode({navigation}){
           onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
           style={StyleSheet.absoluteFillObject}
         />
-        <Image source={require('../assets/img_scan.png')} style={{width: '100%', height: '100%'}} />
+        <ImageBackground source={require('../assets/img_scan.png')} style={{width: '100%', height: '100%'}} >
+          <View style={{flex: 1, alignItems: 'center'}}>
+            <View style={{flex: 1, position: 'absolute', top: '20%'}}>
+              <Text style={{color: '#fff', fontSize: 24}}>ApployMe</Text>
+            </View>
+            <View style={{flex: 1, position: 'absolute', bottom: '17%', alignItems: 'center'}}>
+              <Text style={{color: '#fff', fontSize: 22}}>Scan the business's</Text>
+              <Text style={{color: '#fff', fontSize: 22}}>apployMe QR Code to get started</Text>
+            </View>
+          </View>
+        </ImageBackground>
 
       {scanned && <Button title={'Tap to Scan Again'} onPress={() => setScanned(false)} />}
     </View>
