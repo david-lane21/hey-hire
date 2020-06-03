@@ -24,7 +24,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.apployme",
-      "buildNumber": "3"
+      "buildNumber": "4"
     },
     "android": {
       "package": "com.apployme",
