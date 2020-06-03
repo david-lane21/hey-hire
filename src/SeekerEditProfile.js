@@ -8,10 +8,13 @@ import {
   FlatList,
   Text,
   TextInput,
+  Button,
   ScrollView,
   TouchableOpacity,
   TouchableHighlight,
 } from 'react-native'
+import * as ImagePicker from 'expo-image-picker';
+import Constants from 'expo-constants';
 import {countries} from './utils/consts.js'
 import {getUser, getToken} from './utils/utils.js';
 import {postFormData} from './utils/network.js'
@@ -23,6 +26,7 @@ function SeekerEditProfile({navigation}){
   const [user, setUser] = useState({})
   const [deviceToken, setDeviceToken] = useState('')
   const [profile, setProfile] = useState({})
+  const [image, setImage] = useState(null);
 
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName]   = useState('')
@@ -34,6 +38,33 @@ function SeekerEditProfile({navigation}){
   const [phCode, setPhCode]       = useState('1')
   const [phone, setPhone]         = useState('')
   const [email, setEmail]         = useState('')
+
+  useEffect(() => {
+    (async () => {
+      if (Constants.platform.ios) {
+        const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
+        if (status !== 'granted') {
+          alert('Sorry, we need camera roll permissions to make this work!');
+        }
+      }
+    })();
+  }, []);
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    // console.log(result);
+
+    if (!result.cancelled) {
+      setImage(result.uri);
+    }
+    // console.log(image)
+  };
 
   function _onPress(item){
     setModalVisible(false)
@@ -97,6 +128,7 @@ function SeekerEditProfile({navigation}){
     form.append('user_token', user.user_token)
     form.append('user_id', user.user_id)
     form.append('device_tocken', deviceToken)
+    form.append('avatar_image', image)
     
     postFormData('update_user', form)
     .then(res => {
@@ -125,9 +157,7 @@ function SeekerEditProfile({navigation}){
         <View style={{
         flex: 1, 
         flexDirection: 'row', 
-        alignItems: 'center', 
-        // borderBottomWidth: 1, 
-        // borderBottomColor: '#ccc', 
+        alignItems: 'center',
         paddingBottom: 20,
         paddingTop: 20
         }}>
@@ -142,138 +172,53 @@ function SeekerEditProfile({navigation}){
         </View>
 
         <View style={{flex: 1}}>
-        <View style={{flex: 1, alignItems: 'center', padding: 20, }}>
-          <Image source={{uri: user.avatar_image}} style={{width: 100, height: 100, borderRadius: 50}} />
-        </View>
-
-        <View style={styles.inputField}>
-          <Image source={require('../assets/ic_user.png')} style={{width: 20, height: 20}} />
-          <TextInput
-            style={{width: '100%', paddingLeft: 10}}
-            onChangeText={text => setFirstName(text)}
-            placeholder='First Name...'
-            value={firstName}
-          />
-        </View>
-
-        <View style={styles.inputField}>
-          <Image source={require('../assets/ic_user.png')} style={{width: 20, height: 20}} />
-          <TextInput
-            style={{width: '100%', paddingLeft: 10}}
-            onChangeText={text => setLastName(text)}
-            placeholder='Last Name...'
-            value={lastName}
-          />
-        </View>
-
-        <View style={styles.inputField}>
-          <Image source={require('../assets/ic_address.png')} style={{width: 20, height: 20}} />
-          <TextInput
-            style={{width: '100%', paddingLeft: 10}}
-            onChangeText={text => setAddress(text)}
-            placeholder='Address...'
-            value={address}
-          />
-        </View>
-
-        <View 
-        style={{
-          flex: 2, 
-          alignItems: 'center'}}>
-        <Modal
-          animationType="slide"
-          transparent={false}
-          visible={modalVisible}
-          onRequestClose={() => {
-          // Alert.alert('Modal has been closed.');
-        }}>
-          <SafeAreaView>
-            <View style={{ marginTop: 22 }}>
-              <View>
-                <FlatList
-                  // ItemSeparatorComponent={<Separator />}
-                  data={countries}
-                  keyExtractor={(item) => item.code}
-                  renderItem={({item, index, separators}) => (
-                    <TouchableHighlight
-                      key={index}
-                      onPress={() => _onPress(item)}
-                      onShowUnderlay={separators.highlight}
-                      onHideUnderlay={separators.unhighlight}>
-                      <View style={{backgroundColor: 'white'}}>
-                        <View style={{
-                          flex: 1, 
-                          flexDirection: 'row', 
-                          justifyContent:'space-between', 
-                          padding: 10, 
-                          borderBottomWidth: 1, 
-                          borderBottomColor: '#eee',
-                          
-                          }}>
-                          <Text style={{
-                            fontSize: 20, 
-                            color: '#222'}}>{item.name}</Text>
-                          <Text style={{
-                            fontSize: 20, 
-                            color: '#666'}}>+{item.dial_code}</Text>
-                        </View>
-                      </View>
-                    </TouchableHighlight>
-                  )}
-                />
-              </View>
+          <View style={{flex: 1, alignItems: 'center', padding: 20, }}>
+            <View style={{width: 150, height: 150, alignSelf: 'center'}}>
+              {/* <Image source={{uri: user.avatar_image}} style={{width: 100, height: 100, borderRadius: 50, alignSelf: 'center'}} /> */}
+              {image == null ? 
+                <Image source={{uri: user.avatar_image}} style={{width: 100, height: 100, borderRadius: 50, alignSelf: 'center'}} /> :
+                <Image source={{uri: image}} style={{width: 100, height: 100, borderRadius: 50, alignSelf: 'center'}} />
+                }
+              <TouchableOpacity onPress={pickImage} style={{position: 'absolute', top: 0, right: 0}}>
+                <Image source={require('../assets/ic_camera.png')} style={{width: 60, height: 60,}} />
+              </TouchableOpacity>
             </View>
-          </SafeAreaView>
-        </Modal>
-      
-        <View style={{flex: 1, flexDirection: 'row'}}>
-          <TouchableOpacity style={styles.inputField} onPress={() => setModalVisible(true)}>
-            <Image source={require('../assets/ic_country.png')} style={{width: 20, height: 20, marginRight: 5}} />
-            <Text style={{}}>{country}</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-        {/* <View style={styles.inputField}>
-          <Image source={require('../assets/ic_country.png')} style={{width: 20, height: 20}} />
-          <TextInput
-            style={{width: '100%', paddingLeft: 10}}
-            onChangeText={text => setCountry(text)}
-            placeholder='Country...'
-            value={country}
-          />
-        </View> */}
+          </View>
 
-        <View style={styles.inputField}>
-          <Image source={require('../assets/ic_country.png')} style={{width: 20, height: 20}} />
-          <TextInput
-            style={{width: '100%', paddingLeft: 10}}
-            onChangeText={text => setState(text)}
-            placeholder='State...'
-            value={state}
-          />
-        </View>
+          <View style={styles.inputField}>
+            <Image source={require('../assets/ic_user.png')} style={{width: 20, height: 20}} />
+            <TextInput
+              style={{width: '100%', paddingLeft: 10}}
+              onChangeText={text => setFirstName(text)}
+              placeholder='First Name...'
+              value={firstName}
+            />
+          </View>
 
-        <View style={styles.inputField}>
-          <Image source={require('../assets/ic_country.png')} style={{width: 20, height: 20}} />
-          <TextInput
-            style={{width: '100%', paddingLeft: 10}}
-            onChangeText={text => setCity(text)}
-            placeholder='City...'
-            value={city}
-          />
-        </View>
+          <View style={styles.inputField}>
+            <Image source={require('../assets/ic_user.png')} style={{width: 20, height: 20}} />
+            <TextInput
+              style={{width: '100%', paddingLeft: 10}}
+              onChangeText={text => setLastName(text)}
+              placeholder='Last Name...'
+              value={lastName}
+            />
+          </View>
 
-        <View style={styles.inputField}>
-          <Image source={require('../assets/ic_zip.png')} style={{width: 20, height: 20}} />
-          <TextInput
-            style={{width: '100%', paddingLeft: 10}}
-            onChangeText={text => setZipcode(text)}
-            placeholder='Zip...'
-            value={zipcode}
-          />
-        </View>
+          <View style={styles.inputField}>
+            <Image source={require('../assets/ic_address.png')} style={{width: 20, height: 20}} />
+            <TextInput
+              style={{width: '100%', paddingLeft: 10}}
+              onChangeText={text => setAddress(text)}
+              placeholder='Address...'
+              value={address}
+            />
+          </View>
 
-        <View style={{flex: 1,}}>
+          <View 
+          style={{
+            flex: 2, 
+            alignItems: 'center'}}>
           <Modal
             animationType="slide"
             transparent={false}
@@ -291,7 +236,7 @@ function SeekerEditProfile({navigation}){
                     renderItem={({item, index, separators}) => (
                       <TouchableHighlight
                         key={index}
-                        onPress={() => _onPress2(item)}
+                        onPress={() => _onPress(item)}
                         onShowUnderlay={separators.highlight}
                         onHideUnderlay={separators.unhighlight}>
                         <View style={{backgroundColor: 'white'}}>
@@ -319,35 +264,129 @@ function SeekerEditProfile({navigation}){
               </View>
             </SafeAreaView>
           </Modal>
+        
           <View style={{flex: 1, flexDirection: 'row'}}>
-            <TouchableOpacity style={styles.code} onPress={() => setModalVisible(true)}>
-              <Image source={require('../assets/ic_call.png')} style={{width: 20, height: 20, marginRight: 5}} />
-              <Text style={{}}>+{phCode}</Text>
+            <TouchableOpacity style={styles.inputField} onPress={() => setModalVisible(true)}>
+              <Image source={require('../assets/ic_country.png')} style={{width: 20, height: 20, marginRight: 5}} />
+              <Text style={{}}>{country}</Text>
             </TouchableOpacity>
-
-            <TextInput
-              style={styles.code2}
-              onChangeText={text => setPhone(text)}
-              placeholder='Phone'
-              value={phone}
-            />
           </View>
         </View>
+          {/* <View style={styles.inputField}>
+            <Image source={require('../assets/ic_country.png')} style={{width: 20, height: 20}} />
+            <TextInput
+              style={{width: '100%', paddingLeft: 10}}
+              onChangeText={text => setCountry(text)}
+              placeholder='Country...'
+              value={country}
+            />
+          </View> */}
 
-        <View style={{flex: 1, marginLeft: 10}}>
-          <Text style={{color: '#6E5FBD'}}>* For receiving interview calls</Text>
-        </View>
+          <View style={styles.inputField}>
+            <Image source={require('../assets/ic_country.png')} style={{width: 20, height: 20}} />
+            <TextInput
+              style={{width: '100%', paddingLeft: 10}}
+              onChangeText={text => setState(text)}
+              placeholder='State...'
+              value={state}
+            />
+          </View>
 
-        <View style={styles.inputField}>
-          <Image source={require('../assets/ic_mail.png')} style={{height: 20, width: 20}} />
-          <TextInput
-            style={{paddingLeft: 10, width: '100%'}}
-            onChangeText={text => setEmail(text)}
-            placeholder='Email'
-            value={email}
-            type='email'
-          />
-        </View>
+          <View style={styles.inputField}>
+            <Image source={require('../assets/ic_country.png')} style={{width: 20, height: 20}} />
+            <TextInput
+              style={{width: '100%', paddingLeft: 10}}
+              onChangeText={text => setCity(text)}
+              placeholder='City...'
+              value={city}
+            />
+          </View>
+
+          <View style={styles.inputField}>
+            <Image source={require('../assets/ic_zip.png')} style={{width: 20, height: 20}} />
+            <TextInput
+              style={{width: '100%', paddingLeft: 10}}
+              onChangeText={text => setZipcode(text)}
+              placeholder='Zip...'
+              value={zipcode}
+            />
+          </View>
+
+          <View style={{flex: 1,}}>
+            <Modal
+              animationType="slide"
+              transparent={false}
+              visible={modalVisible}
+              onRequestClose={() => {
+              // Alert.alert('Modal has been closed.');
+            }}>
+              <SafeAreaView>
+                <View style={{ marginTop: 22 }}>
+                  <View>
+                    <FlatList
+                      // ItemSeparatorComponent={<Separator />}
+                      data={countries}
+                      keyExtractor={(item) => item.code}
+                      renderItem={({item, index, separators}) => (
+                        <TouchableHighlight
+                          key={index}
+                          onPress={() => _onPress2(item)}
+                          onShowUnderlay={separators.highlight}
+                          onHideUnderlay={separators.unhighlight}>
+                          <View style={{backgroundColor: 'white'}}>
+                            <View style={{
+                              flex: 1, 
+                              flexDirection: 'row', 
+                              justifyContent:'space-between', 
+                              padding: 10, 
+                              borderBottomWidth: 1, 
+                              borderBottomColor: '#eee',
+                              
+                              }}>
+                              <Text style={{
+                                fontSize: 20, 
+                                color: '#222'}}>{item.name}</Text>
+                              <Text style={{
+                                fontSize: 20, 
+                                color: '#666'}}>+{item.dial_code}</Text>
+                            </View>
+                          </View>
+                        </TouchableHighlight>
+                      )}
+                    />
+                  </View>
+                </View>
+              </SafeAreaView>
+            </Modal>
+            <View style={{flex: 1, flexDirection: 'row'}}>
+              <TouchableOpacity style={styles.code} onPress={() => setModalVisible(true)}>
+                <Image source={require('../assets/ic_call.png')} style={{width: 20, height: 20, marginRight: 5}} />
+                <Text style={{}}>+{phCode}</Text>
+              </TouchableOpacity>
+
+              <TextInput
+                style={styles.code2}
+                onChangeText={text => setPhone(text)}
+                placeholder='Phone'
+                value={phone}
+              />
+            </View>
+          </View>
+
+          <View style={{flex: 1, marginLeft: 10}}>
+            <Text style={{color: '#6E5FBD'}}>* For receiving interview calls</Text>
+          </View>
+
+          <View style={styles.inputField}>
+            <Image source={require('../assets/ic_mail.png')} style={{height: 20, width: 20}} />
+            <TextInput
+              style={{paddingLeft: 10, width: '100%'}}
+              onChangeText={text => setEmail(text)}
+              placeholder='Email'
+              value={email}
+              type='email'
+            />
+          </View>
 
       </View>
 
