@@ -102,7 +102,7 @@ function SeekerSignup({ navigation }){
       <View style={styles.inputField}>
         <Image source={require('../assets/ic_user.png')} style={{height: 20, width: 20}} />
         <TextInput
-          style={{paddingLeft: 10, width: '100%'}}
+          style={{paddingLeft: 10, width: '100%', color: '#000'}}
           onChangeText={text => setFirstName(text)}
           placeholder='First Name...'
           value={firstName}
@@ -114,7 +114,7 @@ function SeekerSignup({ navigation }){
       <View style={styles.inputField}>
         <Image source={require('../assets/ic_user.png')} style={{height: 20, width: 20}} />
         <TextInput
-          style={{paddingLeft: 10, width: '100%'}}
+          style={{paddingLeft: 10, width: '100%', color: '#000'}}
           onChangeText={text => setLastName(text)}
           placeholder='Last Name...'
           value={lastName}
@@ -124,7 +124,7 @@ function SeekerSignup({ navigation }){
       <View style={styles.inputField}>
         <Image source={require('../assets/ic_address.png')} style={{height: 20, width: 20}} />
         <TextInput
-          style={{paddingLeft: 10, width: '100%'}}
+          style={{paddingLeft: 10, width: '100%', color: '#000'}}
           onChangeText={text => setAddress(text)}
           placeholder='Address'
           value={address}
@@ -193,7 +193,7 @@ function SeekerSignup({ navigation }){
       <View style={styles.inputField}>
         <Image source={require('../assets/ic_country.png')} style={{height: 20, width: 20}} />
         <TextInput
-          style={{paddingLeft: 10, width: '100%'}}
+          style={{paddingLeft: 10, width: '100%', color: '#000'}}
           onChangeText={text => setState(text)}
           placeholder='State'
           value={state}
@@ -204,7 +204,7 @@ function SeekerSignup({ navigation }){
       <View style={styles.inputField}>
         <Image source={require('../assets/ic_country.png')} style={{height: 20, width: 20}} />
         <TextInput
-          style={{paddingLeft: 10, width: '100%'}}
+          style={{paddingLeft: 10, width: '100%', color: '#000'}}
           onChangeText={text => setCity(text)}
           placeholder='City'
           value={city}
@@ -215,7 +215,7 @@ function SeekerSignup({ navigation }){
       <View style={styles.inputField}>
         <Image source={require('../assets/ic_zip.png')} style={{height: 20, width: 20}} />
         <TextInput
-          style={{paddingLeft: 10, width: '100%'}}
+          style={{paddingLeft: 10, width: '100%', color: '#000'}}
           onChangeText={text => setZipcode(text)}
           placeholder='Zipcode'
           value={zipcode}
@@ -295,7 +295,7 @@ function SeekerSignup({ navigation }){
       <View style={styles.inputField}>
         <Image source={require('../assets/ic_zip.png')} style={{height: 20, width: 20}} />
         <TextInput
-          style={{paddingLeft: 10, width: '100%'}}
+          style={{paddingLeft: 10, width: '100%', color: '#000'}}
           onChangeText={text => setEmail(text)}
           placeholder='Email'
           value={email}
@@ -307,7 +307,7 @@ function SeekerSignup({ navigation }){
       <View style={styles.inputField}>
         <Image source={require('../assets/ic_password.png')} style={{height: 20, width: 20}} />
         <TextInput
-          style={{paddingLeft: 10, width: '100%'}}
+          style={{paddingLeft: 10, width: '100%', color: '#000'}}
           onChangeText={text => setPassword(text)}
           placeholder='Enter Password'
           value={password}
@@ -319,7 +319,7 @@ function SeekerSignup({ navigation }){
       <View style={styles.inputField}>
         <Image source={require('../assets/ic_password.png')} style={{height: 20, width: 20}} />
         <TextInput
-          style={{paddingLeft: 10, width: '100%'}}
+          style={{paddingLeft: 10, width: '100%', color: '#000'}}
           onChangeText={text => setPassword2(text)}
           placeholder='Confirm Password'
           value={password2}
@@ -405,6 +405,7 @@ const styles = StyleSheet.create({
     },
   },
   code2: {
+    color: '#000',
     backgroundColor: '#fff',
     flexDirection: 'row',
     borderRadius: 8,

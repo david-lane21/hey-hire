@@ -188,7 +188,7 @@ function SeekerEditProfile({navigation}){
           <View style={styles.inputField}>
             <Image source={require('../assets/ic_user.png')} style={{width: 20, height: 20}} />
             <TextInput
-              style={{width: '100%', paddingLeft: 10}}
+              style={{width: '100%', paddingLeft: 10, color: '#000'}}
               onChangeText={text => setFirstName(text)}
               placeholder='First Name...'
               value={firstName}
@@ -198,7 +198,7 @@ function SeekerEditProfile({navigation}){
           <View style={styles.inputField}>
             <Image source={require('../assets/ic_user.png')} style={{width: 20, height: 20}} />
             <TextInput
-              style={{width: '100%', paddingLeft: 10}}
+              style={{width: '100%', paddingLeft: 10, color: '#000'}}
               onChangeText={text => setLastName(text)}
               placeholder='Last Name...'
               value={lastName}
@@ -208,7 +208,7 @@ function SeekerEditProfile({navigation}){
           <View style={styles.inputField}>
             <Image source={require('../assets/ic_address.png')} style={{width: 20, height: 20}} />
             <TextInput
-              style={{width: '100%', paddingLeft: 10}}
+              style={{width: '100%', paddingLeft: 10, color: '#000'}}
               onChangeText={text => setAddress(text)}
               placeholder='Address...'
               value={address}
@@ -254,7 +254,7 @@ function SeekerEditProfile({navigation}){
                               color: '#222'}}>{item.name}</Text>
                             <Text style={{
                               fontSize: 20, 
-                              color: '#666'}}>+{item.dial_code}</Text>
+                              color: '#000'}}>+{item.dial_code}</Text>
                           </View>
                         </View>
                       </TouchableHighlight>
@@ -276,7 +276,7 @@ function SeekerEditProfile({navigation}){
           <View style={styles.inputField}>
             <Image source={require('../assets/ic_country.png')} style={{width: 20, height: 20}} />
             <TextInput
-              style={{width: '100%', paddingLeft: 10}}
+              style={{width: '100%', paddingLeft: 10, color: '#000'}}
               onChangeText={text => setState(text)}
               placeholder='State...'
               value={state}
@@ -286,7 +286,7 @@ function SeekerEditProfile({navigation}){
           <View style={styles.inputField}>
             <Image source={require('../assets/ic_country.png')} style={{width: 20, height: 20}} />
             <TextInput
-              style={{width: '100%', paddingLeft: 10}}
+              style={{width: '100%', paddingLeft: 10, color: '#000'}}
               onChangeText={text => setCity(text)}
               placeholder='City...'
               value={city}
@@ -296,7 +296,7 @@ function SeekerEditProfile({navigation}){
           <View style={styles.inputField}>
             <Image source={require('../assets/ic_zip.png')} style={{width: 20, height: 20}} />
             <TextInput
-              style={{width: '100%', paddingLeft: 10}}
+              style={{width: '100%', paddingLeft: 10, color: '#000'}}
               onChangeText={text => setZipcode(text)}
               placeholder='Zip...'
               value={zipcode}
@@ -339,7 +339,7 @@ function SeekerEditProfile({navigation}){
                                 color: '#222'}}>{item.name}</Text>
                               <Text style={{
                                 fontSize: 20, 
-                                color: '#666'}}>+{item.dial_code}</Text>
+                                color: '#000'}}>+{item.dial_code}</Text>
                             </View>
                           </View>
                         </TouchableHighlight>
@@ -371,7 +371,7 @@ function SeekerEditProfile({navigation}){
           <View style={styles.inputField}>
             <Image source={require('../assets/ic_mail.png')} style={{height: 20, width: 20}} />
             <TextInput
-              style={{paddingLeft: 10, width: '100%'}}
+              style={{paddingLeft: 10, width: '100%', color: '#000'}}
               onChangeText={text => setEmail(text)}
               placeholder='Email'
               value={email}
@@ -452,6 +452,7 @@ const styles = StyleSheet.create({
   },
   code2: {
     backgroundColor: '#fff',
+    color: '#000',
     borderColor: '#eee',
     padding: 13,
     marginBottom: 15,
