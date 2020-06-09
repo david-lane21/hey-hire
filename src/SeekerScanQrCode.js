@@ -49,7 +49,7 @@ function SeekerScanQrCode({navigation}){
         <ImageBackground source={require('../assets/img_scan.png')} style={{width: '100%', height: '100%'}} >
           <View style={{flex: 1, alignItems: 'center'}}>
             <View style={{flex: 1, position: 'absolute', top: '20%'}}>
-              <Text style={{color: '#fff', fontSize: 24}}>ApployMe</Text>
+              <Text style={{color: '#fff', fontSize: 24}}>apployMe</Text>
             </View>
             <View style={{flex: 1, position: 'absolute', bottom: '17%', alignItems: 'center'}}>
               <Text style={{color: '#fff', fontSize: 22}}>Scan the business's</Text>

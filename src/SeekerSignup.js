@@ -1,9 +1,8 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {
   View, 
   Text, 
   TextInput, 
-  Picker, 
   Image,
   StyleSheet,
   SafeAreaView,
@@ -13,12 +12,16 @@ import {
   TouchableOpacity,
   TouchableHighlight
 } from 'react-native'
+import * as ImagePicker from 'expo-image-picker';
+import Constants from 'expo-constants';
 import {countries} from './utils/consts.js'
 import {postFormData} from './utils/network.js'
 
 function SeekerSignup({ navigation }){
   const [modalVisible, setModalVisible] = useState(false);
   const [error, setError]         = useState('')
+  const [image, setImage]         = useState(null);
+
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName]   = useState('')
   const [address, setAddress]     = useState('')
@@ -32,6 +35,33 @@ function SeekerSignup({ navigation }){
   const [password, setPassword]   = useState('')
   const [password2, setPassword2] = useState('')
   
+  useEffect(() => {
+    (async () => {
+      if (Constants.platform.ios) {
+        const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
+        if (status !== 'granted') {
+          alert('Sorry, we need camera roll permissions to make this work!');
+        }
+      }
+    })();
+  }, []);
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    // console.log(result);
+
+    if (!result.cancelled) {
+      setImage(result.uri);
+    }
+    // console.log(image)
+  };
+
   function _onPress(item){
     setModalVisible(false)
     setPhCode(item.dial_code)
@@ -64,7 +94,8 @@ function SeekerSignup({ navigation }){
     form.append('user_type', '2')
     form.append('password', password)
     form.append('device_tocken', token)
-    
+    form.append('avatar_image', image)
+
     postFormData('user_register', form)
     .then(res => {
       return res.json()
@@ -93,11 +124,20 @@ function SeekerSignup({ navigation }){
 
   return(
     <ScrollView style={styles.container}>
-      <SafeAreaView>
+      <SafeAreaView style={{flex: 1}}>
 
-      <View style={{height: 140, width: '100%', alignContent: 'center', alignItems: 'center'}}>
-        <Image source={require('../assets/img_place.png')} style={{height: 110, width: 110}} />
+      <View style={{flex: 1, alignItems: 'center', padding: 20, }}>
+        <View style={{width: 140, height: 140, alignSelf: 'center'}}>
+          {image == null ? 
+            <Image source={require('../assets/img_place.png')} style={{height: 100, width: 100, borderRadius: 50, alignSelf: 'center'}} /> :
+            <Image source={{uri: image}} style={{width: 100, height: 100, borderRadius: 50, alignSelf: 'center'}} />
+            }
+          <TouchableOpacity onPress={pickImage} style={{position: 'absolute', top: 0, right: 0}}>
+            <Image source={require('../assets/ic_camera.png')} style={{width: 60, height: 60,}} />
+          </TouchableOpacity>
+        </View>
       </View>
+
 
       <View style={styles.inputField}>
         <Image source={require('../assets/ic_user.png')} style={{height: 20, width: 20}} />
@@ -219,6 +259,7 @@ function SeekerSignup({ navigation }){
           onChangeText={text => setZipcode(text)}
           placeholder='Zipcode'
           value={zipcode}
+          keyboardType="numeric"
         />
       </View>
 
@@ -283,6 +324,7 @@ function SeekerSignup({ navigation }){
             onChangeText={text => setPhone(text)}
             placeholder='Phone'
             value={phone}
+            keyboardType="numeric"
           />
         </View>
       </View>

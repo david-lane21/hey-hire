@@ -8,7 +8,6 @@ import {
   FlatList,
   Text,
   TextInput,
-  Button,
   ScrollView,
   TouchableOpacity,
   TouchableHighlight,

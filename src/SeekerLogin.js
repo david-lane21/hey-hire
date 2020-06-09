@@ -21,6 +21,7 @@ import {
 
 function SeekerLogin({ navigation }){
   const [modalVisible, setModalVisible] = useState(false);
+  const [loginBotton, setLoginButton] = useState(false)
   const [phCode, setPhCode] = useState('1')
   const [phone, setPhone] = useState('(214) 9985600')
   const [password, setPassword] = useState('12345678')
@@ -28,6 +29,11 @@ function SeekerLogin({ navigation }){
   function _onPress(item){
     setModalVisible(false)
     setPhCode(item.dial_code)
+  }
+
+  function handlePassword(pass){
+    setLoginButton(true)
+    setPassword(pass)
   }
 
   function deviceToken(length) {
@@ -99,14 +105,11 @@ function SeekerLogin({ navigation }){
               marginTop: 0}} />
         </View>
         
-        <View 
-          style={{
-            flex: 1, 
-            alignItems: 'center'}}>
-          <Text 
-            style={{
-              color: '#fff', 
-              fontSize: 18}}>Log in as a job seeker</Text>
+        <View style={{flex: 1, alignItems: 'center'}}>
+          <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
+            <Text style={{color: '#fff', fontSize: 18}}>Log in as a job seeker</Text>
+            <Image source={require('../assets/ic_job_seeker.png')} style={{width: 20, height: 20, marginLeft: 10}} />
+          </View>
         </View>
 
         <View 
@@ -175,18 +178,24 @@ function SeekerLogin({ navigation }){
         </View>
 
         <View style={{flex: 2}}>
-          <TextInput
-              style={styles.code3}
-              secureTextEntry={true}
-              onChangeText={text => setPassword(text)}
-              placeholder='Password'
-              value={password}
-            />
+          <View style={{flex: 1, flexDirection: 'row'}}>
+            <Image source={require('../assets/ic_lock.png')} style={{width: 15, height: 15, position: 'absolute', top: 10, left: 10}} />
+            <TextInput
+                style={styles.code3}
+                secureTextEntry={true}
+                onChangeText={text => handlePassword(text)}
+                placeholder='Password'
+                value={password}
+              />
+          </View>
         </View>
 
         <View style={{flex: 2, alignItems: 'center'}}>
           <TouchableOpacity 
-          style={{width:'100%', backgroundColor: '#fff', paddingTop: 12, paddingBottom: 12, borderRadius: 10, backgroundColor: '#fff'}}
+          style={loginBotton ? 
+            {width:'100%', backgroundColor: '#fff', paddingTop: 12, paddingBottom: 12, borderRadius: 10} :
+            {width:'100%', backgroundColor: 'rgba(255, 255, 255, 0.4)', paddingTop: 12, paddingBottom: 12, borderRadius: 10}
+          }
           onPress={() => handleLogin()}>
             <Text style={{textAlign: 'center', fontSize: 18, color: '#4834A6'}}>Login</Text>
           </TouchableOpacity>
@@ -200,16 +209,16 @@ function SeekerLogin({ navigation }){
                 textDecorationLine: 'underline', 
                 fontSize: 16}}
               onPress={() => navigation.navigate('SeekerForgotPassword')}
-            >Forgot you password?</Text>
+            >Forgot your password?</Text>
         </View>
 
         <View style={{
-          flex: 1, 
+          flex: 2, 
           flexDirection: 'row', 
           justifyContent: 'center'}}>
           <Text style={{
             color: '#fff', 
-            fontSize: 16}}>Dont have an account yet?</Text>
+            fontSize: 16}}>Don't have an account yet?</Text>
           <Text
             style={{
               marginLeft: 6, 
@@ -264,10 +273,12 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     borderColor: '#fff',
     borderWidth: 1,
-    padding: 10,
     color: '#fff',
     width: '100%',
     height: 40,
-    // marginBottom: 20
+    paddingTop: 10,
+    paddingRight: 10,
+    paddingBottom: 10,
+    paddingLeft: 30
   }
 });
