@@ -21,7 +21,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>4</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -56,13 +56,11 @@
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Give apployMe periences permission to save photos</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Give apployMe periences permission to access your photos</string>
+	<string>Give apployMe permission to save photos</string>
 	<key>NSRemindersUsageDescription</key>
 	<string>Allow apployMe to access your reminders</string>
 	<key>UILaunchStoryboardName</key>
 	<string>SplashScreen</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Give apployMe permission to save photos</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
