@@ -47,6 +47,10 @@ function SeekerEditProfile({navigation}){
   const [certificate, setCertificate] = useState('')
   const [langs, setlangs]         = useState('')
   const [availability, setAvailability] = useState('')
+  const [eligible, setEligible]   = useState(false)
+  const [sixteen, setSixteen]     = useState(false)
+  const [convictions, setConvictions] = useState(false)
+
 
   useEffect(() => {
     (async () => {
@@ -75,11 +79,23 @@ function SeekerEditProfile({navigation}){
     // console.log(image)
   };
 
+  function toggleConvictions(){
+    setConvictions(!convictions)
+  }
+
+  function toggleEligible(){
+    setEligible(!eligible)
+  }
+
+  function toggleSixteen(){
+    setSixteen(!sixteen)
+  }
+
   function _availability(item){
     setModalVisible3(false)
     setAvailability(item)
   }
-  
+
   function _edulevel(item){
     setModalVisible2(false)
     setEduLevel(item)
@@ -134,6 +150,9 @@ function SeekerEditProfile({navigation}){
         setCertificate(json.data.certificate)
         setlangs(json.data.language)
         setAvailability(json.data.availability)
+        setEligible(json.data.eligible)
+        setSixteen(json.data.sixteen)
+        setConvictions(json.data.convictions)
       })
       .catch(err => {
         console.log(err)
@@ -587,22 +606,62 @@ function SeekerEditProfile({navigation}){
           </View>
         </View>
 
+        <View style={{flex: 1}}>
+          <View style={{flex: 1, flexDirection: 'row', paddingLeft: 20, paddingTop: 15, paddingBottom: 15, alignItems: 'center'}}>
+            {eligible ?
+            <Image source={require('../assets/checkbox_checked.png')} style={{width: 25, height: 25, marginRight: 5}} />
+            :
+            <Image source={require('../assets/checkbox_blank.png')} style={{width: 25, height: 25, marginRight: 5}} />
+            }
+            
+            <Text style={{paddingLeft: 5, color: '#3482FF'}} onPress={() => toggleEligible()}>Are you eligible to work in the United States?</Text>
+          </View>
+        </View>
+
+        <View style={{flex: 1}}>
+          <View style={{flex: 1, flexDirection: 'row', paddingLeft: 20, paddingTop: 15, paddingBottom: 15, alignItems: 'center'}}>
+            {sixteen ?
+            <Image source={require('../assets/checkbox_checked.png')} style={{width: 25, height: 25, marginRight: 5}} />
+            :
+            <Image source={require('../assets/checkbox_blank.png')} style={{width: 25, height: 25, marginRight: 5}} />
+            }
+            
+            <Text style={{paddingLeft: 5, color: '#3482FF'}} onPress={() => toggleSixteen()}>Are you at least 16 years of age?</Text>
+          </View>
+        </View>
+
+        <View style={{flex: 1}}>
+          <View style={{flex: 1, flexDirection: 'row', paddingLeft: 20, paddingTop: 10, paddingBottom: 15, alignItems: 'center'}}>
+            {convictions ?
+            <Image source={require('../assets/checkbox_checked.png')} style={{width: 25, height: 25, marginRight: 5}} />
+            :
+            <Image source={require('../assets/checkbox_blank.png')} style={{width: 25, height: 25, marginRight: 5}} />
+            }
+            <View style={{flex: 1}} >
+              <Text style={{paddingLeft: 5, color: '#3482FF'}} onPress={() => toggleConvictions()} >Have you ever been convicted of a crime other</Text>  
+              <Text style={{paddingLeft: 5, color: '#3482FF'}} onPress={() => toggleConvictions()} >than a minor traffic violation?</Text>  
+            </View>
+            
+          </View>
+        </View>
+
+
       </View>
 
-        <View style={{}}>
-          {error ? <Text style={{color: 'red', padding: 20}}>{error}</Text> : null}
-          <TouchableOpacity 
-          style={{
-            flex: 1, 
-            alignContent: 'center',
-            backgroundColor: '#5B42BB',
-            padding: 15,
-            
-          }}
-          onPress={() => handleUpdate()}>
-            <Text style={{color: '#fff', textAlign: 'center', fontSize: 18}}>Update Profile</Text>
-          </TouchableOpacity>
-        </View>
+      <View style={{}}>
+        {error ? <Text style={{color: 'red', padding: 20}}>{error}</Text> : null}
+        <TouchableOpacity 
+        style={{
+          flex: 1, 
+          alignContent: 'center',
+          backgroundColor: '#5B42BB',
+          padding: 15,
+          
+        }}
+        onPress={() => handleUpdate()}>
+          <Text style={{color: '#fff', textAlign: 'center', fontSize: 18}}>Update Profile</Text>
+        </TouchableOpacity>
+      </View>
         
 
 
