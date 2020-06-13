@@ -22,6 +22,7 @@ import {postFormData} from './utils/network.js'
 function SeekerEditProfile({navigation}){
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
+  const [modalVisible3, setModalVisible3] = useState(false);
   const [error, setError]               = useState('')
 
   const [user, setUser] = useState({})
@@ -44,6 +45,8 @@ function SeekerEditProfile({navigation}){
   const [eduLevel, setEduLevel]   = useState('')
   const [institution, setInstitution] = useState('')
   const [certificate, setCertificate] = useState('')
+  const [langs, setlangs]         = useState('')
+  const [availability, setAvailability] = useState('')
 
   useEffect(() => {
     (async () => {
@@ -72,6 +75,11 @@ function SeekerEditProfile({navigation}){
     // console.log(image)
   };
 
+  function _availability(item){
+    setModalVisible3(false)
+    setAvailability(item)
+  }
+  
   function _edulevel(item){
     setModalVisible2(false)
     setEduLevel(item)
@@ -124,6 +132,8 @@ function SeekerEditProfile({navigation}){
         setEduLevel(json.data.education_level)
         setInstitution(json.data.education)
         setCertificate(json.data.certificate)
+        setlangs(json.data.language)
+        setAvailability(json.data.availability)
       })
       .catch(err => {
         console.log(err)
@@ -489,7 +499,7 @@ function SeekerEditProfile({navigation}){
             <View style={styles.code}>
               <Image source={require('../assets/ic_educate.png')} style={{width: 20, height: 20, marginRight: 5}} />
               <TextInput
-                style={{width: '100%', color: '#666'}}
+                style={{width: '100%', color: '#000'}}
                 onChangeText={text => setInstitution(text)}
                 placeholder='Bio'
                 value={institution}
@@ -502,13 +512,80 @@ function SeekerEditProfile({navigation}){
             <View style={styles.code}>
               <Image source={require('../assets/ic_file_number.png')} style={{width: 17, height: 17, marginRight: 5}} />
               <TextInput
-                style={{width: '100%', color: '#666'}}
+                style={{width: '100%', color: '#000'}}
                 onChangeText={text => setCertificate(text)}
                 placeholder='Bio'
                 value={certificate}
               />
             </View>
           </View>
+
+
+          <View style={{flex: 1}}>
+            <Text style={{fontSize: 18, paddingLeft: 20}}>Language</Text>
+            <View style={styles.code}>
+              <Image source={require('../assets/ic_language.png')} style={{width: 17, height: 17, marginRight: 5}} />
+              <TextInput
+                style={{width: '100%', color: '#000'}}
+                onChangeText={text => setlangs(text)}
+                placeholder='Bio'
+                value={langs}
+              />
+            </View>
+          </View>
+
+        <View style={{flex: 1}}>
+        <Modal
+            animationType="slide"
+            transparent={false}
+            visible={modalVisible3}
+            onRequestClose={() => {
+            // Alert.alert('Modal has been closed.');
+          }}>
+            <SafeAreaView>
+              <View style={{ marginTop: 22 }}>
+                <View>
+                  <FlatList
+                    // ItemSeparatorComponent={<Separator />}
+                    data={["Full Time", "Part Time", "Flexible"]}
+                    keyExtractor={(item) => item.code}
+                    renderItem={({item, index, separators}) => (
+                      <TouchableHighlight
+                        key={index}
+                        onPress={() => _availability(item)}
+                        onShowUnderlay={separators.highlight}
+                        onHideUnderlay={separators.unhighlight}>
+                        <View style={{backgroundColor: 'white'}}>
+                          <View style={{
+                            flex: 1, 
+                            flexDirection: 'row', 
+                            justifyContent:'space-between', 
+                            padding: 10, 
+                            borderBottomWidth: 1, 
+                            borderBottomColor: '#eee',
+                            
+                            }}>
+                            <Text style={{
+                              fontSize: 20, 
+                              color: '#222'}}>{item}</Text>
+                          </View>
+                        </View>
+                      </TouchableHighlight>
+                    )}
+                  />
+                </View>
+              </View>
+            </SafeAreaView>
+          </Modal>
+
+          <View>
+            <Text style={{fontSize: 18, paddingLeft: 20}}>Availability</Text>
+            <TouchableOpacity style={styles.code} onPress={() => setModalVisible3(true)}>
+              <Image source={require('../assets/ic_educate.png')} style={{width: 20, height: 20, marginRight: 5}} />
+              <Text style={{paddingLeft: 5}}>{availability}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
 
       </View>
 
