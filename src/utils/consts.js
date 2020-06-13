@@ -1,3 +1,15 @@
+export const educationLevels = [ 
+  "Did Not Graduate High School",
+  "GED",
+  "High School Graduate",
+  "Vocational School",
+  "Some college",
+  "Bachelor's Degree",
+  "Some Graduate School",
+  "Masters Degree",
+  "Doctorate or Higher"
+]
+
 export const countries = [
   {
     "name": "United States",

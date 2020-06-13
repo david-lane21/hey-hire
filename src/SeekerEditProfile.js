@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import {
-  SafeAreaView, 
+  // SafeAreaView, 
   StyleSheet,
   View, 
   Modal,
@@ -12,14 +12,16 @@ import {
   TouchableOpacity,
   TouchableHighlight,
 } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
-import {countries} from './utils/consts.js'
+import {educationLevels, countries} from './utils/consts.js'
 import {getUser, getToken} from './utils/utils.js';
 import {postFormData} from './utils/network.js'
 
 function SeekerEditProfile({navigation}){
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible2, setModalVisible2] = useState(false);
   const [error, setError]               = useState('')
 
   const [user, setUser] = useState({})
@@ -37,6 +39,11 @@ function SeekerEditProfile({navigation}){
   const [phCode, setPhCode]       = useState('1')
   const [phone, setPhone]         = useState('')
   const [email, setEmail]         = useState('')
+  const [bio, setBio]             = useState('')
+  const [skills, setSkills]       = useState([])
+  const [eduLevel, setEduLevel]   = useState('')
+  const [institution, setInstitution] = useState('')
+  const [certificate, setCertificate] = useState('')
 
   useEffect(() => {
     (async () => {
@@ -65,6 +72,11 @@ function SeekerEditProfile({navigation}){
     // console.log(image)
   };
 
+  function _edulevel(item){
+    setModalVisible2(false)
+    setEduLevel(item)
+  }
+
   function _onPress(item){
     setModalVisible(false)
     setCountry(item.name)
@@ -92,6 +104,7 @@ function SeekerEditProfile({navigation}){
         return res.json()
       })
       .then(json => {
+        console.log(json.data)
         setProfile(json.data)
         let p = json.data.phone.split(' ')
         let p1 = p[0].replace(/\+/g, '')
@@ -106,6 +119,11 @@ function SeekerEditProfile({navigation}){
         setPhCode(p1)
         setPhone(p2)
         setEmail(json.data.email)
+        setBio(json.data.bio)
+        setSkills(json.data.skill)
+        setEduLevel(json.data.education_level)
+        setInstitution(json.data.education)
+        setCertificate(json.data.certificate)
       })
       .catch(err => {
         console.log(err)
@@ -149,6 +167,7 @@ function SeekerEditProfile({navigation}){
     })
   
   }
+  
   
   return(
     <ScrollView style={{flex: 1, backgroundColor: '#fff'}}>
@@ -376,6 +395,119 @@ function SeekerEditProfile({navigation}){
               value={email}
               type='email'
             />
+          </View>
+
+          <View style={{flex: 1}}>
+            <View style={{flex: 1, padding: 20}}>
+              <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
+                <Image source={require('../assets/icon_note.png')} style={{width: 12, height: 12}} />
+                <Text style={{paddingLeft: 10, fontSize: 18}}>Bio</Text>
+              </View>
+              <TextInput
+                style={{width: '100%', color: '#666'}}
+                onChangeText={text => setBio(text)}
+                placeholder='Bio'
+                value={bio}
+                multiline={true}
+                editable={true}
+              />
+            </View>
+          </View>
+
+
+          <View style={{flex: 1}}>
+            <View style={{flex: 1, padding: 20}}>
+              <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
+                <Image source={require('../assets/ic_star.png')} style={{width: 12, height: 12}} />
+                <Text style={{paddingLeft: 10, fontSize: 18}}>Skills</Text>
+              </View>
+              <View
+                style={{flex: 1, alignItems: 'flex-start'}}
+              >
+                {skills.map(s => <Text style={{color: '#3482FF', borderWidth: 1, borderColor: '#3482FF', padding: 3, borderRadius: 3, marginBottom: 3, marginLeft: 3}}>{s}</Text>)}
+                <Text style={{color: '#999'}}>Enter skill</Text>
+              </View>
+            </View>
+          </View>
+
+          <View style={{flex: 1}}>
+            <Modal
+              animationType="slide"
+              transparent={false}
+              visible={modalVisible2}
+              onRequestClose={() => {
+              // Alert.alert('Modal has been closed.');
+            }}>
+              <SafeAreaView>
+                <View style={{ marginTop: 22 }}>
+                  <View>
+                    <FlatList
+                      // ItemSeparatorComponent={<Separator />}
+                      data={educationLevels}
+                      keyExtractor={(item) => item.code}
+                      renderItem={({item, index, separators}) => (
+                        <TouchableHighlight
+                          key={index}
+                          onPress={() => _edulevel(item)}
+                          onShowUnderlay={separators.highlight}
+                          onHideUnderlay={separators.unhighlight}>
+                          <View style={{backgroundColor: 'white'}}>
+                            <View style={{
+                              flex: 1, 
+                              flexDirection: 'row', 
+                              justifyContent:'space-between', 
+                              padding: 10, 
+                              borderBottomWidth: 1, 
+                              borderBottomColor: '#eee',
+                              
+                              }}>
+                              <Text style={{
+                                fontSize: 20, 
+                                color: '#222'}}>{item}</Text>
+                            </View>
+                          </View>
+                        </TouchableHighlight>
+                      )}
+                    />
+                  </View>
+                </View>
+              </SafeAreaView>
+            </Modal>
+
+            <View>
+              <Text style={{fontSize: 18, paddingLeft: 20}}>Level of Education</Text>
+              <TouchableOpacity style={styles.code} onPress={() => setModalVisible2(true)}>
+                <Image source={require('../assets/ic_educate.png')} style={{width: 20, height: 20, marginRight: 5}} />
+                <Text style={{paddingLeft: 5}}>{eduLevel}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+
+          <View style={{flex: 1}}>
+            <Text style={{fontSize: 18, paddingLeft: 20}}>Name of Institution</Text>
+            <View style={styles.code}>
+              <Image source={require('../assets/ic_educate.png')} style={{width: 20, height: 20, marginRight: 5}} />
+              <TextInput
+                style={{width: '100%', color: '#666'}}
+                onChangeText={text => setInstitution(text)}
+                placeholder='Bio'
+                value={institution}
+              />
+            </View>
+          </View>
+
+          <View style={{flex: 1}}>
+            <Text style={{fontSize: 18, paddingLeft: 20}}>Certification (Optional)</Text>
+            <View style={styles.code}>
+              <Image source={require('../assets/ic_file_number.png')} style={{width: 17, height: 17, marginRight: 5}} />
+              <TextInput
+                style={{width: '100%', color: '#666'}}
+                onChangeText={text => setCertificate(text)}
+                placeholder='Bio'
+                value={certificate}
+              />
+            </View>
           </View>
 
       </View>
