@@ -43,13 +43,15 @@ function SeekerEditProfile({navigation}){
   const [bio, setBio]             = useState('')
   const [skills, setSkills]       = useState([])
   const [eduLevel, setEduLevel]   = useState('')
-  const [institution, setInstitution] = useState('')
-  const [certificate, setCertificate] = useState('')
   const [langs, setlangs]         = useState('')
-  const [availability, setAvailability] = useState('')
   const [eligible, setEligible]   = useState(false)
   const [sixteen, setSixteen]     = useState(false)
-  const [convictions, setConvictions] = useState(false)
+
+  const [institution, setInstitution]   = useState('')
+  const [certificate, setCertificate]   = useState('')
+  const [convictions, setConvictions]   = useState(false)
+  const [availability, setAvailability] = useState('')
+  const [positions, setPositions]       = useState([])
 
 
   useEffect(() => {
@@ -78,6 +80,12 @@ function SeekerEditProfile({navigation}){
     }
     // console.log(image)
   };
+
+  function dateFormat(date){
+    // console.log(date)
+    let d = new Date(date)
+    return `${d.getMonth()}.${d.getDate()}.${d.getFullYear()}`
+  }
 
   function toggleConvictions(){
     setConvictions(!convictions)
@@ -153,6 +161,7 @@ function SeekerEditProfile({navigation}){
         setEligible(json.data.eligible)
         setSixteen(json.data.sixteen)
         setConvictions(json.data.convictions)
+        setPositions(json.data.position)
       })
       .catch(err => {
         console.log(err)
@@ -644,6 +653,36 @@ function SeekerEditProfile({navigation}){
             
           </View>
         </View>
+
+        <View style={{flex: 1, marginBottom: 30}}>
+          <View style={{flex: 1, flexDirection: 'row', paddingLeft: 20, marginTop: 20, paddingBottom: 20, alignItems: 'center'}}>
+            <Image source={require('../assets/ic_past_positions.png')} style={{width: 20, height: 20, marginRight: 5}} />
+            <Text style={{fontSize: 18, }}>Past positions (Optional)</Text>
+          </View>
+          <View style={{flex: 1}}>
+            {positions.map(p => {
+              return(
+                <View style={{flex: 1, flexDirection: 'row', paddingLeft: 20, paddingBottom: 20}}>
+                  <View style={{width: '10%',paddingRight: 20}}>
+                    <Image source={require('../assets/ic_edit.png')} style={{width: 20, height: 20, marginRight: 5}} />
+                  </View>
+                  <View style={{width: '90%'}}>
+                    <Text style={{color: '#999', fontSize: 12}}>{dateFormat(p.from_date)} - {dateFormat(p.to_date)}</Text>
+                    <Text style={{fontSize: 14, width: '90%'}}>{p.category}, {p.company_name}, {p.city_name} </Text>
+                  </View>
+                </View>
+              )
+            })}
+
+            <TouchableOpacity style={{alignSelf: 'center', marginTop: 20, marginBottom: 20}} 
+            // onPress={() => navigation.navigate('SeekerAddPastPosition')}
+            >
+              <Text style={{color: '#4E35AE', fontSize: 16}}>+ Add past position</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+
 
 
       </View>
