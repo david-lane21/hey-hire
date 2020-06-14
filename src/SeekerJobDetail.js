@@ -51,9 +51,15 @@ function SeekerJobDetail({route, navigation}){
               <Image source={require('../assets/title_header.png')} style={{width: 120, height: 25}} />
             </View>
             <View style={{width: '33.3%'}}>
-              <TouchableOpacity onPress={() => navigation.navigate('SeekerLinks', { screen: 'SeekerEditProfile'})}>
-                <Text style={{paddingRight: 10, textAlign: 'right', color: '#fff', fontSize: 18}}></Text>
-              </TouchableOpacity>
+              <View style={{flex: 1, flexDirection: 'row', alignItems: 'center',}}>
+                <View style={{flex: 2}}></View>
+                <TouchableOpacity style={{flex: 1}}>
+                  <Image source={require('../assets/ic_checked_white.png')} style={{width: 20, height: 20,}} />
+                </TouchableOpacity>
+                <TouchableOpacity style={{flex: 1}}>
+                  <Image source={require('../assets/ic_share_w.png')} style={{width: 20, height: 20,}} />
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
 
@@ -69,9 +75,11 @@ function SeekerJobDetail({route, navigation}){
             <Text style={{color: '#fff'}}>Currently viewing position: {job.position}</Text>
           </View>
 
-          <View style={{flex: 1, alignItems: 'center', paddingBottom: 20, borderBottomWidth: 1, 
-            borderBottomColor: '#715FCB', }}>
-            <Text style={{color: '#fff'}}>{job.business.address}</Text>
+          <View style={{flex: 1, alignItems: 'center', paddingBottom: 20, borderBottomWidth: 1, borderBottomColor: '#715FCB', }}>
+            <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
+              <Image source={require('../assets/ic_location.png')} style={{width: 13, height: 13}} />
+              <Text style={{color: '#fff', marginLeft: 5}}>{job.business.address}</Text>
+            </View>
           </View>
 
           <View style={{flex: 1, alignItems: 'center', padding: 20, borderBottomWidth: 1, 
@@ -97,16 +105,23 @@ function SeekerJobDetail({route, navigation}){
               borderColor: '#eee',
               borderWidth: 1,
             }}>
-              <Text style={{fontSize: 18, }}>Start Date</Text> 
-              <Text style={{marginBottom: 30}}>{job.start_date}</Text>
+              <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
+                <Image source={require('../assets/ic_calender.png')} style={{width: 20, height: 20}} />
+                <Text style={{fontSize: 16, marginLeft: 5, fontWeight: 'bold'}}>Start Date</Text> 
+              </View>
+              <Text style={{marginBottom: 30, marginTop: 10}}>{job.start_date}</Text>
 
+              <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
+                <Image source={require('../assets/ic_category.png')} style={{width: 15, height: 15}} />
+                <Text style={{fontSize: 16, marginLeft: 10, fontWeight: 'bold'}}>Position description</Text> 
+              </View>
+              <Text style={{marginBottom: 30, marginTop: 10}}>{job.position_desc}</Text>
 
-              <Text style={{fontSize: 18, marginBottom: 10}}>Position description</Text> 
-              <Text style={{marginBottom: 30}}>{job.position_desc}</Text>
-
-
-              <Text style={{fontSize: 18, marginBottom: 10}}>Required experience</Text> 
-              <Text style={{marginBottom: 30}}>{job.experience}</Text>
+              <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
+                <Image source={require('../assets/ic_mind.png')} style={{width: 20, height: 20}} />
+                <Text style={{fontSize: 16, marginLeft: 10, fontWeight: 'bold'}}>Required experience</Text> 
+              </View>
+              <Text style={{marginBottom: 30, marginTop: 10}}>{job.experience}</Text>
 
             </View>
             
