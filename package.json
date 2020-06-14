@@ -14,6 +14,7 @@
     "expo-barcode-scanner": "~8.1.0",
     "expo-image-picker": "~8.1.0",
     "expo-linear-gradient": "~8.1.0",
+    "expo-location": "^8.1.0",
     "expo-splash-screen": "^0.2.3",
     "expo-updates": "~0.2.0",
     "react": "~16.9.0",

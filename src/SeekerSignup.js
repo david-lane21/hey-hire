@@ -16,9 +16,11 @@ import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
 import {countries} from './utils/consts.js'
 import {postFormData} from './utils/network.js'
+import * as Location from 'expo-location';
 
 function SeekerSignup({ navigation }){
   const [modalVisible, setModalVisible] = useState(false);
+  const [location, setLocation] = useState(null);
   const [error, setError]         = useState('')
   const [image, setImage]         = useState(null);
 
@@ -35,6 +37,18 @@ function SeekerSignup({ navigation }){
   const [password, setPassword]   = useState('')
   const [password2, setPassword2] = useState('')
   
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestPermissionsAsync();
+      if (status !== 'granted') {
+        setError('Permission to access location was denied');
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+    })();
+  });
+
   useEffect(() => {
     (async () => {
       if (Constants.platform.ios) {
