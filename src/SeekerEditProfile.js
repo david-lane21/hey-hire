@@ -136,7 +136,7 @@ function SeekerEditProfile({navigation}){
         return res.json()
       })
       .then(json => {
-        console.log(json.data)
+        // console.log(json.data)
         setProfile(json.data)
         let p = json.data.phone.split(' ')
         let p1 = p[0].replace(/\+/g, '')
