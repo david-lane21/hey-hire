@@ -76,6 +76,17 @@ function SeekerSignup({ navigation }){
     // console.log(image)
   };
 
+  function _setPhone(text){
+    if(text.length > 3){
+      let areaCode = text.substring(0, 3).replace(/[^0-9]/g, '')
+      let ph = text.substring(3).replace(/[^0-9]/g, '')
+      setPhone(areaCode + ' ' + ph)
+    }else{
+      setPhone(text)
+    }
+    
+  }
+
   function _onPress(item){
     setModalVisible(false)
     setPhCode(item.dial_code)
@@ -335,7 +346,7 @@ function SeekerSignup({ navigation }){
 
           <TextInput
             style={styles.code2}
-            onChangeText={text => setPhone(text)}
+            onChangeText={text => _setPhone(text)}
             placeholder='Phone'
             value={phone}
             keyboardType="numeric"
