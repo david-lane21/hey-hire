@@ -479,7 +479,10 @@ function SeekerEditProfile({navigation}){
                   value={eduLevel}
                   items={educationLevels.map((i) => {
                     return(
-                      { label: i, value: i }
+                      { 
+                        label: i + '                                                                                                ', 
+                        value: i 
+                      }
                     )
                   })}
               />
@@ -537,9 +540,9 @@ function SeekerEditProfile({navigation}){
                   onValueChange={(value) => _availability(value)}
                   value={availability}
                   items={[
-                      { label: 'Full Time', value: 'Full Time' },
-                      { label: 'Part Time', value: 'Part Time' },
-                      { label: 'Flexible', value: 'Flexible' },
+                      { label: 'Full Time                                                                                                ', value: 'Full Time' },
+                      { label: 'Part Time                                                                                                ', value: 'Part Time' },
+                      { label: 'Flexible                                                                                                ', value: 'Flexible' },
                   ]}
               />
             </View>
