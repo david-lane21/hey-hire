@@ -403,6 +403,8 @@ function SeekerSignup({ navigation }){
           <Text style={{color: '#fff', textAlign: 'center', fontSize: 18}}>Create account</Text>
         </TouchableOpacity>
       </View>
+
+      <View style={{height: 300}}></View>
       
     </SafeAreaView>
     </ScrollView>

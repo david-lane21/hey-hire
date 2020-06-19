@@ -18,6 +18,7 @@ import Constants from 'expo-constants';
 import {educationLevels, countries} from './utils/consts.js'
 import {getUser, getToken} from './utils/utils.js';
 import {postFormData} from './utils/network.js'
+import RNPickerSelect from 'react-native-picker-select';
 
 function SeekerEditProfile({navigation}){
   const [modalVisible, setModalVisible] = useState(false);
@@ -100,7 +101,7 @@ function SeekerEditProfile({navigation}){
   }
 
   function _availability(item){
-    setModalVisible3(false)
+    // setModalVisible3(false)
     setAvailability(item)
   }
 
@@ -462,62 +463,27 @@ function SeekerEditProfile({navigation}){
               <View
                 style={{flex: 1, alignItems: 'flex-start'}}
               >
-                {skills.map(s => <Text style={{color: '#3482FF', borderWidth: 1, borderColor: '#3482FF', padding: 3, borderRadius: 3, marginBottom: 3, marginLeft: 3}}>{s}</Text>)}
-                <Text style={{color: '#999'}}>Enter skill</Text>
+                {skills.map(s => <Text key={s} style={{color: '#3482FF', borderWidth: 1, borderColor: '#3482FF', padding: 3, borderRadius: 3, marginBottom: 3, marginLeft: 3}}>{s}</Text>)}
+                <Text key="Enter skill" style={{color: '#999'}}>Enter skill</Text>
               </View>
             </View>
           </View>
 
           <View style={{flex: 1}}>
-            <Modal
-              animationType="slide"
-              transparent={false}
-              visible={modalVisible2}
-              onRequestClose={() => {
-              // Alert.alert('Modal has been closed.');
-            }}>
-              <SafeAreaView>
-                <View style={{ marginTop: 22 }}>
-                  <View>
-                    <FlatList
-                      // ItemSeparatorComponent={<Separator />}
-                      data={educationLevels}
-                      keyExtractor={(item) => item.code}
-                      renderItem={({item, index, separators}) => (
-                        <TouchableHighlight
-                          key={index}
-                          onPress={() => _edulevel(item)}
-                          onShowUnderlay={separators.highlight}
-                          onHideUnderlay={separators.unhighlight}>
-                          <View style={{backgroundColor: 'white'}}>
-                            <View style={{
-                              flex: 1, 
-                              flexDirection: 'row', 
-                              justifyContent:'space-between', 
-                              padding: 10, 
-                              borderBottomWidth: 1, 
-                              borderBottomColor: '#eee',
-                              
-                              }}>
-                              <Text style={{
-                                fontSize: 20, 
-                                color: '#222'}}>{item}</Text>
-                            </View>
-                          </View>
-                        </TouchableHighlight>
-                      )}
-                    />
-                  </View>
-                </View>
-              </SafeAreaView>
-            </Modal>
-
             <View>
               <Text style={{fontSize: 18, paddingLeft: 20}}>Level of Education</Text>
-              <TouchableOpacity style={styles.code} onPress={() => setModalVisible2(true)}>
+              <View style={styles.code}>
                 <Image source={require('../assets/ic_educate.png')} style={{width: 20, height: 20, marginRight: 5}} />
-                <Text style={{paddingLeft: 5}}>{eduLevel}</Text>
-              </TouchableOpacity>
+                <RNPickerSelect
+                  onValueChange={(value) => _edulevel(value)}
+                  value={eduLevel}
+                  items={educationLevels.map((i) => {
+                    return(
+                      { label: i, value: i }
+                    )
+                  })}
+              />
+              </View>
             </View>
           </View>
 
@@ -563,95 +529,63 @@ function SeekerEditProfile({navigation}){
           </View>
 
         <View style={{flex: 1}}>
-        <Modal
-            animationType="slide"
-            transparent={false}
-            visible={modalVisible3}
-            onRequestClose={() => {
-            // Alert.alert('Modal has been closed.');
-          }}>
-            <SafeAreaView>
-              <View style={{ marginTop: 22 }}>
-                <View>
-                  <FlatList
-                    // ItemSeparatorComponent={<Separator />}
-                    data={["Full Time", "Part Time", "Flexible"]}
-                    keyExtractor={(item) => item.code}
-                    renderItem={({item, index, separators}) => (
-                      <TouchableHighlight
-                        key={index}
-                        onPress={() => _availability(item)}
-                        onShowUnderlay={separators.highlight}
-                        onHideUnderlay={separators.unhighlight}>
-                        <View style={{backgroundColor: 'white'}}>
-                          <View style={{
-                            flex: 1, 
-                            flexDirection: 'row', 
-                            justifyContent:'space-between', 
-                            padding: 10, 
-                            borderBottomWidth: 1, 
-                            borderBottomColor: '#eee',
-                            
-                            }}>
-                            <Text style={{
-                              fontSize: 20, 
-                              color: '#222'}}>{item}</Text>
-                          </View>
-                        </View>
-                      </TouchableHighlight>
-                    )}
-                  />
-                </View>
-              </View>
-            </SafeAreaView>
-          </Modal>
-
           <View>
             <Text style={{fontSize: 18, paddingLeft: 20}}>Availability</Text>
-            <TouchableOpacity style={styles.code} onPress={() => setModalVisible3(true)}>
+            <View style={styles.code}>
               <Image source={require('../assets/ic_educate.png')} style={{width: 20, height: 20, marginRight: 5}} />
-              <Text style={{paddingLeft: 5}}>{availability}</Text>
-            </TouchableOpacity>
+              <RNPickerSelect
+                  onValueChange={(value) => _availability(value)}
+                  value={availability}
+                  items={[
+                      { label: 'Full Time', value: 'Full Time' },
+                      { label: 'Part Time', value: 'Part Time' },
+                      { label: 'Flexible', value: 'Flexible' },
+                  ]}
+              />
+            </View>
           </View>
         </View>
 
         <View style={{flex: 1}}>
-          <View style={{flex: 1, flexDirection: 'row', paddingLeft: 20, paddingTop: 15, paddingBottom: 15, alignItems: 'center'}}>
+          <TouchableOpacity 
+          style={{flex: 1, flexDirection: 'row', paddingLeft: 20, paddingTop: 15, paddingBottom: 15, alignItems: 'center'}}
+          onPress={() => toggleEligible()}>
             {eligible ?
             <Image source={require('../assets/checkbox_checked.png')} style={{width: 25, height: 25, marginRight: 5}} />
             :
             <Image source={require('../assets/checkbox_blank.png')} style={{width: 25, height: 25, marginRight: 5}} />
             }
-            
-            <Text style={{paddingLeft: 5, color: '#3482FF'}} onPress={() => toggleEligible()}>Are you eligible to work in the United States?</Text>
-          </View>
+            <Text style={{paddingLeft: 5, color: '#3482FF'}}>Are you eligible to work in the United States?</Text>
+          </TouchableOpacity>
         </View>
 
         <View style={{flex: 1}}>
-          <View style={{flex: 1, flexDirection: 'row', paddingLeft: 20, paddingTop: 15, paddingBottom: 15, alignItems: 'center'}}>
+          <TouchableOpacity 
+          style={{flex: 1, flexDirection: 'row', paddingLeft: 20, paddingTop: 15, paddingBottom: 15, alignItems: 'center'}}
+          onPress={() => toggleSixteen()}>
             {sixteen ?
             <Image source={require('../assets/checkbox_checked.png')} style={{width: 25, height: 25, marginRight: 5}} />
             :
             <Image source={require('../assets/checkbox_blank.png')} style={{width: 25, height: 25, marginRight: 5}} />
             }
-            
-            <Text style={{paddingLeft: 5, color: '#3482FF'}} onPress={() => toggleSixteen()}>Are you at least 16 years of age?</Text>
-          </View>
+            <Text style={{paddingLeft: 5, color: '#3482FF'}}>Are you at least 16 years of age?</Text>
+          </TouchableOpacity>
         </View>
 
         <View style={{flex: 1}}>
-          <View style={{flex: 1, flexDirection: 'row', paddingLeft: 20, paddingTop: 10, paddingBottom: 15, alignItems: 'center'}}>
+          <TouchableOpacity 
+          style={{flex: 1, flexDirection: 'row', paddingLeft: 20, paddingTop: 15, paddingBottom: 15, alignItems: 'center'}}
+          onPress={() => toggleConvictions()}>
             {convictions ?
             <Image source={require('../assets/checkbox_checked.png')} style={{width: 25, height: 25, marginRight: 5}} />
             :
             <Image source={require('../assets/checkbox_blank.png')} style={{width: 25, height: 25, marginRight: 5}} />
             }
             <View style={{flex: 1}} >
-              <Text style={{paddingLeft: 5, color: '#3482FF'}} onPress={() => toggleConvictions()} >Have you ever been convicted of a crime other</Text>  
-              <Text style={{paddingLeft: 5, color: '#3482FF'}} onPress={() => toggleConvictions()} >than a minor traffic violation?</Text>  
+              <Text style={{paddingLeft: 5, color: '#3482FF'}}>Have you ever been convicted of a crime other</Text>  
+              <Text style={{paddingLeft: 5, color: '#3482FF'}}>than a minor traffic violation?</Text>  
             </View>
-            
-          </View>
+          </TouchableOpacity>
         </View>
 
         <View style={{flex: 1, marginBottom: 30}}>
@@ -662,7 +596,7 @@ function SeekerEditProfile({navigation}){
           <View style={{flex: 1}}>
             {positions.map(p => {
               return(
-                <View style={{flex: 1, flexDirection: 'row', paddingLeft: 20, paddingBottom: 20}}>
+                <View key={p.category + p.company_name + p.city_name} style={{flex: 1, flexDirection: 'row', paddingLeft: 20, paddingBottom: 20}}>
                   <View style={{width: '10%',paddingRight: 20}}>
                     <Image source={require('../assets/ic_edit.png')} style={{width: 20, height: 20, marginRight: 5}} />
                   </View>
@@ -675,7 +609,7 @@ function SeekerEditProfile({navigation}){
             })}
 
             <TouchableOpacity style={{alignSelf: 'center', marginTop: 20, marginBottom: 20}} 
-            // onPress={() => navigation.navigate('SeekerAddPastPosition')}
+            onPress={() => navigation.navigate('SeekerAddPastPosition')}
             >
               <Text style={{color: '#4E35AE', fontSize: 16}}>+ Add past position</Text>
             </TouchableOpacity>
