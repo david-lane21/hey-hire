@@ -47,7 +47,7 @@ function SeekerSignup({ navigation }){
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
     })();
-  });
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -76,7 +76,7 @@ function SeekerSignup({ navigation }){
     // console.log(image)
   };
 
-  function _setPhone(text){
+  function _updatePhone(text){
     if(text.length > 3){
       let areaCode = text.substring(0, 3).replace(/[^0-9]/g, '')
       let ph = text.substring(3).replace(/[^0-9]/g, '')
@@ -346,7 +346,7 @@ function SeekerSignup({ navigation }){
 
           <TextInput
             style={styles.code2}
-            onChangeText={text => _setPhone(text)}
+            onChangeText={text => _updatePhone(text)}
             placeholder='Phone'
             value={phone}
             keyboardType="numeric"
