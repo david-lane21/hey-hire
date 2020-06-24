@@ -10,6 +10,7 @@ import {
 import {getUser} from './utils/utils.js';
 import {postFormData} from './utils/network.js'
 import { LinearGradient } from 'expo-linear-gradient';
+import MapView from 'react-native-maps';
 
 function SeekerHome({navigation}){
   const [user, setUser] = useState({})
@@ -136,8 +137,16 @@ function SeekerHome({navigation}){
         </View>
 
         <View style={{flex: 1, }}>
-          <View style={{height: 400, width: '100%', backgroundColor: '#fff'}}>
-
+          <View style={{flex: 1, height: 400, width: '100%', backgroundColor: '#fff'}}>
+            <Text>++</Text>
+            <MapView
+              region={{
+                latitude: 37.78825,
+                longitude: -122.4324,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+              }}
+            />
           </View>
         </View>
 
