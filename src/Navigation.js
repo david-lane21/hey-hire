@@ -129,6 +129,7 @@ function Seeker({navigation}){
     screenOptions={({ route }) => ({
       tabBarIcon: ({ focused, color, size }) => {
         let iconName;
+        let border = focused ? true : false;
 
         if (route.name === 'SeekerHome') {
           iconName = focused ? home : home2;
@@ -140,7 +141,7 @@ function Seeker({navigation}){
           iconName = focused ? notification : notification2;
         }
 
-        return <Image source={iconName} />;
+        return <Icon iconName={iconName} border={border}/>;
       },
     })}
     tabBarOptions={{
@@ -249,5 +250,14 @@ function ClosedJobs(){
           headerShown: false,
           }} />
     </Stack2.Navigator>
+  )
+}
+
+
+function Icon(props){
+  return (
+    <View style={props.border ? {borderBottomWidth: 2, borderBottomColor: '#5F46BF', paddingBottom: 5} : {paddingBottom: 5}}>
+      <Image source={props.iconName} />
+    </View>
   )
 }

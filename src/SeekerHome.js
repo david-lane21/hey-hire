@@ -138,7 +138,6 @@ function SeekerHome({navigation}){
 
         <View style={{flex: 1, }}>
           <View style={{flex: 1, height: 400, width: '100%', backgroundColor: '#fff'}}>
-            <Text>++</Text>
             <MapView
               region={{
                 latitude: 37.78825,
