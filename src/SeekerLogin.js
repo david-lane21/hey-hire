@@ -68,6 +68,17 @@ function SeekerLogin({ navigation }){
       console.log(err)
     })
   }
+
+  function _updatePhone(text){
+    if(text.length > 3){
+      let areaCode = text.substring(0, 3).replace(/[^0-9]/g, '')
+      let ph = text.substring(3).replace(/[^0-9]/g, '')
+      setPhone(areaCode + ' ' + ph)
+    }else{
+      setPhone(text)
+    }
+    
+  }
   
   return(
     <LinearGradient 
@@ -170,7 +181,7 @@ function SeekerLogin({ navigation }){
 
             <TextInput
               style={styles.code2}
-              onChangeText={text => setPhone(text)}
+              onChangeText={text => _updatePhone(text)}
               placeholder='Phone'
               value={phone}
             />
