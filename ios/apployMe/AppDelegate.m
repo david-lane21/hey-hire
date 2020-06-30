@@ -20,12 +20,16 @@
 
 @end
 
+#import <GoogleMaps/GoogleMaps.h>
+
 @implementation AppDelegate
 
 @synthesize window = _window;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  [GMSServices provideAPIKey:@"AIzaSyDQ-mKJcN15xWYC0cBlRyIGODURiPTY31I"]; // add this line using the api key obtained from Google Console
+
   self.moduleRegistryAdapter = [[UMModuleRegistryAdapter alloc] initWithModuleRegistryProvider:[[UMModuleRegistryProvider alloc] init]];
   self.launchOptions = launchOptions;
 
