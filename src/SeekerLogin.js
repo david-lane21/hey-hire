@@ -69,16 +69,25 @@ function SeekerLogin({ navigation }){
     })
   }
 
-  function _updatePhone(text){
-    if(text.length > 3){
-      let areaCode = text.substring(0, 3).replace(/[^0-9]/g, '')
-      let ph = text.substring(3).replace(/[^0-9]/g, '')
-      setPhone(areaCode + ' ' + ph)
-    }else{
-      setPhone(text)
+  function formatPhone(str){
+    let cleaned = str.replace(/\D/g, '')
+    let match = cleaned.match(/^(\d{3})(\d{3})(\d+)$/)
+    if (match){
+      return '(' + match[1] + ') ' + match[2] + '-' + match[3]
     }
-    
+    return str
   }
+
+  // function _updatePhone(text){
+  //   if(text.length > 3){
+  //     let areaCode = text.substring(0, 3).replace(/[^0-9]/g, '')
+  //     let ph = text.substring(3).replace(/[^0-9]/g, '')
+  //     setPhone(areaCode + ' ' + ph)
+  //   }else{
+  //     setPhone(text)
+  //   }
+    
+  // }
   
   return(
     <LinearGradient 
@@ -181,9 +190,9 @@ function SeekerLogin({ navigation }){
 
             <TextInput
               style={styles.code2}
-              onChangeText={text => _updatePhone(text)}
+              onChangeText={text => setPhone(text)}
               placeholder='Phone'
-              value={phone}
+              value={formatPhone(phone)}
             />
           </View>
         </View>

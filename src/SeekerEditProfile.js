@@ -88,6 +88,15 @@ function SeekerEditProfile({navigation}){
     return `${d.getMonth()}.${d.getDate()}.${d.getFullYear()}`
   }
 
+  function formatPhone(str){
+    let cleaned = str.replace(/\D/g, '')
+    let match = cleaned.match(/^(\d{3})(\d{3})(\d+)$/)
+    if (match){
+      return '(' + match[1] + ') ' + match[2] + '-' + match[3]
+    }
+    return str
+  }
+  
   function toggleConvictions(){
     setConvictions(!convictions)
   }
@@ -408,7 +417,7 @@ function SeekerEditProfile({navigation}){
             </Modal>
             <View style={{flex: 1, flexDirection: 'row'}}>
               <TouchableOpacity style={styles.code} onPress={() => setModalVisible(true)}>
-                <Image source={require('../assets/ic_call.png')} style={{width: 20, height: 20, marginRight: 5}} />
+                <Image source={require('../assets/ic_phone.png')} style={{width: 20, height: 20, marginRight: 5}} />
                 <Text style={{}}>+{phCode}</Text>
               </TouchableOpacity>
 
@@ -416,7 +425,7 @@ function SeekerEditProfile({navigation}){
                 style={styles.code2}
                 onChangeText={text => setPhone(text)}
                 placeholder='Phone'
-                value={phone}
+                value={formatPhone(phone)}
               />
             </View>
           </View>

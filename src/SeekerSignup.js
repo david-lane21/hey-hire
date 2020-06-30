@@ -76,16 +76,25 @@ function SeekerSignup({ navigation }){
     // console.log(image)
   };
 
-  function _updatePhone(text){
-    if(text.length > 3){
-      let areaCode = text.substring(0, 3).replace(/[^0-9]/g, '')
-      let ph = text.substring(3).replace(/[^0-9]/g, '')
-      setPhone(areaCode + ' ' + ph)
-    }else{
-      setPhone(text)
+  function formatPhone(str){
+    let cleaned = str.replace(/\D/g, '')
+    let match = cleaned.match(/^(\d{3})(\d{3})(\d+)$/)
+    if (match){
+      return '(' + match[1] + ') ' + match[2] + '-' + match[3]
     }
-    
+    return str
   }
+
+  // function _updatePhone(text){
+  //   if(text.length > 3){
+  //     let areaCode = text.substring(0, 3).replace(/[^0-9]/g, '')
+  //     let ph = text.substring(3).replace(/[^0-9]/g, '')
+  //     setPhone(areaCode + ' ' + ph)
+  //   }else{
+  //     setPhone(text)
+  //   }
+    
+  // }
 
   function _onPress(item){
     setModalVisible(false)
@@ -340,15 +349,15 @@ function SeekerSignup({ navigation }){
       
         <View style={{flex: 1, flexDirection: 'row'}}>
           <TouchableOpacity style={styles.code} onPress={() => setModalVisible(true)}>
-            <Image source={require('../assets/ic_call.png')} style={{width: 20, height: 20, marginRight: 5}} />
+            <Image source={require('../assets/ic_phone.png')} style={{width: 20, height: 20, marginRight: 5}} />
             <Text style={{}}>+{phCode}</Text>
           </TouchableOpacity>
 
           <TextInput
             style={styles.code2}
-            onChangeText={text => _updatePhone(text)}
+            onChangeText={text => setPhone(text)}
             placeholder='Phone'
-            value={phone}
+            value={formatPhone(phone)}
             keyboardType="numeric"
           />
         </View>
@@ -360,7 +369,7 @@ function SeekerSignup({ navigation }){
       <Text style={{color: '#7364BF', paddingTop: 10, paddingBottom: 20}}>* For recieving interview calls</Text>
 
       <View style={styles.inputField}>
-        <Image source={require('../assets/ic_zip.png')} style={{height: 20, width: 20}} />
+        <Image source={require('../assets/ic_mail.png')} style={{height: 20, width: 20}} />
         <TextInput
           style={{paddingLeft: 10, width: '100%', color: '#000'}}
           onChangeText={text => setEmail(text)}
