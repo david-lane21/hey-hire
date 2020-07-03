@@ -15,6 +15,8 @@ import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 function SeekerHome({navigation}){
   const [user, setUser] = useState({})
   const [profile, setProfile] = useState({})
+  const [businesses, setBusinesses] = useState([])
+  const [selectedBusiness, setSelectedBusiness] = useState(0)
   
   useEffect(() => {
     getUser().then(u => {
@@ -33,6 +35,14 @@ function SeekerHome({navigation}){
       .then(json => {
         // console.log(json.data)
         setProfile(json.data)
+        postFormData('get_all_business', form)
+        .then(json2 => {
+          return json2.json()
+        })
+        .then(json2 => {
+          console.log(json2)
+          setBusinesses(json2.data)
+        })
       })
       .catch(err => {
         console.log(err)
@@ -137,9 +147,9 @@ function SeekerHome({navigation}){
         </View>
 
         <View style={{flex: 1, }}>
-          <View style={{flex: 1, height: 400, width: '100%', backgroundColor: '#fff'}}>
+          <View style={{flex: 1, width: '100%', backgroundColor: '#fff'}}>
             <MapView
-              style={{width: '100%', height: 400}}
+              style={{width: '100%', height: 500}}
               provider={PROVIDER_GOOGLE}
               region={{
                 latitude: 37.78825,
@@ -150,6 +160,22 @@ function SeekerHome({navigation}){
               customMapStyle={MapStyle}
             />
           </View>
+          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{flex: 1, position: 'absolute', bottom: 5}}>
+              {businesses.map((biz, idx) => {
+                return (
+                  <View horizontal={true} key={biz.user_id} 
+                  style={selectedBusiness == idx ?
+                    {flex: 1, alignItems: 'center', margin: 10, width: 125, height: 120, borderRadius: 8, backgroundColor: '#3D2F91', padding: 10} :
+                    {flex: 1, alignItems: 'center', margin: 10, width: 125, height: 120, borderRadius: 8, backgroundColor: '#fff', padding: 10}
+                  }>
+                    
+                    <Image source={biz.business_image} style={{flex: 3, }} />
+                    <Text style={selectedBusiness == idx ? {flex: 1, fontSize: 12, color: '#fff'} : {flex: 1, fontSize: 12, color: '#444'}}>{biz.business_name}</Text>
+                  
+                  </View>
+                )
+              })}
+          </ScrollView>
         </View>
 
       </SafeAreaView>
