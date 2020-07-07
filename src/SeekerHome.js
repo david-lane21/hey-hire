@@ -56,6 +56,10 @@ function SeekerHome({navigation}){
     // return () => setProfile({})
   }, [])
 
+  function hasImage(biz){
+    biz != null && biz.avatar_image != "" && biz.avatar_image != null
+  }
+
   function currentLocation(){
     if (selectedBusiness == undefined){
       return {
@@ -140,16 +144,16 @@ function SeekerHome({navigation}){
           <Text style={{color: '#fff', fontSize: 13, paddingBottom: 30, paddingLeft: 30, paddingTop: 10, paddingRight: 10 }}>{user.bio}</Text>
         </View>
 
-        <View style={{flex: 1, alignItems: 'flex-start', borderBottomWidth: 1, 
+        <View style={{flex: 1, alignItems: 'flex-start', borderBottomWidth: 1,
           borderBottomColor: '#715FCB', paddingBottom: 10}}>
-          <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', alignContent: 'center'}}>
+          <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', alignContent: 'center',}}>
             <Image source={require('../assets/ic_past_positions_white.png')} style={{width: 14, height: 12, marginLeft: 8,}} />
             <Text style={{color: '#fff', fontSize: 18, marginLeft: 8}}>Past positions</Text> 
           </View>
           
           {profile.position ? profile.position.map((position) => {
             return(
-              <View style={{flex: 1, paddingLeft: 30, paddingTop: 15, paddingBottom: 5}} key={position.post_id}>
+              <View style={{flex: 1, paddingLeft: 30, paddingTop: 15, paddingBottom: 5, width: '90%'}} key={position.post_id}>
                 <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
                   <Text style={{color: '#fff', fontSize: 13, paddingBottom: 3}}>{dateFormat(position.from_date)} - </Text>
                   <Text style={{color: '#fff', fontSize: 13, paddingBottom: 3}}>{dateFormat(position.to_date)}</Text>
@@ -159,7 +163,7 @@ function SeekerHome({navigation}){
                   <Text style={{color: '#fff', fontSize: 13, paddingBottom: 3}}>{position.company_name} - </Text>
                   <Text style={{color: '#fff', fontSize: 13, paddingBottom: 3}}>{position.city_name}</Text>
                 </View>
-                <View style={{borderBottomColor: '#715FCB', borderBottomWidth: 1}}></View>
+                <View style={{flex: 1, borderBottomColor: '#715FCB', borderBottomWidth: 1,}}></View>
               </View>
             )
           }) : null}
@@ -198,7 +202,11 @@ function SeekerHome({navigation}){
                 return (
                   <TouchableHighlight key={biz.user_id} onPress={() => setSelectedBusiness(idx)} style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.01)'}}>
                     <View style={{flex: 1, alignItems: 'center', margin: 10, width: 125, height: 120, borderRadius: 8, backgroundColor: '#fff', padding: 10}}>
-                      <Image source={{uri: biz.avatar_image}} style={{width: 50, height: 50, margin: 10}} />
+                      {biz.avatar_image ?
+                        <Image source={{uri: biz.avatar_image}} style={{width: 50, height: 50, margin: 10}} />
+                      : 
+                        <Image source={require('../assets/ApployMeLogo.png')} style={{width: 50, height: 50, margin: 10}} />
+                      }
                       <Text style={{flex: 1, fontSize: 12, color: '#444'}}>{biz.business_name}</Text>
                     </View>
                   </TouchableHighlight>
