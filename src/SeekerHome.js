@@ -5,18 +5,19 @@ import {
   Text,
   Image,
   TouchableOpacity,
+  TouchableHighlight,
   ScrollView,
 } from 'react-native'
 import {getUser} from './utils/utils.js';
 import {postFormData} from './utils/network.js'
 import { LinearGradient } from 'expo-linear-gradient';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 
 function SeekerHome({navigation}){
   const [user, setUser] = useState({})
   const [profile, setProfile] = useState({})
   const [businesses, setBusinesses] = useState([])
-  const [selectedBusiness, setSelectedBusiness] = useState(0)
+  const [selectedBusiness, setSelectedBusiness] = useState(undefined)
   
   useEffect(() => {
     getUser().then(u => {
@@ -40,7 +41,7 @@ function SeekerHome({navigation}){
           return json2.json()
         })
         .then(json2 => {
-          console.log(json2)
+          console.log(json2.data)
           setBusinesses(json2.data)
         })
       })
@@ -54,6 +55,24 @@ function SeekerHome({navigation}){
     
     // return () => setProfile({})
   }, [])
+
+  function currentLocation(){
+    if (selectedBusiness == undefined){
+      return {
+        latitude: 32.7767,
+        longitude: -96.7970,
+        latitudeDelta: 0.0522,
+        longitudeDelta: 0.0421,
+      }
+    }else{
+      return {
+        latitude: businesses[selectedBusiness].latitude,
+        longitude: businesses[selectedBusiness].longitude,
+        latitudeDelta: 0.0522,
+        longitudeDelta: 0.0421,
+      }
+    }
+  }
   
   function dateFormat(date){
     // console.log(date)
@@ -151,30 +170,41 @@ function SeekerHome({navigation}){
             <MapView
               style={{width: '100%', height: 500}}
               provider={PROVIDER_GOOGLE}
-              region={{
-                latitude: 37.78825,
-                longitude: -122.4324,
-                latitudeDelta: 0.0922,
-                longitudeDelta: 0.0421,
-              }}
+              region={currentLocation()}
               customMapStyle={MapStyle}
-            />
-          </View>
-          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{flex: 1, position: 'absolute', bottom: 5}}>
-              {businesses.map((biz, idx) => {
-                return (
-                  <View horizontal={true} key={biz.user_id} 
-                  style={selectedBusiness == idx ?
-                    {flex: 1, alignItems: 'center', margin: 10, width: 125, height: 120, borderRadius: 8, backgroundColor: '#3D2F91', padding: 10} :
-                    {flex: 1, alignItems: 'center', margin: 10, width: 125, height: 120, borderRadius: 8, backgroundColor: '#fff', padding: 10}
-                  }>
-                    
-                    <Image source={biz.business_image} style={{flex: 3, }} />
-                    <Text style={selectedBusiness == idx ? {flex: 1, fontSize: 12, color: '#fff'} : {flex: 1, fontSize: 12, color: '#444'}}>{biz.business_name}</Text>
-                  
-                  </View>
+            >
+              {businesses.map(mkr => {
+                return(
+                  <Marker 
+                    draggable 
+                    key={mkr.user_id} 
+                    image={require('../assets/ic_pin_purple.png')}
+                    coordinate={{latitude: mkr.latitude, longitude: mkr.longitude}} />
                 )
               })}
+            </MapView>
+          </View>
+          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{flex: 1, position: 'absolute', bottom: 5, backgroundColor: 'rgba(0,0,0,0)'}}>
+            {businesses.map((biz, idx) => {
+              if (selectedBusiness == idx){
+                return(
+                  <TouchableHighlight key={biz.user_id} style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.01)'}}>
+                    <View style={{flex: 1, alignItems: 'center', margin: 10, width: 125, height: 120, borderRadius: 8, backgroundColor: '#3C2E8F', padding: 10}}>
+                      <Text style={{flex: 1, color: '#fff', fontSize: 20, fontWeight: '400', marginTop: 20, textAlign: 'center'}}>View Available Positions</Text>
+                    </View>
+                  </TouchableHighlight>
+                )
+              }else{
+                return (
+                  <TouchableHighlight key={biz.user_id} onPress={() => setSelectedBusiness(idx)} style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.01)'}}>
+                    <View style={{flex: 1, alignItems: 'center', margin: 10, width: 125, height: 120, borderRadius: 8, backgroundColor: '#fff', padding: 10}}>
+                      <Image source={{uri: biz.avatar_image}} style={{width: 50, height: 50, margin: 10}} />
+                      <Text style={{flex: 1, fontSize: 12, color: '#444'}}>{biz.business_name}</Text>
+                    </View>
+                  </TouchableHighlight>
+                )
+              }
+            })}
           </ScrollView>
         </View>
 
