@@ -206,8 +206,9 @@ function SeekerEditProfile({navigation}){
         // setToken(token)
         setError(json.msg)
       }else{
-        setError('Profile updated')
+        // setError('Profile updated')
         // console.log(json)
+        navigation.goBack()
       }
     })
     .catch(err => {
