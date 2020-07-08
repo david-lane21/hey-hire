@@ -12,12 +12,27 @@ import {getUser} from './utils/utils.js';
 import {postFormData} from './utils/network.js'
 import { LinearGradient } from 'expo-linear-gradient';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
+import * as Location from 'expo-location';
 
 function SeekerHome({navigation}){
   const [user, setUser] = useState({})
   const [profile, setProfile] = useState({})
+  const [location, setLocation] = useState({latitude: 32.7767, longitude: -96.7970,});
   const [businesses, setBusinesses] = useState([])
   const [selectedBusiness, setSelectedBusiness] = useState(undefined)
+  
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestPermissionsAsync();
+      if (status !== 'granted') {
+        setError('Permission to access location was denied');
+      }
+
+      let loc = await Location.getCurrentPositionAsync({});
+      // console.log(loc.coords)
+      setLocation(loc.coords);
+    })();
+  }, []);
   
   useEffect(() => {
     getUser().then(u => {
@@ -41,7 +56,7 @@ function SeekerHome({navigation}){
           return json2.json()
         })
         .then(json2 => {
-          console.log(json2.data)
+          // console.log(json2.data)
           setBusinesses(json2.data)
         })
       })
@@ -62,9 +77,12 @@ function SeekerHome({navigation}){
 
   function currentLocation(){
     if (selectedBusiness == undefined){
+      // console.log(location)
       return {
-        latitude: 32.7767,
-        longitude: -96.7970,
+        // latitude: 32.7767,
+        // longitude: -96.7970,
+        latitude: location.latitude,
+        longitude: location.longitude,
         latitudeDelta: 0.0522,
         longitudeDelta: 0.0421,
       }
