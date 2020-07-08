@@ -218,7 +218,8 @@ function SeekerEditProfile({navigation}){
   
   
   return(
-    <ScrollView style={{flex: 1, backgroundColor: '#fff'}}>
+    <View style={{flex: 1, backgroundColor: '#fff'}}>
+    <ScrollView style={{flex: 1}}>
       <SafeAreaView>
         <View style={{
         flex: 1, 
@@ -633,8 +634,12 @@ function SeekerEditProfile({navigation}){
 
       </View>
 
-      <View style={{}}>
-        {error ? <Text style={{color: 'red', padding: 20}}>{error}</Text> : null}
+      </SafeAreaView>
+    </ScrollView>
+
+    <SafeAreaView>
+    <View style={{position: 'absolute' , bottom: 20, width: '100%'}}>
+        {error ? <Text style={{color: 'red', padding: 20, backgroundColor: '#fff'}}>{error}</Text> : null}
         <TouchableOpacity 
         style={{
           flex: 1, 
@@ -647,11 +652,8 @@ function SeekerEditProfile({navigation}){
           <Text style={{color: '#fff', textAlign: 'center', fontSize: 18}}>Update Profile</Text>
         </TouchableOpacity>
       </View>
-        
-
-
       </SafeAreaView>
-    </ScrollView>
+    </View>
   )
 }
 
