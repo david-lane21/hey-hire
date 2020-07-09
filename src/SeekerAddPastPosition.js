@@ -50,7 +50,7 @@ function SeekerAddPastPosition({navigation}){
     })
   }, [])
 
-  function handleUpdate(){
+  const handleUpdate = () => {
     let form = new FormData()
     form.append('post_list[0][category]', position)
     form.append('post_list[0][from_date]', formatDate(from))
@@ -75,7 +75,7 @@ function SeekerAddPastPosition({navigation}){
         // setToken(token)
         setError(json.msg)
       }else{
-        setError('Profile updated')
+        // setError('Profile updated')
         // console.log(json)
         navigation.goBack()
       }

@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react'
 import {
-  // SafeAreaView, 
   StyleSheet,
   View, 
   Modal,
@@ -19,8 +18,11 @@ import {educationLevels, countries} from './utils/consts.js'
 import {getUser, getToken} from './utils/utils.js';
 import {postFormData} from './utils/network.js'
 import RNPickerSelect from 'react-native-picker-select';
+import { useIsFocused } from "@react-navigation/native";
+
 
 function SeekerEditProfile({navigation}){
+  const isFocused = useIsFocused();
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
   const [modalVisible3, setModalVisible3] = useState(false);
@@ -132,6 +134,13 @@ function SeekerEditProfile({navigation}){
   }
 
   useEffect(() => {
+    console.log(isFocused)
+    if (isFocused){
+      loadDate()
+    }
+  }, [isFocused]);
+
+  function loadDate(){
     getUser().then(u => {
       let u2 = JSON.parse(u)
       // console.log(u2)
@@ -143,9 +152,11 @@ function SeekerEditProfile({navigation}){
 
       postFormData('user_profile', form)
       .then(res => {
+        console.log('step 1')
         return res.json()
       })
       .then(json => {
+        console.log('step 2')
         // console.log(json.data)
         setProfile(json.data)
         let p = json.data.phone.split(' ')
@@ -177,7 +188,7 @@ function SeekerEditProfile({navigation}){
         console.log(err)
       })
     })
-  }, [])
+  }
 
   function handleUpdate(){
     let form = new FormData()

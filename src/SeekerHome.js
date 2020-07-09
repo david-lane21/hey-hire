@@ -87,9 +87,11 @@ function SeekerHome({navigation}){
         longitudeDelta: 0.0421,
       }
     }else{
+      let lat = parseFloat(businesses[selectedBusiness].latitude)
+      let lng = parseFloat(businesses[selectedBusiness].longitude)
       return {
-        latitude: businesses[selectedBusiness].latitude,
-        longitude: businesses[selectedBusiness].longitude,
+        latitude: lat,
+        longitude: lng,
         latitudeDelta: 0.0522,
         longitudeDelta: 0.0421,
       }
@@ -201,7 +203,7 @@ function SeekerHome({navigation}){
                     draggable 
                     key={mkr.user_id} 
                     image={require('../assets/ic_pin_purple.png')}
-                    coordinate={{latitude: mkr.latitude, longitude: mkr.longitude}} />
+                    coordinate={{latitude: parseFloat(mkr.latitude), longitude: parseFloat(mkr.longitude)}} />
                 )
               })}
             </MapView>
