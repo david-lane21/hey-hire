@@ -134,7 +134,7 @@ function SeekerEditProfile({navigation}){
   }
 
   useEffect(() => {
-    console.log(isFocused)
+    // console.log(isFocused)
     if (isFocused){
       loadDate()
     }
@@ -152,11 +152,11 @@ function SeekerEditProfile({navigation}){
 
       postFormData('user_profile', form)
       .then(res => {
-        console.log('step 1')
+        // console.log('step 1')
         return res.json()
       })
       .then(json => {
-        console.log('step 2')
+        // console.log('step 2')
         // console.log(json.data)
         setProfile(json.data)
         let p = json.data.phone.split(' ')

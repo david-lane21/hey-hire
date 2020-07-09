@@ -13,9 +13,11 @@ import {postFormData} from './utils/network.js'
 import { LinearGradient } from 'expo-linear-gradient';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
+import { useIsFocused } from "@react-navigation/native";
 
 function SeekerHome({navigation}){
-  const [user, setUser] = useState({})
+  const isFocused = useIsFocused();
+  const [user, setUser1] = useState({})
   const [profile, setProfile] = useState({})
   const [location, setLocation] = useState({latitude: 32.7767, longitude: -96.7970,});
   const [businesses, setBusinesses] = useState([])
@@ -33,12 +35,19 @@ function SeekerHome({navigation}){
       setLocation(loc.coords);
     })();
   }, []);
-  
+
   useEffect(() => {
+    // console.log(isFocused)
+    if (isFocused){
+      loadDate()
+    }
+  }, [isFocused]);
+  
+  function loadDate(){
     getUser().then(u => {
       let u2 = JSON.parse(u)
       // console.log(u2)
-      setUser(u2)
+      setUser1(u2)
 
       let form = new FormData();
       form.append('user_token', u2.user_token)
@@ -64,7 +73,7 @@ function SeekerHome({navigation}){
         console.log(err)
       })
     })
-  }, [])
+  }
 
   useEffect(()=>{
     
