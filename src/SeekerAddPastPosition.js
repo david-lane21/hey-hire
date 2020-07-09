@@ -63,27 +63,21 @@ function SeekerAddPastPosition({navigation}){
     form.append('user_id', user.user_id)
     form.append('device_tocken', deviceToken)
     
-    
     postFormData('update_user', form)
     .then(res => {
       return res.json()
     })
     .then(json => {
-      console.log(json)
+      // console.log(json)
       if(json.status_code != '200'){
-        // setUser(json.data)
-        // setToken(token)
         setError(json.msg)
       }else{
-        // setError('Profile updated')
-        // console.log(json)
         navigation.goBack()
       }
     })
     .catch(err => {
       console.log(err)
     })
-  
   }
 
   return(
