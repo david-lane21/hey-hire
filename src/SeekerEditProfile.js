@@ -15,7 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
 import {educationLevels, countries} from './utils/consts.js'
-import {getUser, getToken} from './utils/utils.js';
+import {getUser, setUser, getToken} from './utils/utils.js';
 import {postFormData} from './utils/network.js'
 import RNPickerSelect from 'react-native-picker-select';
 import { useIsFocused } from "@react-navigation/native";
@@ -28,7 +28,7 @@ function SeekerEditProfile({navigation}){
   const [modalVisible3, setModalVisible3] = useState(false);
   const [error, setError]               = useState('')
 
-  const [user, setUser] = useState({})
+  const [user, setUser1] = useState({})
   const [deviceToken, setDeviceToken] = useState('')
   const [profile, setProfile] = useState({})
   const [image, setImage] = useState(null);
@@ -144,7 +144,7 @@ function SeekerEditProfile({navigation}){
     getUser().then(u => {
       let u2 = JSON.parse(u)
       // console.log(u2)
-      setUser(u2)
+      setUser1(u2)
       getToken().then(t => setDeviceToken(t))
       let form = new FormData();
       form.append('user_token', u2.user_token)
@@ -211,14 +211,11 @@ function SeekerEditProfile({navigation}){
       return res.json()
     })
     .then(json => {
-      console.log(json)
+      // console.log(json)
       if(json.status_code != '200'){
-        // setUser(json.data)
-        // setToken(token)
         setError(json.msg)
       }else{
-        // setError('Profile updated')
-        // console.log(json)
+        setUser(json.data)
         navigation.goBack()
       }
     })

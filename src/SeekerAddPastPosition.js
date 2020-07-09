@@ -10,11 +10,11 @@ import {
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import {getUser, getToken} from './utils/utils.js';
+import {getUser, getToken, setUser} from './utils/utils.js';
 import {postFormData} from './utils/network.js'
 
 function SeekerAddPastPosition({navigation}){
-  const [user, setUser] = useState({})
+  const [user, setUser1] = useState({})
   const [deviceToken, setDeviceToken] = useState('')
   const [error, setError]   = useState('')
 
@@ -44,7 +44,7 @@ function SeekerAddPastPosition({navigation}){
     getUser().then(u => {
       let u2 = JSON.parse(u)
       // console.log(u2)
-      setUser(u2)
+      setUser1(u2)
       getToken().then(t => setDeviceToken(t))
       
     })
@@ -72,6 +72,8 @@ function SeekerAddPastPosition({navigation}){
       if(json.status_code != '200'){
         setError(json.msg)
       }else{
+        // console.log(json.data)
+        setUser(json.data)
         navigation.goBack()
       }
     })
