@@ -66,7 +66,8 @@ function SeekerHome({navigation}){
         })
         .then(json2 => {
           // console.log(json2.data)
-          setBusinesses(json2.data)
+          let bizList = json2.data.filter(b => parseFloat(b.latitude) && parseFloat(b.longitude)  )
+          setBusinesses(bizList)
         })
       })
       .catch(err => {
