@@ -157,7 +157,7 @@ function SeekerEditProfile({navigation}){
       })
       .then(json => {
         // console.log('step 2')
-        // console.log(json.data)
+        console.log(json.data)
         setProfile(json.data)
         let p = json.data.phone.split(' ')
         let p1 = p[0].replace(/\+/g, '')
@@ -205,7 +205,17 @@ function SeekerEditProfile({navigation}){
     form.append('user_id', user.user_id)
     form.append('device_tocken', deviceToken)
     form.append('avatar_image', image)
+
+    form.append('availability', availability)
+    form.append('education', institution)
+    form.append('education_level', eduLevel)
+    form.append('certificate', certificate)
+    form.append('language', langs)
+    form.append('eligible', eligible)
+    form.append('sixteen', sixteen)
+    form.append('convictions', convictions)
     
+
     postFormData('update_user', form)
     .then(res => {
       return res.json()
