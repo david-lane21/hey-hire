@@ -14,7 +14,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
-import {educationLevels, countries} from './utils/consts.js'
+import {educationLevels, countries, languages} from './utils/consts.js'
 import {getUser, setUser, getToken} from './utils/utils.js';
 import {postFormData} from './utils/network.js'
 import RNPickerSelect from 'react-native-picker-select';
@@ -102,6 +102,24 @@ function SeekerEditProfile({navigation}){
     return str
   }
   
+  function isLangSelected(lang){
+    let langList = langs.split(',').map(i => i.trim())
+    return langList.includes(lang)
+  }
+
+  function removeFromLangs(item){
+    let langList = langs.split(',').map(i => i.trim())
+    langList = langList.filter(i => i !== item).join(', ')
+    setlangs(langList)
+  }
+
+  function addToLangs(item){
+    let langList = langs.split(',').map(i => i.trim())
+    langList.push(item)
+    langList = langList.join(', ')
+    setlangs(langList)
+  }
+  
   function toggleConvictions(){
     setConvictions(!convictions)
   }
@@ -115,12 +133,10 @@ function SeekerEditProfile({navigation}){
   }
 
   function _availability(item){
-    // setModalVisible3(false)
     setAvailability(item)
   }
 
   function _edulevel(item){
-    setModalVisible2(false)
     setEduLevel(item)
   }
 
@@ -134,6 +150,10 @@ function SeekerEditProfile({navigation}){
     setModalVisible(false)
     setPhCode(item.dial_code)
     setCountry(item.name)
+  }
+
+  function _onPress3(item){
+    setModalVisible2(false)
   }
 
   useEffect(() => {
@@ -160,7 +180,7 @@ function SeekerEditProfile({navigation}){
       })
       .then(json => {
         // console.log('step 2')
-        console.log(json.data)
+        // console.log(json.data)
         setProfile(json.data)
         let p = json.data.phone.split(' ')
         let p1 = p[0].replace(/\+/g, '')
@@ -551,16 +571,88 @@ function SeekerEditProfile({navigation}){
 
 
           <View style={{flex: 1}}>
+            <Modal
+              animationType="slide"
+              transparent={false}
+              visible={modalVisible2}
+              onRequestClose={() => {
+              // Alert.alert('Modal has been closed.');
+            }}>
+              <SafeAreaView>
+                <View style={{ marginTop: 22 }}>
+                  <View>
+                    <View style={{
+                    flexDirection: 'row', 
+                    alignItems: 'center',
+                    paddingBottom: 20,
+                    paddingTop: 20
+                    }}>
+                      <View style={{width: '20%', marginLeft: 15}}>
+                        <TouchableOpacity onPress={() => setModalVisible2(false)}>
+                          <Image source={require('../assets/ic_back.png')} style={{width: 28, height: 22}} />
+                        </TouchableOpacity>
+                      </View>
+                      <View style={{width: '60%'}}>
+                        <Text style={{ color: '#4834A6', fontSize: 18}}>ADD YOUR LANGUAGES</Text>
+                      </View>
+                      <View style={{width: '60%'}}>
+                        <TouchableOpacity onPress={() => setModalVisible2(false)}>
+                          <Text style={{ color: '#4834A6', fontSize: 18}}>Done</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                    <FlatList
+                      // ItemSeparatorComponent={<Separator />}
+                      data={languages}
+                      keyExtractor={(item) => item.code}
+                      renderItem={({item, index, separators}) => (
+                        <View
+                          key={index}
+                          onPress={() => _onPress3(item)}
+                          onShowUnderlay={separators.highlight}
+                          onHideUnderlay={separators.unhighlight}>
+                          <View style={{backgroundColor: 'white'}}>
+                            <View style={{
+                              flex: 1, 
+                              flexDirection: 'row', 
+                              alignItems: 'center',
+                              padding: 10, 
+                              borderBottomWidth: 1, 
+                              borderBottomColor: '#eee',
+                              
+                              }}>
+                              {isLangSelected(item) ?
+                              <TouchableOpacity onPress={() => removeFromLangs(item)}>
+                                <Image source={require('../assets/ic_selected.png')} style={{width: 17, height: 17, marginRight: 10, marginLeft: 20}} />
+                              </TouchableOpacity>
+                              :
+                              <TouchableOpacity onPress={() => addToLangs(item)}>
+                                <Image source={require('../assets/ic_add_blue.png')} style={{width: 17, height: 17, marginRight: 10, marginLeft: 20}} />
+                              </TouchableOpacity>
+                              }
+                              
+                              
+                              <Text style={{
+                                fontSize: 20, 
+                                color: '#222'}}>{item}</Text>
+                            </View>
+                          </View>
+                        </View>
+                      )}
+                    />
+                  </View>
+                </View>
+              </SafeAreaView>
+            </Modal>
+
             <Text style={{fontSize: 18, paddingLeft: 20}}>Language</Text>
-            <View style={styles.code}>
-              <Image source={require('../assets/ic_language.png')} style={{width: 17, height: 17, marginRight: 5}} />
-              <TextInput
-                style={{width: '100%', color: '#000'}}
-                onChangeText={text => setlangs(text)}
-                placeholder='Bio'
-                value={langs}
-              />
-            </View>
+            <TouchableOpacity style={styles.code} onPress={() => setModalVisible2(true)}>
+              <View style={{flexDirection: 'row'}}>
+                <Image source={require('../assets/ic_language.png')} style={{width: 17, height: 17, marginRight: 5}} />
+                <Text style={{width: '100%', color: '#000'}}>{langs}</Text>
+              </View>
+            </TouchableOpacity>
+
           </View>
 
         <View style={{flex: 1}}>
