@@ -109,9 +109,12 @@ function SeekerHome({navigation}){
   }
   
   function dateFormat(date){
-    // console.log(date)
-    let d = new Date(date)
-    return `${d.getMonth()}.${d.getDate()}.${d.getFullYear()}`
+    if (date){
+      let d = date.split('-')
+      return `${d[1]}.${d[2]}.${d[0]}`
+     }else{
+       return ""
+     }
   }
   
   return(

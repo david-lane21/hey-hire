@@ -85,13 +85,12 @@ function SeekerEditProfile({navigation}){
   };
 
   function dateFormat(date){
-    // console.log(date)
     if (date){
-     let d = new Date(date)
-     return `${d.getMonth()}.${d.getDate()}.${d.getFullYear()}`
-    }else{
-      return ""
-    }
+      let d = date.split('-')
+      return `${d[1]}.${d[2]}.${d[0]}`
+     }else{
+       return ""
+     }
   }
 
   function formatPhone(str){
