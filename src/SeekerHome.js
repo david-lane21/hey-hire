@@ -21,7 +21,7 @@ function SeekerHome({navigation}){
   const [profile, setProfile] = useState({})
   const [location, setLocation] = useState({latitude: 32.7767, longitude: -96.7970,});
   const [businesses, setBusinesses] = useState([])
-  const [selectedBusiness, setSelectedBusiness] = useState(undefined)
+  const [selectedBusiness, setSelectedBusiness] = useState("")
   
   useEffect(() => {
     (async () => {
@@ -86,7 +86,8 @@ function SeekerHome({navigation}){
   }
 
   function currentLocation(){
-    if (selectedBusiness == undefined){
+    // console.log(selectedBusiness)
+    if (selectedBusiness == ""){
       // console.log(location)
       return {
         // latitude: 32.7767,
@@ -97,8 +98,9 @@ function SeekerHome({navigation}){
         longitudeDelta: 0.0421,
       }
     }else{
-      let lat = parseFloat(businesses[selectedBusiness].latitude)
-      let lng = parseFloat(businesses[selectedBusiness].longitude)
+      let biz = businesses.find(b => b.user_id == selectedBusiness)
+      let lat = parseFloat(biz.latitude)
+      let lng = parseFloat(biz.longitude)
       return {
         latitude: lat,
         longitude: lng,
@@ -210,12 +212,21 @@ function SeekerHome({navigation}){
               region={currentLocation()}
               customMapStyle={MapStyle}
             >
-              {businesses.map(mkr => {
+              <Marker 
+                draggable 
+                key={'mkr.user_id'} 
+                image={require('../assets/img_map_radius.png')}   
+                coordinate={{latitude: parseFloat(location.latitude), longitude: parseFloat(location.longitude)}} />
+                
+              {businesses.map((mkr, idx) => {
+                // console.log('--------------')
+                // console.log(mkr)
+                // console.log(selectedBusiness)
                 return(
                   <Marker 
                     draggable 
                     key={mkr.user_id} 
-                    image={require('../assets/ic_pin_purple.png')}
+                    image={selectedBusiness === mkr.user_id ? require('../assets/ic_pin_purple.png') : require('../assets/ic_pin_black.png')}   
                     coordinate={{latitude: parseFloat(mkr.latitude), longitude: parseFloat(mkr.longitude)}} />
                 )
               })}
@@ -223,7 +234,8 @@ function SeekerHome({navigation}){
           </View>
           <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{flex: 1, position: 'absolute', bottom: 5, backgroundColor: 'rgba(0,0,0,0)'}}>
             {businesses.map((biz, idx) => {
-              if (selectedBusiness == idx){
+              // console.log(biz);
+              if (selectedBusiness == biz.user_id){
                 return(
                   <TouchableHighlight key={biz.user_id} style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.01)'}}>
                     <View style={{flex: 1, alignItems: 'center', margin: 10, width: 125, height: 120, borderRadius: 8, backgroundColor: '#3C2E8F', padding: 10}}>
@@ -233,7 +245,7 @@ function SeekerHome({navigation}){
                 )
               }else{
                 return (
-                  <TouchableHighlight key={biz.user_id} onPress={() => setSelectedBusiness(idx)} style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.01)'}}>
+                  <TouchableHighlight key={biz.user_id} onPress={() => setSelectedBusiness(biz.user_id)} style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.01)'}}>
                     <View style={{flex: 1, alignItems: 'center', margin: 10, width: 125, height: 120, borderRadius: 8, backgroundColor: '#fff', padding: 10}}>
                       {biz.avatar_image ?
                         <Image source={{uri: biz.avatar_image}} style={{width: 50, height: 50, margin: 10}} />
