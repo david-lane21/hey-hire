@@ -28,7 +28,7 @@ function SeekerEditProfile({navigation}){
   const [modalVisible3, setModalVisible3] = useState(false);
   const [error, setError]               = useState('')
   const [search, setSearch]             = useState('')
-  const [filteredLangs, setFilteredLangs] = useState([])
+  const [filteredLangs, setFilteredLangs] = useState(languages)
 
   const [user, setUser1] = useState({})
   const [deviceToken, setDeviceToken] = useState('')
