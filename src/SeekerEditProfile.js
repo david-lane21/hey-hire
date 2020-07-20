@@ -27,6 +27,8 @@ function SeekerEditProfile({navigation}){
   const [modalVisible2, setModalVisible2] = useState(false);
   const [modalVisible3, setModalVisible3] = useState(false);
   const [error, setError]               = useState('')
+  const [search, setSearch]             = useState('')
+  const [filteredLangs, setFilteredLangs] = useState([])
 
   const [user, setUser1] = useState({})
   const [deviceToken, setDeviceToken] = useState('')
@@ -118,6 +120,17 @@ function SeekerEditProfile({navigation}){
     langList.push(item)
     langList = langList.join(', ')
     setlangs(langList)
+  }
+
+  function searchLangs(txt) {
+    let text = txt.toLowerCase()
+    setSearch(text)
+    if (text == ''){
+      setFilteredLangs(languages)
+    }else{
+      let langList = languages.filter(j => j.toLowerCase().includes(text))
+      setFilteredLangs(langList)
+    }
   }
   
   function toggleConvictions(){
@@ -579,7 +592,7 @@ function SeekerEditProfile({navigation}){
               // Alert.alert('Modal has been closed.');
             }}>
               <SafeAreaView>
-                <View style={{ marginTop: 22 }}>
+                <View style={{marginTop: 22, paddingBottom: 170 }}>
                   <View>
                     <View style={{
                     flexDirection: 'row', 
@@ -601,9 +614,24 @@ function SeekerEditProfile({navigation}){
                         </TouchableOpacity>
                       </View>
                     </View>
+
+                    <View style={{width: '85%', margin: 20, backgroundColor: '#fff', padding: 10, borderRadius: 8, borderWidth: 1, borderColor: '#ddd'}}>
+                      <View style={{width: '15%'}}>
+                        <Image source={require('../assets/ic_search.png')} style={{position: 'absolute'}}/>
+                      </View>
+                      <View style={{width: '70%', paddingLeft: 20}}>
+                        <TextInput
+                        style={{width: '100%', paddingLeft: 10, color: '#000'}}
+                        onChangeText={text => searchLangs(text)}
+                        placeholder='Search...'
+                        value={search} />
+
+                      </View>
+                    </View>
+
                     <FlatList
                       // ItemSeparatorComponent={<Separator />}
-                      data={languages}
+                      data={filteredLangs}
                       keyExtractor={(item) => item.code}
                       renderItem={({item, index, separators}) => (
                         <View
