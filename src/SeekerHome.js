@@ -16,7 +16,7 @@ import * as Location from 'expo-location';
 import { useIsFocused } from "@react-navigation/native";
 
 function SeekerHome({navigation}){
-  const markerRef = useRef(null);
+  // const markerRef = useRef(null);
   const isFocused = useIsFocused();
   const [user, setUser1] = useState({})
   const [profile, setProfile] = useState({})
@@ -114,9 +114,9 @@ function SeekerHome({navigation}){
 
   const onRegionChangeComplete = () => {
     // console.log(markerRef)
-    if (markerRef && markerRef.current && markerRef.current.showCallout) {
-      markerRef.current.showCallout();
-    }
+    // if (markerRef && markerRef.current && markerRef.current.showCallout) {
+    //   markerRef.current.showCallout();
+    // }
   };
   
   return(
@@ -232,7 +232,7 @@ function SeekerHome({navigation}){
                   <Marker 
                     key={mkr.user_id}
                     title={mkr.business_name}
-                    ref={markerRef}
+                    // ref={markerRef}
                     image={selectedBusiness === mkr.user_id ? require('../assets/ic_pin_purple.png') : require('../assets/ic_pin_black.png')}   
                     coordinate={{latitude: parseFloat(mkr.latitude), longitude: parseFloat(mkr.longitude)}} />
                 )
