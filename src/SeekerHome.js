@@ -215,10 +215,14 @@ function SeekerHome({navigation}){
               // showsUserLocation={true}
               onRegionChangeComplete={onRegionChangeComplete}
             >
+              {selectedBusiness === "" ?
               <Marker 
                 key={'mkr.user_id'} 
                 image={require('../assets/img_map_radius.png')}   
                 coordinate={{latitude: parseFloat(location.latitude), longitude: parseFloat(location.longitude)}} />
+              :
+              null
+              }
                 
               {businesses.map((mkr, idx) => {
                 // console.log('--------------')
