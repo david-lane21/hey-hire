@@ -592,7 +592,7 @@ function SeekerEditProfile({navigation}){
               // Alert.alert('Modal has been closed.');
             }}>
               <SafeAreaView>
-                <View style={{marginTop: 22, paddingBottom: 170 }}>
+                <View style={{marginTop: 22, height: '89%' }}>
                   <View>
                     <View style={{
                     flexDirection: 'row', 
