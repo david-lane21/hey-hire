@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import {
   SafeAreaView, 
   View, 
@@ -16,6 +16,7 @@ import * as Location from 'expo-location';
 import { useIsFocused } from "@react-navigation/native";
 
 function SeekerHome({navigation}){
+  const markerRef = useRef(null);
   const isFocused = useIsFocused();
   const [user, setUser1] = useState({})
   const [profile, setProfile] = useState({})
@@ -30,7 +31,7 @@ function SeekerHome({navigation}){
         setError('Permission to access location was denied');
       }
 
-      let loc = await Location.getCurrentPositionAsync({});
+      let loc = await Location.getCurrentPositionAsync({accuracy: 'high'});
       // console.log(loc.coords)
       setLocation(loc.coords);
     })();
@@ -76,14 +77,6 @@ function SeekerHome({navigation}){
     })
   }
 
-  useEffect(()=>{
-    
-    // return () => setProfile({})
-  }, [])
-
-  function hasImage(biz){
-    biz != null && biz.avatar_image != "" && biz.avatar_image != null
-  }
 
   function currentLocation(){
     // console.log(selectedBusiness)
@@ -118,6 +111,13 @@ function SeekerHome({navigation}){
        return ""
      }
   }
+
+  const onRegionChangeComplete = () => {
+    // console.log(markerRef)
+    if (markerRef && markerRef.current && markerRef.current.showCallout) {
+      markerRef.current.showCallout();
+    }
+  };
   
   return(
     <LinearGradient 
@@ -211,9 +211,11 @@ function SeekerHome({navigation}){
               provider={PROVIDER_GOOGLE}
               region={currentLocation()}
               customMapStyle={MapStyle}
+              zoomEnabled={true}
+              // showsUserLocation={true}
+              onRegionChangeComplete={onRegionChangeComplete}
             >
               <Marker 
-                draggable 
                 key={'mkr.user_id'} 
                 image={require('../assets/img_map_radius.png')}   
                 coordinate={{latitude: parseFloat(location.latitude), longitude: parseFloat(location.longitude)}} />
@@ -224,8 +226,9 @@ function SeekerHome({navigation}){
                 // console.log(selectedBusiness)
                 return(
                   <Marker 
-                    draggable 
-                    key={mkr.user_id} 
+                    key={mkr.user_id}
+                    title={mkr.business_name}
+                    ref={markerRef}
                     image={selectedBusiness === mkr.user_id ? require('../assets/ic_pin_purple.png') : require('../assets/ic_pin_black.png')}   
                     coordinate={{latitude: parseFloat(mkr.latitude), longitude: parseFloat(mkr.longitude)}} />
                 )
