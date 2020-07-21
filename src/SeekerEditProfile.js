@@ -233,6 +233,8 @@ function SeekerEditProfile({navigation}){
     form.append('address', address)
     form.append('email', email)
     form.append('city', city)
+    form.append('bio', bio)
+    form.append('zip_code', zipcode)
     form.append('state', state)
     form.append('country', country)
     form.append('phone', phCode + ' ' + phone)
