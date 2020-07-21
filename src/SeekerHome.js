@@ -31,7 +31,7 @@ function SeekerHome({navigation}){
         setError('Permission to access location was denied');
       }
 
-      let loc = await Location.getCurrentPositionAsync({accuracy: 'high'});
+      let loc = await Location.getCurrentPositionAsync({accuracy: 6});
       // console.log(loc.coords)
       setLocation(loc.coords);
     })();
