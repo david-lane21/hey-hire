@@ -16,7 +16,7 @@ import * as Location from 'expo-location';
 import { useIsFocused } from "@react-navigation/native";
 
 function SeekerHome({navigation}){
-  // const markerRef = useRef(null);
+  const markerRef = useRef(null)
   const isFocused = useIsFocused();
   const [user, setUser1] = useState({})
   const [profile, setProfile] = useState({})
@@ -80,7 +80,7 @@ function SeekerHome({navigation}){
 
   function currentLocation(){
     // console.log(selectedBusiness)
-    if (selectedBusiness == ""){
+    if (selectedBusiness === ""){
       // console.log(location)
       return {
         // latitude: 32.7767,
@@ -112,11 +112,28 @@ function SeekerHome({navigation}){
      }
   }
 
-  const onRegionChangeComplete = () => {
+  function selectBiz(biz){
+    setSelectedBusiness(biz.user_id)
+  }
+  
+  const purpleImg = require('../assets/ic_pin_purple.png')
+  const blackImg = require('../assets/ic_pin_black.png')
+
+  function mkrImage(mkr){
+    if (selectedBusiness === mkr.user_id){
+      return purpleImg
+    }else{
+      return blackImg
+    }
+  }
+
+  function onRegionChangeComplete() {
+    // console.log('------------')
     // console.log(markerRef)
-    // if (markerRef && markerRef.current && markerRef.current.showCallout) {
-    //   markerRef.current.showCallout();
-    // }
+    if (markerRef && markerRef.current && markerRef.current.showCallout) {
+      // console.log('+++++++')
+      markerRef.current.showCallout();
+    }
   };
   
   return(
@@ -213,36 +230,33 @@ function SeekerHome({navigation}){
               customMapStyle={MapStyle}
               zoomEnabled={true}
               // showsUserLocation={true}
-              onRegionChangeComplete={onRegionChangeComplete}
+              onRegionChangeComplete={onRegionChangeComplete()}
             >
               {selectedBusiness === "" ?
               <Marker 
-                key={'mkr.user_id'} 
-                image={require('../assets/img_map_radius.png')}   
+                key={'mkr.user_id'}
+                image={require('../assets/img_map_radius.png')}
                 coordinate={{latitude: parseFloat(location.latitude), longitude: parseFloat(location.longitude)}} />
               :
               null
               }
                 
-              {businesses.map((mkr, idx) => {
-                // console.log('--------------')
-                // console.log(mkr)
-                // console.log(selectedBusiness)
+              {(selectedBusiness !== "") && businesses.map((mkr, idx) => {
                 return(
                   <Marker 
                     key={mkr.user_id}
                     title={mkr.business_name}
-                    // ref={markerRef}
-                    image={selectedBusiness === mkr.user_id ? require('../assets/ic_pin_purple.png') : require('../assets/ic_pin_black.png')}   
+                    ref={markerRef}
+                    image={mkrImage(mkr)}
                     coordinate={{latitude: parseFloat(mkr.latitude), longitude: parseFloat(mkr.longitude)}} />
+
                 )
               })}
             </MapView>
           </View>
           <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{flex: 1, position: 'absolute', bottom: 5, backgroundColor: 'rgba(0,0,0,0)'}}>
             {businesses.map((biz, idx) => {
-              // console.log(biz);
-              if (selectedBusiness == biz.user_id){
+              if (selectedBusiness === biz.user_id){
                 return(
                   <TouchableHighlight key={biz.user_id} style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.01)'}}>
                     <View style={{flex: 1, alignItems: 'center', margin: 10, width: 125, height: 120, borderRadius: 8, backgroundColor: '#3C2E8F', padding: 10}}>
@@ -252,7 +266,7 @@ function SeekerHome({navigation}){
                 )
               }else{
                 return (
-                  <TouchableHighlight key={biz.user_id} onPress={() => setSelectedBusiness(biz.user_id)} style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.01)'}}>
+                  <TouchableHighlight key={biz.user_id} onPress={() => selectBiz(biz)} style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.01)'}}>
                     <View style={{flex: 1, alignItems: 'center', margin: 10, width: 125, height: 120, borderRadius: 8, backgroundColor: '#fff', padding: 10}}>
                       {biz.avatar_image ?
                         <Image source={{uri: biz.avatar_image}} style={{width: 50, height: 50, margin: 10}} />
