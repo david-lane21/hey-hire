@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react'
+import React, {useState, useEffect} from 'react'
 import {
   SafeAreaView, 
   View, 
@@ -16,7 +16,6 @@ import * as Location from 'expo-location';
 import { useIsFocused } from "@react-navigation/native";
 
 function SeekerHome({navigation}){
-  const markerRef = useRef(null)
   const isFocused = useIsFocused();
   const [user, setUser1] = useState({})
   const [profile, setProfile] = useState({})
@@ -113,6 +112,9 @@ function SeekerHome({navigation}){
   }
 
   function selectBiz(biz){
+    if (this[`markerRef${biz.user_id}`]){
+      this[`markerRef${biz.user_id}`].showCallout()
+    }
     setSelectedBusiness(biz.user_id)
   }
   
@@ -127,15 +129,6 @@ function SeekerHome({navigation}){
     }
   }
 
-  function onRegionChangeComplete() {
-    // console.log('------------')
-    // console.log(markerRef)
-    if (markerRef && markerRef.current && markerRef.current.showCallout) {
-      // console.log('+++++++')
-      markerRef.current.showCallout();
-    }
-  };
-  
   return(
     <LinearGradient 
       style={{flex: 1, alignItems: 'center'}} 
@@ -229,8 +222,6 @@ function SeekerHome({navigation}){
               region={currentLocation()}
               customMapStyle={MapStyle}
               zoomEnabled={true}
-              // showsUserLocation={true}
-              onRegionChangeComplete={onRegionChangeComplete()}
             >
               {selectedBusiness === "" ?
               <Marker 
@@ -246,7 +237,9 @@ function SeekerHome({navigation}){
                   <Marker 
                     key={mkr.user_id}
                     title={mkr.business_name}
-                    ref={markerRef}
+                    ref={r => {
+                      this[`markerRef${mkr.user_id}`] = r
+                    }}
                     image={mkrImage(mkr)}
                     coordinate={{latitude: parseFloat(mkr.latitude), longitude: parseFloat(mkr.longitude)}} />
 
