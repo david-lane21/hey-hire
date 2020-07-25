@@ -29,6 +29,7 @@ import SeekerNotifications from './SeekerNotifications';
 import SeekerEditProfile from './SeekerEditProfile';
 import SeekerJobDetail from './SeekerJobDetail';
 import SeekerArchivedJobs from './SeekerArchivedJobs';
+import SeekerAvailableJobs from './SeekerAvailableJobs';
 import SeekerAddLang from './SeekerAddLang';
 import SeekerAddPastPosition from './SeekerAddPastPosition';
 import TestLinks from './TestLinks';
@@ -176,6 +177,7 @@ function SeekerLinks({navigation}){
       <Stack2.Screen name="SeekerAddPastPosition" component={SeekerAddPastPosition} options={{
           headerShown: false,
           }} />
+      
     </Stack2.Navigator>
   )
 }
@@ -189,6 +191,10 @@ function SeekerAppliedJobs0({navigation}){
       <Stack2.Screen name="SeekerJobDetail" component={SeekerJobDetail} options={{
           headerShown: false,
           }} />
+      <Stack2.Screen name="SeekerAvailableJobs" component={SeekerAvailableJobs} options={{
+          headerShown: false,
+          }} />
+      
     </Stack2.Navigator>
   )
 }
