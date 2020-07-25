@@ -67,6 +67,12 @@ function SeekerHome({navigation}){
         .then(json2 => {
           // console.log(json2.data)
           let bizList = json2.data.filter(b => parseFloat(b.latitude) && parseFloat(b.longitude)  )
+          bizList = bizList.map(b => {
+            b.distance_in_km = distance(location.latitude, location.longitude, b.latitude, b.longitude, '') //.toFixed(1)
+            return b
+          })
+          bizList = bizList.sort((a, b) => a.distance_in_km - b.distance_in_km)
+          // console.log(bizList)
           setBusinesses(bizList)
         })
       })
@@ -126,6 +132,28 @@ function SeekerHome({navigation}){
       return purpleImg
     }else{
       return blackImg
+    }
+  }
+
+  function distance(lat1, lon1, lat2, lon2, unit) {
+    if ((lat1 == lat2) && (lon1 == lon2)) {
+      return 0;
+    }
+    else {
+      var radlat1 = Math.PI * lat1/180;
+      var radlat2 = Math.PI * lat2/180;
+      var theta = lon1-lon2;
+      var radtheta = Math.PI * theta/180;
+      var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+      if (dist > 1) {
+        dist = 1;
+      }
+      dist = Math.acos(dist);
+      dist = dist * 180/Math.PI;
+      dist = dist * 60 * 1.1515;
+      if (unit=="K") { dist = dist * 1.609344 }
+      if (unit=="N") { dist = dist * 0.8684 }
+      return dist;
     }
   }
 
@@ -267,6 +295,7 @@ function SeekerHome({navigation}){
                         <Image source={require('../assets/ApployMeLogo.png')} style={{width: 50, height: 50, margin: 10}} />
                       }
                       <Text style={{flex: 1, fontSize: 12, color: '#444'}}>{biz.business_name}</Text>
+                      <Text style={{flex: 1, fontSize: 10, color: '#444'}}>{biz.distance_in_km.toFixed(1)} miles</Text>
                     </View>
                   </TouchableHighlight>
                 )
