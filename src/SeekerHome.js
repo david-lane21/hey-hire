@@ -251,18 +251,19 @@ function SeekerHome({navigation}){
               customMapStyle={MapStyle}
               zoomEnabled={true}
             >
-              {selectedBusiness === "" ?
+              
               <Marker 
+                draggable={true}
                 key={'mkr.user_id'}
-                image={require('../assets/img_map_radius.png')}
-                coordinate={{latitude: parseFloat(location.latitude), longitude: parseFloat(location.longitude)}} />
-              :
-              null
-              }
+                coordinate={{latitude: parseFloat(location.latitude), longitude: parseFloat(location.longitude)}} >
+                  <Image source={require('../assets/img_map_radius.png')} style={{width: 120, height: 120}} />
+              </Marker>
+              
                 
-              {(selectedBusiness !== "") && businesses.map((mkr, idx) => {
+              {businesses.map((mkr, idx) => {
                 return(
                   <Marker 
+                    draggable={true}
                     key={mkr.user_id}
                     title={mkr.business_name}
                     ref={r => {

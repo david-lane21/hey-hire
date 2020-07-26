@@ -6,6 +6,7 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  TouchableHighlight,
   ImageBackground
 } from 'react-native'
 import {getUser} from './utils/utils.js';
@@ -19,6 +20,7 @@ function SeekerAvailableJobs({route, navigation}){
   const isFocused = useIsFocused();
   const [user, setUser] = useState({})
   const [profile, setProfile] = useState({})
+  const [jobs, setJobs] = useState([])
 
   useEffect(() => {
     // console.log(isFocused)
@@ -43,10 +45,11 @@ function SeekerAvailableJobs({route, navigation}){
         return res.json()
       })
       .then(json => {
-        console.log('-----------')
-        console.log(json.data.job_count)
-        console.log('+++++++++++')
+        // console.log('-----------')
+        // console.log(json.data)
+        // console.log('+++++++++++')
         setProfile(json.data)
+        setJobs(json.data.job)
       })
       .catch(err => {
         console.log(err)
@@ -97,47 +100,46 @@ function SeekerAvailableJobs({route, navigation}){
           </View>
 
           <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-            {/* <Text style={{color: '#fff'}}>Proprieter: </Text> */}
+            <Image source={require('../assets/ic_location.png')} style={{width: 15, height: 15, marginTop: 10, marginRight: 6}} />
             <Text style={{color: '#fff', marginTop: 10}}>{profile.address}</Text>
           </View>
 
-          <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingBottom: 30 }}>
-            {/* <Text style={{color: '#fff'}}>Proprieter: </Text> */}
-            {/* <Text style={{color: '#fff'}}>{user.address}</Text> */}
+          <View style={{flex: 1, marginTop: 30, }}>
+            <View style={{borderBottomColor: '#715FCB', borderBottomWidth: 1}}></View>
           </View>
 
-          <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-            {/* <Text style={{color: '#fff'}}>Proprieter: </Text> */}
-            <Text style={{color: '#fff', textAlign: 'center'}}>{profile.business_detail}</Text>
+          <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 30 }}>
+            <Text style={{color: '#fff', textAlign: 'center', textAlign: 'left', fontSize: 13.5}}>{profile.business_detail}</Text>
           </View>
 
           <View style={{flex: 1, backgroundColor: '#fff', minHeight: 450, padding: 20 }}>
-            <View style={{flex: 1, flexDirection: 'row', maxWidth: '100%' }}>
-              <View>
-                <Text style={{fontSize: 22, paddingBottom: 5}}>Currently hiring for:</Text>
-                <Text style={{fontSize: 12, color: '#888'}}>Tap job to apply now, tap heart to apply later.</Text>
-              </View>
-              <View style={{flex: 1,alignItems: 'flex-end'}}>
-                
-              </View>
+            <View style={{ maxWidth: '100%' }}>
+              <Text style={{fontSize: 22, paddingBottom: 5}}>Currently hiring for:</Text>
+              <Text style={{fontSize: 12, color: '#888', marginBottom: 30}}>Tap job to apply now, tap heart to apply later.</Text>
             </View>
 
-            <View style={{flex: 4}}>
-              {profile.job.map(j => {
+            <View style={{flex: 1}}>
+              {jobs.map(j => {
                 return(
-                  <View key={j.id}>
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}> 
-                      <View>
-                        <Image source={{uri: profile.avatar_image}} style={{width: 40, height: 40}} />
+                  <View key={j.id} style={{padding: 15, borderWidth: 1, borderColor: '#eee', borderRadius: 12}}>
+                    <TouchableOpacity>
+                      <View style={{flexDirection: 'row', alignItems: 'center'}}> 
+                        <View style={{width: "15%",}}>
+                          <Image source={{uri: profile.avatar_image}} style={{width: 40, height: 40, borderWidth: 1, borderColor: '#ccc', borderRadius: 50}} />
+                        </View>
+                        <View style={{width: "77%"}}>
+                          <Text style={{fontSize: 18, color: '#444', marginBottom: 5}}>{j.position}</Text>
+                          <View style={{flexDirection: 'row', alignContent: 'center'}}>
+                            <Image source={require('../assets/ic_location.png')} style={{width: 13, height: 13, marginRight: 5}} />
+                            <Text style={{fontSize: 12, color: '#999'}}>{profile.address}</Text>
+                          </View>
+                          
+                        </View>
+                        <View style={{}}>
+                          <Image source={require('../assets/ic_heart_gray_header.png')} style={{width: 30, height: 30}} />
+                        </View>
                       </View>
-                      <View>
-                        <Text>{j.position}</Text>
-                        <Text>{profile.address}</Text>
-                      </View>
-                      <View>
-                        <Image source={{uri: profile.avatar_image}} style={{width: 40, height: 40}} />
-                      </View>
-                    </View>
+                    </TouchableOpacity>
                   </View>
                 )
               })}
