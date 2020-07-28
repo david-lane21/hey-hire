@@ -17,6 +17,10 @@ import Constants from 'expo-constants';
 import {countries} from './utils/consts.js'
 import {postFormData} from './utils/network.js'
 import * as Location from 'expo-location';
+import {
+  setUser,
+  setToken,
+} from './utils/utils.js';
 
 function SeekerSignup({ navigation }){
   const [modalVisible, setModalVisible] = useState(false);
@@ -137,13 +141,16 @@ function SeekerSignup({ navigation }){
     .then(json => {
       console.log(json)
       if(json.status_code == '300'){
-        // setUser(json.data)
-        // setToken(token)
         setError(json.msg)
       }else{
         setError('')
-        console.log(json)
-        navigation.navigate('HomeScreen')
+        setUser(json.data)
+        setToken(token)
+        navigation.navigate('SeekerVerificationCode', {
+          number: phCode + ' ' + phone,
+          email: email,
+          otp: json.otp
+        })
       }
     })
     .catch(err => {

@@ -11,6 +11,7 @@ import BusinessLogin from './BusinessLogin';
 import SeekerForgotPassword from './SeekerForgotPassword';
 import BusinessForgotPassword from './SeekerForgotPassword';
 import SeekerSignup from './SeekerSignup';
+import SeekerVerificationCode from './SeekerVerificationCode';
 import BusinessSignup from './BusinessSignup';
 import SeekerHome from './SeekerHome';
 import BusinessHome from './BusinessHome';
@@ -73,11 +74,14 @@ function Navigation() {
         <Stack.Screen name="SeekerSignup" component={SeekerSignup} options={{
           headerShown: true,
           headerBackTitleVisible: false,
-          headerTitle: "REGISTRATION",
+          headerTitle: "VERIFICATION",
           headerStyle: {
             backgroundColor: '#fff',
           },
           headerTintColor: '#4E35AE'
+          }} />
+        <Stack.Screen name="SeekerVerificationCode" component={SeekerVerificationCode} options={{
+          headerShown: false,
           }} />
         <Stack.Screen name="BusinessSignup" component={BusinessSignup} options={{
           headerShown: true,
