@@ -242,7 +242,7 @@ function SeekerEditProfile({navigation}){
     form.append('user_token', user.user_token)
     form.append('user_id', user.user_id)
     form.append('device_tocken', deviceToken)
-    form.append('avatar_image', image)
+    form.append('avatar_image', {uri: image, name: 'avatar.jpg', type: 'image/jpeg'})
 
     form.append('availability', availability)
     form.append('education', institution)

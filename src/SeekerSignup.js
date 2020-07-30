@@ -132,7 +132,7 @@ function SeekerSignup({ navigation }){
     form.append('user_type', '2')
     form.append('password', password)
     form.append('device_tocken', token)
-    form.append('avatar_image', image)
+    form.append('avatar_image', {uri: image, name: 'avatar.jpg', type: 'image/jpeg'})
 
     postFormData('user_register', form)
     .then(res => {
