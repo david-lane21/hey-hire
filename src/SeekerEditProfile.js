@@ -193,7 +193,7 @@ function SeekerEditProfile({navigation}){
       })
       .then(json => {
         // console.log('step 2')
-        // console.log(json.data)
+        console.log(json.data)
         setProfile(json.data)
         let p = json.data.phone.split(' ')
         let p1 = p[0].replace(/\+/g, '')
@@ -213,7 +213,12 @@ function SeekerEditProfile({navigation}){
         setEduLevel(json.data.education_level)
         setInstitution(json.data.education)
         setCertificate(json.data.certificate)
-        setlangs(json.data.language)
+        if(json.data.language){
+          setlangs(json.data.language)
+        }else{
+          setlangs('')
+        }
+        
         setAvailability(json.data.availability)
         setEligible(json.data.eligible)
         setSixteen(json.data.sixteen)
