@@ -105,18 +105,18 @@ function SeekerEditProfile({navigation}){
   }
   
   function isLangSelected(lang){
-    let langList = langs.split(',').map(i => i.trim())
+    let langList = langs.split(',').map(i => i.trim()).filter(i => i != '')
     return langList.includes(lang)
   }
 
   function removeFromLangs(item){
-    let langList = langs.split(',').map(i => i.trim())
+    let langList = langs.split(',').map(i => i.trim()).filter(i => i != '')
     langList = langList.filter(i => i !== item).join(', ')
     setlangs(langList)
   }
 
   function addToLangs(item){
-    let langList = langs.split(',').map(i => i.trim())
+    let langList = langs.split(',').map(i => i.trim()).filter(i => i != '')
     langList.push(item)
     langList = langList.join(', ')
     setlangs(langList)
@@ -247,8 +247,10 @@ function SeekerEditProfile({navigation}){
     form.append('user_token', user.user_token)
     form.append('user_id', user.user_id)
     form.append('device_tocken', deviceToken)
-    form.append('avatar_image', {uri: image, name: 'avatar.jpg', type: 'image/jpeg'})
-
+    if (image){
+      form.append('avatar_image', {uri: image, name: 'avatar.jpg', type: 'image/jpeg'})
+    }
+    
     form.append('availability', availability)
     form.append('education', institution)
     form.append('education_level', eduLevel)
@@ -269,7 +271,8 @@ function SeekerEditProfile({navigation}){
         setError(json.msg)
       }else{
         setUser(json.data)
-        navigation.goBack()
+        // navigation.goBack()
+        navigation.navigate('Seeker')
       }
     })
     .catch(err => {
