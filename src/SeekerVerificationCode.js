@@ -50,7 +50,7 @@ function SeekerVerificationCode({ route, navigation }){
     setError('')
     if(code === otp){
       // navigation.navigate('Seeker')
-      navigation.navigate('SeekerLinks', { screen: 'SeekerEditProfile'})
+      navigation.navigate('SeekerLinks', { screen: 'SeekerFinishRegistration'})
     }else{
       setError('Incorrect verification code')
     }

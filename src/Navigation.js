@@ -28,6 +28,7 @@ import SeekerScanQrCode from './SeekerScanQrCode';
 import SeekerAppliedJobs from './SeekerAppliedJobs';
 import SeekerNotifications from './SeekerNotifications';
 import SeekerEditProfile from './SeekerEditProfile';
+import SeekerFinishRegistration from './SeekerFinishRegistration';
 import SeekerJobDetail from './SeekerJobDetail';
 import SeekerArchivedJobs from './SeekerArchivedJobs';
 import SeekerAvailableJobs from './SeekerAvailableJobs';
@@ -167,6 +168,9 @@ function SeekerLinks({navigation}){
   return(
     <Stack2.Navigator>
       <Stack2.Screen name="SeekerEditProfile" component={SeekerEditProfile} options={{
+          headerShown: false,
+          }} />
+      <Stack2.Screen name="SeekerFinishRegistration" component={SeekerFinishRegistration} options={{
           headerShown: false,
           }} />
       <Stack2.Screen name="SeekerArchivedJobs" component={SeekerArchivedJobs} options={{

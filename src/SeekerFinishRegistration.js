@@ -21,7 +21,7 @@ import RNPickerSelect from 'react-native-picker-select';
 import { useIsFocused } from "@react-navigation/native";
 
 
-function SeekerEditProfile({navigation}){
+function SeekerFinishRegistration({navigation}){
   const isFocused = useIsFocused();
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
@@ -170,13 +170,17 @@ function SeekerEditProfile({navigation}){
   }
 
   useEffect(() => {
+    loadAllData()
+  }, []);
+
+  useEffect(() => {
     // console.log(isFocused)
     if (isFocused){
-      loadDate()
+      loadData()
     }
   }, [isFocused]);
 
-  function loadDate(){
+  function loadAllData(){
     getUser().then(u => {
       let u2 = JSON.parse(u)
       // console.log(u2)
@@ -223,6 +227,31 @@ function SeekerEditProfile({navigation}){
         setEligible(json.data.eligible)
         setSixteen(json.data.sixteen)
         setConvictions(json.data.convictions)
+        setPositions(json.data.position)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+    })
+  }
+
+  function loadData(){
+    getUser().then(u => {
+      let u2 = JSON.parse(u)
+      // console.log(u2)
+      setUser1(u2)
+      getToken().then(t => setDeviceToken(t))
+      let form = new FormData();
+      form.append('user_token', u2.user_token)
+      form.append('user_id', u2.user_id)
+
+      postFormData('user_profile', form)
+      .then(res => {
+        return res.json()
+      })
+      .then(json => {
+        console.log(json.data)
+        
         setPositions(json.data.position)
       })
       .catch(err => {
@@ -293,13 +322,13 @@ function SeekerEditProfile({navigation}){
         paddingBottom: 20,
         paddingTop: 20
         }}>
-          <View style={{width: '25%', marginLeft: 15}}>
-            <TouchableOpacity onPress={() => navigation.navigate('Seeker')}>
+          <View style={{width: '30%', marginLeft: 15}}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
               <Image source={require('../assets/ic_back.png')} style={{width: 28, height: 22}} />
             </TouchableOpacity>
           </View>
           <View style={{width: '65%'}}>
-            <Text style={{ color: '#4834A6', fontSize: 18}}>EDIT YOUR PROFILE</Text>
+            <Text style={{ color: '#4834A6', fontSize: 18}}>REGISTRATION</Text>
           </View>
         </View>
 
@@ -801,7 +830,7 @@ function SeekerEditProfile({navigation}){
           
         }}
         onPress={() => handleUpdate()}>
-          <Text style={{color: '#fff', textAlign: 'center', fontSize: 18}}>Update Profile</Text>
+          <Text style={{color: '#fff', textAlign: 'center', fontSize: 18}}>Finish registration</Text>
         </TouchableOpacity>
       </View>
       </SafeAreaView>
@@ -809,7 +838,7 @@ function SeekerEditProfile({navigation}){
   )
 }
 
-export default SeekerEditProfile;
+export default SeekerFinishRegistration;
 
 
 const styles = StyleSheet.create({
