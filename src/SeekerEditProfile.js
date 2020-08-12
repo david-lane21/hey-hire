@@ -193,7 +193,7 @@ function SeekerEditProfile({navigation}){
       })
       .then(json => {
         // console.log('step 2')
-        console.log(json.data)
+        // console.log(json.data)
         setProfile(json.data)
         let p = json.data.phone.split(' ')
         let p1 = p[0].replace(/\+/g, '')

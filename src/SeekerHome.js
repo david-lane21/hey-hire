@@ -19,6 +19,7 @@ function SeekerHome({navigation}){
   const isFocused = useIsFocused();
   const [user, setUser1] = useState({})
   const [profile, setProfile] = useState({})
+  const [positions, setPositions] = useState([])
   const [location, setLocation] = useState({latitude: 32.7767, longitude: -96.7970,});
   const [businesses, setBusinesses] = useState([])
   const [selectedBusiness, setSelectedBusiness] = useState("")
@@ -58,8 +59,9 @@ function SeekerHome({navigation}){
         return res.json()
       })
       .then(json => {
-        // console.log(json.data)
+        console.log(json.data)
         setProfile(json.data)
+        sortPositions(json.data)
         postFormData('get_all_business', form)
         .then(json2 => {
           return json2.json()
@@ -80,6 +82,16 @@ function SeekerHome({navigation}){
         console.log(err)
       })
     })
+  }
+
+  function sortPositions(data){
+    let positions = data.position.sort((a, b) => {
+      let dateA = new Date(a.to_date)
+      let dateB = new Date(b.to_date)
+      return dateB - dateA
+    })
+    positions = positions.slice(0, 2)
+    setPositions(positions)
   }
 
 
@@ -189,7 +201,7 @@ function SeekerHome({navigation}){
         </View>
 
         <View style={{flex: 1, alignItems: 'center', padding: 20, }}>
-          <Image source={{uri: user.avatar_image}} style={{width: 100, height: 100, borderRadius: 50}} />
+          <Image source={{uri: user.avatar_image}} style={{width: 110, height: 110, borderRadius: 60, borderWidth: 1, borderColor: '#fff'}} />
         </View>
 
         <View style={{flex: 1, alignItems: 'center', }}>
@@ -224,7 +236,7 @@ function SeekerHome({navigation}){
             <Text style={{color: '#fff', fontSize: 18, marginLeft: 8}}>Past positions</Text> 
           </View>
           
-          {profile.position ? profile.position.map((position) => {
+          {positions && positions.map((position) => {
             return(
               <View style={{flex: 1, paddingLeft: 30, paddingTop: 15, paddingBottom: 5, width: '90%'}} key={position.post_id}>
                 <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
@@ -239,7 +251,7 @@ function SeekerHome({navigation}){
                 <View style={{flex: 1, borderBottomColor: '#715FCB', borderBottomWidth: 1,}}></View>
               </View>
             )
-          }) : null}
+          }) }
         </View>
 
         <View style={{flex: 1, }}>
@@ -269,14 +281,16 @@ function SeekerHome({navigation}){
                     ref={r => {
                       this[`markerRef${mkr.user_id}`] = r
                     }}
-                    image={mkrImage(mkr)}
-                    coordinate={{latitude: parseFloat(mkr.latitude), longitude: parseFloat(mkr.longitude)}} />
+                    
+                    coordinate={{latitude: parseFloat(mkr.latitude), longitude: parseFloat(mkr.longitude)}} >
+                      <Image source={mkrImage(mkr)} style={{width: 40, height: 40}} />
+                    </Marker>
 
                 )
               })}
             </MapView>
           </View>
-          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{flex: 1, position: 'absolute', bottom: 5, backgroundColor: 'rgba(0,0,0,0)'}}>
+          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}  style={{flex: 1, position: 'absolute', bottom: 5, }}>
             {businesses.map((biz, idx) => {
               if (selectedBusiness === biz.user_id){
                 return(
@@ -294,7 +308,7 @@ function SeekerHome({navigation}){
                   <TouchableHighlight key={biz.user_id} onPress={() => selectBiz(biz)} style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.01)'}}>
                     <View style={{flex: 1, alignItems: 'center', margin: 10, width: 125, height: 120, borderRadius: 8, backgroundColor: '#fff', padding: 10}}>
                       {biz.avatar_image ?
-                        <Image source={{uri: biz.avatar_image}} style={{width: 50, height: 50, margin: 10}} />
+                        <Image source={{uri: biz.avatar_image}} style={{width: 50, height: 50, margin: 10, borderRadius: 25}} />
                       : 
                         <Image source={require('../assets/ApployMeLogo.png')} style={{width: 50, height: 50, margin: 10}} />
                       }
