@@ -331,6 +331,7 @@ function SeekerEditProfile({navigation}){
               onChangeText={text => setFirstName(text)}
               placeholder='First Name...'
               value={firstName}
+              textContentType="name"
             />
           </View>
 
@@ -341,6 +342,7 @@ function SeekerEditProfile({navigation}){
               onChangeText={text => setLastName(text)}
               placeholder='Last Name...'
               value={lastName}
+              textContentType="name"
             />
           </View>
 
@@ -351,6 +353,7 @@ function SeekerEditProfile({navigation}){
               onChangeText={text => setAddress(text)}
               placeholder='Address...'
               value={address}
+              textContentType="fullStreetAddress"
             />
           </View>
 
@@ -419,6 +422,7 @@ function SeekerEditProfile({navigation}){
               onChangeText={text => setState(text)}
               placeholder='State...'
               value={state}
+              textContentType="addressState"
             />
           </View>
 
@@ -429,6 +433,7 @@ function SeekerEditProfile({navigation}){
               onChangeText={text => setCity(text)}
               placeholder='City...'
               value={city}
+              textContentType="addressCity"
             />
           </View>
 
@@ -439,6 +444,7 @@ function SeekerEditProfile({navigation}){
               onChangeText={text => setZipcode(text)}
               placeholder='Zip...'
               value={zipcode}
+              textContentType="postalCode"
             />
           </View>
 
@@ -499,6 +505,7 @@ function SeekerEditProfile({navigation}){
                 onChangeText={text => setPhone(text)}
                 placeholder='Phone'
                 value={formatPhone(phone)}
+                textContentType="telephoneNumber"
               />
             </View>
           </View>
@@ -515,6 +522,7 @@ function SeekerEditProfile({navigation}){
               placeholder='Email'
               value={email}
               type='email'
+              textContentType="emailAddress"
             />
           </View>
 
@@ -580,8 +588,9 @@ function SeekerEditProfile({navigation}){
               <TextInput
                 style={{width: '100%', color: '#000'}}
                 onChangeText={text => setInstitution(text)}
-                placeholder='Bio'
+                placeholder='Institution'
                 value={institution}
+                textContentType="none"
               />
             </View>
           </View>
@@ -593,8 +602,9 @@ function SeekerEditProfile({navigation}){
               <TextInput
                 style={{width: '100%', color: '#000'}}
                 onChangeText={text => setCertificate(text)}
-                placeholder='Bio'
+                placeholder='Certificate'
                 value={certificate}
+                textContentType="none"
               />
             </View>
           </View>

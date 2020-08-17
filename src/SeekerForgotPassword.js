@@ -121,6 +121,7 @@ function SeekerForgotPassword({navigation}){
               onChangeText={text => setPhone(text)}
               placeholder='Phone number'
               value={phone}
+              textContentType="telephoneNumber"
             />
           </View>
         </View>

@@ -193,6 +193,7 @@ function SeekerLogin({ navigation }){
               onChangeText={text => setPhone(text)}
               placeholder='Phone'
               value={formatPhone(phone)}
+              textContentType="telephoneNumber"
             />
           </View>
         </View>
@@ -206,6 +207,7 @@ function SeekerLogin({ navigation }){
                 onChangeText={text => handlePassword(text)}
                 placeholder='Password'
                 value={password}
+                textContentType="none"
               />
           </View>
         </View>

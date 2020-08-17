@@ -191,6 +191,7 @@ function SeekerSignup({ navigation }){
           onChangeText={text => setFirstName(text)}
           placeholder='First Name...'
           value={firstName}
+          textContentType="name"
         />  
       </View>
 
@@ -203,6 +204,7 @@ function SeekerSignup({ navigation }){
           onChangeText={text => setLastName(text)}
           placeholder='Last Name...'
           value={lastName}
+          textContentType="name"
         />
       </View>
 
@@ -213,6 +215,7 @@ function SeekerSignup({ navigation }){
           onChangeText={text => setAddress(text)}
           placeholder='Address'
           value={address}
+          textContentType="fullStreetAddress"
         />
       </View>
 
@@ -282,6 +285,7 @@ function SeekerSignup({ navigation }){
           onChangeText={text => setState(text)}
           placeholder='State'
           value={state}
+          textContentType="addressState"
         />
       </View>
 
@@ -293,6 +297,7 @@ function SeekerSignup({ navigation }){
           onChangeText={text => setCity(text)}
           placeholder='City'
           value={city}
+          textContentType="addressCity"
         />
       </View>
       
@@ -305,6 +310,7 @@ function SeekerSignup({ navigation }){
           placeholder='Zipcode'
           value={zipcode}
           keyboardType="numeric"
+          textContentType="postalCode"
         />
       </View>
 
@@ -370,6 +376,7 @@ function SeekerSignup({ navigation }){
             placeholder='Phone'
             value={formatPhone(phone)}
             keyboardType="numeric"
+            textContentType="telephoneNumber"
           />
         </View>
       </View>
@@ -387,6 +394,7 @@ function SeekerSignup({ navigation }){
           placeholder='Email'
           value={email}
           type='email'
+          textContentType="emailAddress"
         />
       </View>
 
@@ -399,6 +407,7 @@ function SeekerSignup({ navigation }){
           placeholder='Enter Password'
           value={password}
           secureTextEntry={true}
+          textContentType="none"
         />
       </View>
   
@@ -411,6 +420,7 @@ function SeekerSignup({ navigation }){
           placeholder='Confirm Password'
           value={password2}
           secureTextEntry={true}
+          textContentType="none"
         />
       </View>
 
