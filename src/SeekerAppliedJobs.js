@@ -43,9 +43,16 @@ function SeekerAppliedJobs({navigation}){
         return res.json()
       })
       .then(json => {
-        // console.log(json.data)
-        setAppliedJobs(json.data)
-        setFilteredJobs(json.data)
+        // console.log('+++++++++++++++++++')
+        // console.log(json)
+        // console.log('+++++++++++++++++++')
+        if (json.msg == "No Job Available!"){
+          setAppliedJobs([])
+          setFilteredJobs([])
+        }else{
+          setAppliedJobs(json.data)
+          setFilteredJobs(json.data)
+        }
       })
       .catch(err => {
         console.log(err)
