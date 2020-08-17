@@ -217,6 +217,7 @@ function SeekerFinishRegistration({navigation}){
         setEduLevel(json.data.education_level)
         setInstitution(json.data.education)
         setCertificate(json.data.certificate)
+        setImage(json.data.avatar_image)
         if(json.data.language){
           setlangs(json.data.language)
         }else{
@@ -337,7 +338,13 @@ function SeekerFinishRegistration({navigation}){
             <View style={{width: 150, height: 150, alignSelf: 'center'}}>
               {/* <Image source={{uri: user.avatar_image}} style={{width: 100, height: 100, borderRadius: 50, alignSelf: 'center'}} /> */}
               {image == null ? 
-                <Image source={{uri: user.avatar_image}} style={{width: 100, height: 100, borderRadius: 50, alignSelf: 'center'}} /> :
+                <View>
+                { user.avatar_image == "" ? <Image source={require('../assets/img_place.png')} style={{height: 100, width: 100, borderRadius: 50, alignSelf: 'center'}} /> 
+                  :
+                  <Image source={{uri: user.avatar_image}} style={{width: 100, height: 100, borderRadius: 50, alignSelf: 'center'}} />
+                }
+                </View>
+                :
                 <Image source={{uri: image}} style={{width: 100, height: 100, borderRadius: 50, alignSelf: 'center'}} />
                 }
               <TouchableOpacity onPress={pickImage} style={{position: 'absolute', top: 0, right: 0}}>

@@ -27,7 +27,7 @@ function SeekerSignup({ navigation }){
   const [location, setLocation] = useState(null);
   const [error, setError]         = useState('')
   const [image, setImage]         = useState(null);
-
+  
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName]   = useState('')
   const [address, setAddress]     = useState('')

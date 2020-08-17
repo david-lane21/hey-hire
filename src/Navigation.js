@@ -75,7 +75,7 @@ function Navigation() {
         <Stack.Screen name="SeekerSignup" component={SeekerSignup} options={{
           headerShown: true,
           headerBackTitleVisible: false,
-          headerTitle: "VERIFICATION",
+          headerTitle: "REGISTRATION",
           headerStyle: {
             backgroundColor: '#fff',
           },
