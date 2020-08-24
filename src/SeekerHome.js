@@ -201,7 +201,7 @@ function SeekerHome({navigation}){
         </View>
 
         <View style={{flex: 1, alignItems: 'center', padding: 20, }}>
-          <Image source={{uri: user.avatar_image}} style={{width: 110, height: 110, borderRadius: 60, borderWidth: 1, borderColor: '#fff'}} />
+          <Image source={{uri: profile.avatar_image}} style={{width: 110, height: 110, borderRadius: 60, borderWidth: 1, borderColor: '#fff'}} />
         </View>
 
         <View style={{flex: 1, alignItems: 'center', }}>
