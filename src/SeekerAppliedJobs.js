@@ -10,8 +10,10 @@ import {
 } from 'react-native'
 import {postFormData} from './utils/network.js'
 import {getUser} from './utils/utils.js';
+import { useIsFocused } from "@react-navigation/native";
 
 function SeekerAppliedJobs({navigation}){
+  const isFocused = useIsFocused();
   const [appliedJobs, setAppliedJobs] = useState([])
   const [filteredJobs, setFilteredJobs] = useState([])
   const [user, setUser] = useState({})
@@ -29,6 +31,13 @@ function SeekerAppliedJobs({navigation}){
   }
 
   useEffect(() => {
+    // console.log(isFocused)
+    if (isFocused){
+      loadData()
+    }
+  }, [isFocused]);
+
+  function loadData(){
     getUser().then(u => {
       let u2 = JSON.parse(u)
       // console.log(u2)
@@ -58,7 +67,7 @@ function SeekerAppliedJobs({navigation}){
         console.log(err)
       })
     })
-  }, [])
+  }
 
   const list = filteredJobs.map((item => {
     // console.log(item)

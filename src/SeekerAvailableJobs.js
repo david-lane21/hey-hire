@@ -21,7 +21,7 @@ function SeekerAvailableJobs({route, navigation}){
   const [user, setUser] = useState({})
   const [profile, setProfile] = useState({})
   const [jobs, setJobs] = useState([])
-
+  
   useEffect(() => {
     // console.log(isFocused)
     if (isFocused){
@@ -54,6 +54,52 @@ function SeekerAvailableJobs({route, navigation}){
       .catch(err => {
         console.log(err)
       })
+    })
+  }
+
+  function isApplied(job){
+
+  }
+
+  function getHired(job){
+    let form = new FormData();
+    form.append('user_token', user.user_token)
+    form.append('user_id', user.user_id)
+    form.append('job_id', job.id)
+
+    postFormData('send_cv', form)
+    .then(res => {
+      return res.json()
+    })
+    .then(json => {
+      // console.log('-----------')
+      console.log(json)
+      // console.log('+++++++++++')
+      
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  }
+
+  function addWishlist(job){
+    let form = new FormData();
+    form.append('user_token', user.user_token)
+    form.append('user_id', user.user_id)
+    form.append('job_id', job.id)
+
+    postFormData('add_wishlist', form)
+    .then(res => {
+      return res.json()
+    })
+    .then(json => {
+      // console.log('-----------')
+      console.log(json)
+      // console.log('+++++++++++')
+      
+    })
+    .catch(err => {
+      console.log(err)
     })
   }
 
@@ -121,25 +167,31 @@ function SeekerAvailableJobs({route, navigation}){
             <View style={{flex: 1}}>
               {jobs.map(j => {
                 return(
-                  <View key={j.id} style={{padding: 15, borderWidth: 1, borderColor: '#eee', borderRadius: 12}}>
-                    <TouchableOpacity>
-                      <View style={{flexDirection: 'row', alignItems: 'center'}}> 
-                        <View style={{width: "15%",}}>
-                          <Image source={{uri: profile.avatar_image}} style={{width: 40, height: 40, borderWidth: 1, borderColor: '#ccc', borderRadius: 50}} />
-                        </View>
-                        <View style={{width: "77%"}}>
+                  <View key={j.id} style={{padding: 15, borderWidth: 1, borderColor: '#eee', borderRadius: 12, marginBottom: 5}}>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}> 
+                      <View style={{width: "15%",}}>
+                        <Image source={{uri: profile.avatar_image}} style={{width: 40, height: 40, borderWidth: 1, borderColor: '#ccc', borderRadius: 50}} />
+                      </View>
+                      <TouchableOpacity onPress={() => getHired(j) } style={{width: "77%"}}>
+                        <View>
                           <Text style={{fontSize: 18, color: '#444', marginBottom: 5}}>{j.position}</Text>
                           <View style={{flexDirection: 'row', alignContent: 'center'}}>
                             <Image source={require('../assets/ic_location.png')} style={{width: 13, height: 13, marginRight: 5}} />
                             <Text style={{fontSize: 12, color: '#999'}}>{profile.address}</Text>
                           </View>
-                          
                         </View>
-                        <View style={{}}>
-                          <Image source={require('../assets/ic_heart_gray_header.png')} style={{width: 30, height: 30}} />
+                      </TouchableOpacity>
+                      
+                      <TouchableOpacity onPress={() => addWishlist(j) } style={{width: 25}}>
+                        <View style={{width: 35}}>
+                          {/* {isApplied(j) ?  */}
+                            {/* <Image source={require('../assets/ic_heart_blue.png')} style={{width: 30, height: 30}} /> */}
+                          {/* : */}
+                            <Image source={require('../assets/ic_heart_gray_header.png')} style={{width: 30, height: 30}} />                          
+                          {/* } */}
                         </View>
-                      </View>
-                    </TouchableOpacity>
+                      </TouchableOpacity>
+                    </View>
                   </View>
                 )
               })}
