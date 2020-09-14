@@ -291,13 +291,16 @@ function SeekerHome({navigation}){
             </MapView>
           </View>
           <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}  style={{flex: 1, position: 'absolute', bottom: 5, }}>
+            
             {businesses.map((biz, idx) => {
               if (selectedBusiness === biz.user_id){
                 return(
                   <TouchableHighlight key={biz.user_id} onPress={() =>  navigation.navigate('SeekerAppliedJobs0', {
                     screen: 'SeekerAvailableJobs', 
                     params: {biz_id: biz.user_id}
-                    })} style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.01)'}}>
+                    })} style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.001)'}}
+                    underlayColor="rgba(0,0,0,0.001)"
+                    >
                     <View style={{flex: 1, alignItems: 'center', margin: 10, width: 125, height: 120, borderRadius: 8, backgroundColor: '#3C2E8F', padding: 10}}>
                       <Text style={{flex: 1, color: '#fff', fontSize: 20, fontWeight: '400', marginTop: 20, textAlign: 'center'}}>View Available Positions</Text>
                     </View>
@@ -305,7 +308,9 @@ function SeekerHome({navigation}){
                 )
               }else{
                 return (
-                  <TouchableHighlight key={biz.user_id} onPress={() => selectBiz(biz)} style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.01)'}}>
+                  <TouchableHighlight key={biz.user_id} onPress={() => selectBiz(biz)} style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.001)'}}
+                    underlayColor="rgba(0,0,0,0.001)"
+                  >
                     <View style={{flex: 1, alignItems: 'center', margin: 10, width: 125, height: 120, borderRadius: 8, backgroundColor: '#fff', padding: 10}}>
                       {biz.avatar_image ?
                         <Image source={{uri: biz.avatar_image}} style={{width: 50, height: 50, margin: 10, borderRadius: 25}} />
@@ -319,6 +324,7 @@ function SeekerHome({navigation}){
                 )
               }
             })}
+            
           </ScrollView>
         </View>
 
