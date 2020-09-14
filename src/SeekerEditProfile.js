@@ -562,15 +562,16 @@ function SeekerEditProfile({navigation}){
           <View style={{flex: 1}}>
             <View>
               <Text style={{fontSize: 18, paddingLeft: 20}}>Level of Education</Text>
-              <View style={styles.code}>
+              <View style={styles.code3}>
                 <Image source={require('../assets/ic_educate.png')} style={{width: 20, height: 20, marginRight: 5}} />
                 <RNPickerSelect
                   onValueChange={(value) => _edulevel(value)}
                   value={eduLevel}
+                  style={pickerSelectStyles}
                   items={educationLevels.map((i) => {
                     return(
                       { 
-                        label: i + '                                                                                                ', 
+                        label: i, 
                         value: i 
                       }
                     )
@@ -713,15 +714,16 @@ function SeekerEditProfile({navigation}){
         <View style={{flex: 1}}>
           <View>
             <Text style={{fontSize: 18, paddingLeft: 20}}>Availability</Text>
-            <View style={styles.code}>
+            <View style={styles.code3}>
               <Image source={require('../assets/ic_educate.png')} style={{width: 20, height: 20, marginRight: 5}} />
               <RNPickerSelect
                   onValueChange={(value) => _availability(value)}
                   value={availability}
+                  style={pickerSelectStyles}
                   items={[
-                      { label: 'Full Time                                                                                                ', value: 'Full Time' },
-                      { label: 'Part Time                                                                                                ', value: 'Part Time' },
-                      { label: 'Flexible                                                                                                ', value: 'Flexible' },
+                      { label: 'Full Time', value: 'Full Time' },
+                      { label: 'Part Time', value: 'Part Time' },
+                      { label: 'Flexible', value: 'Flexible' },
                   ]}
               />
             </View>
@@ -895,5 +897,41 @@ const styles = StyleSheet.create({
     // alignItems: 'center',
     // width: '50%',
     marginLeft: 5
+  },
+  code3: {
+    backgroundColor: '#fff',
+    borderColor: '#eee',
+    paddingTop: 13,
+    paddingLeft: 13,
+    marginBottom: 15,
+    marginLeft: 10,
+    marginRight: 10,
+    borderWidth: 1,
+    borderRadius: 10,
+    shadowColor: "#bbb",
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.23,
+    shadowRadius: 2.62,
+    elevation: 4,
+    flex: 1, 
+    flexDirection: 'row',
+    // alignItems: 'center',
+    // width: '25%',
+  }
+});
+
+const pickerSelectStyles = StyleSheet.create({
+  inputIOS: {
+    // borderColor: '#333',
+    // borderWidth: 1,
+    minWidth: '95%',
+    paddingBottom: 13,
+  },
+  inputAndroid: {
+    minWidth: '95%',
+    paddingBottom: 13,
   },
 });
