@@ -14,6 +14,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { useIsFocused } from "@react-navigation/native";
+import { Dimensions } from 'react-native';
 
 function SeekerHome({navigation}){
   const isFocused = useIsFocused();
@@ -59,7 +60,7 @@ function SeekerHome({navigation}){
         return res.json()
       })
       .then(json => {
-        console.log(json.data)
+        // console.log(json.data)
         setProfile(json.data)
         sortPositions(json.data)
         postFormData('get_all_business', form)
@@ -129,11 +130,15 @@ function SeekerHome({navigation}){
      }
   }
 
-  function selectBiz(biz){
+  function selectBiz(biz, idx){
     if (this[`markerRef${biz.user_id}`]){
       this[`markerRef${biz.user_id}`].showCallout()
     }
     setSelectedBusiness(biz.user_id)
+
+    map.animateToRegion(currentLocation(), 500)
+    
+    _scrollView.scrollTo({x: idx*125, y: 0, animated: true});    
   }
   
   const purpleImg = require('../assets/ic_pin_purple.png')
@@ -257,9 +262,10 @@ function SeekerHome({navigation}){
         <View style={{flex: 1, }}>
           <View style={{flex: 1, width: '100%', backgroundColor: '#fff'}}>
             <MapView
+              ref={ (r) => map = r }
               style={{width: '100%', height: 500}}
               provider={PROVIDER_GOOGLE}
-              region={currentLocation()}
+              initialRegion={currentLocation()}
               customMapStyle={MapStyle}
               zoomEnabled={true}
             >
@@ -290,7 +296,11 @@ function SeekerHome({navigation}){
               })}
             </MapView>
           </View>
-          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}  style={{flex: 1, position: 'absolute', bottom: 5, }}>
+          <ScrollView 
+            ref={ref => _scrollView = ref}
+            horizontal={true} 
+            showsHorizontalScrollIndicator={false}  
+            style={{flex: 1, position: 'absolute', bottom: 5, }}>
             
             {businesses.map((biz, idx) => {
               if (selectedBusiness === biz.user_id){
@@ -308,7 +318,7 @@ function SeekerHome({navigation}){
                 )
               }else{
                 return (
-                  <TouchableHighlight key={biz.user_id} onPress={() => selectBiz(biz)} style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.001)'}}
+                  <TouchableHighlight key={biz.user_id} onPress={() => selectBiz(biz, idx)} style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.001)'}}
                     underlayColor="rgba(0,0,0,0.001)"
                   >
                     <View style={{flex: 1, alignItems: 'center', margin: 10, width: 125, height: 120, borderRadius: 8, backgroundColor: '#fff', padding: 10}}>
