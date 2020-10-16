@@ -50,8 +50,8 @@ function SeekerSignup({ navigation }) {
       if (status !== "granted") {
         setError("Permission to access location was denied");
       }
-
       let location = await Location.getCurrentPositionAsync({});
+      setAddressField(location);
       setLocation(location);
     })();
   }, []);
@@ -68,6 +68,29 @@ function SeekerSignup({ navigation }) {
       }
     })();
   }, []);
+
+  const setAddressField = async (location) => {
+    const loc = {
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+    };
+    let addressObject = await Location.reverseGeocodeAsync(loc);
+    const street =
+      (addressObject[0].name || "") +
+      " " +
+      (addressObject[0].street !== addressObject[0].name
+        ? addressObject[0].street || ""
+        : "");
+    const country = countries.find(
+      (item) => item.code == addressObject[0].isoCountryCode
+    );
+    setAddress(street);
+    setState(addressObject[0].region);
+    setCity(addressObject[0].city);
+    setCountry(country.name);
+    setPhCode(country.dial_code);
+    setZipcode(addressObject[0].postalCode);
+  };
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
