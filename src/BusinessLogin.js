@@ -10,7 +10,8 @@ import {
   TouchableOpacity, 
   FlatList,
   TouchableHighlight,
-  ImageBackground
+  ImageBackground,
+  Platform
 } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient';
 import {countries} from './utils/consts.js'
@@ -19,12 +20,18 @@ import {
   setUser,
   setToken,
 } from './utils/utils.js';
+import { KeyboardAccessoryNavigation } from "react-native-keyboard-accessory";
 
 function BusinessLogin({navigation}){
   const [modalVisible, setModalVisible] = useState(false);
   const [phCode, setPhCode] = useState('1')
   const [phone, setPhone] = useState('(877) 9951411')
   const [password, setPassword] = useState('12345678')
+  const [activeInputIndex, setActiveInputIndex] = useState(0);
+  const [inputs, setInputs] = useState([]);
+  const [nextFocusDisabled, setNextFocusDisabled] = useState(false);
+  const [previousFocusDisabled, setPreviousFocusDisabled] = useState(false);
+
 
   function _onPress(item){
     setModalVisible(false)
@@ -63,8 +70,30 @@ function BusinessLogin({navigation}){
       console.log(err)
     })
   }
+
+  function handleFocus(index) {
+    setActiveInputIndex(index);
+    setNextFocusDisabled(index === inputs.length - 1);
+    setPreviousFocusDisabled(index === 0);
+  }
+
+  function handleFocusNext() {
+    inputs[activeInputIndex + 1].focus();
+  }
+
+  function handleFocusPrev() {
+    inputs[activeInputIndex - 1].focus();
+  }
+
+  function handleRef(index, ref) {
+    let tempInputs = inputs;
+    tempInputs[index] = ref;
+    setInputs(inputs);
+  }
+
   
   return(
+    <View style={{flex:1}}>
     <View style={styles.container}>
       <SafeAreaView style={{flex: 1, width: '90%'}}>
         <View style={{
@@ -169,6 +198,12 @@ function BusinessLogin({navigation}){
               onChangeText={text => setPhone(text)}
               placeholder='Phone'
               value={phone}
+              onFocus={() => {
+                handleFocus(0);
+              }}
+              ref={(ref) => {
+                handleRef(0, ref);
+              }}
             />
           </View>
         </View>
@@ -180,6 +215,12 @@ function BusinessLogin({navigation}){
               onChangeText={text => setPassword(text)}
               placeholder='Password'
               value={password}
+              onFocus={() => {
+                handleFocus(1);
+              }}
+              ref={(ref) => {
+                handleRef(1, ref);
+              }}
             />
         </View>
 
@@ -222,7 +263,19 @@ function BusinessLogin({navigation}){
         
         <View style={{flex: 3, alignItems: 'center'}}></View>
       </SafeAreaView>
+     
     </View>
+     <KeyboardAccessoryNavigation
+     androidAdjustResize={Platform.OS=="android"}
+     avoidKeyboard={Platform.OS=="android"}
+      onNext={handleFocusNext}
+      onPrevious={handleFocusPrev}
+      nextDisabled={nextFocusDisabled}
+      previousDisabled={previousFocusDisabled}
+      style={Platform.OS=="android" && {top: 0}}
+    />
+    </View>
+
   )
 }
 
