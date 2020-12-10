@@ -34,13 +34,14 @@
   self.launchOptions = launchOptions;
 
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-#ifdef DEBUG
+
+//#ifdef DEBUG
   [self initializeReactNativeApp];
-#else
-  EXUpdatesAppController *controller = [EXUpdatesAppController sharedInstance];
-  controller.delegate = self;
-  [controller startAndShowLaunchScreen:self.window];
-#endif
+//#else
+//  EXUpdatesAppController *controller = [EXUpdatesAppController sharedInstance];
+//  controller.delegate = self;
+//  [controller startAndShowLaunchScreen:self.window];
+//#endif
 
   [super application:application didFinishLaunchingWithOptions:launchOptions];
 
@@ -73,7 +74,8 @@
 #ifdef DEBUG
   return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
 #else
-  return [[EXUpdatesAppController sharedInstance] launchAssetUrl];
+  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+//  return [[EXUpdatesAppController sharedInstance] launchAssetUrl];
 #endif
 }
 

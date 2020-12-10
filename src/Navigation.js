@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { View, Text, Image } from 'react-native';
+import  React, { useState, useEffect } from 'react';
+import { View, Text, Image, TouchableWithoutFeedback,Linking } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -34,17 +34,39 @@ import SeekerArchivedJobs from './SeekerArchivedJobs';
 import SeekerAvailableJobs from './SeekerAvailableJobs';
 import SeekerAddLang from './SeekerAddLang';
 import SeekerAddPastPosition from './SeekerAddPastPosition';
+import BusinessEdit from './BusinessEdit';
+import BusinessJobDetail from './BusinessJobDetail';
+import BusinessJobEdit from './BusinessJobEdit';
 import TestLinks from './TestLinks';
+import BusinessClosedJobDetail from './BusinessClosedJobDetail';
+import BusinessEmployees from './BusinessEmployeers';
+import BusinessSubmittedApplication from './BusinessSubmittedApplication'
+import SeekerEditPastPosition from './SeekerEditPastPosition';
 
 const Stack = createStackNavigator();
 const Stack2 = createStackNavigator();
+const Stack3 = createStackNavigator();
 const Tab = createBottomTabNavigator();
+const BusinessHomeStack = createStackNavigator();
+const SeekerHomeStack = createStackNavigator();
+import NavigationService from './utils/NavigationService';
 // const currentUser = getUser()
 
-function Navigation() {
+export function Navigation(props) {
+
+  // useEffect(()=>{
+  //   Linking.addEventListener('url',handleOpenURL);
+  // },[])
+
+
+  // function handleOpenURL(event){
+  //   console.log('Handle open url',props,event);
+  // }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer  ref={navigatorRef => {
+      NavigationService.setTopLevelNavigator(navigatorRef);
+    }}>
       <Stack.Navigator initialRouteName="HomeScreen" >
         <Stack.Screen name="Seeker" component={Seeker} options={{
           headerShown: false,
@@ -57,11 +79,29 @@ function Navigation() {
         <Stack.Screen name="Business" component={Business} options={{
           headerShown: false,
           }} />
-        <Stack.Screen name="BusinessEditAccount" component={BusinessEditAccount} />
+
+<Stack.Screen name="BusinessLinks" component={BusinessLinks} options={{
+          headerShown: false,
+          }} />
+
+
+        <Stack.Screen name="BusinessEditAccount" component={BusinessEditAccount} options={{
+          headerShown: true,
+          headerBackTitleVisible: false,
+          headerTitle: "Edit Account",
+          headerStyle: {
+            backgroundColor: '#4E35AE',
+          },
+          headerTintColor: '#fff'
+          }} />
         
         <Stack.Screen name="BusinessPrinterOptions" component={BusinessPrinterOptions} />
-        <Stack.Screen name="BusinessSeekerProfile" component={BusinessSeekerProfile} />
-        <Stack.Screen name="BusinessVisitorDetail" component={BusinessVisitorDetail} />
+        <Stack.Screen name="BusinessSeekerProfileMain" component={BusinessSeekerProfile} options={{
+          headerShown: false,
+          }} />
+        <Stack.Screen name="BusinessVisitorDetail" component={BusinessVisitorDetail} options={{
+          headerShown: false,
+          }} />
 
         <Stack.Screen name="HomeScreen" component={HomeScreen} options={{
           headerShown: false,
@@ -121,6 +161,9 @@ function Navigation() {
 
 export default Navigation;
 
+
+
+
 function Seeker({navigation}){
   let home = require('../assets/tabbar_home_active.png')
   let home2 = require('../assets/tab_home_off.png')
@@ -129,7 +172,9 @@ function Seeker({navigation}){
   let jobs = require('../assets/tab_jobs.png')
   let jobs2 = require('../assets/tab_jobs_off.png')
   let notification = require('../assets/tabbar_notification_active.png')
-  let notification2 = require('../assets/tab_notification_off.png')
+  let notification2 = require('../assets/tab_notification_off.png') 
+
+
   return(
     <Tab.Navigator
     screenOptions={({ route }) => ({
@@ -147,20 +192,38 @@ function Seeker({navigation}){
           iconName = focused ? notification : notification2;
         }
 
-        return <Icon iconName={iconName} border={border}/>;
+        return <Icon iconName={iconName} border={border} navigation={navigation}/>;
       },
+      
     })}
     tabBarOptions={{
       // activeTintColor: 'purple',
       // inactiveTintColor: 'gray',
       showLabel: false
-    }}
+    }}    
     >
-      <Tab.Screen name="SeekerHome" component={SeekerHome} />
+      <Tab.Screen name="SeekerHome" component={SeekerHomeRoute} />
       <Tab.Screen name="SeekerScanQrCode" component={SeekerScanQrCode} />
-      <Tab.Screen name="SeekerAppliedJobs0" component={SeekerAppliedJobs0} />
+      <Tab.Screen name="SeekerAppliedJobs0" component={SeekerAppliedJobs0} initialRouteName={'SeekerAppliedJobs'} />
       <Tab.Screen name="SeekerNotifications" component={SeekerNotifications} />
     </Tab.Navigator>
+  )
+}
+function SeekerHomeRoute({navigation}){
+  return(
+    <SeekerHomeStack.Navigator initialRouteName="SeekerHome">
+      <Stack3.Screen name="SeekerHome" component={SeekerHome} options={{
+          headerShown: false,
+          }} />
+           <Stack3.Screen name="SeekerHomeAvailableJobs" component={SeekerAvailableJobs} options={{
+          headerShown: false,
+          }} />
+           <Stack3.Screen name="SeekerHomeJobDetail" component={SeekerJobDetail} options={{
+          headerShown: false,
+          }} />   
+                     
+     
+    </SeekerHomeStack.Navigator>
   )
 }
 
@@ -174,7 +237,7 @@ function SeekerLinks({navigation}){
           headerShown: false,
           }} />
       <Stack2.Screen name="SeekerArchivedJobs" component={SeekerArchivedJobs} options={{
-          headerShown: false,
+          headerShown: false
           }} />
       {/* <Stack2.Screen name="SeekerJobDetail" component={SeekerJobDetail} options={{
           headerShown: false,
@@ -185,14 +248,31 @@ function SeekerLinks({navigation}){
       <Stack2.Screen name="SeekerAddPastPosition" component={SeekerAddPastPosition} options={{
           headerShown: false,
           }} />
+ <Stack2.Screen name="SeekerEditPastPosition" component={SeekerEditPastPosition} options={{
+          headerShown: false,
+          }} />
+
       
     </Stack2.Navigator>
   )
 }
 
+
+function BusinessLinks({navigation}){
+  return(
+    <Stack2.Navigator>
+      <Stack2.Screen name="BusinessEditAccount" component={BusinessEditAccount} options={{
+          headerShown: false,
+          }} />
+
+ </Stack2.Navigator>
+  )
+}
+
+
 function SeekerAppliedJobs0({navigation}){
   return (
-    <Stack2.Navigator>
+    <Stack2.Navigator initialRouteName="SeekerAppliedJobs">
       <Stack2.Screen name="SeekerAppliedJobs" component={SeekerAppliedJobs} options={{
           headerShown: false,
           }} />
@@ -212,8 +292,8 @@ function Business({navigation}){
   let home2 = require('../assets/tab_home_off.png')
   let qr = require('../assets/tab_qr.png')
   let qr2 = require('../assets/tab_qr_off.png')
-  let jobs = require('../assets/tab_jobs.png')
-  let jobs2 = require('../assets/tab_jobs_off.png')
+  let jobs = require('../assets/tabbar_Newjob.png')
+  let jobs2 = require('../assets/tabbar_Newjob_grey.png')
   let notification = require('../assets/tab_notification.png')
   let notification2 = require('../assets/tab_notification_off.png')
 
@@ -223,7 +303,7 @@ function Business({navigation}){
       tabBarIcon: ({ focused, color, size }) => {
         let iconName;
 
-        if (route.name === 'BusinessHome') {
+        if (route.name === 'BusinessHomeStack') {
           iconName = focused ? home : home2;
         } else if (route.name === 'BusinessQrCodeScan') {
           iconName = focused ? qr : qr2;
@@ -232,7 +312,6 @@ function Business({navigation}){
         }else if (route.name === 'BusinessNotifications') {
           iconName = focused ? notification : notification2;
         }
-
         return <Image source={iconName} />;
       },
     })}
@@ -242,9 +321,9 @@ function Business({navigation}){
       showLabel: false
     }}
     >
-      <Tab.Screen name="BusinessHome" component={BusinessHome} />
+      <Tab.Screen name="BusinessHomeStack" component={BusinessHomeRoute} />
       <Tab.Screen name="BusinessQrCodeScan" component={BusinessQrCodeScan} />
-      <Tab.Screen name="ClosedJobs" component={ClosedJobs} />
+      <Tab.Screen name="ClosedJobs" component={ClosedJobs} initialRouteName="BusinessPostNewJob" />
       <Tab.Screen name="BusinessNotifications" component={BusinessNotifications} />
     </Tab.Navigator>
   )
@@ -253,13 +332,14 @@ function Business({navigation}){
 
 function ClosedJobs(){
   return(
-    <Stack2.Navigator>
+    <Stack2.Navigator initialRouteName="BusinessPostNewJob">
+       <Stack2.Screen name="BusinessPostNewJob" component={BusinessPostNewJob} options={{
+          headerShown: false,
+          }} />
       <Stack2.Screen name="BusinessClosedJobs" component={BusinessClosedJobs} options={{
           headerShown: false,
           }} />
-      <Stack2.Screen name="BusinessPostNewJob" component={BusinessPostNewJob} options={{
-          headerShown: false,
-          }} />
+     
       <Stack2.Screen name="BusinessReListJob" component={BusinessReListJob}  options={{
           headerShown: false,
           }} />
@@ -267,11 +347,46 @@ function ClosedJobs(){
   )
 }
 
+function BusinessHomeRoute({navigation}){
+  return(
+    <BusinessHomeStack.Navigator initialRouteName="BusinessHome">
+      <Stack2.Screen name="BusinessHome" component={BusinessHome} options={{
+          headerShown: false,
+          }} />
+           <Stack2.Screen name="BusinessEdit" component={BusinessEdit} options={{
+          headerShown: false,
+          }} />
+           <Stack2.Screen name="BusinessJobDetail" component={BusinessJobDetail} options={{
+          headerShown: false,
+          }} />   
+            <Stack2.Screen name="BusinessJobEdit" component={BusinessJobEdit} options={{
+          headerShown: false,
+          }} />          
+      <Stack2.Screen name="BusinessHomePostNewJob" component={BusinessPostNewJob} options={{
+          headerShown: false,
+          }} />
+          <Stack2.Screen name="BusinessEmployees" component={BusinessEmployees} options={{
+          headerShown: false,
+          }} />
+   <Stack.Screen name="BusinessSeekerProfile" component={BusinessSeekerProfile} options={{
+          headerShown: false,
+          }}/>
+          <Stack.Screen name="BusinessSubmittedApplication" component={BusinessSubmittedApplication} options={{
+          headerShown: false,
+          }}/>
+            <Stack.Screen name="BusinessEmployeesApplication" component={BusinessSubmittedApplication} options={{
+          headerShown: false,
+          }}/>
+
+    </BusinessHomeStack.Navigator>
+  )
+}
+
 
 function Icon(props){
   return (
-    <View style={props.border ? {borderBottomWidth: 2, borderBottomColor: '#5F46BF', paddingBottom: 5} : {paddingBottom: 5}}>
-      <Image source={props.iconName} />
+    <View style={props.border ? {borderBottomWidth: 2, borderBottomColor: '#5F46BF', paddingBottom: 5} : {paddingBottom: 5}} >
+      <Image source={props.iconName}  />
     </View>
   )
 }

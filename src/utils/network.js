@@ -23,6 +23,25 @@ export async function getRequest(url){
   return response
 }
 
+export async function getWithParamRequest(url,form){
+  let response = await fetch(API_URL(url), {
+    method: "GET", 
+    mode: "cors", 
+    cache: "no-cache",
+    credentials: "same-origin",
+    headers: {
+      // "Content-Type": "application/json", 
+      "Access-Control-Allow-Origin": "*",
+      // "Authorization": localStorage.token
+    },
+    redirect: "follow",
+    referrer: "no-referrer",  
+    body:form
+  })
+
+  return response
+}
+
 export async function postFormData(url, form){
   let response = await fetch(API_URL(url), {
     method: "POST", 
@@ -37,8 +56,7 @@ export async function postFormData(url, form){
     redirect: "follow",
     referrer: "no-referrer",  
     body: form
-  })
-
+  });
   return response
 }
 
