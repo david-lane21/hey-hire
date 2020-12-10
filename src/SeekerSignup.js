@@ -20,6 +20,7 @@ import { postFormData } from "./utils/network.js";
 import * as Location from "expo-location";
 import { setUser, setToken } from "./utils/utils.js";
 import { KeyboardAccessoryNavigation } from "react-native-keyboard-accessory";
+import {strings} from './translation/config';
 
 function SeekerSignup({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
@@ -94,8 +95,8 @@ function SeekerSignup({ navigation }) {
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: false,
       aspect: [4, 3],
       quality: 1,
     });
@@ -149,7 +150,7 @@ function SeekerSignup({ navigation }) {
   }
 
   function handleSignup() {
-    navigation.navigate("SeekerLinks", { screen: "SeekerFinishRegistration" });
+   
 
     let token = deviceToken(128);
     let form = new FormData();
@@ -179,7 +180,7 @@ function SeekerSignup({ navigation }) {
         return res.json();
       })
       .then((json) => {
-        console.log(json);
+        console.log('Registration',json);
         if (json.status_code == "300") {
           setError(json.msg);
         } else {
@@ -270,9 +271,10 @@ function SeekerSignup({ navigation }) {
             <TextInput
               style={{ paddingLeft: 10, width: "100%", color: "#000" }}
               onChangeText={(text) => setFirstName(text)}
-              placeholder="First Name..."
+              placeholder={strings.FIRSTNAME}
               value={firstName}
               textContentType="name"
+              autoCompleteType={'name'}
               onFocus={() => {
                 handleFocus(0);
               }}
@@ -290,9 +292,10 @@ function SeekerSignup({ navigation }) {
             <TextInput
               style={{ paddingLeft: 10, width: "100%", color: "#000" }}
               onChangeText={(text) => setLastName(text)}
-              placeholder="Last Name..."
+              placeholder={strings.LASTNAME}
               value={lastName}
               textContentType="name"
+              autoCompleteType={'name'}
               onFocus={() => {
                 handleFocus(1);
               }}
@@ -310,9 +313,10 @@ function SeekerSignup({ navigation }) {
             <TextInput
               style={{ paddingLeft: 10, width: "100%", color: "#000" }}
               onChangeText={(text) => setAddress(text)}
-              placeholder="Address"
+              placeholder={strings.ADDRESS}
               value={address}
               textContentType="fullStreetAddress"
+              autoCompleteType={'street-address'}
               onFocus={() => {
                 handleFocus(2);
               }}
@@ -409,7 +413,7 @@ function SeekerSignup({ navigation }) {
             <TextInput
               style={{ paddingLeft: 10, width: "100%", color: "#000" }}
               onChangeText={(text) => setState(text)}
-              placeholder="State"
+              placeholder={strings.STATE}
               value={state}
               textContentType="addressState"
               onFocus={() => {
@@ -429,7 +433,7 @@ function SeekerSignup({ navigation }) {
             <TextInput
               style={{ paddingLeft: 10, width: "100%", color: "#000" }}
               onChangeText={(text) => setCity(text)}
-              placeholder="City"
+              placeholder={strings.CITY}
               value={city}
               textContentType="addressCity"
               onFocus={() => {
@@ -449,10 +453,11 @@ function SeekerSignup({ navigation }) {
             <TextInput
               style={{ paddingLeft: 10, width: "100%", color: "#000" }}
               onChangeText={(text) => setZipcode(text)}
-              placeholder="Zipcode"
+              placeholder={strings.ZIP}
               value={zipcode}
               keyboardType="numeric"
               textContentType="postalCode"
+              autoCompleteType={'postal-code'}
               onFocus={() => {
                 handleFocus(5);
               }}
@@ -542,10 +547,11 @@ function SeekerSignup({ navigation }) {
               <TextInput
                 style={styles.code2}
                 onChangeText={(text) => setPhone(text)}
-                placeholder="Phone"
+                placeholder={strings.PHONE}
                 value={formatPhone(phone)}
-                keyboardType="numeric"
+                keyboardType={'phone-pad'}
                 textContentType="telephoneNumber"
+                autoCompleteType={'tel'}
                 onFocus={() => {
                   handleFocus(6);
                 }}
@@ -557,7 +563,7 @@ function SeekerSignup({ navigation }) {
           </View>
 
           <Text style={{ color: "#7364BF", paddingTop: 10, paddingBottom: 20 }}>
-            * For recieving interview calls
+            {strings.FOR_RECEIVING_INTERVIEW_CALLS}
           </Text>
 
           <View style={styles.inputField}>
@@ -568,10 +574,12 @@ function SeekerSignup({ navigation }) {
             <TextInput
               style={{ paddingLeft: 10, width: "100%", color: "#000" }}
               onChangeText={(text) => setEmail(text)}
-              placeholder="Email"
+              placeholder={strings.EMAIL}
               value={email}
               type="email"
-              textContentType="emailAddress"
+              textContentType="username"
+              keyboardType={'email-address'}
+              autoCompleteType={'email'}
               onFocus={() => {
                 handleFocus(7);
               }}
@@ -589,10 +597,11 @@ function SeekerSignup({ navigation }) {
             <TextInput
               style={{ paddingLeft: 10, width: "100%", color: "#000" }}
               onChangeText={(text) => setPassword(text)}
-              placeholder="Enter Password"
+              placeholder={strings.ENTER_PASSWORD}
               value={password}
               secureTextEntry={true}
-              textContentType="none"
+              textContentType={'newPassword'}  
+              autoCompleteType={'password'}            
               onFocus={() => {
                 handleFocus(8);
               }}
@@ -610,10 +619,12 @@ function SeekerSignup({ navigation }) {
             <TextInput
               style={{ paddingLeft: 10, width: "100%", color: "#000" }}
               onChangeText={(text) => setPassword2(text)}
-              placeholder="Confirm Password"
+              placeholder={strings.CONFIRM_PASSWORD}
               value={password2}
               secureTextEntry={true}
-              textContentType="none"
+              textContentType={'newPassword'}   
+              autoCompleteType={'password'}
+           
               onFocus={() => {
                 handleFocus(9);
               }}
@@ -643,7 +654,7 @@ function SeekerSignup({ navigation }) {
               <Text
                 style={{ color: "#fff", textAlign: "center", fontSize: 18 }}
               >
-                Create account
+                {strings.CREATE_ACCOUNT}
               </Text>
             </TouchableOpacity>
           </View>

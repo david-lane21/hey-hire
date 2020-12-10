@@ -19,6 +19,7 @@ import { postFormData } from "./utils/network.js";
 import { setUser, setToken } from "./utils/utils.js";
 import { KeyboardAccessoryNavigation } from "react-native-keyboard-accessory";
 import { Platform } from "react-native";
+import {strings} from './translation/config';
 
 function SeekerLogin({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
@@ -56,6 +57,7 @@ function SeekerLogin({ navigation }) {
     form.append("phone", phCode + " " + phone);
     form.append("password", password);
     form.append("user_type", "2");
+    
     form.append("device_tocken", token);
 
     postFormData("user_login", form)
@@ -64,7 +66,9 @@ function SeekerLogin({ navigation }) {
       })
       .then((json) => {
         if (json.data.user_type == "2") {
-          setUser(json.data);
+          let tempUserData = json.data;
+          tempUserData.avatar_image = tempUserData.avatar_image + '?random_number=' + new Date().getTime();
+          setUser(tempUserData);
           setToken(token);
           navigation.navigate("Seeker");
         } else {
@@ -118,16 +122,17 @@ function SeekerLogin({ navigation }) {
 
   return (
     <LinearGradient style={styles.container} colors={["#4E35AE", "#775ED7"]}>
-      <SafeAreaView style={{ flex: 1, height: 480 }}>
+      <SafeAreaView style={{ flex: 1,  }}>
+        <ScrollView showsVerticalScrollIndicator={false}>
         <View
           style={{
             flex: 2,
             alignItems: "flex-start",
             marginHorizontal: "5%",
+            
           }}
         >
           <TouchableOpacity
-            style={{ height: 30, width: 40 }}
             onPress={() => navigation.goBack()}
           >
             <Image
@@ -146,29 +151,32 @@ function SeekerLogin({ navigation }) {
 
         <View
           style={{
-            flex: 6,
+            // flex: 7,
             alignItems: "center",
             marginHorizontal: "5%",
+            marginVertical:'5%'
           }}
         >
           <Image
             source={require("../assets/logo_white_2.png")}
             style={{
               width: 150,
-              height: 170,
+              height: 160,
               marginTop: 0,
+              opacity:1
             }}
+            resizeMode={'stretch'}
           />
         </View>
 
         <View style={{ flex: 1, alignItems: "center" }}>
           <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
             <Text style={{ color: "#fff", fontSize: 18 }}>
-              Log in as a job seeker
+              {strings.LOG_IN_AS_A_JOB_SEEKER}
             </Text>
             <Image
               source={require("../assets/ic_job_seeker.png")}
-              style={{ width: 20, height: 20, marginLeft: 10 }}
+              style={{ width: 20, height: 20, marginLeft: 5 }}
             />
           </View>
         </View>
@@ -239,7 +247,9 @@ function SeekerLogin({ navigation }) {
             </SafeAreaView>
           </Modal>
 
-          <View style={{ flex: 1, flexDirection: "row" }}>
+          <View style={{ 
+            // flex: 1, 
+            flexDirection: "row", marginVertical:5 }}>
             <TouchableOpacity
               style={styles.code}
               onPress={() => setModalVisible(true)}
@@ -254,9 +264,11 @@ function SeekerLogin({ navigation }) {
             <TextInput
               style={styles.code2}
               onChangeText={(text) => setPhone(text)}
-              placeholder="Phone"
+              placeholder={strings.PHONE}
               value={formatPhone(phone)}
               textContentType="telephoneNumber"
+              autoCompleteType={'tel'}
+              keyboardType={'phone-pad'}
               onFocus={() => {
                 handleFocus(0);
               }}
@@ -267,7 +279,9 @@ function SeekerLogin({ navigation }) {
           </View>
         </View>
 
-        <View style={{ flex: 2, marginHorizontal: "5%" }}>
+        <View style={{ 
+          flex: 2, 
+          marginHorizontal: "5%",marginVertical:10 }}>
           <View style={{ flex: 1, flexDirection: "row" }}>
             <Image
               source={require("../assets/ic_lock.png")}
@@ -283,9 +297,10 @@ function SeekerLogin({ navigation }) {
               style={styles.code3}
               secureTextEntry={true}
               onChangeText={(text) => handlePassword(text)}
-              placeholder="Password"
+              placeholder={strings.PASSWORD}
               value={password}
               textContentType="none"
+              autoCompleteType={'password'}
               onFocus={() => {
                 handleFocus(1);
               }}
@@ -296,7 +311,7 @@ function SeekerLogin({ navigation }) {
           </View>
         </View>
 
-        <View style={{ flex: 2, alignItems: "center", marginHorizontal: "5%" }}>
+        <View style={{ flex: 2, alignItems: "center", marginHorizontal: "5%",marginVertical:5 }}>
           <TouchableOpacity
             style={
               loginBotton
@@ -320,7 +335,7 @@ function SeekerLogin({ navigation }) {
             <Text
               style={{ textAlign: "center", fontSize: 18, color: "#4834A6" }}
             >
-              Login
+              {strings.LOGIN}
             </Text>
           </TouchableOpacity>
         </View>
@@ -335,7 +350,7 @@ function SeekerLogin({ navigation }) {
             }}
             onPress={() => navigation.navigate("SeekerForgotPassword")}
           >
-            Forgot your password?
+            {strings.FORGOT_YOUR_PASSWORD}
           </Text>
         </View>
 
@@ -344,6 +359,7 @@ function SeekerLogin({ navigation }) {
             flex: 2,
             flexDirection: "row",
             justifyContent: "center",
+            marginTop:30
           }}
         >
           <Text
@@ -352,7 +368,7 @@ function SeekerLogin({ navigation }) {
               fontSize: 16,
             }}
           >
-            Don't have an account yet?
+            {strings.DONT_ACCOUNT}
           </Text>
           <Text
             style={{
@@ -363,11 +379,12 @@ function SeekerLogin({ navigation }) {
             }}
             onPress={() => navigation.navigate("SeekerSignup")}
           >
-            Sign up
+            {strings.SIGN_UP}
           </Text>
         </View>
 
         <View style={{ flex: 2, alignItems: "center" }}></View>
+        </ScrollView>
       </SafeAreaView>
       <KeyboardAccessoryNavigation
         androidAdjustResize={Platform.OS == "android"}

@@ -12,6 +12,7 @@ import {
   TouchableHighlight
 } from 'react-native'
 import {countries} from './utils/consts.js'
+import {strings} from './translation/config';
 
 function BusinessForgotPassword({navigation}){
   const [modalVisible, setModalVisible] = useState(false);
@@ -55,8 +56,8 @@ function BusinessForgotPassword({navigation}){
     <View style={{flex: 1, alignItems:'center'}}>
       <SafeAreaView>
         <View style={{flex: 1, alignItems: 'center', paddingTop: 30, paddingBottom: 30}}>
-          <Text style={{fontSize: 20}}>Please enter the phone number</Text>
-          <Text style={{fontSize: 20}}>associated with your account below</Text>
+          <Text style={{fontSize: 20}}>{strings.ENTER_PHONE_NUMBER}</Text>
+          <Text style={{fontSize: 20}}>{strings.ASSOCIATED_WITH_ACCOUNT}</Text>
         </View>
 
         <View 
@@ -119,7 +120,7 @@ function BusinessForgotPassword({navigation}){
             <TextInput
               style={styles.code2}
               onChangeText={text => setPhone(text)}
-              placeholder='Phone number'
+              placeholder={strings.PHONE_NUMBER}
               value={phone}
             />
           </View>
@@ -129,7 +130,7 @@ function BusinessForgotPassword({navigation}){
           <TouchableOpacity 
           style={{width:'100%', backgroundColor: '#4834A6', paddingTop: 15, paddingBottom: 15, borderRadius: 25}}
           onPress={() => handleRequest()}>
-            <Text style={{textAlign: 'center', fontSize: 18, color: '#fff'}}>Send</Text>
+            <Text style={{textAlign: 'center', fontSize: 18, color: '#fff'}}>{strings.SEND}</Text>
           </TouchableOpacity>
         </View>
 

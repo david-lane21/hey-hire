@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
 } from 'react-native'
 import {postFormData} from './utils/network.js'
+import {strings} from './translation/config';
 
 
 function SeekerVerificationCode({ route, navigation }){
@@ -22,7 +23,7 @@ function SeekerVerificationCode({ route, navigation }){
   
   function handleResend(){
     let form = new FormData()
-    form.append('user_type', '2')
+    form.append('user_type', '1')
     form.append('phone', num)
     form.append('email', email)
     
@@ -35,7 +36,7 @@ function SeekerVerificationCode({ route, navigation }){
       if(json.status_code == '300'){
         setError(json.msg)
       }else{
-        // console.log(json)
+        console.log(json)
         setOtp(json.otp)
         setMsg("Verification code has been sent.")
       }
@@ -68,33 +69,34 @@ function SeekerVerificationCode({ route, navigation }){
         borderBottomColor: '#eee',
         
         }}>
-          <View style={{width: '25%', marginLeft: 15}}>
+          <View style={{position:'absolute', left: 5}}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Image source={require('../assets/ic_back.png')} style={{width: 28, height: 22}} />
             </TouchableOpacity>
           </View>
-          <View style={{width: '55%'}}>
-            <Text style={{ color: '#4834A6', fontSize: 18}}>VERIFICATION</Text>
+          <View style={{flex:1,alignItems:'center'}}>
+            <Text style={{ color: '#4834A6', fontSize: 18}}>{strings.VERIFICATION}</Text>
           </View>
-          <View>
+          <View style={{position:'absolute', right: 5}}>
             <TouchableOpacity onPress={() => handleResend()}>
-              <Text style={{ color: '#4834A6'}}>Resend</Text>
+              <Text style={{ color: '#4834A6'}}>{strings.RESEND}</Text>
             </TouchableOpacity>
           </View>
         </View>
       
       <View style={{flex: 1}}>
         <View style={{marginTop: 20, marginBottom: 20, alignItems: 'center'}}>
-          <Text style={{fontSize: 18}}>We are sending a verification code by SMS.</Text>
-          <Text style={{fontSize: 18}}>This may be take up to a couple minutes.</Text>
+          <Text style={{fontSize: 18}}>{strings.WE_ARE_SENDING}</Text>
+          <Text style={{fontSize: 18}}>{strings.THIS_MAY_BE_TAKE_UP}</Text>
         </View>
 
         <View style={{margin: 30}}>
           <TextInput
             style={styles.code2}
             onChangeText={text => setCode(text)}
-            placeholder='Verification Code'
+            placeholder={strings.VERIFICATION_CODE}
             value={code}
+            keyboardType="numeric"
           />
         </View>
 
@@ -124,7 +126,7 @@ function SeekerVerificationCode({ route, navigation }){
             alignSelf: 'center'
           }}
           onPress={() => handleVerificationCode()}>
-            <Text style={{color: '#fff', textAlign: 'center', fontSize: 18}}>Submit</Text>
+            <Text style={{color: '#fff', textAlign: 'center', fontSize: 18}}>{strings.SUBMIT}</Text>
           </TouchableOpacity>
         </View>
       </View>

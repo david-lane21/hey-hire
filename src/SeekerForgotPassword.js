@@ -12,6 +12,8 @@ import {
   TouchableHighlight
 } from 'react-native'
 import {countries} from './utils/consts.js'
+import {postFormData} from './utils/network.js'
+import {strings} from './translation/config';
 
 function SeekerForgotPassword({navigation}){
   const [modalVisible, setModalVisible] = useState(false);
@@ -34,7 +36,7 @@ function SeekerForgotPassword({navigation}){
     let token = deviceToken(128)
     let form = new FormData()
     form.append('phone', phCode + ' ' + phone)
-    form.append('user_type', '2')
+    form.append('user_type', '1')
     form.append('device_tocken', token)
     
     postFormData('user_login', form)
@@ -55,8 +57,8 @@ function SeekerForgotPassword({navigation}){
     <View style={{flex: 1, alignItems:'center'}}>
       <SafeAreaView>
         <View style={{flex: 1, alignItems: 'center', paddingTop: 30, paddingBottom: 30}}>
-          <Text style={{fontSize: 20}}>Please enter the phone number</Text>
-          <Text style={{fontSize: 20}}>associated with your account below</Text>
+          <Text style={{fontSize: 20}}>{strings.ENTER_PHONE_NUMBER}</Text>
+          <Text style={{fontSize: 20}}>{strings.ASSOCIATED_WITH_ACCOUNT}</Text>
         </View>
 
         <View 
@@ -119,7 +121,7 @@ function SeekerForgotPassword({navigation}){
             <TextInput
               style={styles.code2}
               onChangeText={text => setPhone(text)}
-              placeholder='Phone number'
+              placeholder={strings.PHONE_NUMBER}
               value={phone}
               textContentType="telephoneNumber"
             />
@@ -128,9 +130,9 @@ function SeekerForgotPassword({navigation}){
 
         <View style={{flex: 1, alignItems: 'center', padding: 20}}>
           <TouchableOpacity 
-          style={{width:'100%', backgroundColor: '#4834A6', paddingTop: 15, paddingBottom: 15, borderRadius: 25}}
+          style={{width:'100%', backgroundColor: '#4834A6', paddingTop: 15, paddingBottom: 15, borderRadius: 25,height:52}}
           onPress={() => handleRequest()}>
-            <Text style={{textAlign: 'center', fontSize: 18, color: '#fff'}}>Send</Text>
+            <Text style={{textAlign: 'center', fontSize: 18, color: '#fff'}}>{strings.SEND}</Text>
           </TouchableOpacity>
         </View>
 

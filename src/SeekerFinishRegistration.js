@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   TouchableHighlight,
   Platform,
+  ActivityIndicator
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
@@ -21,6 +22,7 @@ import { postFormData } from "./utils/network.js";
 import RNPickerSelect from "react-native-picker-select";
 import { useIsFocused } from "@react-navigation/native";
 import { KeyboardAccessoryNavigation } from "react-native-keyboard-accessory";
+import {strings} from './translation/config';
 
 function SeekerFinishRegistration({ navigation }) {
   const isFocused = useIsFocused();
@@ -63,6 +65,9 @@ function SeekerFinishRegistration({ navigation }) {
   const [inputs, setInputs] = useState([]);
   const [nextFocusDisabled, setNextFocusDisabled] = useState(false);
   const [previousFocusDisabled, setPreviousFocusDisabled] = useState(false);
+  const [skill, setSkill] = useState('');
+  const [loading,setLoading] = useState(false);
+
 
   useEffect(() => {
     (async () => {
@@ -79,8 +84,8 @@ function SeekerFinishRegistration({ navigation }) {
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: false,
       aspect: [4, 3],
       quality: 1,
     });
@@ -306,16 +311,20 @@ function SeekerFinishRegistration({ navigation }) {
     form.append("education_level", eduLevel);
     form.append("certificate", certificate);
     form.append("language", langs);
-    form.append("eligible", eligible);
-    form.append("sixteen", sixteen);
-    form.append("convictions", convictions);
+    form.append("eligible", eligible || false);
+    form.append("sixteen", sixteen || false);
+    form.append("convictions", convictions || false);
+    form.append("skill", skills.toString());
+    setLoading(true);
 
     postFormData("update_user", form)
       .then((res) => {
         return res.json();
       })
       .then((json) => {
-        // console.log(json)
+         console.log(json)
+         setLoading(false);
+
         if (json.status_code != "200") {
           setError(json.msg);
         } else {
@@ -349,14 +358,66 @@ function SeekerFinishRegistration({ navigation }) {
     setInputs(inputs);
   }
 
+  function addSkill(){
+    let tempSkills = skills;
+    if(skill && skill.trim()!=''){
+    tempSkills.push(skill);
+    setSkills(tempSkills);
+    setSkill('');
+    }
+  }
+
+  function deleteSkil(index) {
+
+    let tempSkills = skills;
+    skills.splice(index, 1);
+    // setSkills(tempSkills);  
+    console.log(tempSkills);
+    setSkills(oldArray => [...tempSkills]);
+
+  }
+
+  function renderSkill(item){
+   return( <View
+                    
+                    style={{
+                      borderWidth: 1,
+                      borderColor: "#3482FF",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      paddingHorizontal: 2,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: "#3482FF",
+                        // borderWidth: 1,
+                        // borderColor: "#3482FF",
+                        padding: 3,
+                        borderRadius: 3,
+                        marginBottom: 3,
+                        marginLeft: 3,
+                      }}
+                    >
+                      {item.item}
+                    </Text>
+                    <TouchableOpacity onPress={()=>{deleteSkil(item.index)}}>
+                      <Image
+                        source={require("../assets/ic_close_black.png")}
+                        style={{ height: 15, width: 15 }}
+                        resizeMode={"stretch"}
+                      />
+                    </TouchableOpacity>
+                  </View>)
+  }
+
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
-      <ScrollView style={{ flex: 1 }}>
-        <SafeAreaView>
-          <View
+              <SafeAreaView>
+
+      <View
             style={{
-              flex: 1,
-              flexDirection: "row",
+               flexDirection: "row",
               alignItems: "center",
               paddingBottom: 20,
               paddingTop: 20,
@@ -372,10 +433,18 @@ function SeekerFinishRegistration({ navigation }) {
             </View>
             <View style={{ width: "65%" }}>
               <Text style={{ color: "#4834A6", fontSize: 18 }}>
-                REGISTRATION
+                {strings.REGISTRATION}
               </Text>
             </View>
           </View>
+          { loading &&
+          <View style={{position:'absolute',top:0,left:0,backgroundColor:'rgba(0,0,0,0.5)',width:'100%',height:'100%',zIndex:999,}}>
+            <ActivityIndicator animating={true} size={'large'} style={{top:'50%'}} color={'#fff'} />
+          </View>
+          
+           }
+      <ScrollView >
+          
 
           <View style={{ flex: 1 }}>
             <View style={{ flex: 1, alignItems: "center", padding: 20 }}>
@@ -436,7 +505,7 @@ function SeekerFinishRegistration({ navigation }) {
               <TextInput
                 style={{ width: "100%", paddingLeft: 10, color: "#000" }}
                 onChangeText={(text) => setFirstName(text)}
-                placeholder="First Name..."
+                placeholder={strings.FIRSTNAME}
                 value={firstName}
                 textContentType="name"
                 onFocus={() => {
@@ -456,7 +525,7 @@ function SeekerFinishRegistration({ navigation }) {
               <TextInput
                 style={{ width: "100%", paddingLeft: 10, color: "#000" }}
                 onChangeText={(text) => setLastName(text)}
-                placeholder="Last Name..."
+                placeholder={strings.LASTNAME}
                 value={lastName}
                 textContentType="name"
                 onFocus={() => {
@@ -476,7 +545,7 @@ function SeekerFinishRegistration({ navigation }) {
               <TextInput
                 style={{ width: "100%", paddingLeft: 10, color: "#000" }}
                 onChangeText={(text) => setAddress(text)}
-                placeholder="Address..."
+                placeholder={strings.ADDRESS}
                 value={address}
                 textContentType="fullStreetAddress"
                 onFocus={() => {
@@ -575,7 +644,7 @@ function SeekerFinishRegistration({ navigation }) {
               <TextInput
                 style={{ width: "100%", paddingLeft: 10, color: "#000" }}
                 onChangeText={(text) => setState(text)}
-                placeholder="State..."
+                placeholder={strings.STATE}
                 value={state}
                 textContentType="addressState"
                 onFocus={() => {
@@ -595,7 +664,7 @@ function SeekerFinishRegistration({ navigation }) {
               <TextInput
                 style={{ width: "100%", paddingLeft: 10, color: "#000" }}
                 onChangeText={(text) => setCity(text)}
-                placeholder="City..."
+                placeholder={strings.CITY}
                 value={city}
                 textContentType="addressCity"
                 onFocus={() => {
@@ -615,7 +684,7 @@ function SeekerFinishRegistration({ navigation }) {
               <TextInput
                 style={{ width: "100%", paddingLeft: 10, color: "#000" }}
                 onChangeText={(text) => setZipcode(text)}
-                placeholder="Zip..."
+                placeholder={strings.ZIP}
                 value={zipcode}
                 textContentType="postalCode"
                 onFocus={() => {
@@ -701,7 +770,7 @@ function SeekerFinishRegistration({ navigation }) {
                 <TextInput
                   style={styles.code2}
                   onChangeText={(text) => setPhone(text)}
-                  placeholder="Phone"
+                  placeholder={strings.PHONE}
                   value={formatPhone(phone)}
                   textContentType="telephoneNumber"
                   onFocus={() => {
@@ -716,7 +785,7 @@ function SeekerFinishRegistration({ navigation }) {
 
             <View style={{ flex: 1, marginLeft: 10 }}>
               <Text style={{ color: "#6E5FBD" }}>
-                * For receiving interview calls
+                {strings.FOR_RECEIVING_INTERVIEW_CALLS}
               </Text>
             </View>
 
@@ -728,7 +797,7 @@ function SeekerFinishRegistration({ navigation }) {
               <TextInput
                 style={{ paddingLeft: 10, width: "100%", color: "#000" }}
                 onChangeText={(text) => setEmail(text)}
-                placeholder="Email"
+                placeholder={strings.EMAIL}
                 value={email}
                 type="email"
                 textContentType="emailAddress"
@@ -754,12 +823,12 @@ function SeekerFinishRegistration({ navigation }) {
                     source={require("../assets/icon_note.png")}
                     style={{ width: 12, height: 12 }}
                   />
-                  <Text style={{ paddingLeft: 10, fontSize: 18 }}>Bio</Text>
+                  <Text style={{ paddingLeft: 10, fontSize: 18 }}>{strings.BIO}</Text>
                 </View>
                 <TextInput
                   style={{ width: "100%", color: "#666" }}
                   onChangeText={(text) => setBio(text)}
-                  placeholder="Bio"
+                  placeholder={strings.BIO}
                   value={bio}
                   multiline={true}
                   editable={true}
@@ -786,10 +855,15 @@ function SeekerFinishRegistration({ navigation }) {
                     source={require("../assets/ic_star.png")}
                     style={{ width: 12, height: 12 }}
                   />
-                  <Text style={{ paddingLeft: 10, fontSize: 18 }}>Skills</Text>
+                  <Text style={{ paddingLeft: 10, fontSize: 18 }}>{strings.SKILLS}</Text>
                 </View>
                 <View style={{ flex: 1, alignItems: "flex-start" }}>
-                  {skills.map((s) => (
+                <FlatList 
+                  data={skills}
+                  keyExtractor={item=>item}
+                  renderItem={renderSkill} 
+                  />
+                  {/* {skills.map((s) => (
                     <Text
                       key={s}
                       style={{
@@ -804,10 +878,20 @@ function SeekerFinishRegistration({ navigation }) {
                     >
                       {s}
                     </Text>
-                  ))}
-                  <Text key="Enter skill" style={{ color: "#999" }}>
+                  ))} */}
+                  {/* <Text key="Enter skill" style={{ color: "#999" }}>
                     Enter skill
-                  </Text>
+                  </Text> */}
+                  <TextInput
+                  style={{ width: "100%", color: "#000" }}
+                  placeholder={strings.ENTER_SKILL}
+                  textContentType="none"              
+                  onSubmitEditing={()=>addSkill()}
+                  returnKeyType={'done'}
+                  onEndEditing={()=>addSkill()}
+                  value={skill}
+                  onChangeText={(text) => setSkill(text)}
+                />
                 </View>
               </View>
             </View>
@@ -815,7 +899,7 @@ function SeekerFinishRegistration({ navigation }) {
             <View style={{ flex: 1 }}>
               <View>
                 <Text style={{ fontSize: 18, paddingLeft: 20 }}>
-                  Level of Education
+                  {strings.LEVEL_OF_EDUCATION}
                 </Text>
                 <View style={styles.code3}>
                   <Image
@@ -839,7 +923,7 @@ function SeekerFinishRegistration({ navigation }) {
 
             <View style={{ flex: 1 }}>
               <Text style={{ fontSize: 18, paddingLeft: 20 }}>
-                Name of Institution
+                {strings.NAME_OF_INSTITUTION}
               </Text>
               <View style={styles.code}>
                 <Image
@@ -849,7 +933,7 @@ function SeekerFinishRegistration({ navigation }) {
                 <TextInput
                   style={{ width: "100%", color: "#000" }}
                   onChangeText={(text) => setInstitution(text)}
-                  placeholder="Institution"
+                  placeholder={strings.INSTITUTION}
                   value={institution}
                   textContentType="none"
                   onFocus={() => {
@@ -864,7 +948,7 @@ function SeekerFinishRegistration({ navigation }) {
 
             <View style={{ flex: 1 }}>
               <Text style={{ fontSize: 18, paddingLeft: 20 }}>
-                Certification (Optional)
+                {strings.CERTIFICATION} {strings.OPTIONAL}
               </Text>
               <View style={styles.code}>
                 <Image
@@ -874,7 +958,7 @@ function SeekerFinishRegistration({ navigation }) {
                 <TextInput
                   style={{ width: "100%", color: "#000" }}
                   onChangeText={(text) => setCertificate(text)}
-                  placeholder="Certificate"
+                  placeholder={strings.CERTIFICATE}
                   value={certificate}
                   textContentType="none"
                   onFocus={() => {
@@ -919,7 +1003,7 @@ function SeekerFinishRegistration({ navigation }) {
                         </View>
                         <View style={{ width: "60%" }}>
                           <Text style={{ color: "#4834A6", fontSize: 18 }}>
-                            ADD YOUR LANGUAGES
+                            {strings.ADD_YOUR_LANGUAGES}
                           </Text>
                         </View>
                         <View style={{ width: "60%" }}>
@@ -927,7 +1011,7 @@ function SeekerFinishRegistration({ navigation }) {
                             onPress={() => setModalVisible2(false)}
                           >
                             <Text style={{ color: "#4834A6", fontSize: 18 }}>
-                              Done
+                              {strings.DONE}
                             </Text>
                           </TouchableOpacity>
                         </View>
@@ -958,7 +1042,7 @@ function SeekerFinishRegistration({ navigation }) {
                               color: "#000",
                             }}
                             onChangeText={(text) => searchLangs(text)}
-                            placeholder="Search..."
+                            placeholder={strings.SEARCH}
                             value={search}
                           />
                         </View>
@@ -1034,7 +1118,7 @@ function SeekerFinishRegistration({ navigation }) {
                 </SafeAreaView>
               </Modal>
 
-              <Text style={{ fontSize: 18, paddingLeft: 20 }}>Language</Text>
+              <Text style={{ fontSize: 18, paddingLeft: 20 }}>{strings.LANGUAGE}</Text>
               <TouchableOpacity
                 style={styles.code}
                 onPress={() => setModalVisible2(true)}
@@ -1052,7 +1136,7 @@ function SeekerFinishRegistration({ navigation }) {
             <View style={{ flex: 1 }}>
               <View>
                 <Text style={{ fontSize: 18, paddingLeft: 20 }}>
-                  Availability
+                  {strings.AVAILABILITY}
                 </Text>
                 <View style={styles.code3}>
                   <Image
@@ -1097,7 +1181,7 @@ function SeekerFinishRegistration({ navigation }) {
                   />
                 )}
                 <Text style={{ paddingLeft: 5, color: "#3482FF" }}>
-                  Are you eligible to work in the United States?
+                  {strings.ARE_YOU_ELEGIBLE}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -1126,7 +1210,7 @@ function SeekerFinishRegistration({ navigation }) {
                   />
                 )}
                 <Text style={{ paddingLeft: 5, color: "#3482FF" }}>
-                  Are you at least 16 years of age?
+                  {strings.ARE_YOU_AT_LEAST}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -1156,11 +1240,9 @@ function SeekerFinishRegistration({ navigation }) {
                 )}
                 <View style={{ flex: 1 }}>
                   <Text style={{ paddingLeft: 5, color: "#3482FF" }}>
-                    Have you ever been convicted of a crime other
+                    {strings.HAVE_YOU_EVER_BEEN_CONVICTED}
                   </Text>
-                  <Text style={{ paddingLeft: 5, color: "#3482FF" }}>
-                    than a minor traffic violation?
-                  </Text>
+                  
                 </View>
               </TouchableOpacity>
             </View>
@@ -1180,13 +1262,13 @@ function SeekerFinishRegistration({ navigation }) {
                   source={require("../assets/ic_past_positions.png")}
                   style={{ width: 20, height: 20, marginRight: 5 }}
                 />
-                <Text style={{ fontSize: 18 }}>Past positions (Optional)</Text>
+                <Text style={{ fontSize: 18 }}>{strings.PAST_POSTIONS} {strings.OPTIONAL}</Text>
               </View>
               <View style={{ flex: 1 }}>
                 {positions.map((p) => {
                   return (
                     <View
-                      key={p.category + p.company_name + p.city_name}
+                      key={p.post_id}
                       style={{
                         flex: 1,
                         flexDirection: "row",
@@ -1216,21 +1298,46 @@ function SeekerFinishRegistration({ navigation }) {
                   style={{
                     alignSelf: "center",
                     marginTop: 20,
-                    marginBottom: 20,
+                    marginBottom: 120,
                   }}
                   onPress={() => navigation.navigate("SeekerAddPastPosition")}
                 >
                   <Text style={{ color: "#4E35AE", fontSize: 16 }}>
-                    + Add past position
+                    + {strings.ADD_PAST_POSTION}
                   </Text>
                 </TouchableOpacity>
               </View>
             </View>
+            
           </View>
-        </SafeAreaView>
+          
       </ScrollView>
+      <View style={{ position: "absolute", bottom: 100, width: "100%" }}>
+          {error ? (
+            <Text
+              style={{ color: "red", padding: 20, backgroundColor: "#fff" }}
+            >
+              {error}
+            </Text>
+          ) : null}
+          <TouchableOpacity
+            style={{
+              flex: 1,
+              alignContent: "center",
+              backgroundColor: "#5B42BB",
+              padding: 15,
+            }}
+            onPress={() => handleUpdate()}
+          >
+            <Text style={{ color: "#fff", textAlign: "center", fontSize: 18 }}>
+              {strings.FINISH_REGISTRATION}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
 
-      <SafeAreaView>
+
+      {/* <SafeAreaView>
         <View style={{ position: "absolute", bottom: 20, width: "100%" }}>
           {error ? (
             <Text
@@ -1253,7 +1360,7 @@ function SeekerFinishRegistration({ navigation }) {
             </Text>
           </TouchableOpacity>
         </View>
-      </SafeAreaView>
+      </SafeAreaView> */}
       <KeyboardAccessoryNavigation
         onNext={handleFocusNext}
         onPrevious={handleFocusPrev}

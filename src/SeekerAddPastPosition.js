@@ -7,14 +7,17 @@ import {
   TextInput,
   Platform,
   TouchableOpacity,
+  ScrollView,
+  
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { getUser, getToken, setUser } from "./utils/utils.js";
 import { postFormData } from "./utils/network.js";
 import { KeyboardAccessoryNavigation } from "react-native-keyboard-accessory";
+import {strings} from './translation/config';
 
-function SeekerAddPastPosition({ navigation }) {
+function SeekerAddPastPosition({ route,navigation }) {
   const [user, setUser1] = useState({});
   const [deviceToken, setDeviceToken] = useState("");
   const [error, setError] = useState("");
@@ -32,17 +35,19 @@ function SeekerAddPastPosition({ navigation }) {
   const [previousFocusDisabled, setPreviousFocusDisabled] = useState(false);
 
   function hideFrom(i) {
-    setFrom(i);
+    if (i) setFrom(i);
     setShowFrom(false);
   }
 
   function hideTo(i) {
-    setTo(i);
+    if (i) setTo(i);
     setShowTo(false);
   }
 
   function formatDate(d) {
-    return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+    return `${d.getFullYear()}-${("0" + (d.getMonth() + 1)).slice(-2)}-${(
+      "0" + d.getDate()
+    ).slice(-2)}`;
   }
 
   useEffect(() => {
@@ -55,6 +60,8 @@ function SeekerAddPastPosition({ navigation }) {
   }, []);
 
   const handleUpdate = () => {
+    if(position && from && company && city){
+
     let form = new FormData();
     form.append("post_list[0][category]", position);
     form.append("post_list[0][from_date]", formatDate(from));
@@ -72,18 +79,24 @@ function SeekerAddPastPosition({ navigation }) {
         return res.json();
       })
       .then((json) => {
-        // console.log(json)
+        console.log(json)
         if (json.status_code != "200") {
           setError(json.msg);
         } else {
-          // console.log(json.data)
           setUser(json.data);
-          navigation.goBack();
+          // navigation.navigate("SeekerEditProfile", {
+          //   profile: json.data,
+          // });
+          if(route.params && route.params.onGoBack){
+            route.params.onGoBack(json.data.position);
+          }
+           navigation.goBack();
         }
       })
       .catch((err) => {
         console.log(err);
       });
+    }
   };
 
   function handleFocus(index) {
@@ -107,9 +120,11 @@ function SeekerAddPastPosition({ navigation }) {
   }
 
   return (
+    <View style={{ flex: 1, backgroundColor: "#fff" }}>
+    <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
     <SafeAreaView style={{ flex: 1 }}>
       <View style={{ flex: 1 }}>
-        <View style={{ height: 80 }}>
+        <View style={{ height: 60 }}>
           <View
             style={{
               flex: 1,
@@ -120,7 +135,10 @@ function SeekerAddPastPosition({ navigation }) {
             }}
           >
             <View style={{ width: "20%", marginLeft: 15 }}>
-              <TouchableOpacity onPress={() => navigation.goBack()}>
+              <TouchableOpacity onPress={() => {
+                console.log(route.params)
+                navigation.goBack()
+                }}>
                 <Image
                   source={require("../assets/ic_back.png")}
                   style={{ width: 28, height: 22 }}
@@ -129,15 +147,15 @@ function SeekerAddPastPosition({ navigation }) {
             </View>
             <View style={{ width: "70%" }}>
               <Text style={{ color: "#4834A6", fontSize: 18 }}>
-                ADD YOUR PAST POSITION
+                {strings.ADD_YOUR_PAST_POSITION}
               </Text>
             </View>
           </View>
         </View>
 
-        <View style={{ height: 800, margin: 20 }}>
+        <View style={{ margin: 20 }}>
           <View style={{}}>
-            <Text>What was your position?</Text>
+            <Text>{strings.WHAT_WAS_YOUR_POSITION}</Text>
             <View style={styles.inputField}>
               <Image
                 source={require("../assets/ic_description.png")}
@@ -146,7 +164,7 @@ function SeekerAddPastPosition({ navigation }) {
               <TextInput
                 style={{ width: "100%", paddingLeft: 10, color: "#000" }}
                 onChangeText={(text) => setPosition(text)}
-                placeholder="Position"
+                placeholder={strings.POSITON}
                 value={position}
                 onFocus={() => {
                   handleFocus(0);
@@ -159,7 +177,7 @@ function SeekerAddPastPosition({ navigation }) {
           </View>
 
           <View style={{}}>
-            <Text>Who was your employer?</Text>
+            <Text>{strings.WHO_WAS_YOUR_EMPLOYER}</Text>
             <View style={styles.inputField}>
               <Image
                 source={require("../assets/ic_business.png")}
@@ -168,7 +186,7 @@ function SeekerAddPastPosition({ navigation }) {
               <TextInput
                 style={{ width: "100%", paddingLeft: 10, color: "#000" }}
                 onChangeText={(text) => setCompany(text)}
-                placeholder="Company name"
+                placeholder={strings.COMPANY_NAME}
                 value={company}
                 onFocus={() => {
                   handleFocus(1);
@@ -181,7 +199,7 @@ function SeekerAddPastPosition({ navigation }) {
           </View>
 
           <View style={{}}>
-            <Text>Where was your work located?</Text>
+            <Text>{strings.WHERE_WAS_YOUR_WORK_LOCATED}</Text>
             <View style={styles.inputField}>
               <Image
                 source={require("../assets/ic_location_small.png")}
@@ -190,7 +208,7 @@ function SeekerAddPastPosition({ navigation }) {
               <TextInput
                 style={{ width: "100%", paddingLeft: 10, color: "#000" }}
                 onChangeText={(text) => setCity(text)}
-                placeholder="City, Country"
+                placeholder={strings.CITY_COUNTRY}
                 value={city}
                 onFocus={() => {
                   handleFocus(2);
@@ -203,7 +221,7 @@ function SeekerAddPastPosition({ navigation }) {
           </View>
 
           <View style={{}}>
-            <Text>How long have you been working there?</Text>
+            <Text>{strings.HOW_LONG_HAVE_YOU_BEEN_WORKING}</Text>
             <View style={{ flexDirection: "row", width: "85%" }}>
               <View style={styles.inputField}>
                 <Image
@@ -242,7 +260,7 @@ function SeekerAddPastPosition({ navigation }) {
               }}
               onPress={() => handleUpdate()}
             >
-              <Text style={{ color: "#fff", fontSize: 18 }}>Add Position</Text>
+              <Text style={{ color: "#fff", fontSize: 18 }}>{strings.ADD_POSITION}</Text>
             </TouchableOpacity>
           </View>
 
@@ -251,25 +269,31 @@ function SeekerAddPastPosition({ navigation }) {
             mode="date"
             onConfirm={(i) => hideFrom(i)}
             onCancel={(i) => hideFrom(i)}
+            maximumDate={new Date()}
+
           />
           <DateTimePickerModal
             isVisible={showTo}
             mode="date"
             onConfirm={(i) => hideTo(i)}
             onCancel={(i) => hideTo(i)}
+            maximumDate={new Date()}
           />
         </View>
       </View>
-      <KeyboardAccessoryNavigation
-        onNext={handleFocusNext}
-        onPrevious={handleFocusPrev}
-        nextDisabled={nextFocusDisabled}
-        previousDisabled={previousFocusDisabled}
-        androidAdjustResize={Platform.OS=="android"}
-        avoidKeyboard={Platform.OS=="android"}
-        style={Platform.OS=="android" && {top: 0}}
-      />
+     
     </SafeAreaView>
+    </ScrollView>
+ <KeyboardAccessoryNavigation
+ onNext={handleFocusNext}
+ onPrevious={handleFocusPrev}
+ nextDisabled={nextFocusDisabled}
+ previousDisabled={previousFocusDisabled}
+ androidAdjustResize={Platform.OS == "android"}
+ avoidKeyboard={Platform.OS == "android"}
+ style={Platform.OS == "android" && { top: 0 }}
+/></View>
+
   );
 }
 
