@@ -6,6 +6,7 @@ export async function getUser() {
     if(user !== null) {
       return user
     }
+    return user;
   } catch(e) {
     console.log('currentUser didn\'t get');
   }
@@ -36,5 +37,13 @@ export async function setToken(token) {
     await AsyncStorage.setItem('token', token)
   } catch(e) {
     console.log('token didn\'t set');
+  }
+}
+
+export async function removeUser() {
+  try {
+    await AsyncStorage.removeItem('currentUser');
+  } catch(e) {
+    console.log('currentUser didn\'t set');
   }
 }

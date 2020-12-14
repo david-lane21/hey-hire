@@ -81,7 +81,7 @@ function BusinessSeekerProfile({ route, navigation }) {
       .then((json) => {
         console.log("step 2");
         console.log(json);
-        Alert.alert(json.msg);
+        Alert.alert("",json.msg);
         if (json.status_code == 200) {
           navigation.goBack();
         }
@@ -113,6 +113,8 @@ function BusinessSeekerProfile({ route, navigation }) {
       .then((json) => {
         console.log("step 2");
         console.log(json);
+        
+        Alert.alert("",json.msg);
         if (json.status_code == 200) {
           navigation.goBack();
         }
@@ -140,34 +142,26 @@ function BusinessSeekerProfile({ route, navigation }) {
             borderBottomColor: "#715FCB",
           }}
         >
-          <View style={{ width: "33.3%", alignContent: "center" }}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
+          <View style={{ position:'absolute' }}>
+            <TouchableOpacity onPress={() => navigation.goBack()} style={{padding:5}}>
               <Image
                 source={require("../assets/ic_back_w.png")}
                 style={{
                   width: 40,
-                  height: 30,
-                  marginTop: 10,
-                  marginLeft: 10,
+                  height: 30,                 
                 }}
               />
             </TouchableOpacity>
           </View>
-          <View style={{ width: "33.3%" }}>
+          <View style={{flex:1,alignItems:'center',justifyContent:'center' }}>
             <Image
               source={require("../assets/title_header.png")}
               style={{ width: 120, height: 25 }}
             />
           </View>
-          <View style={{ width: "33.3%" }}>
-            <View
-              style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
-            >
-              <View style={{ flex: 2 }}></View>
-            </View>
-          </View>
+         
         </View>
-        <ScrollView style={{ marginBottom: 60 }}>
+        <ScrollView style={{ marginBottom: 50 }}>
           {/* <View
             style={{
               backgroundColor: "#4E35AE",
@@ -586,7 +580,7 @@ function BusinessSeekerProfile({ route, navigation }) {
           </View>
 
 
-          {businessUser && route.name!="BusinessSeekerProfileMain" && (
+          {businessUser && (
             <View
            style={{
              width: "100%",
@@ -613,7 +607,7 @@ function BusinessSeekerProfile({ route, navigation }) {
             </View>
           )}
 
-          {!businessUser && route.name!="BusinessSeekerProfileMain" && (
+          {!businessUser && (
            <View
            style={{
              width: "100%",
@@ -647,14 +641,15 @@ function BusinessSeekerProfile({ route, navigation }) {
               </TouchableOpacity>
             </View>
           )}
-          {!businessUser && route.name!="BusinessSeekerProfileMain" && (
+          {!businessUser && (
 
 <View
            style={{
              width: "100%",
              padding: 20,
              backgroundColor: "#fff",
-            paddingVertical:10
+            paddingVertical:5,
+            
            }}
          >
               <TouchableOpacity
@@ -678,7 +673,7 @@ function BusinessSeekerProfile({ route, navigation }) {
               </TouchableOpacity>
             </View>
           )}
-{!businessUser && route.name!="BusinessSeekerProfileMain" && (
+{!businessUser  && (
             <View
            style={{
              width: "100%",

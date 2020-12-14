@@ -20,6 +20,8 @@ import { setUser, setToken } from "./utils/utils.js";
 import { KeyboardAccessoryNavigation } from "react-native-keyboard-accessory";
 import { Platform } from "react-native";
 import {strings} from './translation/config';
+import { AuthContext } from "./navigation/context";
+
 
 function SeekerLogin({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
@@ -31,6 +33,7 @@ function SeekerLogin({ navigation }) {
   const [inputs, setInputs] = useState([]);
   const [nextFocusDisabled, setNextFocusDisabled] = useState(false);
   const [previousFocusDisabled, setPreviousFocusDisabled] = useState(false);
+  const { signIn } = React.useContext(AuthContext);
 
   function _onPress(item) {
     setModalVisible(false);
@@ -70,7 +73,8 @@ function SeekerLogin({ navigation }) {
           tempUserData.avatar_image = tempUserData.avatar_image + '?random_number=' + new Date().getTime();
           setUser(tempUserData);
           setToken(token);
-          navigation.navigate("Seeker");
+          signIn(tempUserData);
+          // navigation.navigate("Seeker");
         } else {
           console.log(json.data.user_type);
         }

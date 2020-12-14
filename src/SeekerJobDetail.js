@@ -232,7 +232,8 @@ function SeekerJobDetail({ route, navigation }) {
             </View>
           </View>
         </View>
-        <ScrollView >
+        <ScrollView       style={{marginBottom:50}}
+>
 
 
           <View style={{ flex: 1, alignItems: "center", padding: 20 }}>

@@ -129,7 +129,7 @@ function BusinessJobDetail({ route, navigation }) {
             alignItems: "center",
             borderBottomWidth: 1,
             borderBottomColor: "#715FCB",
-            paddingTop: 15,
+            paddingTop: 10,
             paddingBottom: 10
           }}
         >

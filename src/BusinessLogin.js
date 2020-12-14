@@ -21,6 +21,7 @@ import { postFormData } from "./utils/network.js";
 import { setUser, setToken } from "./utils/utils.js";
 import { KeyboardAccessoryNavigation } from "react-native-keyboard-accessory";
 import { strings } from "./translation/config";
+import { AuthContext } from "./navigation/context";
 
 function BusinessLogin({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
@@ -31,6 +32,8 @@ function BusinessLogin({ navigation }) {
   const [inputs, setInputs] = useState([]);
   const [nextFocusDisabled, setNextFocusDisabled] = useState(false);
   const [previousFocusDisabled, setPreviousFocusDisabled] = useState(false);
+  const { signIn } = React.useContext(AuthContext);
+
 
   function _onPress(item) {
     setModalVisible(false);
@@ -63,7 +66,8 @@ function BusinessLogin({ navigation }) {
           setUser(json.data);
           setToken(token);
           if (json.data.user_type == "1") {
-            navigation.navigate("Business");
+            signIn(json.data);
+            // navigation.navigate("Business");
           } else {
             console.log(json.data.user_type);
           }
@@ -249,7 +253,7 @@ function BusinessLogin({ navigation }) {
                   style={styles.code2}
                   onChangeText={(text) => setPhone(text)}
                   placeholder={strings.PHONE}
-                  value={formatPhone(phone)}
+                  value={(phone)}
                   keyboardType={'phone-pad'}
                   onFocus={() => {
                     handleFocus(0);

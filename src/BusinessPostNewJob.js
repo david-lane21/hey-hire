@@ -65,6 +65,8 @@ function BusinessPostNewJob({ navigation }) {
   }
 
   function handlePostJob() {
+
+    if(position && description && experience && date){
     let form = new FormData();
     form.append("position", position);
     form.append("position_desc", description);
@@ -90,6 +92,7 @@ function BusinessPostNewJob({ navigation }) {
       .catch((err) => {
         console.log(err);
       });
+    }
   }
 
   function handleFocus(index) {
@@ -180,6 +183,7 @@ function BusinessPostNewJob({ navigation }) {
                   ref={(ref) => {
                     handleRef(0, ref);
                   }}
+                  autoCorrect={false}
                 />
               </View>
             </View>
@@ -218,6 +222,8 @@ function BusinessPostNewJob({ navigation }) {
                   ref={(ref) => {
                     handleRef(1, ref);
                   }}
+                  autoCorrect={false}
+
                 />
               </View>
             </View>
@@ -256,6 +262,8 @@ function BusinessPostNewJob({ navigation }) {
                   ref={(ref) => {
                     handleRef(2, ref);
                   }}
+                  autoCorrect={false}
+
                 />
               </View>
             </View>
@@ -334,7 +342,7 @@ function BusinessPostNewJob({ navigation }) {
         previousDisabled={previousFocusDisabled}
         androidAdjustResize={Platform.OS == "android"}
         avoidKeyboard={Platform.OS == "android"}
-        style={{ top: -220 }}
+        style={Platform.OS == "android" ? { top: -100 } : {top:-175}}
       />
     </View>
   );

@@ -200,7 +200,9 @@ function SeekerAvailableJobs({ route, navigation }) {
               </TouchableOpacity>
             </View>
           </View>
-      <ScrollView horizontal={false}  refreshControl={
+      <ScrollView horizontal={false}  
+      style={{marginBottom:50}}
+      refreshControl={
         <RefreshControl refreshing={refresh} onRefresh={() => { loadDate() }} tintColor={'#fff'}
         />
       }>

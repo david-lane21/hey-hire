@@ -21,6 +21,8 @@ import * as Location from "expo-location";
 import { setUser, setToken } from "./utils/utils.js";
 import { KeyboardAccessoryNavigation } from "react-native-keyboard-accessory";
 import {strings} from './translation/config';
+import { AuthContext } from "./navigation/context";
+
 
 function SeekerSignup({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
@@ -44,6 +46,7 @@ function SeekerSignup({ navigation }) {
   const [inputs, setInputs] = useState([]);
   const [nextFocusDisabled, setNextFocusDisabled] = useState(false);
   const [previousFocusDisabled, setPreviousFocusDisabled] = useState(false);
+
 
   useEffect(() => {
     (async () => {
@@ -181,9 +184,7 @@ function SeekerSignup({ navigation }) {
       })
       .then((json) => {
         console.log('Registration',json);
-        if (json.status_code == "300") {
-          setError(json.msg);
-        } else {
+        if (json.status_code == "200") {
           setError("");
           setUser(json.data);
           setToken(token);
@@ -192,6 +193,12 @@ function SeekerSignup({ navigation }) {
             email: email,
             otp: json.otp,
           });
+        } else {
+          if(json.msg){
+          setError(json.msg);
+          }else{
+            setError(json);
+          }
         }
       })
       .catch((err) => {

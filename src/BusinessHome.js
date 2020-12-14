@@ -10,11 +10,12 @@ import {
   FlatList,
   RefreshControl
 } from "react-native";
-import { getUser,getToken } from "./utils/utils.js";
+import { getUser,getToken,removeUser } from "./utils/utils.js";
 import { postFormData } from "./utils/network.js";
 import { LinearGradient } from "expo-linear-gradient";
 import { useIsFocused } from "@react-navigation/native";
 import {strings} from './translation/config';
+import { AuthContext } from "./navigation/context";
 
 function BusinessHome({ navigation }) {
   const isFocused = useIsFocused();
@@ -24,6 +25,7 @@ function BusinessHome({ navigation }) {
   const [jobs, setJobs] = useState([]);
   const [deviceToken, setDeviceToken] = useState("");
   const [refresh, setRefresh] = useState(false);
+  const { signOut } = React.useContext(AuthContext);
 
 
   useEffect(() => {
@@ -107,6 +109,7 @@ function BusinessHome({ navigation }) {
       colors={["#4E35AE", "#775ED7"]}
     >
       <SafeAreaView>
+     
       <View
             style={{
               // backgroundColor: '#4E35AE',
@@ -121,7 +124,10 @@ function BusinessHome({ navigation }) {
           >
             <View style={{ width: "33.3%" }}>
               <TouchableOpacity
-                onPress={() => navigation.navigate("HomeScreen")}
+                onPress={() =>{
+                  removeUser();
+                  signOut();
+                }}
               >
                 <Text style={{ paddingLeft: 10, color: "#fff", fontSize: 18 }}>
                   {strings.LOGOUT}
@@ -154,10 +160,14 @@ function BusinessHome({ navigation }) {
               </TouchableOpacity>
             </View>
           </View>
-      <ScrollView style={{marginBottom:50}} refreshControl={
+      <ScrollView style={{marginBottom:50,backgroundColor:'#fff'}} refreshControl={
         <RefreshControl refreshing={refresh} onRefresh={() => { loadData() }}  tintColor={'#fff'}   />
-      }>
-                
+      }
+      
+      >
+             <LinearGradient
+      colors={["#4E35AE", "#775ED7"]}
+    >
 
           <View
             style={{
@@ -255,7 +265,7 @@ function BusinessHome({ navigation }) {
               {user.business_detail}
             </Text>
           </View>
-
+          </LinearGradient>    
           <View
             style={{
               flex: 1,
@@ -306,6 +316,7 @@ function BusinessHome({ navigation }) {
             <FlatList
               data={jobs}
               keyExtractor={(item) => item.created_date}
+              style={{minHeight:300}}
               renderItem={({ item, index, separators }) => (
                 <TouchableOpacity onPress={()=> {
                   let job = item;

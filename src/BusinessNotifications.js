@@ -82,7 +82,8 @@ function BusinessNotifications({ navigation }) {
           console.log(json)
           console.log('+++++++++++++++++++')
 
-          setNotification(json.data);
+          // setNotification(json.data);
+          sortNotification(json.data)
           setRefresh(false);
 
 
@@ -100,9 +101,9 @@ function BusinessNotifications({ navigation }) {
           return res.json()
         })
         .then(json => {
-          // console.log('Visitor +++++++++++++++++++')
-          // console.log(json)
-          // console.log('+++++++++++++++++++')
+          console.log('Visitor +++++++++++++++++++')
+          console.log(json)
+          console.log('+++++++++++++++++++')
           let tempVisitors = [];
 
           json.data.forEach((item)=>{
@@ -120,6 +121,15 @@ function BusinessNotifications({ navigation }) {
 
 
     })
+  }
+
+  function sortNotification(data) {
+    let tempNotifications = data.sort((a, b) => {
+      let dateA = new Date(a.created_date);
+      let dateB = new Date(b.created_date);
+      return dateB - dateA;
+    });
+    setNotification(tempNotifications);  
   }
 
 
@@ -182,7 +192,15 @@ function BusinessNotifications({ navigation }) {
         alignItems: 'center',
         marginHorizontal: 20
       }}
-      onPress={()=>navigation.navigate('BusinessSeekerProfileMain',{seeker:item.item.user_detail})}
+      onPress={()=>
+        {
+          let tempUser = item.item.user_detail;
+          tempUser.job_detail= [item.item.job_detail];
+        navigation.navigate('BusinessSeekerProfileMain',{seeker:tempUser});
+
+        }
+      
+      }
       >
         <View style={{ flex: 1 }}>
           <Image source={{ uri: item.item.user_detail.avatar_image }} style={{ width: 40, height: 40, borderRadius: 20, marginRight: 10 }} />
@@ -190,7 +208,7 @@ function BusinessNotifications({ navigation }) {
         <View style={{ flex: 8, marginHorizontal: 20 }}>
           <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{item.item.position_name}</Text>
           <Text style={{ marginRight: 10 }}>{item.item.message}</Text>
-          <Text style={{ fontSize: 12, textAlign: 'right' ,fontWeight:'bold'}}>{moment(item.item.created_date).fromNow()}</Text>
+          <Text style={{ fontSize: 12, textAlign: 'right' ,fontWeight:'bold'}}>{moment.utc(item.item.created_date).fromNow()}</Text>
         </View>
 
       </TouchableOpacity>
@@ -276,7 +294,8 @@ function Header() {
       alignItems: 'center',
       borderBottomWidth: 1,
       borderBottomColor: '#ccc',
-      paddingBottom: 10
+      paddingBottom: 10,
+      paddingTop:10
     }}>
       <View style={{ width: '100%', alignItems: 'center' }}>
         <Text style={{ color: '#4E35AE', fontSize: 18 }}>Notifications</Text>

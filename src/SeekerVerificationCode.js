@@ -51,7 +51,8 @@ function SeekerVerificationCode({ route, navigation }){
     setError('')
     if(code === otp){
       // navigation.navigate('Seeker')
-      navigation.navigate('SeekerLinks', { screen: 'SeekerFinishRegistration'})
+      // navigation.navigate('SeekerLinks', { screen: 'SeekerFinishRegistration'})
+      navigation.navigate('SeekerFinishRegistration')
     }else{
       setError('Incorrect verification code')
     }
@@ -86,8 +87,9 @@ function SeekerVerificationCode({ route, navigation }){
       
       <View style={{flex: 1}}>
         <View style={{marginTop: 20, marginBottom: 20, alignItems: 'center'}}>
-          <Text style={{fontSize: 18}}>{strings.WE_ARE_SENDING}</Text>
-          <Text style={{fontSize: 18}}>{strings.THIS_MAY_BE_TAKE_UP}</Text>
+          <Text style={{fontSize: 18,textAlign:'center'}}>{strings.WE_ARE_SENDING}</Text>
+          <Text style={{fontSize: 18,textAlign:'center'}}>{strings.THIS_MAY_BE_TAKE_UP}</Text>
+          <Text style={{fontSize: 18,textAlign:'center'}}>{strings.MSG_DATA}</Text>
         </View>
 
         <View style={{margin: 30}}>
@@ -197,6 +199,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 15,
     alignSelf: 'center',
+    textAlign:'center',
     width: '80%',
     height: 60,
     fontSize: 18,

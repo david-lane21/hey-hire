@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   ScrollView,
   RefreshControl,
-  FlatList
+  FlatList,
+  Alert
 } from 'react-native'
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -52,9 +53,12 @@ function SeekerNotifications({navigation}){
         console.log('+++++++++++++++++++')
         console.log(json)
         console.log('+++++++++++++++++++')
-
-        setNotification(json.data);
-       setRefresh(false);
+        if(json.data){
+        sortNotification(json.data);
+        }else{
+          Alert.alert("",json)
+        }
+        setRefresh(false);
 
      
       })
@@ -62,6 +66,15 @@ function SeekerNotifications({navigation}){
         console.log(err)
       })
     })
+  }
+
+  function sortNotification(data) {
+    let tempNotifications = data.sort((a, b) => {
+      let dateA = new Date(a.created_date);
+      let dateB = new Date(b.created_date);
+      return dateB - dateA;
+    });
+    setNotification(tempNotifications);  
   }
 
   function renderItem(item){

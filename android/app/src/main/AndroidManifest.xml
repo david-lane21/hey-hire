@@ -54,6 +54,22 @@
                       android:path="/qr" />
               </intent-filter>
 
+
+  <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="app.apployme.com" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="http" android:host="app.apployme.com"
+                      android:path="/qr" />
+              </intent-filter>
+
     </activity>
     <activity android:name="com.facebook.react.devsupport.DevSettingsActivity"/>
     <activity

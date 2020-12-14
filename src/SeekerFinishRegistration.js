@@ -23,6 +23,7 @@ import RNPickerSelect from "react-native-picker-select";
 import { useIsFocused } from "@react-navigation/native";
 import { KeyboardAccessoryNavigation } from "react-native-keyboard-accessory";
 import {strings} from './translation/config';
+import { AuthContext } from "./navigation/context";
 
 function SeekerFinishRegistration({ navigation }) {
   const isFocused = useIsFocused();
@@ -67,6 +68,8 @@ function SeekerFinishRegistration({ navigation }) {
   const [previousFocusDisabled, setPreviousFocusDisabled] = useState(false);
   const [skill, setSkill] = useState('');
   const [loading,setLoading] = useState(false);
+
+  const { signIn } = React.useContext(AuthContext);
 
 
   useEffect(() => {
@@ -330,7 +333,9 @@ function SeekerFinishRegistration({ navigation }) {
         } else {
           setUser(json.data);
           // navigation.goBack()
-          navigation.navigate("Seeker");
+          signIn(json.data);
+
+          // navigation.navigate("Seeker");
         }
       })
       .catch((err) => {

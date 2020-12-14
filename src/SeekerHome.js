@@ -10,7 +10,7 @@ import {
   RefreshControl,
   Linking
 } from "react-native";
-import { getUser } from "./utils/utils.js";
+import { getUser,removeUser } from "./utils/utils.js";
 import { postFormData } from "./utils/network.js";
 import { LinearGradient } from "expo-linear-gradient";
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
@@ -20,6 +20,7 @@ import { Dimensions } from "react-native";
 import Header from "./components/Header";
 import {strings} from './translation/config';
 import NavigationService from './utils/NavigationService';
+import { AuthContext } from "./navigation/context";
 
 function SeekerHome({ navigation }) {
   const isFocused = useIsFocused();
@@ -39,6 +40,7 @@ function SeekerHome({ navigation }) {
     longitudeDelta: 0.0421,
   });
   const [refresh, setRefresh] = useState(false);
+  const { signOut } = React.useContext(AuthContext);
 
 
   useEffect(() => {
@@ -280,9 +282,13 @@ loadDate();
           >
             <View style={{ position:'absolute',left:5 }}>
               <TouchableOpacity
-                onPress={() => navigation.navigate("HomeScreen")}
+                onPress={() => {
+                  removeUser();
+                  signOut();
+                }}
+                style={{padding:5}}
               >
-                <Text style={{ paddingLeft: 10, color: "#fff", fontSize: 18 }}>
+                <Text style={{ paddingHorizontal: 10, color: "#fff", fontSize: 18 }}>
                   {strings.LOGOUT}
                 </Text>
               </TouchableOpacity>
