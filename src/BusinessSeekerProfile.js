@@ -142,6 +142,12 @@ function BusinessSeekerProfile({ route, navigation }) {
             borderBottomColor: "#715FCB",
           }}
         >
+           <View style={{flex:1,alignItems:'center',justifyContent:'center' }}>
+            <Image
+              source={require("../assets/title_header.png")}
+              style={{ width: 120, height: 25 }}
+            />
+          </View>
           <View style={{ position:'absolute' }}>
             <TouchableOpacity onPress={() => navigation.goBack()} style={{padding:5}}>
               <Image
@@ -153,12 +159,7 @@ function BusinessSeekerProfile({ route, navigation }) {
               />
             </TouchableOpacity>
           </View>
-          <View style={{flex:1,alignItems:'center',justifyContent:'center' }}>
-            <Image
-              source={require("../assets/title_header.png")}
-              style={{ width: 120, height: 25 }}
-            />
-          </View>
+         
          
         </View>
         <ScrollView style={{ marginBottom: 50 }}>
@@ -212,7 +213,7 @@ function BusinessSeekerProfile({ route, navigation }) {
               borderBottomLeftRadius: 5,
               borderBottomRightRadius: 5,
             }}
-            colors={["#4E35AE", "#775ED7"]}
+            colors={["#4E35AE","#4E35AE", "#775ED7"]}
           >
             <Image
               source={{ uri: user.avatar_image }}

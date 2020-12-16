@@ -342,7 +342,7 @@ function BusinessPostNewJob({ navigation }) {
         previousDisabled={previousFocusDisabled}
         androidAdjustResize={Platform.OS == "android"}
         avoidKeyboard={Platform.OS == "android"}
-        style={Platform.OS == "android" ? { top: -100 } : {top:-175}}
+        style={Platform.OS == "android" ? { top: -100 } : {top:-80}}
       />
     </View>
   );

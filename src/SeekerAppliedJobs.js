@@ -103,13 +103,13 @@ function SeekerAppliedJobs({ navigation }) {
                 item.like = 1;
               } else {
                 item.like = 0;
-
               }
             }
             return item;
           });
           setFilteredJobs((jobs) => [...findJob]);
         }
+        // loadData();
         // Alert.alert("", json.msg);
         // console.log('+++++++++++')
       })
@@ -122,9 +122,9 @@ function SeekerAppliedJobs({ navigation }) {
   const list = filteredJobs.map((item => {
     // console.log(item)
     const isLiked = likedJobs.filter((item1) => item.id == item1.id);
-    console.log('isLiked', isLiked)
+    console.log('isLiked', isLiked,item)
     return (
-      <TouchableOpacity key={item.id} onPress={() => navigation.navigate('SeekerAppliedJobs0', {
+      <TouchableOpacity key={item.id+""+item.like + ""+item.aplied} onPress={() => navigation.navigate('SeekerAppliedJobs0', {
         screen: 'SeekerJobDetail',
         params: { job: item }
       }
@@ -161,7 +161,7 @@ function SeekerAppliedJobs({ navigation }) {
 
 
 
-                {(item.aplied === '1' && (isLiked.length == 0) || item.like!=1) ?
+                {(item.aplied  == 1 )?
                   <Image source={require('../assets/ic_applied.png')} style={{ width: 60, height: 15, marginLeft: 15, }} />
                   : null}
               </View>

@@ -201,7 +201,7 @@ function SeekerHome({ navigation }) {
   function dateFormat(date) {
     if (date) {
       let d = date.split("-");
-      return `${d[1]}.${d[2]}.${d[0]}`;
+      return `${d[1]}/${d[2]}/${d[0]}`;
     } else {
       return "";
     }
@@ -280,6 +280,12 @@ loadDate();
               paddingTop: 20,
             }}
           >
+             <View style={{flex:1,alignItems:'center' }}>
+              <Image
+                source={require("../assets/title_header.png")}
+                style={{ width: 120, height: 25 }}
+              />
+            </View>
             <View style={{ position:'absolute',left:5 }}>
               <TouchableOpacity
                 onPress={() => {
@@ -293,12 +299,7 @@ loadDate();
                 </Text>
               </TouchableOpacity>
             </View>
-            <View style={{flex:1,alignItems:'center' }}>
-              <Image
-                source={require("../assets/title_header.png")}
-                style={{ width: 120, height: 25 }}
-              />
-            </View>
+           
             <View style={{ position:'absolute',right:5 }}>
               <TouchableOpacity
                 onPress={() =>

@@ -56,7 +56,8 @@ function BusinessLogin({ navigation }) {
     form.append("password", password);
     form.append("user_type", "1");
     form.append("device_tocken", token);
-
+    setToken(token);
+console.log(token);
     postFormData("user_login", form)
       .then((res) => {
         return res.json();
@@ -64,7 +65,6 @@ function BusinessLogin({ navigation }) {
       .then((json) => {
         if (json.status_code == 200) {
           setUser(json.data);
-          setToken(token);
           if (json.data.user_type == "1") {
             signIn(json.data);
             // navigation.navigate("Business");
@@ -253,7 +253,7 @@ function BusinessLogin({ navigation }) {
                   style={styles.code2}
                   onChangeText={(text) => setPhone(text)}
                   placeholder={strings.PHONE}
-                  value={(phone)}
+                  value={formatPhone(phone)}
                   keyboardType={'phone-pad'}
                   onFocus={() => {
                     handleFocus(0);

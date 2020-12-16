@@ -33,6 +33,7 @@ export async function getToken() {
 }
 
 export async function setToken(token) {
+  console.log('setToken',token)
   try {
     await AsyncStorage.setItem('token', token)
   } catch(e) {

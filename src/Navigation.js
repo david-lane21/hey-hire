@@ -91,6 +91,8 @@ export function Navigation(props) {
           component={SeekerLinks}
           options={{
             headerShown: false,
+            gestureEnabled:false
+
           }}
         />
 
@@ -99,6 +101,8 @@ export function Navigation(props) {
           component={Business}
           options={{
             headerShown: false,
+            gestureEnabled:false
+
           }}
         />
 
@@ -107,6 +111,8 @@ export function Navigation(props) {
           component={BusinessLinks}
           options={{
             headerShown: false,
+            gestureEnabled:false
+
           }}
         />
 
@@ -241,6 +247,8 @@ export function AppNavigation({navigation}){
           component={Seeker}
           options={{
             headerShown: false,
+            gestureEnabled:false
+
           }}
         />
 
@@ -249,6 +257,8 @@ export function AppNavigation({navigation}){
           component={SeekerLinks}
           options={{
             headerShown: false,
+            gestureEnabled:false
+
           }}
         />
 
@@ -257,6 +267,8 @@ export function AppNavigation({navigation}){
           component={Business}
           options={{
             headerShown: false,
+            gestureEnabled:false
+
           }}
         />
 
@@ -265,6 +277,8 @@ export function AppNavigation({navigation}){
           component={BusinessLinks}
           options={{
             headerShown: false,
+            gestureEnabled:false
+
           }}
         />
 
@@ -279,6 +293,8 @@ export function AppNavigation({navigation}){
               backgroundColor: "#4E35AE",
             },
             headerTintColor: "#fff",
+            gestureEnabled:false
+
           }}
         />
 
@@ -298,6 +314,8 @@ export function AppNavigation({navigation}){
           component={BusinessVisitorDetail}
           options={{
             headerShown: false,
+            gestureEnabled:false
+
           }}
         />     
           </AppNavigationStack.Navigator>
@@ -313,6 +331,8 @@ export function AuthNavigation({navigation}){
           component={HomeScreen}
           options={{
             headerShown: false,
+            gestureEnabled:false
+
           }}
         />
         <AuthNavigationStack.Screen
@@ -320,6 +340,8 @@ export function AuthNavigation({navigation}){
           component={SeekerLogin}
           options={{
             headerShown: false,
+            gestureEnabled:false
+
           }}
         />
         <AuthNavigationStack.Screen
@@ -327,6 +349,8 @@ export function AuthNavigation({navigation}){
           component={BusinessLogin}
           options={{
             headerShown: false,
+            gestureEnabled:false
+
           }}
         />
         <AuthNavigationStack.Screen
@@ -340,6 +364,8 @@ export function AuthNavigation({navigation}){
               backgroundColor: "#fff",
             },
             headerTintColor: "#4E35AE",
+            gestureEnabled:false
+
           }}
         />
         <AuthNavigationStack.Screen
@@ -347,6 +373,8 @@ export function AuthNavigation({navigation}){
           component={SeekerVerificationCode}
           options={{
             headerShown: false,
+            gestureEnabled:false
+
           }}
         />
         <AuthNavigationStack.Screen
@@ -360,6 +388,8 @@ export function AuthNavigation({navigation}){
               backgroundColor: "#4E35AE",
             },
             headerTintColor: "#fff",
+            gestureEnabled:false
+
           }}
         />
         <AuthNavigationStack.Screen
@@ -373,6 +403,8 @@ export function AuthNavigation({navigation}){
               backgroundColor: "#4E35AE",
             },
             headerTintColor: "#fff",
+            gestureEnabled:false
+
           }}
         />
         <AuthNavigationStack.Screen
@@ -386,11 +418,22 @@ export function AuthNavigation({navigation}){
               backgroundColor: "#4E35AE",
             },
             headerTintColor: "#fff",
+            gestureEnabled:false
+
           }}
         />
         <Stack2.Screen
         name="SeekerFinishRegistration"
         component={SeekerFinishRegistration}
+        options={{
+          headerShown: false,
+          gestureEnabled:false
+
+        }}
+      />
+      <Stack2.Screen
+        name="SeekerAddPastPosition"
+        component={SeekerAddPastPosition}
         options={{
           headerShown: false,
         }}

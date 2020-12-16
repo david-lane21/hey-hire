@@ -156,50 +156,28 @@ function BusinessSubmittedApplication({ route, navigation }) {
             borderBottomColor: "rgba(0,0,0,0.2)",
           }}
         >
-          <View style={{ position: "absolute",left:10,top:15 }}>
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              style={{ padding:5 }}
-            >
-              <Image
-                source={require("../assets/ic_back2.png")}
-                style={{ width: 28, height: 22 }}
-              />
-            </TouchableOpacity>
-          </View>
+         
           <View
             style={{flex:1, alignItems: "center", justifyContent: "center" }}
           >
             <Text style={{ color: "#4834A6", fontSize: 18 }}>{headerName}</Text>
           </View>
+          <View  style={{ position: "absolute",left:5}}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={{ padding: 30,alignItems:'center',justifyContent:'center'}}
+        >
+          <Image
+            source={require("../assets/ic_back2.png")}
+            style={{  width: 28, height: 22,position:'absolute',top:20,zIndex:-223 }}
+            onPress={() => navigation.goBack()}
+
+          />
+        </TouchableOpacity>
+        </View>
         </View>
         <ScrollView>
-          {/* <View
-            style={{
-                flex:1,
-                width:'100%',
-              flexDirection: "row",
-              alignItems: "center",
-              paddingTop: 20,
-              justifyContent: "center",
-              paddingBottom: 10,
-              borderBottomWidth: 0.25,
-              borderBottomColor: "rgba(0,0,0,0.2)"
-            }}
-          >
-          <View style={{width:'25%', left:0, marginLeft:10}}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-                <Image
-                  source={require("../assets/ic_back2.png")}
-                  style={{ width: 28, height: 22 }}
-                />
-              </TouchableOpacity>
-          </View>
-          <View style={{width:'75%'}}>
-          <Text style={{ color: '#4834A6', fontSize: 18}}>Submitted application</Text>
-          </View>
-              
-          </View> */}
+         
 
           <View style={{ flex: 1, alignItems: "center", padding: 20 }}>
             <FlatList

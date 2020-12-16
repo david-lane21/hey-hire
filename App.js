@@ -9,7 +9,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { AuthContext } from "./src/navigation/context";
 import { getUser } from "./src/utils/utils.js";
- 
+
 SplashScreen.preventAutoHideAsync()
   .then((result) =>
     console.log(`SplashScreen.preventAutoHideAsync() succeeded: ${result}`)
@@ -86,7 +86,9 @@ export default function App() {
 
   return (
     <AuthContext.Provider value={authContext}>
-      <NavigationContainer>
+      <NavigationContainer  ref={(navigatorRef) => {
+        NavigationService.setTopLevelNavigator(navigatorRef);
+      }}>
         <RootStackScreen userToken={userToken} />
       </NavigationContainer>
     </AuthContext.Provider>

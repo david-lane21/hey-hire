@@ -11,7 +11,8 @@ import {
   TouchableOpacity,
   TouchableHighlight,
   Platform,
-  ActivityIndicator
+  ActivityIndicator,
+  KeyboardAvoidingView
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
@@ -22,7 +23,7 @@ import { postFormData } from "./utils/network.js";
 import RNPickerSelect from "react-native-picker-select";
 import { useIsFocused } from "@react-navigation/native";
 import { KeyboardAccessoryNavigation } from "react-native-keyboard-accessory";
-import {strings} from './translation/config';
+import { strings } from "./translation/config";
 import { AuthContext } from "./navigation/context";
 
 function SeekerFinishRegistration({ navigation }) {
@@ -66,11 +67,12 @@ function SeekerFinishRegistration({ navigation }) {
   const [inputs, setInputs] = useState([]);
   const [nextFocusDisabled, setNextFocusDisabled] = useState(false);
   const [previousFocusDisabled, setPreviousFocusDisabled] = useState(false);
-  const [skill, setSkill] = useState('');
-  const [loading,setLoading] = useState(false);
+  const [skill, setSkill] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [multiline,setMultiline] = useState(false);
+
 
   const { signIn } = React.useContext(AuthContext);
-
 
   useEffect(() => {
     (async () => {
@@ -104,7 +106,7 @@ function SeekerFinishRegistration({ navigation }) {
   function dateFormat(date) {
     if (date) {
       let d = date.split("-");
-      return `${d[1]}.${d[2]}.${d[0]}`;
+      return `${d[1]}/${d[2]}/${d[0]}`;
     } else {
       return "";
     }
@@ -325,8 +327,8 @@ function SeekerFinishRegistration({ navigation }) {
         return res.json();
       })
       .then((json) => {
-         console.log(json)
-         setLoading(false);
+        console.log(json);
+        setLoading(false);
 
         if (json.status_code != "200") {
           setError(json.msg);
@@ -361,97 +363,134 @@ function SeekerFinishRegistration({ navigation }) {
     let tempInputs = inputs;
     tempInputs[index] = ref;
     setInputs(inputs);
+    if(index==8){
+      setTimeout(()=>{
+        setMultiline(true);   
+
+      },500)
+     }
   }
 
-  function addSkill(){
+  function addSkill() {
     let tempSkills = skills;
-    if(skill && skill.trim()!=''){
-    tempSkills.push(skill);
-    setSkills(tempSkills);
-    setSkill('');
+    if (skill && skill.trim() != "") {
+      tempSkills.push(skill);
+      setSkills(tempSkills);
+      setSkill("");
     }
   }
 
   function deleteSkil(index) {
-
     let tempSkills = skills;
     skills.splice(index, 1);
-    // setSkills(tempSkills);  
+    // setSkills(tempSkills);
     console.log(tempSkills);
-    setSkills(oldArray => [...tempSkills]);
-
+    setSkills((oldArray) => [...tempSkills]);
   }
 
-  function renderSkill(item){
-   return( <View
-                    
-                    style={{
-                      borderWidth: 1,
-                      borderColor: "#3482FF",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      paddingHorizontal: 2,
-                    }}
-                  >
-                    <Text
-                      style={{
-                        color: "#3482FF",
-                        // borderWidth: 1,
-                        // borderColor: "#3482FF",
-                        padding: 3,
-                        borderRadius: 3,
-                        marginBottom: 3,
-                        marginLeft: 3,
-                      }}
-                    >
-                      {item.item}
-                    </Text>
-                    <TouchableOpacity onPress={()=>{deleteSkil(item.index)}}>
-                      <Image
-                        source={require("../assets/ic_close_black.png")}
-                        style={{ height: 15, width: 15 }}
-                        resizeMode={"stretch"}
-                      />
-                    </TouchableOpacity>
-                  </View>)
+  function onChangeSkill(text) {
+    console.log(text.indexOf(","));
+    let commaIndex = text.indexOf(",");
+    if (commaIndex > 0) {
+      let tempSkills = skills;
+      tempSkills.push(text.substring(0, commaIndex));
+      setSkills(tempSkills);
+      setSkill("");
+    } else {
+      setSkill(text);
+    }
+  }
+
+  function renderSkill(item) {
+    return (
+      <View
+        style={{
+          borderWidth: 1,
+          borderColor: "#3482FF",
+          flexDirection: "row",
+          alignItems: "center",
+          paddingHorizontal: 2,
+        }}
+      >
+        <Text
+          style={{
+            color: "#3482FF",
+            // borderWidth: 1,
+            // borderColor: "#3482FF",
+            padding: 3,
+            borderRadius: 3,
+            marginBottom: 3,
+            marginLeft: 3,
+          }}
+        >
+          {item.item}
+        </Text>
+        <TouchableOpacity
+          onPress={() => {
+            deleteSkil(item.index);
+          }}
+        >
+          <Image
+            source={require("../assets/ic_close_black.png")}
+            style={{ height: 15, width: 15 }}
+            resizeMode={"stretch"}
+          />
+        </TouchableOpacity>
+      </View>
+    );
   }
 
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
-              <SafeAreaView>
-
-      <View
+      <SafeAreaView>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            paddingBottom: 20,
+            paddingTop: 20,
+          }}
+        >
+          <View style={{ width: "30%", marginLeft: 15 }}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Image
+                source={require("../assets/ic_back.png")}
+                style={{ width: 28, height: 22 }}
+              />
+            </TouchableOpacity>
+          </View>
+          <View style={{ width: "65%" }}>
+            <Text style={{ color: "#4834A6", fontSize: 18 }}>
+              {strings.REGISTRATION}
+            </Text>
+          </View>
+        </View>
+        {loading && (
+          <View
             style={{
-               flexDirection: "row",
-              alignItems: "center",
-              paddingBottom: 20,
-              paddingTop: 20,
+              position: "absolute",
+              top: 0,
+              left: 0,
+              backgroundColor: "rgba(0,0,0,0.5)",
+              width: "100%",
+              height: "100%",
+              zIndex: 999,
             }}
           >
-            <View style={{ width: "30%", marginLeft: 15 }}>
-              <TouchableOpacity onPress={() => navigation.goBack()}>
-                <Image
-                  source={require("../assets/ic_back.png")}
-                  style={{ width: 28, height: 22 }}
-                />
-              </TouchableOpacity>
-            </View>
-            <View style={{ width: "65%" }}>
-              <Text style={{ color: "#4834A6", fontSize: 18 }}>
-                {strings.REGISTRATION}
-              </Text>
-            </View>
+            <ActivityIndicator
+              animating={true}
+              size={"large"}
+              style={{ top: "50%" }}
+              color={"#fff"}
+            />
           </View>
-          { loading &&
-          <View style={{position:'absolute',top:0,left:0,backgroundColor:'rgba(0,0,0,0.5)',width:'100%',height:'100%',zIndex:999,}}>
-            <ActivityIndicator animating={true} size={'large'} style={{top:'50%'}} color={'#fff'} />
-          </View>
-          
-           }
-      <ScrollView >
-          
-
-          <View style={{ flex: 1 }}>
+        )}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : null}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 10 : 40}      
+      >
+        <ScrollView keyboardShouldPersistTaps="always" >
+        <SafeAreaView style={{ flex: 1 }}>
             <View style={{ flex: 1, alignItems: "center", padding: 20 }}>
               <View style={{ width: 150, height: 150, alignSelf: "center" }}>
                 {/* <Image source={{uri: user.avatar_image}} style={{width: 100, height: 100, borderRadius: 50, alignSelf: 'center'}} /> */}
@@ -816,34 +855,59 @@ function SeekerFinishRegistration({ navigation }) {
             </View>
 
             <View style={{ flex: 1 }}>
-              <View style={{ flex: 1, padding: 20 }}>
+              <View style={{ flex: 1, padding: 10 }}>
                 <View
                   style={{
                     flex: 1,
                     flexDirection: "row",
                     alignItems: "center",
+                    paddingHorizontal: 10,
                   }}
                 >
                   <Image
                     source={require("../assets/icon_note.png")}
                     style={{ width: 12, height: 12 }}
                   />
-                  <Text style={{ paddingLeft: 10, fontSize: 18 }}>{strings.BIO}</Text>
+                  <Text style={{ paddingLeft: 10, fontSize: 18 }}>
+                    {strings.BIO}
+                  </Text>
                 </View>
-                <TextInput
-                  style={{ width: "100%", color: "#666" }}
-                  onChangeText={(text) => setBio(text)}
-                  placeholder={strings.BIO}
-                  value={bio}
-                  multiline={true}
-                  editable={true}
-                  onFocus={() => {
-                    handleFocus(8);
+                <View
+                  style={{
+                    backgroundColor: "#fff",
+                    borderColor: "#eee",
+                    padding: 5,
+                    marginBottom: 15,
+
+                    // marginRight: 10,
+                    borderWidth: 1,
+                    borderRadius: 10,
+                    shadowColor: "#bbb",
+                    shadowOffset: {
+                      width: 0,
+                      height: 3,
+                    },
+                    shadowOpacity: 0.23,
+                    shadowRadius: 2.62,
+                    elevation: 4,
                   }}
-                  ref={(ref) => {
-                    handleRef(8, ref);
-                  }}
-                />
+                >
+                  <TextInput
+                    style={{ width: "100%", color: "#666" }}
+                    onChangeText={(text) => setBio(text)}
+                    placeholder={strings.BIO}
+                    value={bio}
+                    multiline={multiline}
+                    editable={true}
+                    autoFocus={true}
+                    onFocus={() => {
+                      handleFocus(8);
+                    }}
+                    ref={(ref) => {
+                      handleRef(8, ref);
+                    }}
+                  />
+                </View>
               </View>
             </View>
 
@@ -860,43 +924,45 @@ function SeekerFinishRegistration({ navigation }) {
                     source={require("../assets/ic_star.png")}
                     style={{ width: 12, height: 12 }}
                   />
-                  <Text style={{ paddingLeft: 10, fontSize: 18 }}>{strings.SKILLS}</Text>
+                  <Text style={{ paddingLeft: 10, fontSize: 18 }}>
+                    {strings.SKILLS}
+                  </Text>
                 </View>
                 <View style={{ flex: 1, alignItems: "flex-start" }}>
-                <FlatList 
-                  data={skills}
-                  keyExtractor={item=>item}
-                  renderItem={renderSkill} 
+                  <FlatList
+                    data={skills}
+                    keyExtractor={(item) => item}
+                    renderItem={renderSkill}
                   />
-                  {/* {skills.map((s) => (
-                    <Text
-                      key={s}
-                      style={{
-                        color: "#3482FF",
-                        borderWidth: 1,
-                        borderColor: "#3482FF",
-                        padding: 3,
-                        borderRadius: 3,
-                        marginBottom: 3,
-                        marginLeft: 3,
-                      }}
-                    >
-                      {s}
-                    </Text>
-                  ))} */}
-                  {/* <Text key="Enter skill" style={{ color: "#999" }}>
-                    Enter skill
-                  </Text> */}
-                  <TextInput
-                  style={{ width: "100%", color: "#000" }}
-                  placeholder={strings.ENTER_SKILL}
-                  textContentType="none"              
-                  onSubmitEditing={()=>addSkill()}
-                  returnKeyType={'done'}
-                  onEndEditing={()=>addSkill()}
-                  value={skill}
-                  onChangeText={(text) => setSkill(text)}
-                />
+                  <View
+                    style={{
+                      borderColor: "#eee",
+                      marginBottom: 5,
+                      paddingHorizontal: 5,
+                      // marginRight: 10,
+                      borderWidth: 1,
+                      borderRadius: 10,
+                      shadowColor: "#bbb",
+                      shadowOffset: {
+                        width: 0,
+                        height: 3,
+                      },
+                      shadowOpacity: 0.23,
+                      shadowRadius: 2.62,
+                      elevation: 4,
+                    }}
+                  >
+                    <TextInput
+                      style={{ width: "100%", color: "#000" }}
+                      placeholder={strings.ENTER_SKILL}
+                      textContentType="none"
+                      onSubmitEditing={() => addSkill()}
+                      returnKeyType={"done"}
+                      onEndEditing={() => addSkill()}
+                      value={skill}
+                      onChangeText={(text) => onChangeSkill(text)}
+                    />
+                  </View>
                 </View>
               </View>
             </View>
@@ -1123,7 +1189,9 @@ function SeekerFinishRegistration({ navigation }) {
                 </SafeAreaView>
               </Modal>
 
-              <Text style={{ fontSize: 18, paddingLeft: 20 }}>{strings.LANGUAGE}</Text>
+              <Text style={{ fontSize: 18, paddingLeft: 20 }}>
+                {strings.LANGUAGE}
+              </Text>
               <TouchableOpacity
                 style={styles.code}
                 onPress={() => setModalVisible2(true)}
@@ -1247,7 +1315,6 @@ function SeekerFinishRegistration({ navigation }) {
                   <Text style={{ paddingLeft: 5, color: "#3482FF" }}>
                     {strings.HAVE_YOU_EVER_BEEN_CONVICTED}
                   </Text>
-                  
                 </View>
               </TouchableOpacity>
             </View>
@@ -1267,7 +1334,9 @@ function SeekerFinishRegistration({ navigation }) {
                   source={require("../assets/ic_past_positions.png")}
                   style={{ width: 20, height: 20, marginRight: 5 }}
                 />
-                <Text style={{ fontSize: 18 }}>{strings.PAST_POSTIONS} {strings.OPTIONAL}</Text>
+                <Text style={{ fontSize: 18 }}>
+                  {strings.PAST_POSTIONS} {strings.OPTIONAL}
+                </Text>
               </View>
               <View style={{ flex: 1 }}>
                 {positions.map((p) => {
@@ -1313,11 +1382,20 @@ function SeekerFinishRegistration({ navigation }) {
                 </TouchableOpacity>
               </View>
             </View>
-            
-          </View>
-          
-      </ScrollView>
-      <View style={{ position: "absolute", bottom: 100, width: "100%" }}>
+            </SafeAreaView >
+        </ScrollView>
+        <KeyboardAccessoryNavigation
+        onNext={handleFocusNext}
+        onPrevious={handleFocusPrev}
+        onPress={handleFocusNext}
+        nextDisabled={nextFocusDisabled}
+        previousDisabled={previousFocusDisabled}
+        androidAdjustResize={Platform.OS == "android"}
+        avoidKeyboard={Platform.OS == "android"}
+        style={ Platform.OS == "android" ? { top: -230,position:'absolute',zIndex:9999 }:{top:0}}
+      />
+        </KeyboardAvoidingView>
+        <View style={{ position: "absolute", bottom: 100, width: "100%" }}>
           {error ? (
             <Text
               style={{ color: "red", padding: 20, backgroundColor: "#fff" }}
@@ -1340,7 +1418,6 @@ function SeekerFinishRegistration({ navigation }) {
           </TouchableOpacity>
         </View>
       </SafeAreaView>
-
 
       {/* <SafeAreaView>
         <View style={{ position: "absolute", bottom: 20, width: "100%" }}>
@@ -1366,16 +1443,7 @@ function SeekerFinishRegistration({ navigation }) {
           </TouchableOpacity>
         </View>
       </SafeAreaView> */}
-      <KeyboardAccessoryNavigation
-        onNext={handleFocusNext}
-        onPrevious={handleFocusPrev}
-        onPress={handleFocusNext}
-        nextDisabled={nextFocusDisabled}
-        previousDisabled={previousFocusDisabled}
-        androidAdjustResize={Platform.OS == "android"}
-        avoidKeyboard={Platform.OS == "android"}
-        style={Platform.OS == "android" && { top: 0 }}
-      />
+   
     </View>
   );
 }

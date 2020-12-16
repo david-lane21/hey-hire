@@ -330,7 +330,7 @@ function BusinessReListJob({ route,navigation }) {
         previousDisabled={previousFocusDisabled}
         androidAdjustResize={Platform.OS=="android"}
         avoidKeyboard={Platform.OS=="android"}
-        style={{top: -210}}
+        style={{top: -200}}
       />
     </View>
   );

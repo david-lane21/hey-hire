@@ -11,18 +11,23 @@ import {
   TouchableOpacity,
   TouchableHighlight,
   Platform,
-  ActivityIndicator
+  ActivityIndicator,
+  KeyboardAvoidingView
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
 import Constants from "expo-constants";
 import { educationLevels, countries, languages } from "./utils/consts.js";
 import { getUser, setUser, getToken } from "./utils/utils.js";
-import { postFormData,getWithParamRequest,postJSON } from "./utils/network.js";
+import {
+  postFormData,
+  getWithParamRequest,
+  postJSON,
+} from "./utils/network.js";
 import RNPickerSelect from "react-native-picker-select";
 import { useIsFocused } from "@react-navigation/native";
 import { KeyboardAccessoryNavigation } from "react-native-keyboard-accessory";
-import {strings} from './translation/config';
+import { strings } from "./translation/config";
 
 function SeekerEditProfile({ navigation, route }) {
   const isFocused = useIsFocused();
@@ -53,7 +58,7 @@ function SeekerEditProfile({ navigation, route }) {
   const [phone, setPhone] = useState(p2);
   const [email, setEmail] = useState(tempProfile.email);
   const [bio, setBio] = useState(tempProfile.bio);
-  const [skills, setSkills] = useState([]);
+  const [skills, setSkills] = useState(tempProfile.skill);
   const [eduLevel, setEduLevel] = useState(tempProfile.education_level);
   const [langs, setlangs] = useState(tempProfile.language || "");
   const [eligible, setEligible] = useState(tempProfile.eligible);
@@ -70,7 +75,7 @@ function SeekerEditProfile({ navigation, route }) {
   const [nextFocusDisabled, setNextFocusDisabled] = useState(false);
   const [previousFocusDisabled, setPreviousFocusDisabled] = useState(false);
 
-  const [loading,setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [skill, setSkill] = useState("");
 
@@ -82,6 +87,8 @@ function SeekerEditProfile({ navigation, route }) {
         alert("Sorry, we need camera roll permissions to make this work!");
       }
       // }
+
+
     })();
   }, []);
 
@@ -235,7 +242,7 @@ function SeekerEditProfile({ navigation, route }) {
 
       setUser1(u2);
       getToken().then((t) => setDeviceToken(t));
-      console.log(u2.user_token)
+      console.log(u2.user_token);
       // let form = new FormData();
       // form.append("user_token", u2.user_token);
       // form.append("user_id", u2.user_id);
@@ -320,19 +327,18 @@ function SeekerEditProfile({ navigation, route }) {
     form.append("convictions", convictions);
     form.append("skill", skills.toString());
     setLoading(true);
-     postFormData("update_user", form)
+    postFormData("update_user", form)
       .then((res) => {
         return res.json();
       })
       .then((json) => {
-        console.log('update user',json)
+        console.log("update user", json);
         if (json.status_code != "200") {
           setError(json.msg);
           setLoading(false);
-
         } else {
           setUser1(json.data);
-          update_cv(json.data.user_token)
+          update_cv(json.data.user_token);
           // let tempUserData = json.data;
           // tempUserData.avatar_image =
           //   tempUserData.avatar_image +
@@ -341,13 +347,11 @@ function SeekerEditProfile({ navigation, route }) {
           setUser(json.data);
           // // navigation.goBack()
           // navigation.navigate("Seeker");
-
         }
       })
       .catch((err) => {
         console.log(err, err.message);
       });
-    
   }
 
   function update_cv(userToken) {
@@ -364,9 +368,8 @@ function SeekerEditProfile({ navigation, route }) {
       education: institution,
       convictions: convictions ? "1" : "0",
       post_list: positions,
-      availability:availability
+      availability: availability,
     };
-
 
     postJSON("update_cv", form2)
       .then((response) => {
@@ -379,7 +382,6 @@ function SeekerEditProfile({ navigation, route }) {
         // navigation.goBack()
         navigation.navigate("Seeker");
         setLoading(false);
-
       })
       .catch((err1) => {
         console.log("Update CV Error", err1, err1.message);
@@ -404,6 +406,7 @@ function SeekerEditProfile({ navigation, route }) {
     let tempInputs = inputs;
     tempInputs[index] = ref;
     setInputs(inputs);
+   
   }
 
   function addSkill() {
@@ -427,6 +430,19 @@ function SeekerEditProfile({ navigation, route }) {
     }
   }
 
+  function onChangeSkill(text){
+    console.log(text.indexOf(","));
+    let commaIndex = text.indexOf(",");
+    if(commaIndex>0){
+      let tempSkills = skills;
+      tempSkills.push(text.substring(0,commaIndex));
+      setSkills(tempSkills);
+      setSkill("");
+    }else{
+    setSkill(text);
+    }
+  }
+
   function renderSkill(item) {
     return (
       <View
@@ -436,6 +452,8 @@ function SeekerEditProfile({ navigation, route }) {
           flexDirection: "row",
           alignItems: "center",
           paddingHorizontal: 2,
+          borderRadius: 4,
+          marginBottom: 5,
         }}
       >
         <Text
@@ -468,42 +486,56 @@ function SeekerEditProfile({ navigation, route }) {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
-              <SafeAreaView>
-
-      <View
+      <SafeAreaView>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            paddingTop: 20,
+          }}
+        >
+          <View style={{ width: "25%", marginLeft: 15 }}>
+            <TouchableOpacity onPress={() => navigation.navigate("Seeker")}>
+              <Image
+                source={require("../assets/ic_back.png")}
+                style={{ width: 28, height: 22 }}
+              />
+            </TouchableOpacity>
+          </View>
+          <View style={{ width: "65%" }}>
+            <Text style={{ color: "#4834A6", fontSize: 18 }}>
+              {strings.EDIT_YOUR_PROFILE}
+            </Text>
+          </View>
+        </View>
+        {loading && (
+          <View
             style={{
-              flexDirection: "row",
-              alignItems: "center",
-              paddingTop: 20,
+              position: "absolute",
+              top: 0,
+              left: 0,
+              backgroundColor: "rgba(0,0,0,0.5)",
+              width: "100%",
+              height: "100%",
+              zIndex: 999,
             }}
           >
-            <View style={{ width: "25%", marginLeft: 15 }}>
-              <TouchableOpacity onPress={() => navigation.navigate("Seeker")}>
-                <Image
-                  source={require("../assets/ic_back.png")}
-                  style={{ width: 28, height: 22 }}
-                />
-              </TouchableOpacity>
-            </View>
-            <View style={{ width: "65%" }}>
-              <Text style={{ color: "#4834A6", fontSize: 18 }}>
-                {strings.EDIT_YOUR_PROFILE}
-              </Text>
-            </View>
+            <ActivityIndicator
+              animating={true}
+              size={"large"}
+              style={{ top: "50%" }}
+              color={"#fff"}
+            />
           </View>
-          { loading &&
-          <View style={{position:'absolute',top:0,left:0,backgroundColor:'rgba(0,0,0,0.5)',width:'100%',height:'100%',zIndex:999,}}>
-            <ActivityIndicator animating={true} size={'large'} style={{top:'50%'}} color={'#fff'} />
-          </View>
-          
-           }
-      <ScrollView  showsVerticalScrollIndicator={false}>
-          
-
+        )}
+         <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : null}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 10 : 40}      
+      >
+        <ScrollView showsVerticalScrollIndicator={false} >
           <View style={{ flex: 1, width: "100%" }}>
             <View style={{ flex: 1, alignItems: "center", padding: 20 }}>
               <View style={{ width: 150, height: 150, alignSelf: "center" }}>
-                {/* <Image source={{uri: user.avatar_image}} style={{width: 100, height: 100, borderRadius: 50, alignSelf: 'center'}} /> */}
                 {image == null ? (
                   <View>
                     {user.avatar_image == "" ? (
@@ -872,34 +904,58 @@ function SeekerEditProfile({ navigation, route }) {
             </View>
 
             <View style={{ flex: 1 }}>
-              <View style={{ flex: 1, padding: 20 }}>
+              <View style={{ flex: 1, padding: 10 }}>
                 <View
                   style={{
                     flex: 1,
                     flexDirection: "row",
                     alignItems: "center",
+                    paddingHorizontal: 10,
                   }}
                 >
                   <Image
                     source={require("../assets/icon_note.png")}
                     style={{ width: 12, height: 12 }}
                   />
-                  <Text style={{ paddingLeft: 10, fontSize: 18 }}>{strings.BIO}</Text>
+                  <Text style={{ paddingLeft: 10, fontSize: 18 }}>
+                    {strings.BIO}
+                  </Text>
                 </View>
-                <TextInput
-                  style={{ width: "100%", color: "#666" }}
-                  onChangeText={(text) => setBio(text)}
-                  placeholder={strings.BIO}
-                  value={bio}
-                  multiline={true}
-                  editable={true}
-                  onFocus={() => {
-                    handleFocus(8);
+                <View
+                  style={{
+                    backgroundColor: "#fff",
+                    borderColor: "#eee",
+                    padding: 5,
+                    marginBottom: 15,
+
+                    // marginRight: 10,
+                    borderWidth: 1,
+                    borderRadius: 10,
+                    shadowColor: "#bbb",
+                    shadowOffset: {
+                      width: 0,
+                      height: 3,
+                    },
+                    shadowOpacity: 0.23,
+                    shadowRadius: 2.62,
+                    elevation: 4,
                   }}
-                  ref={(ref) => {
-                    handleRef(8, ref);
-                  }}
-                />
+                >
+                  <TextInput
+                    style={{ width: "100%", color: "#666" }}
+                    onChangeText={(text) => setBio(text)}
+                    placeholder={strings.BIO}
+                    value={bio}
+                    multiline={true}
+                    editable={true}
+                    onFocus={() => {
+                      handleFocus(8);
+                    }}
+                    ref={(ref) => {
+                      handleRef(8, ref);
+                    }}
+                  />
+                </View>
               </View>
             </View>
 
@@ -916,7 +972,9 @@ function SeekerEditProfile({ navigation, route }) {
                     source={require("../assets/ic_star.png")}
                     style={{ width: 12, height: 12 }}
                   />
-                  <Text style={{ paddingLeft: 10, fontSize: 18 }}>{strings.SKILLS}</Text>
+                  <Text style={{ paddingLeft: 10, fontSize: 18 }}>
+                    {strings.SKILLS}
+                  </Text>
                 </View>
                 <View style={{ flex: 1, alignItems: "flex-start" }}>
                   <FlatList
@@ -924,20 +982,35 @@ function SeekerEditProfile({ navigation, route }) {
                     keyExtractor={(item) => item}
                     renderItem={renderSkill}
                   />
-
-                  {/* <Text key="Enter skill" style={{ color: "#999" }}>
-                    Enter skill
-                  </Text> */}
-                  <TextInput
-                    style={{ width: "100%", color: "#000" }}
-                    placeholder={strings.ENTER_SKILL}
-                    textContentType="none"
-                    onSubmitEditing={() => addSkill()}
-                    returnKeyType={"done"}
-                    onEndEditing={() => addSkill()}
-                    value={skill}
-                    onChangeText={(text) => setSkill(text)}
-                  />
+                  <View
+                    style={{
+                      borderColor: "#eee",
+                      marginBottom: 5,
+                      paddingHorizontal: 5,
+                      // marginRight: 10,
+                      borderWidth: 1,
+                      borderRadius: 10,
+                      shadowColor: "#bbb",
+                      shadowOffset: {
+                        width: 0,
+                        height: 3,
+                      },
+                      shadowOpacity: 0.23,
+                      shadowRadius: 2.62,
+                      elevation: 3,
+                    }}
+                  >
+                    <TextInput
+                      style={{ width: "100%", color: "#000" }}
+                      placeholder={strings.ENTER_SKILL}
+                      textContentType="none"
+                      onSubmitEditing={() => addSkill()}
+                      returnKeyType={"done"}
+                      onEndEditing={() => addSkill()}
+                      value={skill}
+                      onChangeText={(text) => onChangeSkill(text)}
+                    />
+                  </View>
                 </View>
               </View>
             </View>
@@ -977,7 +1050,7 @@ function SeekerEditProfile({ navigation, route }) {
                   style={{ width: 20, height: 20, marginRight: 5 }}
                 />
                 <TextInput
-                  style={{ width: "90%", color: "#000" , }}
+                  style={{ width: "90%", color: "#000" }}
                   onChangeText={(text) => setInstitution(text)}
                   placeholder={strings.INSTITUTION}
                   value={institution}
@@ -1002,7 +1075,7 @@ function SeekerEditProfile({ navigation, route }) {
                   style={{ width: 17, height: 17, marginRight: 5 }}
                 />
                 <TextInput
-                  style={{ width: "90%", color: "#000" , }}
+                  style={{ width: "90%", color: "#000" }}
                   onChangeText={(text) => setCertificate(text)}
                   placeholder={strings.CERTIFICATE}
                   value={certificate}
@@ -1170,7 +1243,9 @@ function SeekerEditProfile({ navigation, route }) {
                 </SafeAreaView>
               </Modal>
 
-              <Text style={{ fontSize: 18, paddingLeft: 20 }}>{strings.LANGUAGE}</Text>
+              <Text style={{ fontSize: 18, paddingLeft: 20 }}>
+                {strings.LANGUAGE}
+              </Text>
               <TouchableOpacity
                 style={styles.code}
                 onPress={() => setModalVisible2(true)}
@@ -1294,7 +1369,6 @@ function SeekerEditProfile({ navigation, route }) {
                   <Text style={{ paddingLeft: 5, color: "#3482FF" }}>
                     {strings.HAVE_YOU_EVER_BEEN_CONVICTED}
                   </Text>
-                  
                 </View>
               </TouchableOpacity>
             </View>
@@ -1314,7 +1388,9 @@ function SeekerEditProfile({ navigation, route }) {
                   source={require("../assets/ic_past_positions.png")}
                   style={{ width: 20, height: 20, marginRight: 5 }}
                 />
-                <Text style={{ fontSize: 18 }}>{strings.PAST_POSTIONS} {strings.OPTIONAL}</Text>
+                <Text style={{ fontSize: 18 }}>
+                  {strings.PAST_POSTIONS} {strings.OPTIONAL}
+                </Text>
               </View>
               <View style={{ flex: 1 }}>
                 {positions.map((p, index) => {
@@ -1375,9 +1451,21 @@ function SeekerEditProfile({ navigation, route }) {
               </View>
             </View>
           </View>
-         
-      </ScrollView>
-      <View style={{ position: "absolute", bottom: 80, width: "100%" }}>
+        </ScrollView>
+        <KeyboardAccessoryNavigation
+        androidAdjustResize={Platform.OS == "android"}
+        avoidKeyboard={Platform.OS == "android"}
+        style={ Platform.OS == "android" ? { top: -230,position:'absolute',zIndex:9999 }:{top:0}}
+        onNext={handleFocusNext}
+        onPrevious={handleFocusPrev}
+        nextDisabled={nextFocusDisabled}
+        previousDisabled={previousFocusDisabled}
+      />
+             </KeyboardAvoidingView>
+
+                  
+
+        <View style={{ position: "absolute", bottom: 80, width: "100%" }}>
           {error ? (
             <Text
               style={{ color: "red", padding: 20, backgroundColor: "#fff" }}
@@ -1399,6 +1487,7 @@ function SeekerEditProfile({ navigation, route }) {
             </Text>
           </TouchableOpacity>
         </View>
+
       </SafeAreaView>
 
       {/* <SafeAreaView>
@@ -1425,15 +1514,7 @@ function SeekerEditProfile({ navigation, route }) {
           </TouchableOpacity>
         </View>
       </SafeAreaView> */}
-      <KeyboardAccessoryNavigation
-        androidAdjustResize={Platform.OS == "android"}
-        avoidKeyboard={Platform.OS == "android"}
-        style={Platform.OS == "android" && { top: 0 }}
-        onNext={handleFocusNext}
-        onPrevious={handleFocusPrev}
-        nextDisabled={nextFocusDisabled}
-        previousDisabled={previousFocusDisabled}
-      />
+                   
     </View>
   );
 }

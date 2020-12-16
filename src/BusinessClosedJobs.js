@@ -112,6 +112,10 @@ function BusinessClosedJobs({ navigation }) {
             borderBottomColor: "rgba(0,0,0,0.2)"
           }}
         >
+          
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+            <Text style={{ color: '#4834A6', fontSize: 18 }}>{strings.CLOSED_JOBS}</Text>
+          </View>
           <View style={{ position: 'absolute', left: 10 }}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Image
@@ -120,9 +124,6 @@ function BusinessClosedJobs({ navigation }) {
               />
             </TouchableOpacity>
           </View>
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <Text style={{ color: '#4834A6', fontSize: 18 }}>{strings.CLOSED_JOBS}</Text>
-          </View>
         </View>
         <ScrollView style={{ backgroundColor: '#fff', marginBottom: 40 }}
           refreshControl={
@@ -130,9 +131,6 @@ function BusinessClosedJobs({ navigation }) {
             />
           }
         >
-
-
-
           <View style={{ padding: 20 }}>
             {list}
           </View>
