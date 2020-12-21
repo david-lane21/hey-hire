@@ -10,6 +10,8 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { AuthContext } from "./src/navigation/context";
 import { getUser } from "./src/utils/utils.js";
 
+console.disableYellowBox = true;
+
 SplashScreen.preventAutoHideAsync()
   .then((result) =>
     console.log(`SplashScreen.preventAutoHideAsync() succeeded: ${result}`)
@@ -66,7 +68,12 @@ export default function App() {
   React.useEffect(() => {
     getUser().then((u) => {
       console.log(u);
-      setUserToken(JSON.parse(u));
+      var userData = JSON.parse(u);
+      if(userData && userData.is_verified==1){
+        setUserToken(JSON.parse(u));
+      }else{
+        setUserToken(null);
+      }
       setIsLoading(false);
     });
   }, []);

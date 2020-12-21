@@ -124,6 +124,8 @@
     "LOADING":"Loading",
     "LOGIN":"Login",
     "TAP_TO_SCAN_AGAIN":"Tap to Scan Again",
-    "RE_LIST_JOB":"Re-list Job"
+    "RE_LIST_JOB":"Re-list Job",
+    "PLEASE_FILL_MISSING":"Please fill in the missing fields.",
+    "PASSWORD_ERROR":"Password and Confirm Password must be same."
 
 }

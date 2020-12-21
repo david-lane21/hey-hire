@@ -236,31 +236,35 @@ function SeekerEditPastPosition({ route, navigation }) {
               <View style={{}}>
                 <Text>{strings.HOW_LONG_HAVE_YOU_BEEN_WORKING}</Text>
                 <View style={{ flexDirection: "row", width: "85%" }}>
-                  <View style={styles.inputField}>
-                    <Image
-                      source={require("../assets/ic_calendar.png")}
-                      style={{ width: 20, height: 20 }}
-                    />
-                    <TouchableOpacity
-                      style={{ width: "48%", paddingLeft: 10 }}
-                      onPress={(val) => setShowFrom(!showFrom)}
-                    >
-                      <Text style={{ width: 120 }}>{formatDate(from)}</Text>
-                    </TouchableOpacity>
-                  </View>
-                  <View style={{ width: "2%" }}></View>
-                  <View style={styles.inputField}>
-                    <Image
-                      source={require("../assets/ic_calendar.png")}
-                      style={{ width: 20, height: 20 }}
-                    />
-                    <TouchableOpacity
-                      style={{ width: "48%", paddingLeft: 10 }}
-                      onPress={(val) => setShowTo(!showTo)}
-                    >
-                      <Text style={{ width: 120 }}>{formatDate(to)}</Text>
-                    </TouchableOpacity>
-                  </View>
+                <TouchableOpacity
+                  style={{ width:'55%' }}
+                  onPress={(val) => setShowFrom(!showFrom)}
+                >
+              <View style={styles.inputField}>
+                <Image
+                  source={require("../assets/ic_calendar.png")}
+                  style={{ width: 20, height: 20 }}
+                />
+               
+                  <Text style={{ paddingLeft:10,width: 120 }}>{formatDate(from)}</Text>
+              </View>
+              </TouchableOpacity>
+
+              <View style={{ width: "2%" }}></View>
+              <TouchableOpacity
+                  style={{width:'55%' }}
+                  onPress={(val) => setShowTo(!showTo)}
+                >
+              <View style={styles.inputField}>
+                <Image
+                  source={require("../assets/ic_calendar.png")}
+                  style={{ width: 20, height: 20 }}
+                />
+                
+                  <Text style={{ paddingLeft:10, width: 120 }}>{formatDate(to)}</Text>
+                
+              </View>
+              </TouchableOpacity>
                 </View>
 
                 <TouchableOpacity

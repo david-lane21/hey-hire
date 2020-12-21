@@ -70,11 +70,11 @@ function SeekerVerificationCode({ route, navigation }){
         borderBottomColor: '#eee',
         
         }}>
-          {/* <View style={{position:'absolute', left: 5}}>
+          <View style={{position:'absolute', left: 5}}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Image source={require('../assets/ic_back.png')} style={{width: 28, height: 22}} />
             </TouchableOpacity>
-          </View> */}
+          </View>
           <View style={{flex:1,alignItems:'center'}}>
             <Text style={{ color: '#4834A6', fontSize: 18}}>{strings.VERIFICATION}</Text>
           </View>

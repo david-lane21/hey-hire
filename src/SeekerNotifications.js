@@ -56,7 +56,7 @@ function SeekerNotifications({navigation}){
         if(json.data){
         sortNotification(json.data);
         }else{
-          Alert.alert("",json)
+          Alert.alert("",json.msg || json)
         }
         setRefresh(false);
 

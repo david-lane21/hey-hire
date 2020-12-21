@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect,useRef } from 'react'
 import {
   View,
   Text,
@@ -12,7 +12,8 @@ import {
   TouchableOpacity,
   TouchableHighlight,
   Platform,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  findNodeHandle
 } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 import Constants from 'expo-constants'
@@ -20,11 +21,14 @@ import { countries } from './utils/consts.js'
 import { postFormData } from './utils/network.js'
 import * as Location from 'expo-location'
 import { setUser, setToken } from './utils/utils.js'
-import { KeyboardAccessoryNavigation } from 'react-native-keyboard-accessory'
+import { KeyboardAccessoryNavigation,KeyboardAccessoryView } from 'react-native-keyboard-accessory'
 import { strings } from './translation/config'
 import { AuthContext } from './navigation/context'
+import { func } from 'prop-types'
 
 function SeekerSignup ({ navigation }) {
+  const scrollViewRef = useRef();
+
   const [modalVisible, setModalVisible] = useState(false)
   const [location, setLocation] = useState(null)
   const [error, setError] = useState('')
@@ -46,6 +50,8 @@ function SeekerSignup ({ navigation }) {
   const [inputs, setInputs] = useState([])
   const [nextFocusDisabled, setNextFocusDisabled] = useState(false)
   const [previousFocusDisabled, setPreviousFocusDisabled] = useState(false)
+
+  const [currentScroll, setCurrentScroll] = useState(null);
 
   useEffect(() => {
     ;(async () => {
@@ -218,7 +224,9 @@ function SeekerSignup ({ navigation }) {
         })
     } else {
       if (password !== password2) {
-        setError('Password and Confirm Password must be same.')
+        setError(strings.PASSWORD_ERROR)
+      }else{
+        setError(strings.PLEASE_FILL_MISSING)
       }
     }
   }
@@ -229,9 +237,19 @@ function SeekerSignup ({ navigation }) {
   // }
 
   function handleFocus (index) {
-    setActiveInputIndex(index)
-    setNextFocusDisabled(index === inputs.length - 1)
-    setPreviousFocusDisabled(index === 0)
+    setActiveInputIndex(index);
+    setNextFocusDisabled(index === inputs.length - 1);
+    setPreviousFocusDisabled(index === 0);
+
+    const inputHandle = findNodeHandle(inputs[index]);
+    var scrollResponder = scrollViewRef.current.getScrollResponder();
+
+      scrollResponder.scrollResponderScrollNativeHandleToKeyboard(
+    inputHandle, // The TextInput node handle
+    80, // The scroll view's bottom "contentInset" (default 0)
+    true // Prevent negative scrolling
+  ); 
+
   }
 
   function handleFocusNext () {
@@ -248,14 +266,19 @@ function SeekerSignup ({ navigation }) {
     setInputs(inputs)
   }
 
+  function onScroll(event){
+    setCurrentScroll(event.nativeEvent.contentOffset.y);
+  }
+
   return (
-    <View style={{ flex: 1 }}>
-      <KeyboardAvoidingView
+    <SafeAreaView style={{ flex: 1 }}>
+      {/* <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 40}
-      >
-        <ScrollView style={styles.container}>
-          <SafeAreaView style={{ flex: 1 }}>
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
+      > */}
+
+        <ScrollView style={styles.container}  ref={scrollViewRef} onScroll={onScroll} >
+         
             <View style={{ flex: 1, alignItems: 'center', padding: 20 }}>
               <View style={{ width: 140, height: 140, alignSelf: 'center' }}>
                 {image == null ? (
@@ -696,8 +719,8 @@ function SeekerSignup ({ navigation }) {
               </TouchableOpacity>
             </View>
 
-            <View style={{ height: 300 }}></View>
-          </SafeAreaView>
+            <View style={{ height: 400 }}></View>
+          
         </ScrollView>
         <KeyboardAccessoryNavigation
           onNext={handleFocusNext}
@@ -706,10 +729,11 @@ function SeekerSignup ({ navigation }) {
           previousDisabled={previousFocusDisabled}
           androidAdjustResize={Platform.OS == 'android'}
           avoidKeyboard={Platform.OS == 'android'}
-          style={Platform.OS=="android" ? { top: -40 }:{top:0}}
+          style={Platform.OS=="android" ? { top: 0 }:{top:0}}
         />
-      </KeyboardAvoidingView>
-    </View>
+      {/* </KeyboardAvoidingView> */}
+     
+  </SafeAreaView>
   )
 }
 

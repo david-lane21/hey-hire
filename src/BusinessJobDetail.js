@@ -31,7 +31,8 @@ function BusinessJobDetail({ route, navigation }) {
         setUser1(u2);
         let form = new FormData();
         form.append('user_token', u2.user_token)
-        form.append('job_id', route.params.job.id)
+        form.append('job_id', route.params.job.id);
+        console.log(form);
         postFormData('/job_detail', form)
           .then(res => {
             return res.json()
@@ -113,6 +114,15 @@ function BusinessJobDetail({ route, navigation }) {
       ],
       { cancelable: false }
     );
+  }
+
+  function dateFormat(date) {
+    if (date) {
+      let d = date.split("-");
+      return `${d[1]}/${d[2]}/${d[0]}`;
+    } else {
+      return "";
+    }
   }
 
   return (
@@ -325,7 +335,7 @@ function BusinessJobDetail({ route, navigation }) {
                 </Text>
               </View>
               <Text style={{ marginBottom: 30, marginTop: 10 }}>
-                {job.start_date}
+                {dateFormat(job.start_date)}
               </Text>
 
               <View

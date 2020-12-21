@@ -20,6 +20,14 @@ function BusinessClosedJobs({ navigation }) {
   const [user, setUser1] = useState({});
   const [refresh, setRefresh] = useState(false);
 
+  function dateFormat(date) {
+    if (date) {
+      let d = date.split("-");
+      return `${d[1]}/${d[2]}/${d[0]}`;
+    } else {
+      return "";
+    }
+  }
 
   const list = closedJobs.map((item => {
     return (
@@ -56,7 +64,7 @@ function BusinessClosedJobs({ navigation }) {
           <View style={{ width: '80%' }}>
             <View style={{ flex: 1 }}>
               <Text style={{ fontSize: 20 }}>{item.position}</Text>
-              <Text>{item.start_date}</Text>
+              <Text>{dateFormat(item.start_date)}</Text>
             </View>
           </View>
 

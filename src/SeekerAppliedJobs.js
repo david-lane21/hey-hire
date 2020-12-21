@@ -23,7 +23,7 @@ function SeekerAppliedJobs({ navigation }) {
 
   const [user, setUser] = useState({})
   const [search, setSearch] = useState('')
-
+const [message,setMessage] = useState(null);
   function searchJobs(txt) {
     setSearch(txt)
 
@@ -63,9 +63,11 @@ function SeekerAppliedJobs({ navigation }) {
           // console.log([...json.data,...json.liked_jobs])
           // console.log('+++++++++++++++++++')
           if (json.msg == "No Job Available!") {
+            setMessage(json.msg);
             setAppliedJobs([])
             setFilteredJobs([])
           } else {
+            setMessage(null);
             setAppliedJobs(json.applied_jobs)
             setFilteredJobs([...json.applied_jobs,...json.liked_jobs]);
             setLikedJobs(json.liked_jobs);
@@ -245,6 +247,7 @@ function SeekerAppliedJobs({ navigation }) {
             </View>
 
             {list}
+            {message!=null&& <Text style={{ fontSize: 18,textAlign:'center' }}>{message}</Text>}
           </View>
         </ScrollView>
       </SafeAreaView>

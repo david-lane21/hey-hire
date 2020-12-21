@@ -167,6 +167,15 @@ function SeekerJobDetail({ route, navigation }) {
   }
 
 
+  function dateFormat(date) {
+    if (date) {
+      let d = date.split("-");
+      return `${d[1]}/${d[2]}/${d[0]}`;
+    } else {
+      return "";
+    }
+  }
+
   return (
     <LinearGradient
       style={{ flex: 1 }}
@@ -327,7 +336,7 @@ function SeekerJobDetail({ route, navigation }) {
                 </Text>
               </View>
               <Text style={{ marginBottom: 30, marginTop: 10 }}>
-                {job.start_date}
+                {dateFormat(job.start_date)}
               </Text>
 
               <View

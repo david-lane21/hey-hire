@@ -39,12 +39,12 @@ function BusinessHome({ navigation }) {
       console.log(u2)
       getToken().then((t) => {
         setDeviceToken(t)
+      });
       let form = new FormData();
       form.append("user_token", u2.user_token);
       form.append("user_id", u2.user_id);
-      form.append("device_tocken",t);
-      console.log(form);
-
+      form.append("device_tocken",deviceToken);
+console.log(form);
       postFormData("business_profile", form)
         .then((res) => {
           return res.json();
@@ -56,7 +56,7 @@ function BusinessHome({ navigation }) {
         .catch((err) => {
           setRefresh(false);
           console.log(err);
-        });
+       
       });
     });
   // }

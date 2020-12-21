@@ -41,7 +41,8 @@ function SeekerHome({ navigation }) {
   });
   const [refresh, setRefresh] = useState(false);
   const { signOut } = React.useContext(AuthContext);
-
+  const [latitude, setLatitude] = useState("32.7767");
+  const [longitude, setLongitude] = useState("-96.797");
 
   useEffect(() => {
 
@@ -55,6 +56,8 @@ function SeekerHome({ navigation }) {
           setError("Permission to access location was denied");
         }
         let loc = await Location.getLastKnownPositionAsync();
+        setLatitude(loc.coords.latitude);
+        setLongitude(loc.coords.longitude);
 
         map.animateToRegion(
           {
@@ -65,7 +68,13 @@ function SeekerHome({ navigation }) {
           },
           500
         );
-        setLocation(loc.coords);
+        console.log(loc)
+        // setLocation({...location,{
+        //   latitude: loc.coords.latitude,
+        //   longitude: loc.coords.longitude}});
+          
+       ;
+
         setRegion({
           latitude: loc.coords.latitude,
           longitude: loc.coords.longitude,
@@ -84,13 +93,16 @@ function SeekerHome({ navigation }) {
           },
           500
         );
-        setLocation(loc.coords);
+        // setLocation(loc.coords);
+        setLatitude( loc.coords.latitude);
+        setLongitude( loc.coords.longitude);
         setRegion({
           latitude: loc.coords.latitude,
           longitude: loc.coords.longitude,
           latitudeDelta: 0.0522,
           longitudeDelta: 0.0421,
         });
+
       }
     })();
 
@@ -102,7 +114,10 @@ function SeekerHome({ navigation }) {
 
   useEffect(() => {
     if (isFocused) {
-      loadDate();
+      setTimeout(()=>{
+        loadDate();
+      },500);
+     
     }
   }, [isFocused]);
 
@@ -116,7 +131,8 @@ function SeekerHome({ navigation }) {
     );
   }
 
-  function loadDate() {
+ async function loadDate() {
+  let loc = await Location.getLastKnownPositionAsync(); 
     getUser().then((u) => {
       let u2 = JSON.parse(u);
       setUser1(u2);
@@ -144,17 +160,19 @@ function SeekerHome({ navigation }) {
               );
               bizList = bizList.map((b) => {
                 b.distance_in_km = distance(
-                  location.latitude,
-                  location.longitude,
+                  loc.coords.latitude || latitude,
+                  loc.coords.longitude || longitude,
                   b.latitude,
                   b.longitude,
                   ""
                 ); //.toFixed(1)
                 return b;
               });
+              
               bizList = bizList.sort(
                 (a, b) => a.distance_in_km - b.distance_in_km
               );
+              console.log(bizList);
               setBusinesses(bizList);
               setRefresh(false);
             });
@@ -229,8 +247,10 @@ function SeekerHome({ navigation }) {
     }
   }
 
-  function distance(lat1, lon1, lat2, lon2, unit) {
-    if (lat1 == lat2 && lon1 == lon2) {
+   function distance(lat1, lon1, lat2, lon2, unit) {
+   
+    console.log(lat1, lon1, lat2, lon2, unit)
+        if (lat1 == lat2 && lon1 == lon2) {
       return 0;
     } else {
       var radlat1 = (Math.PI * lat1) / 180;

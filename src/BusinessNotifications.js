@@ -82,8 +82,8 @@ function BusinessNotifications({ navigation }) {
           console.log(json)
           console.log('+++++++++++++++++++')
 
-          // setNotification(json.data);
-          sortNotification(json.data)
+          setNotification(sortNotification(json.data));
+          
           setRefresh(false);
 
 
@@ -111,8 +111,9 @@ function BusinessNotifications({ navigation }) {
               tempVisitors.push(item);
             }
           })
+          setVisitors(sortNotification(tempVisitors));
 
-          setVisitors(tempVisitors);
+          // setVisitors(tempVisitors);
 
         })
         .catch(err => {
@@ -129,7 +130,7 @@ function BusinessNotifications({ navigation }) {
       let dateB = new Date(b.created_date);
       return dateB - dateA;
     });
-    setNotification(tempNotifications);  
+    return (tempNotifications);  
   }
 
 

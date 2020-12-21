@@ -8,7 +8,7 @@ import {
   Platform,
   TouchableOpacity,
   ScrollView,
-  
+  ActivityIndicator
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -33,6 +33,7 @@ function SeekerAddPastPosition({ route,navigation }) {
   const [inputs, setInputs] = useState([]);
   const [nextFocusDisabled, setNextFocusDisabled] = useState(false);
   const [previousFocusDisabled, setPreviousFocusDisabled] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   function hideFrom(i) {
     if (i) setFrom(i);
@@ -73,7 +74,7 @@ function SeekerAddPastPosition({ route,navigation }) {
     // form.append('user_token', user.user_token)
     form.append("user_id", user.user_id);
     form.append("device_tocken", deviceToken);
-
+      setLoading(true);
     postFormData("update_user", form)
       .then((res) => {
         return res.json();
@@ -90,6 +91,8 @@ function SeekerAddPastPosition({ route,navigation }) {
           if(route.params && route.params.onGoBack){
             route.params.onGoBack(json.data.position);
           }
+          setLoading(false);
+
            navigation.goBack();
         }
       })
@@ -121,6 +124,26 @@ function SeekerAddPastPosition({ route,navigation }) {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
+      {loading && (
+          <View
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              backgroundColor: "rgba(0,0,0,0.5)",
+              width: "100%",
+              height: "100%",
+              zIndex: 999,
+            }}
+          >
+            <ActivityIndicator
+              animating={true}
+              size={"large"}
+              style={{ top: "50%" }}
+              color={"#fff"}
+            />
+          </View>
+        )}
     <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
     <SafeAreaView style={{ flex: 1 }}>
       <View style={{ flex: 1 }}>
@@ -223,31 +246,35 @@ function SeekerAddPastPosition({ route,navigation }) {
           <View style={{}}>
             <Text>{strings.HOW_LONG_HAVE_YOU_BEEN_WORKING}</Text>
             <View style={{ flexDirection: "row", width: "85%" }}>
-              <View style={styles.inputField}>
-                <Image
-                  source={require("../assets/ic_calendar.png")}
-                  style={{ width: 20, height: 20 }}
-                />
-                <TouchableOpacity
-                  style={{ width: "48%", paddingLeft: 10 }}
+            <TouchableOpacity
+                  style={{ width:'55%' }}
                   onPress={(val) => setShowFrom(!showFrom)}
                 >
-                  <Text style={{ width: 120 }}>{formatDate(from)}</Text>
-                </TouchableOpacity>
-              </View>
-              <View style={{ width: "2%" }}></View>
               <View style={styles.inputField}>
                 <Image
                   source={require("../assets/ic_calendar.png")}
                   style={{ width: 20, height: 20 }}
                 />
-                <TouchableOpacity
-                  style={{ width: "48%", paddingLeft: 10 }}
+               
+                  <Text style={{ paddingLeft:10,width: 120 }}>{formatDate(from)}</Text>
+              </View>
+              </TouchableOpacity>
+
+              <View style={{ width: "2%" }}></View>
+              <TouchableOpacity
+                  style={{width:'55%' }}
                   onPress={(val) => setShowTo(!showTo)}
                 >
-                  <Text style={{ width: 120 }}>{formatDate(to)}</Text>
-                </TouchableOpacity>
+              <View style={styles.inputField}>
+                <Image
+                  source={require("../assets/ic_calendar.png")}
+                  style={{ width: 20, height: 20 }}
+                />
+                
+                  <Text style={{ paddingLeft:10, width: 120 }}>{formatDate(to)}</Text>
+                
               </View>
+              </TouchableOpacity>
             </View>
 
             <TouchableOpacity
