@@ -26,6 +26,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { KeyboardAccessoryNavigation } from "react-native-keyboard-accessory";
 import { strings } from "./translation/config";
 import { AuthContext } from "./navigation/context";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 function SeekerFinishRegistration({ navigation }) {
   const scrollViewRef = useRef();
@@ -77,6 +78,9 @@ function SeekerFinishRegistration({ navigation }) {
   const [currentScroll, setCurrentScroll] = useState(null);
 
   const { signIn } = React.useContext(AuthContext);
+
+  const BIO_PLACEHOLDER = `Example: Greetings, my name is Benjamin, I am 20 years old. I am currently studying my degree at UT, TX.
+  I am a hard working overachiever. And I know I will only benefit your business goals and accomplishments. I have past experience working in the kitchen, as my past job was at Mario’s Pizza downtown. I am easy going, and will bring only good and positive vibes in to your business, I would gladly appreciate it you consider my submission and set an interview this following week! Thanks for reading and hope to see you soon!`;
 
   useEffect(() => {
     (async () => {
@@ -259,7 +263,6 @@ function SeekerFinishRegistration({ navigation }) {
           setSixteen(json.data.sixteen);
           setConvictions(json.data.convictions);
           setPositions(json.data.position);
-          scrollViewRef.current.scrollTo({ y: 750, animated: true });
         })
         .catch((err) => {
           console.log(err);
@@ -354,14 +357,14 @@ function SeekerFinishRegistration({ navigation }) {
     setActiveInputIndex(index);
     setNextFocusDisabled(index === inputs.length - 1);
     setPreviousFocusDisabled(index === 0);
-    const inputHandle = findNodeHandle(inputs[index]);
-    var scrollResponder = scrollViewRef.current.getScrollResponder();
+    // const inputHandle = findNodeHandle(inputs[index]);
+    // var scrollResponder = scrollViewRef.current.getScrollResponder();
 
-    scrollResponder.scrollResponderScrollNativeHandleToKeyboard(
-      inputHandle, // The TextInput node handle
-      480, // The scroll view's bottom "contentInset" (default 0)
-      true // Prevent negative scrolling
-    );
+    // scrollResponder.scrollResponderScrollNativeHandleToKeyboard(
+    //   inputHandle, // The TextInput node handle
+    //   480, // The scroll view's bottom "contentInset" (default 0)
+    //   true // Prevent negative scrolling
+    // );
   }
 
   function handleFocusNext() {
@@ -455,8 +458,8 @@ function SeekerFinishRegistration({ navigation }) {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#fff" }}>
-      <SafeAreaView>
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+      <KeyboardAwareScrollView>
         <View
           style={{
             flexDirection: "row",
@@ -509,10 +512,9 @@ function SeekerFinishRegistration({ navigation }) {
       behavior={Platform.OS === "ios" ? "padding" : null}
       keyboardVerticalOffset={Platform.OS === "ios" ? 10 : 0}      
       > */}
-        <ScrollView ref={scrollViewRef}>
-          <View style={{ flex: 1, alignItems: "center", padding: 20 }}>
+        {/* <ScrollView ref={scrollViewRef}> */}
+          {/* <View style={{ flex: 1, alignItems: "center", padding: 20 }}>
             <View style={{ width: 150, height: 150, alignSelf: "center" }}>
-              {/* <Image source={{uri: user.avatar_image}} style={{width: 100, height: 100, borderRadius: 50, alignSelf: 'center'}} /> */}
               {image == null ? (
                 <View>
                   {user.avatar_image == "" ? (
@@ -631,14 +633,14 @@ function SeekerFinishRegistration({ navigation }) {
               transparent={false}
               visible={modalVisible}
               onRequestClose={() => {
-                // Alert.alert('Modal has been closed.');
+               
               }}
             >
               <SafeAreaView>
                 <View style={{ marginTop: 22 }}>
                   <View>
                     <FlatList
-                      // ItemSeparatorComponent={<Separator />}
+                      
                       data={countries}
                       keyExtractor={(item) => item.code}
                       renderItem={({ item, index, separators }) => (
@@ -765,7 +767,7 @@ function SeekerFinishRegistration({ navigation }) {
               transparent={false}
               visible={modalVisible}
               onRequestClose={() => {
-                // Alert.alert('Modal has been closed.');
+                
               }}
             >
               <SafeAreaView>
@@ -871,7 +873,7 @@ function SeekerFinishRegistration({ navigation }) {
                 handleRef(7, ref);
               }}
             />
-          </View>
+          </View> */}
 
           <View style={{ flex: 1 }}>
             <View style={{ flex: 1, padding: 10 }}>
@@ -918,7 +920,7 @@ function SeekerFinishRegistration({ navigation }) {
                     textAlignVertical: "top",
                   }}
                   onChangeText={(text) => setBio(text)}
-                  placeholder={strings.BIO}
+                  placeholder={BIO_PLACEHOLDER}
                   value={bio}
                   multiline={true}
                   editable={true}
@@ -1080,7 +1082,7 @@ function SeekerFinishRegistration({ navigation }) {
               <TextInput
                 style={{ width: "100%", color: "#000" }}
                 onChangeText={(text) => setCertificate(text)}
-                placeholder={strings.CERTIFICATE}
+                placeholder={strings.CERTIFICATE_PLACEHOLDER}
                 value={certificate}
                 textContentType="none"
                 onFocus={() => {
@@ -1442,8 +1444,8 @@ function SeekerFinishRegistration({ navigation }) {
           </View>
           <View style={{ height: 20 }}></View>
 
-        </ScrollView>
-        <KeyboardAccessoryNavigation
+          </KeyboardAwareScrollView>
+                  <KeyboardAccessoryNavigation
           onNext={handleFocusNext}
           onPrevious={handleFocusPrev}
           onPress={handleFocusNext}
@@ -1453,12 +1455,12 @@ function SeekerFinishRegistration({ navigation }) {
           avoidKeyboard={Platform.OS == "android"}
           style={
             Platform.OS == "android"
-              ? { top: -110, position: "absolute", zIndex: 9999 }
+              ? { top: 0, position: "absolute", zIndex: 9999 }
               : { top: 0 }
           }
         />
         {/* </KeyboardAvoidingView> */}
-        <View style={{ position: "absolute", bottom: 100, width: "100%" }}>
+        <View style={{ position: "absolute", bottom: 50, width: "100%" }}>
           {error ? (
             <Text
               style={{ color: "red", padding: 20, backgroundColor: "#fff" }}
@@ -1483,7 +1485,6 @@ function SeekerFinishRegistration({ navigation }) {
       </SafeAreaView>
 
      
-    </View>
   );
 }
 

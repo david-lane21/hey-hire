@@ -76,10 +76,10 @@
     "ZIP":"Zip...",
     "FOR_RECEIVING_INTERVIEW_CALLS":"* For receiving interview calls",
     "EMAIL":"Email",
-    "ENTER_SKILL":"Enter skill",
+    "ENTER_SKILL":"Enter Skills Separated By Commas",
     "LEVEL_OF_EDUCATION":"Level of Education",
     "NAME_OF_INSTITUTION":"Name of Institution",
-    "INSTITUTION":"Institution",
+    "INSTITUTION":"Name of High School or College",
     "OPTIONAL":"(Optional)",
     "CERTIFICATE":"Certificate",
     "ADD_YOUR_LANGUAGES":"ADD YOUR LANGUAGES",
@@ -126,6 +126,7 @@
     "TAP_TO_SCAN_AGAIN":"Tap to Scan Again",
     "RE_LIST_JOB":"Re-list Job",
     "PLEASE_FILL_MISSING":"Please fill in the missing fields.",
-    "PASSWORD_ERROR":"Password and Confirm Password must be same."
+    "PASSWORD_ERROR":"Password and Confirm Password must be same.",
+    "CERTIFICATE_PLACEHOLDER":"ServSafe, TABC, etc. "
 
 }

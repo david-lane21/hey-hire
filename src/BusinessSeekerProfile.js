@@ -38,9 +38,7 @@ function BusinessSeekerProfile({ route, navigation }) {
   }, [isFocused]);
 
   function formatDate(d) {
-    return `${d.getFullYear()}-${("0" + (d.getMonth() + 1)).slice(-2)}-${(
-      "0" + d.getDate()
-    ).slice(-2)}`;
+    return `${("0" + (d.getMonth() + 1)).slice(-2)}/${( "0" + d.getDate()).slice(-2)}/${d.getFullYear()}`;
   }
 
   function handleUnemploy() {
@@ -268,7 +266,8 @@ function BusinessSeekerProfile({ route, navigation }) {
                   : ""}
               </Text>
                 </View> }
-                {  route.name!="BusinessSeekerProfileMain" &&  <View
+
+                {  route.name!="BusinessSeekerProfileMain" && route.params.job && route.params.job.active_date &&  <View
               style={{
                 flex: 1,
                 flexDirection: "row",
@@ -279,7 +278,7 @@ function BusinessSeekerProfile({ route, navigation }) {
               <Text style={{ color: "#fff" }}>{strings.APPLIED_ON}: </Text>
 
               <Text style={{ color: "#fff", fontSize: 14 }}>
-                {user.hired_date}
+                {formatDate(new Date(route.params.job.active_date))}
               </Text>
             </View>}
           </LinearGradient>

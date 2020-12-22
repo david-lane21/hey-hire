@@ -29,6 +29,7 @@ import RNPickerSelect from "react-native-picker-select";
 import { useIsFocused } from "@react-navigation/native";
 import { KeyboardAccessoryNavigation } from "react-native-keyboard-accessory";
 import { strings } from "./translation/config";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 function SeekerEditProfile({ navigation, route }) {
   const scrollViewRef = useRef();
@@ -82,12 +83,15 @@ function SeekerEditProfile({ navigation, route }) {
 
   const [skill, setSkill] = useState("");
   
+  const BIO_PLACEHOLDER = `Example: Greetings, my name is Benjamin, I am 20 years old. I am currently studying my degree at UT, TX.
+  I am a hard working overachiever. And I know I will only benefit your business goals and accomplishments. I have past experience working in the kitchen, as my past job was at Mario’s Pizza downtown. I am easy going, and will bring only good and positive vibes in to your business, I would gladly appreciate it you consider my submission and set an interview this following week! Thanks for reading and hope to see you soon!`;
+
 
   useEffect(() => {
     (async () => {
       // if (Constants.platform.ios) {
       const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
-      if (status !== "granted") {
+      if (status != "granted") {
         alert("Sorry, we need camera roll permissions to make this work!");
       }
       // }
@@ -110,7 +114,7 @@ function SeekerEditProfile({ navigation, route }) {
   function dateFormat(date) {
     if (date) {
       let d = date.split("-");
-      return `${d[1]}.${d[2]}.${d[0]}`;
+      return `${d[1]}/${d[2]}/${d[0]}`;
     } else {
       return "";
     }
@@ -395,14 +399,14 @@ function SeekerEditProfile({ navigation, route }) {
     setActiveInputIndex(index);
     setNextFocusDisabled(index === inputs.length - 1);
     setPreviousFocusDisabled(index === 0);  
-    const inputHandle = findNodeHandle(inputs[index]);
-    var scrollResponder = scrollViewRef.current.getScrollResponder();
+    // const inputHandle = findNodeHandle(inputs[index]);
+    // var scrollResponder = scrollViewRef.current.getScrollResponder();
 
-    scrollResponder.scrollResponderScrollNativeHandleToKeyboard(
-      inputHandle, // The TextInput node handle
-      480, // The scroll view's bottom "contentInset" (default 0)
-      true // Prevent negative scrolling
-    ); 
+    // scrollResponder.scrollResponderScrollNativeHandleToKeyboard(
+    //   inputHandle, // The TextInput node handle
+    //   480, // The scroll view's bottom "contentInset" (default 0)
+    //   true // Prevent negative scrolling
+    // ); 
   }
 
   function handleFocusNext() {
@@ -495,8 +499,8 @@ function SeekerEditProfile({ navigation, route }) {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#fff" }}>
-      <SafeAreaView>
+      <SafeAreaView  style={{ flex: 1, backgroundColor: "#fff" }}>
+      <KeyboardAwareScrollView>
         <View
           style={{
             flexDirection: "row",
@@ -542,12 +546,12 @@ function SeekerEditProfile({ navigation, route }) {
       behavior={Platform.OS === "ios" ? "padding" : null}
       keyboardVerticalOffset={Platform.OS === "ios" ? 10 : 40}      
       > */}
-          <ScrollView
+          {/* <ScrollView
           keyboardShouldPersistTaps="always"
             showsVerticalScrollIndicator={false}
             style={{ marginBottom: 40 }}   
             ref={scrollViewRef}
-          >
+          > */}
             <View style={{ flex: 1, width: "100%" }}>
               <View style={{ flex: 1, alignItems: "center", padding: 20 }}>
                 <View style={{ width: 150, height: 150, alignSelf: "center" }}>
@@ -959,7 +963,7 @@ function SeekerEditProfile({ navigation, route }) {
                     <TextInput
                       style={{ width: "100%", color: "#666" }}
                       onChangeText={(text) => setBio(text)}
-                      placeholder={strings.BIO}
+                      placeholder={BIO_PLACEHOLDER}
                       value={bio}
                       multiline={true}
                       editable={true}
@@ -1121,7 +1125,7 @@ function SeekerEditProfile({ navigation, route }) {
                   <TextInput
                     style={{ width: "90%", color: "#000" }}
                     onChangeText={(text) => setCertificate(text)}
-                    placeholder={strings.CERTIFICATE}
+                    placeholder={strings.CERTIFICATE_PLACEHOLDER}
                     value={certificate}
                     textContentType="none"
                     onFocus={() => {
@@ -1499,13 +1503,15 @@ function SeekerEditProfile({ navigation, route }) {
                 </View>
               </View>
             </View>
-          </ScrollView>
+          {/* </ScrollView> */}
+          </KeyboardAwareScrollView>
+
           <KeyboardAccessoryNavigation
             androidAdjustResize={Platform.OS == "android"}
             avoidKeyboard={Platform.OS == "android"}
             style={
               Platform.OS == "android"
-                ? { top: -100, position: "absolute", zIndex: 9999 }
+                ? { top: 0, position: "absolute", zIndex: 9999 }
                 : { top: 0 }
             }
             onNext={handleFocusNext}
@@ -1515,7 +1521,7 @@ function SeekerEditProfile({ navigation, route }) {
           />
         {/* </KeyboardAvoidingView> */}
 
-        <View style={{ position: "absolute", bottom: 80, width: "100%" }}>
+        <View style={{ position: "absolute", bottom: 40, width: "100%" }}>
           {error ? (
             <Text
               style={{ color: "red", padding: 20, backgroundColor: "#fff" }}
@@ -1539,31 +1545,7 @@ function SeekerEditProfile({ navigation, route }) {
         </View>
       </SafeAreaView>
 
-      {/* <SafeAreaView>
-        <View style={{ position: "absolute", bottom: 20, width: "100%" }}>
-          {error ? (
-            <Text
-              style={{ color: "red", padding: 20, backgroundColor: "#fff" }}
-            >
-              {error}
-            </Text>
-          ) : null}
-          <TouchableOpacity
-            style={{
-              flex: 1,
-              alignContent: "center",
-              backgroundColor: "#5B42BB",
-              padding: 15,
-            }}
-            onPress={() => handleUpdate()}
-          >
-            <Text style={{ color: "#fff", textAlign: "center", fontSize: 18 }}>
-              Update Profile
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView> */}
-    </View>
+
   );
 }
 

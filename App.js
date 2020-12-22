@@ -20,7 +20,6 @@ SplashScreen.preventAutoHideAsync()
 
 const RootStack = createStackNavigator();
 const RootStackScreen = ({ userToken }) => (
-  
   <RootStack.Navigator headerMode="none">
     {userToken ? (
       <RootStack.Screen
@@ -29,8 +28,9 @@ const RootStackScreen = ({ userToken }) => (
         options={{
           animationEnabled: false,
         }}
-        initialParams={{ screen:userToken.user_type==2?'Seeker':'Business' }}
-
+        initialParams={{
+          screen: userToken.user_type == 2 ? "Seeker" : "Business",
+        }}
       />
     ) : (
       <RootStack.Screen
@@ -47,6 +47,7 @@ const RootStackScreen = ({ userToken }) => (
 export default function App() {
   const [isLoading, setIsLoading] = React.useState(true);
   const [userToken, setUserToken] = React.useState(null);
+  const [url, setURL] = React.useState(null);
 
   const authContext = React.useMemo(() => {
     return {
@@ -69,9 +70,9 @@ export default function App() {
     getUser().then((u) => {
       console.log(u);
       var userData = JSON.parse(u);
-      if(userData && userData.is_verified==1){
+      if (userData && userData.is_verified == 1) {
         setUserToken(JSON.parse(u));
-      }else{
+      } else {
         setUserToken(null);
       }
       setIsLoading(false);
@@ -79,6 +80,10 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    Linking.getInitialURL().then((url) => {
+      console.log(url);
+      if (url) handleOpenURL(url);
+    });
     setTimeout(async () => {
       await SplashScreen.hideAsync();
       if (Constants.platform.ios) {
@@ -87,16 +92,28 @@ export default function App() {
     }, 2500);
   });
 
+  function handleOpenURL(url) {
+    let businessId = url.split("/").filter(Boolean).pop();
+    console.log(businessId / 33469);
+    NavigationService.navigate(
+      "SeekerHomeAvailableJobs",
+
+      { biz_id: businessId / 33469 }
+    );
+  }
+
   if (isLoading) {
-    return (null);
+    return null;
   }
 
   return (
     <AuthContext.Provider value={authContext}>
-      <NavigationContainer  ref={(navigatorRef) => {
-        NavigationService.setTopLevelNavigator(navigatorRef);
-      }}>
-        <RootStackScreen userToken={userToken} />
+      <NavigationContainer
+        ref={(navigatorRef) => {
+          NavigationService.setTopLevelNavigator(navigatorRef);
+        }}
+      >
+        <RootStackScreen userToken={userToken} url={url} />
       </NavigationContainer>
     </AuthContext.Provider>
   );

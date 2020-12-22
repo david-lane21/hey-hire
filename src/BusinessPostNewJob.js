@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
   TouchableHighlight,
   Platform,
-  Alert  
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -19,7 +19,7 @@ import { KeyboardAccessoryNavigation } from "react-native-keyboard-accessory";
 import { useIsFocused } from "@react-navigation/native";
 import { getUser, setUser, getToken } from "./utils/utils.js";
 import { postFormData } from "./utils/network.js";
-import {strings} from './translation/config';
+import { strings } from "./translation/config";
 
 function BusinessPostNewJob({ navigation }) {
   const isFocused = useIsFocused();
@@ -61,37 +61,42 @@ function BusinessPostNewJob({ navigation }) {
   }
 
   function formatDate(d) {
-    return `${d.getFullYear()}-${('0'+(d.getMonth() + 1)).slice(-2)}-${('0' + d.getDate()).slice(-2)}`;
+    return `${d.getFullYear()}-${("0" + (d.getMonth() + 1)).slice(-2)}-${(
+      "0" + d.getDate()
+    ).slice(-2)}`;
   }
 
   function handlePostJob() {
+    if (position && description && experience && date) {
+      let form = new FormData();
+      form.append("position", position);
+      form.append("position_desc", description);
+      form.append("experience", experience);
+      form.append("start_date", formatDate(date));
 
-    if(position && description && experience && date){
-    let form = new FormData();
-    form.append("position", position);
-    form.append("position_desc", description);
-    form.append("experience", experience);
-    form.append("start_date", formatDate(date));
+      form.append("user_token", user.user_token);
+      form.append("user_id", user.user_id);
 
-    form.append("user_token", user.user_token);
-    form.append("user_id", user.user_id);
-
-    postFormData("add_job", form)
-      .then((res) => {
-        console.log(res);
-        return res.json();
-      })
-      .then((json) => {
-        console.log("Response", json,form);
-        if(json.status_code==200){
-        navigation.goBack();
-        }else{
-          Alert.alert("",json.msg);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+      postFormData("add_job", form)
+        .then((res) => {
+          console.log(res);
+          return res.json();
+        })
+        .then((json) => {
+          console.log("Response", json, form);
+          if (json.status_code == 200) {
+            setPosition("");
+            setDescription("");
+            setExperience("");
+            setDate(null);
+            navigation.goBack();
+          } else {
+            Alert.alert("", json.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   }
 
@@ -117,52 +122,54 @@ function BusinessPostNewJob({ navigation }) {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
-              <SafeAreaView>
-
-      <View
+      <SafeAreaView>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            paddingTop: 20,
+            justifyContent: "center",
+            paddingBottom: 10,
+            borderBottomWidth: 0.25,
+            borderBottomColor: "rgba(0,0,0,0.2)",
+          }}
+        >
+          <View style={{ position: "absolute", left: 15 }}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Image
+                source={require("../assets/ic_back2.png")}
+                style={{ width: 28, height: 22 }}
+              />
+            </TouchableOpacity>
+          </View>
+          <View style={{ justifyContent: "center" }}>
+            <Text style={{ color: "#4834A6", fontSize: 18 }}>
+              {strings.POST_A_JOB}
+            </Text>
+          </View>
+          <View
             style={{
-              flexDirection: "row",
-              alignItems: "center",
-              paddingTop: 20,
-              justifyContent: "center",
-              paddingBottom: 10,
-              borderBottomWidth: 0.25,
-              borderBottomColor: "rgba(0,0,0,0.2)",
+              position: "absolute",
+              alignItems: "flex-end",
+              right: 15,
+              top: 20,
             }}
           >
-            <View style={{position:'absolute', left: 15 }}>
-              <TouchableOpacity onPress={() => navigation.goBack()}>
-                <Image
-                  source={require("../assets/ic_back2.png")}
-                  style={{ width: 28, height: 22 }}
-                />
-              </TouchableOpacity>
-            </View>
-            <View style={{ justifyContent:'center'}}>
-              <Text style={{ color: "#4834A6", fontSize: 18 }}>{strings.POST_A_JOB}</Text>
-            </View>
-            <View
-              style={{
-               position:'absolute',
-                alignItems: "flex-end",
-                right: 15,
-                top:20
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("ClosedJobs", {
+                  screen: "BusinessClosedJobs",
+                });
               }}
             >
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate("ClosedJobs", {
-                    screen: "BusinessClosedJobs",
-                  });
-                }}
-              >
-                <Text style={{ color: "#4834A6" }}>{strings.ARCHIVED_POSTS}</Text>
-              </TouchableOpacity>
-            </View>
+              <Text style={{ color: "#4834A6" }}>{strings.ARCHIVED_POSTS}</Text>
+            </TouchableOpacity>
           </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
-          
-
+        </View>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          style={{ marginBottom: 80 }}
+        >
           <View style={{ flex: 1, width: "100%", paddingTop: 20 }}>
             <View
               style={{ flex: 1, alignItems: "center", paddingHorizontal: 20 }}
@@ -223,7 +230,6 @@ function BusinessPostNewJob({ navigation }) {
                     handleRef(1, ref);
                   }}
                   autoCorrect={false}
-
                 />
               </View>
             </View>
@@ -263,7 +269,6 @@ function BusinessPostNewJob({ navigation }) {
                     handleRef(2, ref);
                   }}
                   autoCorrect={false}
-
                 />
               </View>
             </View>
@@ -291,22 +296,24 @@ function BusinessPostNewJob({ navigation }) {
                     </Text>
                   ) : (
                     <Text style={{ width: 120 }}>
-                      {date == null ? strings.START_DATE: formatDate(date)}
+                      {date == null ? strings.START_DATE : formatDate(date)}
                     </Text>
                   )}
                 </TouchableOpacity>
               </View>
             </View>
 
-            <View
+            <TouchableOpacity
               style={{
                 flex: 3,
                 alignItems: "center",
                 marginHorizontal: "5%",
                 marginTop: 20,
+                
               }}
+              onPress={() => handlePostJob()}
             >
-              <TouchableOpacity
+              <View
                 style={{
                   width: "100%",
                   backgroundColor: "#4834A6",
@@ -314,15 +321,15 @@ function BusinessPostNewJob({ navigation }) {
                   paddingBottom: 12,
                   borderRadius: 50,
                 }}
-                onPress={() => handlePostJob()}
+               
               >
                 <Text
                   style={{ textAlign: "center", fontSize: 18, color: "#fff" }}
                 >
                   {strings.POST_JOB}
                 </Text>
-              </TouchableOpacity>
-            </View>
+              </View>
+            </TouchableOpacity>
 
             <DateTimePickerModal
               isVisible={showDate}
@@ -332,7 +339,7 @@ function BusinessPostNewJob({ navigation }) {
               onCancel={(i) => hideDate(i)}
             />
           </View>
-      </ScrollView>
+        </ScrollView>
       </SafeAreaView>
 
       <KeyboardAccessoryNavigation
@@ -342,7 +349,7 @@ function BusinessPostNewJob({ navigation }) {
         previousDisabled={previousFocusDisabled}
         androidAdjustResize={Platform.OS == "android"}
         avoidKeyboard={Platform.OS == "android"}
-        style={Platform.OS == "android" ? { top: -100 } : {top:-80}}
+        style={Platform.OS == "android" ? { top: -100 } : { top: -80 }}
       />
     </View>
   );
@@ -373,5 +380,3 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
-
-

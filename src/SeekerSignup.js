@@ -24,7 +24,7 @@ import { setUser, setToken } from './utils/utils.js'
 import { KeyboardAccessoryNavigation,KeyboardAccessoryView } from 'react-native-keyboard-accessory'
 import { strings } from './translation/config'
 import { AuthContext } from './navigation/context'
-import { func } from 'prop-types'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 function SeekerSignup ({ navigation }) {
   const scrollViewRef = useRef();
@@ -59,6 +59,10 @@ function SeekerSignup ({ navigation }) {
       if (status !== 'granted') {
         setError('Permission to access location was denied')
       }
+      const  status1  = await ImagePicker.requestCameraRollPermissionsAsync();
+        if (status1.status !== 'granted') {
+          alert('Sorry, we need camera roll permissions to make this work!')
+        }
 
       try {
         let loc = await Location.getLastKnownPositionAsync()
@@ -72,17 +76,7 @@ function SeekerSignup ({ navigation }) {
     })()
   }, [])
 
-  useEffect(() => {
-    ;(async () => {
-      if (Constants.platform.ios) {
-        const { status } = await ImagePicker.requestCameraRollPermissionsAsync()
-        if (status !== 'granted') {
-          alert('Sorry, we need camera roll permissions to make this work!')
-        }
-      }
-    })()
-  }, [])
-
+  
   const setAddressField = async location => {
     const loc = {
       latitude: location.coords.latitude,
@@ -241,15 +235,6 @@ function SeekerSignup ({ navigation }) {
     setNextFocusDisabled(index === inputs.length - 1);
     setPreviousFocusDisabled(index === 0);
 
-    const inputHandle = findNodeHandle(inputs[index]);
-    var scrollResponder = scrollViewRef.current.getScrollResponder();
-
-      scrollResponder.scrollResponderScrollNativeHandleToKeyboard(
-    inputHandle, // The TextInput node handle
-    80, // The scroll view's bottom "contentInset" (default 0)
-    true // Prevent negative scrolling
-  ); 
-
   }
 
   function handleFocusNext () {
@@ -272,12 +257,9 @@ function SeekerSignup ({ navigation }) {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      {/* <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
-      > */}
+      <KeyboardAwareScrollView style={styles.container}>
 
-        <ScrollView style={styles.container}  ref={scrollViewRef} onScroll={onScroll} >
+        {/* <ScrollView style={styles.container}  ref={scrollViewRef} onScroll={onScroll} > */}
          
             <View style={{ flex: 1, alignItems: 'center', padding: 20 }}>
               <View style={{ width: 140, height: 140, alignSelf: 'center' }}>
@@ -721,7 +703,8 @@ function SeekerSignup ({ navigation }) {
 
             <View style={{ height: 400 }}></View>
           
-        </ScrollView>
+        {/* </ScrollView> */}
+        </KeyboardAwareScrollView>
         <KeyboardAccessoryNavigation
           onNext={handleFocusNext}
           onPrevious={handleFocusPrev}
@@ -744,7 +727,7 @@ const styles = StyleSheet.create({
     //  flex: 1,
     flexDirection: 'column',
     padding: 20,
-    backgroundColor: 'white'
+    // backgroundColor: 'white'
   },
   inputField: {
     // height: 40,

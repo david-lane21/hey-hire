@@ -68,12 +68,7 @@ function SeekerHome({ navigation }) {
           },
           500
         );
-        console.log(loc)
-        // setLocation({...location,{
-        //   latitude: loc.coords.latitude,
-        //   longitude: loc.coords.longitude}});
-          
-       ;
+       
 
         setRegion({
           latitude: loc.coords.latitude,
@@ -156,15 +151,14 @@ function SeekerHome({ navigation }) {
             })
             .then((json2) => {
               let bizList = json2.data.filter(
-                (b) => parseFloat(b.latitude) && parseFloat(b.longitude)
+                (b) => parseFloat(b.latitude) && parseFloat(b.longitude) && b.is_active==1
               );
               bizList = bizList.map((b) => {
-                b.distance_in_km = distance(
+                b.distance_in_km = haversine_distance(
                   loc.coords.latitude || latitude,
                   loc.coords.longitude || longitude,
-                  b.latitude,
-                  b.longitude,
-                  ""
+                  21.5651931,70.4342993,
+                  "K"
                 ); //.toFixed(1)
                 return b;
               });
@@ -272,8 +266,30 @@ function SeekerHome({ navigation }) {
       if (unit == "N") {
         dist = dist * 0.8684;
       }
+
       return dist;
     }
+  }
+
+  function distanceInKM(lat1, lon1, lat2, lon2) {
+    var p = 0.017453292519943295;    // Math.PI / 180
+    var c = Math.cos;
+    var a = 0.5 - c((lat2 - lat1) * p)/2 + 
+            c(lat1 * p) * c(lat2 * p) * 
+            (1 - c((lon2 - lon1) * p))/2;
+  console.log(12742 * Math.asin(Math.sqrt(a)))
+    return 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
+  }
+
+  function haversine_distance(lat1, lon1, lat2, lon2) {
+    var R = 3958.8; // Radius of the Earth in miles
+    var rlat1 = lat1 * (Math.PI/180); // Convert degrees to radians
+    var rlat2 = lat2 * (Math.PI/180); // Convert degrees to radians
+    var difflat = rlat2-rlat1; // Radian difference (latitudes)
+    var difflon = (lon2-lon1) * (Math.PI/180); // Radian difference (longitudes)
+
+    var d = 2 * R * Math.asin(Math.sqrt(Math.sin(difflat/2)*Math.sin(difflat/2)+Math.cos(rlat1)*Math.cos(rlat2)*Math.sin(difflon/2)*Math.sin(difflon/2)));
+    return d;
   }
 
   function refreshData(){
@@ -324,7 +340,7 @@ loadDate();
               <TouchableOpacity
                 onPress={() =>
                   navigation.navigate("SeekerLinks", {
-                    screen: "SeekerEditProfile",
+                    screen: "SeekerFinishRegistration",
                     params: {
                       profile: profile,
                     },
