@@ -189,7 +189,7 @@ function SeekerSignup ({ navigation }) {
       }
 
       form.append('zip_code', zipcode)
-
+console.log(form);
       postFormData('user_register', form)
         .then(res => {
           return res.json()
@@ -203,7 +203,8 @@ function SeekerSignup ({ navigation }) {
             navigation.navigate('SeekerVerificationCode', {
               number: phCode + ' ' + phone,
               email: email,
-              otp: json.otp
+              otp: json.otp,
+              userId:json.data.user_id
             })
           } else {
             if (json.msg) {
@@ -325,7 +326,7 @@ function SeekerSignup ({ navigation }) {
                 style={{ height: 20, width: 20 }}
               />
               <TextInput
-                style={{ paddingLeft: 10, width: '100%', color: '#000' }}
+                style={{ paddingLeft: 10, width: '100%', color: '#000'}}
                 onChangeText={text => setLastName(text)}
                 placeholder={strings.LASTNAME}
                 value={lastName}
@@ -429,9 +430,9 @@ function SeekerSignup ({ navigation }) {
                 </SafeAreaView>
               </Modal>
 
-              <View style={{ flex: 1, flexDirection: 'row' }}>
+              <View style={styles.inputField}>
                 <TouchableOpacity
-                  style={styles.inputField}
+                  style={[styles.inputField,{padding:0, paddingTop:10}]}
                   onPress={() => setModalVisible(true)}
                 >
                   <Image
@@ -575,7 +576,7 @@ function SeekerSignup ({ navigation }) {
 
               <View style={{ flex: 1, flexDirection: 'row' }}>
                 <TouchableOpacity
-                  style={styles.code}
+                  style={[styles.code]}
                   onPress={() => setModalVisible(true)}
                 >
                   <Image
@@ -749,7 +750,9 @@ const styles = StyleSheet.create({
       width: 0,
       height: 0
     },
-    alignItems: 'flex-start'
+    alignItems: 'center',
+    paddingVertical:5
+    
   },
   code: {
     backgroundColor: '#fff',
@@ -757,11 +760,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderColor: '#fff',
     borderWidth: 1,
-    paddingTop: 10,
+    paddingTop: 15,
     paddingLeft: 10,
     // color: '#fff',
     width: '25%',
-    height: 40,
+    // height: 40,
     marginBottom: 10,
     shadowColor: '#ccc',
     shadowRadius: 4,
@@ -769,7 +772,8 @@ const styles = StyleSheet.create({
     shadowOffset: {
       width: 0,
       height: 0
-    }
+    },
+    
   },
   code2: {
     color: '#000',
@@ -781,7 +785,7 @@ const styles = StyleSheet.create({
     padding: 10,
     // color: '#fff',123
     width: '70%',
-    height: 40,
+    // height: 40,
     marginLeft: '5%',
     marginBottom: 10,
     shadowColor: '#ccc',

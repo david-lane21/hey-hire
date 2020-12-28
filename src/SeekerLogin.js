@@ -99,9 +99,9 @@ function SeekerLogin({ navigation }) {
 
   function handleResend(tempUserData) {
     let form = new FormData();
-    form.append("user_type", "1");
-    form.append("phone", phCode + " " + phone);
-    form.append("email", tempUserData.email);
+    form.append("user_type", tempUserData.user_type);
+    form.append("phone",tempUserData.phone);
+
 
     postFormData("send_verification_code", form)
       .then((res) => {
@@ -110,12 +110,13 @@ function SeekerLogin({ navigation }) {
       .then((json) => {
         console.log(json);
         if (json.status_code == "300") {
-          setError(json.msg);
+          console.log(json.msg);
         } else {
           navigation.navigate("SeekerVerificationCode", {
             number: phCode + " " + phone,
             email: tempUserData.email,
             otp: json.otp,
+            userId:tempUserData.user_id
           });
         }
       })

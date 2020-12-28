@@ -15,7 +15,7 @@ import { strings } from "./translation/config";
 
 function BusinessVisitorDetail({ navigation, route }) {
   const [user, setUser1] = useState(route.params.seeker);
-
+console.log(route.params.seeker)
   return (
     <View style={{flex:1}}>
     <SafeAreaView >
@@ -124,9 +124,9 @@ function BusinessVisitorDetail({ navigation, route }) {
                 {strings.SKILLS}
               </Text>
             </View>
-            {user.skill.split(",").map((item) => (
+            {user.skill.split(",").map((item,index) => (
               <View
-                key={item}
+                key={item+""+index}
                 style={{
                   marginBottom: 10,
                   borderRadius: 5,
@@ -296,7 +296,7 @@ function BusinessVisitorDetail({ navigation, route }) {
             paddingLeft: 15,
             paddingRight: 15,
             paddingBottom: 10,
-            marginBottom:50
+            marginBottom:100
           }}
         >
           <Text style={{ fontSize: 18, marginLeft: 10 }}>{strings.AVAILABILITY}</Text>

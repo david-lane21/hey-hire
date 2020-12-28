@@ -58,7 +58,7 @@ function SeekerHome({ navigation }) {
         let loc = await Location.getLastKnownPositionAsync();
         setLatitude(loc.coords.latitude);
         setLongitude(loc.coords.longitude);
-
+        console.log(loc);
         map.animateToRegion(
           {
             latitude: loc.coords.latitude,
@@ -157,7 +157,7 @@ function SeekerHome({ navigation }) {
                 b.distance_in_km = haversine_distance(
                   loc.coords.latitude || latitude,
                   loc.coords.longitude || longitude,
-                  21.5651931,70.4342993,
+                  b.latitude,b.longitude,
                   "K"
                 ); //.toFixed(1)
                 return b;
@@ -340,7 +340,7 @@ loadDate();
               <TouchableOpacity
                 onPress={() =>
                   navigation.navigate("SeekerLinks", {
-                    screen: "SeekerFinishRegistration",
+                    screen: "SeekerEditProfile",
                     params: {
                       profile: profile,
                     },
@@ -654,8 +654,8 @@ loadDate();
                   draggable={true}
                   key={"mkr.user_id"}
                   coordinate={{
-                    latitude: parseFloat(location.latitude),
-                    longitude: parseFloat(location.longitude),
+                    latitude: parseFloat(latitude),
+                    longitude: parseFloat(longitude),
                   }}
                 >
                   <Image

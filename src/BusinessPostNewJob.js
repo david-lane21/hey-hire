@@ -20,6 +20,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { getUser, setUser, getToken } from "./utils/utils.js";
 import { postFormData } from "./utils/network.js";
 import { strings } from "./translation/config";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 function BusinessPostNewJob({ navigation }) {
   const isFocused = useIsFocused();
@@ -121,8 +122,8 @@ function BusinessPostNewJob({ navigation }) {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#fff" }}>
-      <SafeAreaView>
+
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
         <View
           style={{
             flexDirection: "row",
@@ -166,10 +167,8 @@ function BusinessPostNewJob({ navigation }) {
             </TouchableOpacity>
           </View>
         </View>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          style={{ marginBottom: 80 }}
-        >
+        <KeyboardAwareScrollView>
+
           <View style={{ flex: 1, width: "100%", paddingTop: 20 }}>
             <View
               style={{ flex: 1, alignItems: "center", paddingHorizontal: 20 }}
@@ -339,19 +338,24 @@ function BusinessPostNewJob({ navigation }) {
               onCancel={(i) => hideDate(i)}
             />
           </View>
-        </ScrollView>
-      </SafeAreaView>
-
-      <KeyboardAccessoryNavigation
+        {/* </ScrollView> */}
+        </KeyboardAwareScrollView>
+        <KeyboardAccessoryNavigation
         onNext={handleFocusNext}
         onPrevious={handleFocusPrev}
         nextDisabled={nextFocusDisabled}
         previousDisabled={previousFocusDisabled}
         androidAdjustResize={Platform.OS == "android"}
         avoidKeyboard={Platform.OS == "android"}
-        style={Platform.OS == "android" ? { top: -100 } : { top: -80 }}
+        style={
+          Platform.OS == "android"
+            ? { top: 0}
+            : { top: 0 }
+        }
       />
-    </View>
+      </SafeAreaView>
+
+     
   );
 }
 

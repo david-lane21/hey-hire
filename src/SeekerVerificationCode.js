@@ -19,11 +19,12 @@ function SeekerVerificationCode({ route, navigation }){
   const [otp, setOtp]   = useState(route.params.otp)
   const [num, setNum]   = useState(route.params.number)
   const [email, setEmail]   = useState(route.params.email)
-  
+  const [userId, setUserId]   = useState(route.params.userId)
+
   
   function handleResend(){
     let form = new FormData()
-    form.append('user_type', '1')
+    form.append('user_type', '2')
     form.append('phone', num)
     form.append('email', email)
     
@@ -52,7 +53,24 @@ function SeekerVerificationCode({ route, navigation }){
     if(code === otp){
       // navigation.navigate('Seeker')
       // navigation.navigate('SeekerLinks', { screen: 'SeekerFinishRegistration'})
-      navigation.navigate('SeekerFinishRegistration')
+      let form = new FormData()
+      form.append('user_id', userId);  
+      
+      postFormData('user_verified_code', form)
+      .then(res => {
+        return res.json()
+      })
+      .then(json => {
+        console.log(json);
+        if(json.status_code==200){
+        navigation.navigate('SeekerFinishRegistration');
+        }
+      })
+      .catch(err => {
+        console.log(err)
+      })
+
+     
     }else{
       setError('Incorrect verification code')
     }
@@ -70,17 +88,18 @@ function SeekerVerificationCode({ route, navigation }){
         borderBottomColor: '#eee',
         
         }}>
-          <View style={{position:'absolute', left: 5}}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Image source={require('../assets/ic_back.png')} style={{width: 28, height: 22}} />
-            </TouchableOpacity>
-          </View>
+         
           <View style={{flex:1,alignItems:'center'}}>
             <Text style={{ color: '#4834A6', fontSize: 18}}>{strings.VERIFICATION}</Text>
           </View>
           <View style={{position:'absolute', right: 5}}>
             <TouchableOpacity onPress={() => handleResend()}>
               <Text style={{ color: '#4834A6'}}>{strings.RESEND}</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={{position:'absolute', left: 5}}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Image source={require('../assets/ic_back.png')} style={{width: 28, height: 22}} />
             </TouchableOpacity>
           </View>
         </View>
