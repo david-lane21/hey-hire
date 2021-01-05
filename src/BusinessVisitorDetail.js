@@ -124,7 +124,7 @@ console.log(route.params.seeker)
                 {strings.SKILLS}
               </Text>
             </View>
-            {user.skill.split(",").map((item,index) => (
+            {user.skill && user.skill.split(",").map((item,index) => (
               <View
                 key={item+""+index}
                 style={{
@@ -159,7 +159,7 @@ console.log(route.params.seeker)
             paddingBottom: 10,
           }}
         >
-          <Text style={{ fontSize: 18, marginLeft: 10 }}>
+          <Text style={{ fontSize: 18,marginLeft: 10 ,marginBottom:5 }}>
             {strings.EDUCATIONS}
           </Text>
           <View
@@ -194,7 +194,7 @@ console.log(route.params.seeker)
             paddingBottom: 10,
           }}
         >
-          <Text style={{ fontSize: 18, marginLeft: 10 }}>
+          <Text style={{ fontSize: 18, marginLeft: 10 ,marginBottom:5 }}>
             {strings.CERTIFICATION}
           </Text>
           <View
@@ -229,7 +229,7 @@ console.log(route.params.seeker)
             paddingBottom: 10,
           }}
         >
-          <Text style={{ fontSize: 18, marginLeft: 10 }}>
+          <Text style={{ fontSize: 18, marginLeft: 10 ,marginBottom:5 }}>
             {strings.LANGUAGE}
           </Text>
           <View
@@ -264,7 +264,7 @@ console.log(route.params.seeker)
             paddingBottom: 10,
           }}
         >
-          <Text style={{ fontSize: 18, marginLeft: 10 }}>{strings.LEVEL_OF_EDUCATION}</Text>
+          <Text style={{ fontSize: 18, marginLeft: 10 ,marginBottom:5 }}>{strings.LEVEL_OF_EDUCATION}</Text>
           <View
             style={{
               width: "100%",
@@ -299,7 +299,7 @@ console.log(route.params.seeker)
             marginBottom:100
           }}
         >
-          <Text style={{ fontSize: 18, marginLeft: 10 }}>{strings.AVAILABILITY}</Text>
+          <Text style={{ fontSize: 18, marginLeft: 10 ,marginBottom:5 }}>{strings.AVAILABILITY}</Text>
           <View
             style={{
               width: "100%",
@@ -344,8 +344,8 @@ function Header() {
           <Image
             source={require("../assets/ic_back_w.png")}
             style={{
-              width: 40,
-              height: 30,
+              width: 28,
+              height: 25,
               marginTop: 10,
               marginLeft: 10,
             }}

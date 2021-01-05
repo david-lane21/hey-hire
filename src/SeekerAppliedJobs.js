@@ -234,13 +234,15 @@ const [message,setMessage] = useState(null);
           <View style={{ backgroundColor: '#F4F5FA', minHeight: 1000 }}>
             <View style={{ backgroundColor: '#4E35AE', padding: 20, borderBottomLeftRadius: 7, borderBottomRightRadius: 7 }}>
               <View style={{ flex: 1, flexDirection: 'row' }}>
-                <Image source={require('../assets/ic_search_w.png')} style={{ alignSelf: 'flex-start' }} />
+                <Image source={require('../assets/ic_search_w.png')} />
 
                 <TextInput
-                  style={{ width: '85%', paddingLeft: 10, color: '#fff' }}
+                  style={{ width: '85%', paddingLeft: 10, color: '#fff',paddingTop:0 }}
                   onChangeText={text => searchJobs(text)}
-                  placeholder={strings.SEARCH}
-                  value={search} />
+                  placeholder={strings.SEARCH_SPECIFIC_JOB}
+                  value={search} 
+                  placeholderTextColor="#fff" 
+                  />
 
                 <Image source={require('../assets/ic_filter_w.png')} style={{}} />
               </View>

@@ -127,6 +127,7 @@
     "RE_LIST_JOB":"Re-list Job",
     "PLEASE_FILL_MISSING":"Please fill in the missing fields.",
     "PASSWORD_ERROR":"Password and Confirm Password must be same.",
-    "CERTIFICATE_PLACEHOLDER":"ServSafe, TABC, etc. "
+    "CERTIFICATE_PLACEHOLDER":"ServSafe, TABC, etc. ",
+    "SEARCH_SPECIFIC_JOB":"Search for a specific job"
 
 }

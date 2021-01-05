@@ -17,7 +17,7 @@ import { func } from "prop-types";
 import { useIsFocused } from "@react-navigation/native";
 import { getUser } from "./utils/utils.js";
 import Header from "./components/Header";
-import {strings} from './translation/config';
+import { strings } from './translation/config';
 
 function BusinessSeekerProfile({ route, navigation }) {
   console.log(route);
@@ -38,7 +38,7 @@ function BusinessSeekerProfile({ route, navigation }) {
   }, [isFocused]);
 
   function formatDate(d) {
-    return `${("0" + (d.getMonth() + 1)).slice(-2)}/${( "0" + d.getDate()).slice(-2)}/${d.getFullYear()}`;
+    return `${("0" + (d.getMonth() + 1)).slice(-2)}/${("0" + d.getDate()).slice(-2)}/${d.getFullYear()}`;
   }
 
   function handleUnemploy() {
@@ -79,7 +79,7 @@ function BusinessSeekerProfile({ route, navigation }) {
       .then((json) => {
         console.log("step 2");
         console.log(json);
-        Alert.alert("",json.msg);
+        Alert.alert("", json.msg);
         if (json.status_code == 200) {
           navigation.goBack();
         }
@@ -89,13 +89,13 @@ function BusinessSeekerProfile({ route, navigation }) {
       });
   }
 
-  function onPressCall(){
+  function onPressCall() {
     Linking.openURL(`tel:${user.phone}`)
 
   }
 
 
-  function notRelevant(){
+  function notRelevant() {
 
     let form = new FormData();
     form.append("user_token", userToken);
@@ -111,8 +111,8 @@ function BusinessSeekerProfile({ route, navigation }) {
       .then((json) => {
         console.log("step 2");
         console.log(json);
-        
-        Alert.alert("",json.msg);
+
+        Alert.alert("", json.msg);
         if (json.status_code == 200) {
           navigation.goBack();
         }
@@ -123,10 +123,10 @@ function BusinessSeekerProfile({ route, navigation }) {
   }
 
   return (
-<LinearGradient
-      style={{ flex: 1}}
+    <LinearGradient
+      style={{ flex: 1 }}
       colors={["#4E35AE", "#775ED7"]}
-    > 
+    >
       <SafeAreaView>
 
         <View
@@ -140,25 +140,25 @@ function BusinessSeekerProfile({ route, navigation }) {
             borderBottomColor: "#715FCB",
           }}
         >
-           <View style={{flex:1,alignItems:'center',justifyContent:'center' }}>
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
             <Image
               source={require("../assets/title_header.png")}
               style={{ width: 120, height: 25 }}
             />
           </View>
-          <View style={{ position:'absolute' }}>
-            <TouchableOpacity onPress={() => navigation.goBack()} style={{padding:5}}>
+          <View style={{ position: 'absolute' }}>
+            <TouchableOpacity onPress={() => navigation.goBack()} style={{ padding: 5 }}>
               <Image
                 source={require("../assets/ic_back_w.png")}
                 style={{
-                  width: 40,
-                  height: 30,                 
+                  width: 28,
+                  height: 25,
                 }}
               />
             </TouchableOpacity>
           </View>
-         
-         
+
+
         </View>
         <ScrollView style={{ marginBottom: 50 }}>
           {/* <View
@@ -211,7 +211,7 @@ function BusinessSeekerProfile({ route, navigation }) {
               borderBottomLeftRadius: 5,
               borderBottomRightRadius: 5,
             }}
-            colors={["#4E35AE","#4E35AE", "#775ED7"]}
+            colors={["#4E35AE", "#4E35AE", "#775ED7"]}
           >
             <Image
               source={{ uri: user.avatar_image }}
@@ -230,7 +230,7 @@ function BusinessSeekerProfile({ route, navigation }) {
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "center",
-                marginTop: 10,
+                marginTop: 20,
               }}
             >
               <Text style={{ color: "#fff", fontSize: 20 }}>
@@ -250,7 +250,7 @@ function BusinessSeekerProfile({ route, navigation }) {
                 {user.address}
               </Text>
             </View>
-            {  route.name!="BusinessSeekerProfileMain" && <View
+            {route.name != "BusinessSeekerProfileMain" && <View
               style={{
                 flex: 1,
                 flexDirection: "row",
@@ -265,9 +265,9 @@ function BusinessSeekerProfile({ route, navigation }) {
                   ? user.job_detail.length > 0 && user.job_detail[0].position
                   : ""}
               </Text>
-                </View> }
+            </View>}
 
-                {  route.name!="BusinessSeekerProfileMain" && route.params.job && route.params.job.active_date &&  <View
+            {route.name != "BusinessSeekerProfileMain" && route.params.job && route.params.job.active_date && <View
               style={{
                 flex: 1,
                 flexDirection: "row",
@@ -388,7 +388,7 @@ function BusinessSeekerProfile({ route, navigation }) {
               paddingBottom: 10,
             }}
           >
-            <Text style={{ fontSize: 18, marginLeft: 10 }}>{strings.EDUCATIONS}</Text>
+            <Text style={{ fontSize: 18,marginLeft: 10 ,marginBottom:5 }}>{strings.EDUCATIONS}</Text>
             <View
               style={{
                 width: "100%",
@@ -421,7 +421,7 @@ function BusinessSeekerProfile({ route, navigation }) {
               paddingBottom: 10,
             }}
           >
-            <Text style={{ fontSize: 18, marginLeft: 10 }}>{strings.CERTIFICATION}</Text>
+            <Text style={{ fontSize: 18, marginLeft: 10 ,marginBottom:5}}>{strings.CERTIFICATION}</Text>
             <View
               style={{
                 width: "100%",
@@ -454,7 +454,7 @@ function BusinessSeekerProfile({ route, navigation }) {
               paddingBottom: 10,
             }}
           >
-            <Text style={{ fontSize: 18, marginLeft: 10 }}>{strings.LANGUAGE}</Text>
+            <Text style={{ fontSize: 18, marginLeft: 10 ,marginBottom:5}}>{strings.LANGUAGE}</Text>
             <View
               style={{
                 width: "100%",
@@ -476,7 +476,7 @@ function BusinessSeekerProfile({ route, navigation }) {
               </View>
             </View>
           </View>
-          
+
           <View
             style={{
               alignItems: "flex-start",
@@ -487,7 +487,7 @@ function BusinessSeekerProfile({ route, navigation }) {
               paddingBottom: 10,
             }}
           >
-            <Text style={{ fontSize: 18, marginLeft: 10 }}>{strings.LEVEL_OF_EDUCATION}</Text>
+            <Text style={{ fontSize: 18,marginLeft: 10 ,marginBottom:5}}>{strings.LEVEL_OF_EDUCATION}</Text>
             <View
               style={{
                 width: "100%",
@@ -520,7 +520,7 @@ function BusinessSeekerProfile({ route, navigation }) {
               paddingBottom: 10,
             }}
           >
-            <Text style={{ fontSize: 18, marginLeft: 10 }}>{strings.NAME_OF_INSTITUTION}</Text>
+            <Text style={{ fontSize: 18, marginLeft: 10 ,marginBottom:5}}>{strings.NAME_OF_INSTITUTION}</Text>
             <View
               style={{
                 width: "100%",
@@ -543,9 +543,9 @@ function BusinessSeekerProfile({ route, navigation }) {
             </View>
           </View>
 
-          
 
-         
+
+
           <View
             style={{
               alignItems: "flex-start",
@@ -556,7 +556,7 @@ function BusinessSeekerProfile({ route, navigation }) {
               paddingBottom: 10,
             }}
           >
-            <Text style={{ fontSize: 18, marginLeft: 10 }}>{strings.AVAILABILITY}</Text>
+            <Text style={{ fontSize: 18,marginLeft: 10 ,marginBottom:5}}>{strings.AVAILABILITY}</Text>
             <View
               style={{
                 width: "100%",
@@ -582,13 +582,13 @@ function BusinessSeekerProfile({ route, navigation }) {
 
           {businessUser && (
             <View
-           style={{
-             width: "100%",
-             padding: 20,
-             backgroundColor: "#fff",
-            
-           }}
-         >
+              style={{
+                width: "100%",
+                padding: 20,
+                backgroundColor: "#fff",
+
+              }}
+            >
               <TouchableOpacity
                 style={{
                   width: "100%",
@@ -608,18 +608,18 @@ function BusinessSeekerProfile({ route, navigation }) {
           )}
 
           {!businessUser && (
-           <View
-           style={{
-             width: "100%",
-             padding: 20,
-             backgroundColor: "#fff",
-            
-           }}
-         >
+            <View
+              style={{
+                width: "100%",
+                padding: 20,
+                backgroundColor: "#fff",
+                paddingBottom:10
+              }}
+            >
               <TouchableOpacity
                 style={{
                   width: "100%",
-                  backgroundColor:'#fff'
+                  backgroundColor: '#fff'
                 }}
                 onPress={() => handleHire()}
               >
@@ -636,75 +636,77 @@ function BusinessSeekerProfile({ route, navigation }) {
                     style={{ textAlign: "center", fontSize: 18, color: "#fff" }}
                   >
                     {strings.HIRE}
-                </Text>
+                  </Text>
                 </LinearGradient>
               </TouchableOpacity>
             </View>
           )}
           {!businessUser && (
 
-<View
-           style={{
-             width: "100%",
-             padding: 20,
-             backgroundColor: "#fff",
-            paddingVertical:5,
-            
-           }}
-         >
+            <View
+              style={{
+                width: "100%",
+                padding: 20,
+                backgroundColor: "#fff",
+                paddingVertical: 5,
+
+              }}
+            >
               <TouchableOpacity
                 style={{
                   width: "100%",
                   borderColor: "#4834A6",
-                  paddingTop: 5,
-                  paddingBottom: 5,
+                  paddingVertical:10,
                   borderRadius: 50,
-                  borderWidth:1,
+                  borderWidth: 1,
+                  flexDirection:'row',
+                  alignItems:'center'
                 }}
-                onPress={()=>onPressCall()}
+                onPress={() => onPressCall()}
               >
                 <Text
-                  style={{ textAlign: "center", fontSize: 18, color: "#4834A6" }}
+                  style={{width:'95%', textAlign: "center", fontSize: 18, color: "#4834A6" }}
                 >{strings.INTERVIEW_OPTIONS}</Text>
                 <Image
                   source={require("../assets/ic_call.png")}
-                  style={{ width: 20, height: 20,position:'absolute',right:20,top:8 }}
+                  style={{ width: 20, height: 20,  right: 20, }}
                 />
               </TouchableOpacity>
             </View>
           )}
-{!businessUser  && (
+          {!businessUser && (
             <View
-           style={{
-             width: "100%",
-             padding: 20,
-             backgroundColor: "#fff",
-            paddingVertical:10,
-            paddingBottom:30
-           }}
-         >
+              style={{
+                width: "100%",
+                padding: 20,
+                backgroundColor: "#fff",
+                paddingVertical: 10,
+                paddingBottom: 30
+              }}
+            >
               <TouchableOpacity
                 style={{
                   width: "100%",
-                  paddingTop: 5,
-                  paddingBottom: 5,
+                  paddingVertical:10,
                   borderRadius: 50,
-                  borderWidth:1,
+                  borderWidth: 1,
+                  flexDirection:'row',
+                  alignItems:'center'
                 }}
-                onPress={()=>notRelevant()}
+                onPress={() => notRelevant()}
               >
                 <Text
-                  style={{ textAlign: "center", fontSize: 18, color: "#000" }}
+                  style={{width:'95%', textAlign: "center", fontSize: 18, color: "#000" }}
                 >
                   {strings.NOT_RELEVANT}
                 </Text>
                 <Image
                   source={require("../assets/ic_close_black.png")}
-                  style={{ width: 20, height: 20,position:'absolute',right:20,top:5 }}
+                  style={{ width: 20, height: 20,  right: 20,  }}
                 />
               </TouchableOpacity>
             </View>
-)}
+          )}
         </ScrollView>
       </SafeAreaView>
 

@@ -172,7 +172,7 @@ function SeekerAvailableJobs({ route, navigation }) {
               <TouchableOpacity onPress={() => navigation.goBack()}>
                 <Image
                   source={require("../assets/ic_back_w.png")}
-                  style={{ width: 40, height: 30, marginLeft: 10 }}
+                  style={{ width: 28, height: 25, marginLeft: 10 }}
                 />
               </TouchableOpacity>
             </View>

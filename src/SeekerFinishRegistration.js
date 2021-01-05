@@ -511,13 +511,14 @@ function SeekerFinishRegistration({ navigation }) {
       
 
           <View style={{ flex: 1 }}>
-            <View style={{ flex: 1, padding: 10 }}>
+            <View style={{ flex: 1, padding: 10,paddingHorizontal:20 }}>
               <View
                 style={{
                   flex: 1,
                   flexDirection: "row",
                   alignItems: "center",
                   paddingHorizontal: 10,
+                  marginBottom: 5
                 }}
               >
                 <Image
@@ -650,7 +651,7 @@ function SeekerFinishRegistration({ navigation }) {
 
           <View style={{ flex: 1 }}>
             <View>
-              <Text style={{ fontSize: 18, paddingLeft: 20 }}>
+              <Text style={{ fontSize: 18, paddingLeft: 20,marginBottom: 5 }}>
                 {strings.LEVEL_OF_EDUCATION}
               </Text>
               <View style={styles.code3}>
@@ -668,20 +669,14 @@ function SeekerFinishRegistration({ navigation }) {
                       value: i,
                     };
                   })}
-                  onOpen={() => {
-                    scrollViewRef.current.scrollTo({
-                      x: 0,
-                      y: 620,
-                      animated: true,
-                    });
-                  }}
+                  
                 />
               </View>
             </View>
           </View>
 
           <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 18, paddingLeft: 20 }}>
+            <Text style={{ fontSize: 18, paddingLeft: 20 ,marginBottom: 5}}>
               {strings.NAME_OF_INSTITUTION}
             </Text>
             <View style={styles.code}>
@@ -706,7 +701,7 @@ function SeekerFinishRegistration({ navigation }) {
           </View>
 
           <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 18, paddingLeft: 20 }}>
+            <Text style={{ fontSize: 18, paddingLeft: 20,marginBottom: 5 }}>
               {strings.CERTIFICATION} {strings.OPTIONAL}
             </Text>
             <View style={styles.code}>
@@ -877,7 +872,7 @@ function SeekerFinishRegistration({ navigation }) {
               </SafeAreaView>
             </Modal>
 
-            <Text style={{ fontSize: 18, paddingLeft: 20 }}>
+            <Text style={{ fontSize: 18, paddingLeft: 20,marginBottom: 5 }}>
               {strings.LANGUAGE}
             </Text>
             <TouchableOpacity
@@ -896,7 +891,7 @@ function SeekerFinishRegistration({ navigation }) {
 
           <View style={{ flex: 1 }}>
             <View>
-              <Text style={{ fontSize: 18, paddingLeft: 20 }}>
+              <Text style={{ fontSize: 18, paddingLeft: 20 ,marginBottom: 5}}>
                 {strings.AVAILABILITY}
               </Text>
               <View style={styles.code3}>
@@ -913,13 +908,7 @@ function SeekerFinishRegistration({ navigation }) {
                     { label: "Part Time", value: "Part Time" },
                     { label: "Flexible", value: "Flexible" },
                   ]}
-                  onOpen={() => {
-                    scrollViewRef.current.scrollTo({
-                      x: 0,
-                      y: 1000,
-                      animated: true,
-                    });
-                  }}
+                  
                 />
               </View>
             </View>
@@ -1087,7 +1076,7 @@ function SeekerFinishRegistration({ navigation }) {
           nextDisabled={nextFocusDisabled}
           previousDisabled={previousFocusDisabled}
           androidAdjustResize={Platform.OS == "android"}
-          avoidKeyboard={Platform.OS == "android"}
+          avoidKeyboard={true}
           style={
             Platform.OS == "android"
               ? { top: 0, position: "absolute", zIndex: 9999 }
@@ -1131,8 +1120,8 @@ const styles = StyleSheet.create({
     borderColor: "#eee",
     padding: 13,
     marginBottom: 15,
-    marginLeft: 10,
-    marginRight: 10,
+    marginLeft: 20,
+    marginRight: 20,
     borderWidth: 1,
     borderRadius: 10,
     shadowColor: "#bbb",
@@ -1152,8 +1141,8 @@ const styles = StyleSheet.create({
     borderColor: "#eee",
     padding: 13,
     marginBottom: 15,
-    marginLeft: 10,
-    marginRight: 10,
+    marginLeft: 20,
+    marginRight: 20,
     borderWidth: 1,
     borderRadius: 10,
     shadowColor: "#bbb",
@@ -1198,8 +1187,8 @@ const styles = StyleSheet.create({
     paddingTop: 13,
     paddingLeft: 13,
     marginBottom: 15,
-    marginLeft: 10,
-    marginRight: 10,
+    marginLeft: 20,
+    marginRight: 20,
     borderWidth: 1,
     borderRadius: 10,
     shadowColor: "#bbb",

@@ -13,6 +13,7 @@
 #import <UMCore/UMModuleRegistry.h>
 #import <UMReactNativeAdapter/UMNativeModulesProxy.h>
 #import <UMReactNativeAdapter/UMModuleRegistryAdapter.h>
+#import <React/RCTLinkingManager.h>
 
 @interface AppDelegate ()
 
@@ -42,6 +43,11 @@
 //  controller.delegate = self;
 //  [controller startAndShowLaunchScreen:self.window];
 //#endif
+  
+  if (@available(iOS 14, *)) {
+      UIDatePicker *picker = [UIDatePicker appearance];
+    picker.preferredDatePickerStyle = UIDatePickerStyleWheels;
+   }  
 
   [super application:application didFinishLaunchingWithOptions:launchOptions];
 
@@ -83,5 +89,20 @@
 {
   appController.bridge = [self initializeReactNativeApp];
 }
+
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url
+ options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
+{
+ return [RCTLinkingManager application:app openURL:url options:options];
+}
+
+- (BOOL)application:(UIApplication *)application continueUserActivity:(nonnull NSUserActivity *)userActivity
+restorationHandler:(nonnull void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler
+{
+return [RCTLinkingManager application:application
+continueUserActivity:userActivity
+restorationHandler:restorationHandler];
+}
+
 
 @end

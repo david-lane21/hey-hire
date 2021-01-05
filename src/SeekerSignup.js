@@ -712,7 +712,7 @@ console.log(form);
           nextDisabled={nextFocusDisabled}
           previousDisabled={previousFocusDisabled}
           androidAdjustResize={Platform.OS == 'android'}
-          avoidKeyboard={Platform.OS == 'android'}
+          avoidKeyboard={true}
           style={Platform.OS=="android" ? { top: 0 }:{top:0}}
         />
       {/* </KeyboardAvoidingView> */}

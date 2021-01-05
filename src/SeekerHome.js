@@ -534,6 +534,7 @@ loadDate();
                 flexDirection: "row",
                 alignItems: "center",
                 alignContent: "center",
+                marginTop:10
               }}
             >
               <Image
@@ -626,6 +627,7 @@ loadDate();
                         flex: 1,
                         borderBottomColor: "#715FCB",
                         borderBottomWidth: 1,
+                        marginTop:2.5
                       }}
                     ></View>
                   </View>

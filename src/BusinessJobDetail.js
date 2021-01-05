@@ -148,8 +148,8 @@ function BusinessJobDetail({ route, navigation }) {
               <Image
                 source={require("../assets/ic_back_w.png")}
                 style={{
-                  width: 40,
-                  height: 30,
+                  width: 28,
+                  height: 25,
                   marginTop: 10,
                   marginLeft: 10,
                 }}

@@ -167,6 +167,7 @@ function BusinessPostNewJob({ navigation }) {
             </TouchableOpacity>
           </View>
         </View>
+        
         <KeyboardAwareScrollView>
 
           <View style={{ flex: 1, width: "100%", paddingTop: 20 }}>
@@ -337,22 +338,23 @@ function BusinessPostNewJob({ navigation }) {
               onConfirm={(i) => hideDate(i)}
               onCancel={(i) => hideDate(i)}
             />
-          </View>
         {/* </ScrollView> */}
+        </View>
         </KeyboardAwareScrollView>
         <KeyboardAccessoryNavigation
-        onNext={handleFocusNext}
-        onPrevious={handleFocusPrev}
-        nextDisabled={nextFocusDisabled}
-        previousDisabled={previousFocusDisabled}
-        androidAdjustResize={Platform.OS == "android"}
-        avoidKeyboard={Platform.OS == "android"}
-        style={
-          Platform.OS == "android"
-            ? { top: 0}
-            : { top: 0 }
-        }
-      />
+          onNext={handleFocusNext}
+          onPrevious={handleFocusPrev}
+          onPress={handleFocusNext}
+          nextDisabled={nextFocusDisabled}
+          previousDisabled={previousFocusDisabled}
+          androidAdjustResize={Platform.OS == "android"}
+          avoidKeyboard={true}
+          style={
+            Platform.OS == "android"
+              ? { top: 0, position: "absolute", zIndex: 9999 }
+              : { top:100 }
+          }
+        />
       </SafeAreaView>
 
      
