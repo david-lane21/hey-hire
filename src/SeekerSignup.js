@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import {
   View,
   Text,
@@ -13,7 +13,9 @@ import {
   TouchableHighlight,
   Platform,
   KeyboardAvoidingView,
-  findNodeHandle
+  findNodeHandle,
+  Alert,
+  StatusBar
 } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 import Constants from 'expo-constants'
@@ -21,12 +23,13 @@ import { countries } from './utils/consts.js'
 import { postFormData } from './utils/network.js'
 import * as Location from 'expo-location'
 import { setUser, setToken } from './utils/utils.js'
-import { KeyboardAccessoryNavigation,KeyboardAccessoryView } from 'react-native-keyboard-accessory'
+import { KeyboardAccessoryNavigation, KeyboardAccessoryView } from 'react-native-keyboard-accessory'
 import { strings } from './translation/config'
 import { AuthContext } from './navigation/context'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-
-function SeekerSignup ({ navigation }) {
+import DeviceInfo from 'react-native-device-info';
+const isIphoneX = DeviceInfo.hasNotch();
+function SeekerSignup({ navigation }) {
   const scrollViewRef = useRef();
 
   const [modalVisible, setModalVisible] = useState(false)
@@ -54,15 +57,15 @@ function SeekerSignup ({ navigation }) {
   const [currentScroll, setCurrentScroll] = useState(null);
 
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       let { status } = await Location.requestPermissionsAsync()
       if (status !== 'granted') {
         setError('Permission to access location was denied')
       }
-      const  status1  = await ImagePicker.requestCameraRollPermissionsAsync();
-        if (status1.status !== 'granted') {
-          alert('Sorry, we need camera roll permissions to make this work!')
-        }
+      const status1 = await ImagePicker.requestCameraRollPermissionsAsync();
+      if (status1.status !== 'granted') {
+        alert('Sorry, we need camera roll permissions to make this work!')
+      }
 
       try {
         let loc = await Location.getLastKnownPositionAsync()
@@ -76,7 +79,7 @@ function SeekerSignup ({ navigation }) {
     })()
   }, [])
 
-  
+
   const setAddressField = async location => {
     const loc = {
       latitude: location.coords.latitude,
@@ -116,7 +119,7 @@ function SeekerSignup ({ navigation }) {
     // console.log(image)
   }
 
-  function formatPhone (str) {
+  function formatPhone(str) {
     let cleaned = str.replace(/\D/g, '')
     let match = cleaned.match(/^(\d{3})(\d{3})(\d+)$/)
     if (match) {
@@ -136,18 +139,18 @@ function SeekerSignup ({ navigation }) {
 
   // }
 
-  function _onPress (item) {
+  function _onPress(item) {
     setModalVisible(false)
     setPhCode(item.dial_code)
   }
 
-  function _onPress2 (item) {
+  function _onPress2(item) {
     setModalVisible(false)
     setCountry(item.name)
     setPhCode(item.dial_code)
   }
 
-  function deviceToken (length) {
+  function deviceToken(length) {
     let chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
     var result = ''
     for (var i = length; i > 0; --i)
@@ -155,7 +158,7 @@ function SeekerSignup ({ navigation }) {
     return result
   }
 
-  function handleSignup () {
+  function handleSignup() {
     if (
       firstName &&
       lastName &&
@@ -167,6 +170,7 @@ function SeekerSignup ({ navigation }) {
       password &&
       password2
     ) {
+      if (password == password2) {
       let token = deviceToken(128)
       let form = new FormData()
       form.append('first_name', firstName)
@@ -189,7 +193,7 @@ function SeekerSignup ({ navigation }) {
       }
 
       form.append('zip_code', zipcode)
-console.log(form);
+      console.log(form);
       postFormData('user_register', form)
         .then(res => {
           return res.json()
@@ -204,7 +208,7 @@ console.log(form);
               number: phCode + ' ' + phone,
               email: email,
               otp: json.otp,
-              userId:json.data.user_id
+              userId: json.data.user_id
             })
           } else {
             if (json.msg) {
@@ -216,11 +220,14 @@ console.log(form);
         })
         .catch(err => {
           console.log(err)
-        })
+        });
+      }else{
+        Alert.alert("Error",strings.PASSWORD_ERROR);
+      }
     } else {
       if (password !== password2) {
         setError(strings.PASSWORD_ERROR)
-      }else{
+      } else {
         setError(strings.PLEASE_FILL_MISSING)
       }
     }
@@ -231,493 +238,490 @@ console.log(form);
   //   setPhCode(country);
   // }
 
-  function handleFocus (index) {
+  function handleFocus(index) {
     setActiveInputIndex(index);
     setNextFocusDisabled(index === inputs.length - 1);
     setPreviousFocusDisabled(index === 0);
 
   }
 
-  function handleFocusNext () {
+  function handleFocusNext() {
     inputs[activeInputIndex + 1].focus()
   }
 
-  function handleFocusPrev () {
+  function handleFocusPrev() {
     inputs[activeInputIndex - 1].focus()
   }
 
-  function handleRef (index, ref) {
+  function handleRef(index, ref) {
     let tempInputs = inputs
     tempInputs[index] = ref
     setInputs(inputs)
   }
 
-  function onScroll(event){
-    setCurrentScroll(event.nativeEvent.contentOffset.y);
-  }
+  
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <KeyboardAwareScrollView style={styles.container}>
+    <SafeAreaView style={{flex:1}}>
+      <StatusBar/>
+      <KeyboardAwareScrollView  style={[styles.container]}  extraScrollHeight={Platform.OS === "ios"?-60:0} >
 
-        {/* <ScrollView style={styles.container}  ref={scrollViewRef} onScroll={onScroll} > */}
-         
-            <View style={{ flex: 1, alignItems: 'center', padding: 20 }}>
-              <View style={{ width: 140, height: 140, alignSelf: 'center' }}>
-                {image == null ? (
-                  <Image
-                    source={require('../assets/img_place.png')}
-                    style={{
-                      height: 100,
-                      width: 100,
-                      borderRadius: 50,
-                      alignSelf: 'center'
-                    }}
-                  />
-                ) : (
-                  <Image
-                    source={{ uri: image }}
-                    style={{
-                      width: 100,
-                      height: 100,
-                      borderRadius: 50,
-                      alignSelf: 'center'
-                    }}
-                  />
-                )}
-                <TouchableOpacity
-                  onPress={pickImage}
-                  style={{ position: 'absolute', top: 0, right: 0 }}
-                >
-                  <Image
-                    source={require('../assets/ic_camera.png')}
-                    style={{ width: 60, height: 60 }}
-                  />
-                </TouchableOpacity>
-              </View>
-            </View>
 
-            <View style={styles.inputField}>
+        <View style={{ flex: 1, alignItems: 'center', padding: 20 }}>
+          <View style={{ width: 140, height: 140, alignSelf: 'center' }}>
+            {image == null ? (
               <Image
-                source={require('../assets/ic_user.png')}
-                style={{ height: 20, width: 20 }}
-              />
-              <TextInput
-                style={{ paddingLeft: 10, width: '100%', color: '#000' }}
-                onChangeText={text => setFirstName(text)}
-                placeholder={strings.FIRSTNAME}
-                value={firstName}
-                textContentType='givenName'
-                autoCompleteType={'name'}
-                keyboardType={'default'}
-                autoCapitalize={'words'}
-                onFocus={() => {
-                  handleFocus(0)
-                }}
-                ref={ref => {
-                  handleRef(0, ref)
+                source={require('../assets/img_place.png')}
+                style={{
+                  height: 100,
+                  width: 100,
+                  borderRadius: 50,
+                  alignSelf: 'center'
                 }}
               />
-            </View>
-
-            <View style={styles.inputField}>
-              <Image
-                source={require('../assets/ic_user.png')}
-                style={{ height: 20, width: 20 }}
-              />
-              <TextInput
-                style={{ paddingLeft: 10, width: '100%', color: '#000'}}
-                onChangeText={text => setLastName(text)}
-                placeholder={strings.LASTNAME}
-                value={lastName}
-                textContentType='familyName'
-                autoCompleteType={'name'}
-                keyboardType={'default'}
-                autoCapitalize={'words'}
-                onFocus={() => {
-                  handleFocus(1)
-                }}
-                ref={ref => {
-                  handleRef(1, ref)
-                }}
-              />
-            </View>
-
-            <View style={styles.inputField}>
-              <Image
-                source={require('../assets/ic_address.png')}
-                style={{ height: 20, width: 20 }}
-              />
-              <TextInput
-                style={{ paddingLeft: 10, width: '100%', color: '#000' }}
-                onChangeText={text => setAddress(text)}
-                placeholder={strings.ADDRESS}
-                value={address}
-                textContentType='fullStreetAddress'
-                autoCompleteType={'street-address'}
-                keyboardType={'default'}
-                onFocus={() => {
-                  handleFocus(2)
-                }}
-                ref={ref => {
-                  handleRef(2, ref)
-                }}
-              />
-            </View>
-
-            <View
-              style={{
-                flex: 2,
-                alignItems: 'center'
-              }}
-            >
-              <Modal
-                animationType='slide'
-                transparent={false}
-                visible={modalVisible}
-                onRequestClose={() => {
-                  // Alert.alert('Modal has been closed.');
-                }}
-              >
-                <SafeAreaView>
-                  <View style={{ marginTop: 22 }}>
-                    <View>
-                      <FlatList
-                        // ItemSeparatorComponent={<Separator />}
-                        data={countries}
-                        keyExtractor={item => item.code}
-                        renderItem={({ item, index, separators }) => (
-                          <TouchableHighlight
-                            key={index}
-                            onPress={() => _onPress2(item)}
-                            onShowUnderlay={separators.highlight}
-                            onHideUnderlay={separators.unhighlight}
-                          >
-                            <View style={{ backgroundColor: 'white' }}>
-                              <View
-                                style={{
-                                  flex: 1,
-                                  flexDirection: 'row',
-                                  justifyContent: 'space-between',
-                                  padding: 10,
-                                  borderBottomWidth: 1,
-                                  borderBottomColor: '#eee'
-                                }}
-                              >
-                                <Text
-                                  style={{
-                                    fontSize: 20,
-                                    color: '#222'
-                                  }}
-                                >
-                                  {item.name}
-                                </Text>
-                                <Text
-                                  style={{
-                                    fontSize: 20,
-                                    color: '#666'
-                                  }}
-                                >
-                                  +{item.dial_code}
-                                </Text>
-                              </View>
-                            </View>
-                          </TouchableHighlight>
-                        )}
-                      />
-                    </View>
-                  </View>
-                </SafeAreaView>
-              </Modal>
-
-              <View style={styles.inputField}>
-                <TouchableOpacity
-                  style={[styles.inputField,{padding:0, paddingTop:10}]}
-                  onPress={() => setModalVisible(true)}
-                >
-                  <Image
-                    source={require('../assets/ic_country.png')}
-                    style={{ width: 20, height: 20, marginRight: 5 }}
-                  />
-                  <Text style={{}}>{country}</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            <View style={styles.inputField}>
-              <Image
-                source={require('../assets/ic_country.png')}
-                style={{ height: 20, width: 20 }}
-              />
-              <TextInput
-                style={{ paddingLeft: 10, width: '100%', color: '#000' }}
-                onChangeText={text => setState(text)}
-                placeholder={strings.STATE}
-                value={state}
-                textContentType='addressState'
-                keyboardType={'default'}
-                autoCompleteType={'street-address'}
-                onFocus={() => {
-                  handleFocus(3)
-                }}
-                ref={ref => {
-                  handleRef(3, ref)
-                }}
-              />
-            </View>
-
-            <View style={styles.inputField}>
-              <Image
-                source={require('../assets/ic_country.png')}
-                style={{ height: 20, width: 20 }}
-              />
-              <TextInput
-                style={{ paddingLeft: 10, width: '100%', color: '#000' }}
-                onChangeText={text => setCity(text)}
-                placeholder={strings.CITY}
-                value={city}
-                textContentType='addressCity'
-                keyboardType={'default'}
-                onFocus={() => {
-                  handleFocus(4)
-                }}
-                ref={ref => {
-                  handleRef(4, ref)
-                }}
-              />
-            </View>
-
-            <View style={styles.inputField}>
-              <Image
-                source={require('../assets/ic_zip.png')}
-                style={{ height: 20, width: 20 }}
-              />
-              <TextInput
-                style={{ paddingLeft: 10, width: '100%', color: '#000' }}
-                onChangeText={text => setZipcode(text)}
-                placeholder={strings.ZIP}
-                value={zipcode}
-                keyboardType='number-pad'
-                textContentType='postalCode'
-                autoCompleteType={'postal-code'}
-                onFocus={() => {
-                  handleFocus(5)
-                }}
-                ref={ref => {
-                  handleRef(5, ref)
-                }}
-              />
-            </View>
-
-            <View
-              style={{
-                flex: 2,
-                alignItems: 'center'
-              }}
-            >
-              <Modal
-                animationType='slide'
-                transparent={false}
-                visible={modalVisible}
-                onRequestClose={() => {
-                  // Alert.alert('Modal has been closed.');
-                }}
-              >
-                <SafeAreaView>
-                  <View style={{ marginTop: 22 }}>
-                    <View>
-                      <FlatList
-                        // ItemSeparatorComponent={<Separator />}
-                        data={countries}
-                        keyExtractor={item => item.code}
-                        renderItem={({ item, index, separators }) => (
-                          <TouchableHighlight
-                            key={index}
-                            onPress={() => _onPress(item)}
-                            onShowUnderlay={separators.highlight}
-                            onHideUnderlay={separators.unhighlight}
-                          >
-                            <View style={{ backgroundColor: 'white' }}>
-                              <View
-                                style={{
-                                  flex: 1,
-                                  flexDirection: 'row',
-                                  justifyContent: 'space-between',
-                                  padding: 10,
-                                  borderBottomWidth: 1,
-                                  borderBottomColor: '#eee'
-                                }}
-                              >
-                                <Text
-                                  style={{
-                                    fontSize: 20,
-                                    color: '#222'
-                                  }}
-                                >
-                                  {item.name}
-                                </Text>
-                                <Text
-                                  style={{
-                                    fontSize: 20,
-                                    color: '#666'
-                                  }}
-                                >
-                                  +{item.dial_code}
-                                </Text>
-                              </View>
-                            </View>
-                          </TouchableHighlight>
-                        )}
-                      />
-                    </View>
-                  </View>
-                </SafeAreaView>
-              </Modal>
-
-              <View style={{ flex: 1, flexDirection: 'row' }}>
-                <TouchableOpacity
-                  style={[styles.code]}
-                  onPress={() => setModalVisible(true)}
-                >
-                  <Image
-                    source={require('../assets/ic_phone.png')}
-                    style={{ width: 20, height: 20, marginRight: 5 }}
-                  />
-                  <Text style={{}}>+{phCode}</Text>
-                </TouchableOpacity>
-
-                <TextInput
-                  style={styles.code2}
-                  onChangeText={text => setPhone(text)}
-                  placeholder={strings.PHONE}
-                  value={formatPhone(phone)}
-                  keyboardType={'phone-pad'}
-                  textContentType='telephoneNumber'
-                  autoCompleteType={'tel'}
-                  onFocus={() => {
-                    handleFocus(6)
-                  }}
-                  ref={ref => {
-                    handleRef(6, ref)
+            ) : (
+                <Image
+                  source={{ uri: image }}
+                  style={{
+                    width: 100,
+                    height: 100,
+                    borderRadius: 50,
+                    alignSelf: 'center'
                   }}
                 />
-              </View>
-            </View>
-
-            <Text
-              style={{ color: '#7364BF', paddingTop: 10, paddingBottom: 20 }}
+              )}
+            <TouchableOpacity
+              onPress={pickImage}
+              style={{ position: 'absolute', top: 0, right: 0 }}
             >
-              {strings.FOR_RECEIVING_INTERVIEW_CALLS}
-            </Text>
-
-            <View style={styles.inputField}>
               <Image
-                source={require('../assets/ic_mail.png')}
-                style={{ height: 20, width: 20 }}
+                source={require('../assets/ic_camera.png')}
+                style={{ width: 60, height: 60 }}
               />
-              <TextInput
-                style={{ paddingLeft: 10, width: '100%', color: '#000' }}
-                onChangeText={text => setEmail(text)}
-                placeholder={strings.EMAIL}
-                value={email}
-                type='email'
-                textContentType='username'
-                keyboardType={'email-address'}
-                autoCompleteType={'email'}
-                onFocus={() => {
-                  handleFocus(7)
-                }}
-                ref={ref => {
-                  handleRef(7, ref)
-                }}
-              />
-            </View>
+            </TouchableOpacity>
+          </View>
+        </View>
 
-            <View style={styles.inputField}>
-              <Image
-                source={require('../assets/ic_password.png')}
-                style={{ height: 20, width: 20 }}
-              />
-              <TextInput
-                style={{ paddingLeft: 10, width: '100%', color: '#000' }}
-                onChangeText={text => setPassword(text)}
-                placeholder={strings.ENTER_PASSWORD}
-                value={password}
-                secureTextEntry={true}
-                textContentType={'newPassword'}
-                autoCompleteType={'password'}
-                onFocus={() => {
-                  handleFocus(8)
-                }}
-                ref={ref => {
-                  handleRef(8, ref)
-                }}
-              />
-            </View>
+        <View style={styles.inputField}>
+          <Image
+            source={require('../assets/ic_user.png')}
+            style={{ height: 20, width: 20 }}
+          />
+          <TextInput
+            style={[{ paddingLeft: 10, width: '100%', color: '#000'},Platform.OS === "ios" && {height:30} ]}
+            onChangeText={text => setFirstName(text)}
+            placeholder={strings.FIRSTNAME}
+            value={firstName}
+            textContentType='givenName'
+            autoCompleteType={'name'}
+            keyboardType={'default'}
+            autoCapitalize={'words'}
+            onFocus={() => {
+              handleFocus(0)
+            }}
+            ref={ref => {
+              handleRef(0, ref)
+            }}
+          />
+        </View>
 
-            <View style={styles.inputField}>
-              <Image
-                source={require('../assets/ic_password.png')}
-                style={{ height: 20, width: 20 }}
-              />
-              <TextInput
-                style={{ paddingLeft: 10, width: '100%', color: '#000' }}
-                onChangeText={text => setPassword2(text)}
-                placeholder={strings.CONFIRM_PASSWORD}
-                value={password2}
-                secureTextEntry={true}
-                textContentType={'newPassword'}
-                autoCompleteType={'password'}
-                onFocus={() => {
-                  handleFocus(9)
-                }}
-                ref={ref => {
-                  handleRef(9, ref)
-                }}
-              />
-            </View>
+        <View style={styles.inputField}>
+          <Image
+            source={require('../assets/ic_user.png')}
+            style={{ height: 20, width: 20 }}
+          />
+          <TextInput
+            style={[{ paddingLeft: 10, width: '100%', color: '#000'},Platform.OS === "ios" && {height:30} ]}
+            onChangeText={text => setLastName(text)}
+            placeholder={strings.LASTNAME}
+            value={lastName}
+            textContentType='familyName'
+            autoCompleteType={'name'}
+            keyboardType={'default'}
+            autoCapitalize={'words'}
+            onFocus={() => {
+              handleFocus(1)
+            }}
+            ref={ref => {
+              handleRef(1, ref)
+            }}
+          />
+        </View>
 
-            {error ? (
-              <View style={{ flex: 1, padding: 20 }}>
-                <Text style={{ color: 'red' }}>{error}</Text>
+        <View style={styles.inputField}>
+          <Image
+            source={require('../assets/ic_address.png')}
+            style={{ height: 20, width: 20 }}
+          />
+          <TextInput
+            style={[{ paddingLeft: 10, width: '100%', color: '#000'},Platform.OS === "ios" && {height:30} ]}
+            onChangeText={text => setAddress(text)}
+            placeholder={strings.ADDRESS}
+            value={address}
+            textContentType='fullStreetAddress'
+            autoCompleteType={'street-address'}
+            keyboardType={'default'}
+            onFocus={() => {
+              handleFocus(2)
+            }}
+            ref={ref => {
+              handleRef(2, ref)
+            }}
+          />
+        </View>
+
+        <View
+          style={{
+            flex: 2,
+            alignItems: 'center'
+          }}
+        >
+          <Modal
+            animationType='slide'
+            transparent={false}
+            visible={modalVisible}
+            onRequestClose={() => {
+              // Alert.alert('Modal has been closed.');
+            }}
+          >
+            <SafeAreaView>
+              <View style={{ marginTop: 22 }}>
+                <View>
+                  <FlatList
+                    // ItemSeparatorComponent={<Separator />}
+                    data={countries}
+                    keyExtractor={item => item.code}
+                    renderItem={({ item, index, separators }) => (
+                      <TouchableHighlight
+                        key={index}
+                        onPress={() => _onPress2(item)}
+                        onShowUnderlay={separators.highlight}
+                        onHideUnderlay={separators.unhighlight}
+                      >
+                        <View style={{ backgroundColor: 'white' }}>
+                          <View
+                            style={{
+                              flex: 1,
+                              flexDirection: 'row',
+                              justifyContent: 'space-between',
+                              padding: 10,
+                              borderBottomWidth: 1,
+                              borderBottomColor: '#eee'
+                            }}
+                          >
+                            <Text
+                              style={{
+                                fontSize: 20,
+                                color: '#222'
+                              }}
+                            >
+                              {item.name}
+                            </Text>
+                            <Text
+                              style={{
+                                fontSize: 20,
+                                color: '#666'
+                              }}
+                            >
+                              +{item.dial_code}
+                            </Text>
+                          </View>
+                        </View>
+                      </TouchableHighlight>
+                    )}
+                  />
+                </View>
               </View>
-            ) : null}
+            </SafeAreaView>
+          </Modal>
 
-            <View style={{ flex: 1 }}>
-              <TouchableOpacity
-                style={{
-                  flex: 1,
-                  alignContent: 'center',
-                  backgroundColor: '#5B42BB',
-                  padding: 15,
-                  borderRadius: 30
-                }}
-                onPress={() => handleSignup()}
-              >
-                <Text
-                  style={{ color: '#fff', textAlign: 'center', fontSize: 18 }}
-                >
-                  {strings.CREATE_ACCOUNT}
-                </Text>
-              </TouchableOpacity>
-            </View>
+          <View style={{ flex: 1, flexDirection: "row" }}>
+            <TouchableOpacity
+              style={[styles.inputField, { padding: 0, paddingTop: 10,paddingLeft:10}]}
+              onPress={() => setModalVisible(true)}
+            >
+              <Image
+                source={require('../assets/ic_country.png')}
+                style={{ width: 20, height: 20,marginRight: 5 }}
+              />
+              <Text style={{}}>{country}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
 
-            <View style={{ height: 400 }}></View>
-          
-        {/* </ScrollView> */}
-        </KeyboardAwareScrollView>
-        <KeyboardAccessoryNavigation
-          onNext={handleFocusNext}
-          onPrevious={handleFocusPrev}
-          nextDisabled={nextFocusDisabled}
-          previousDisabled={previousFocusDisabled}
-          androidAdjustResize={Platform.OS == 'android'}
-          avoidKeyboard={true}
-          style={Platform.OS=="android" ? { top: 0 }:{top:0}}
-        />
+        <View style={styles.inputField}>
+          <Image
+            source={require('../assets/ic_country.png')}
+            style={{ height: 20, width: 20 }}
+          />
+          <TextInput
+            style={[{ paddingLeft: 10, width: '100%', color: '#000'},Platform.OS === "ios" && {height:30} ]}
+            onChangeText={text => setState(text)}
+            placeholder={strings.STATE}
+            value={state}
+            textContentType='addressState'
+            keyboardType={'default'}
+            autoCompleteType={'street-address'}
+            onFocus={() => {
+              handleFocus(3)
+            }}
+            ref={ref => {
+              handleRef(3, ref)
+            }}
+          />
+        </View>
+
+        <View style={styles.inputField}>
+          <Image
+            source={require('../assets/ic_country.png')}
+            style={{ height: 20, width: 20 }}
+          />
+          <TextInput
+            style={[{ paddingLeft: 10, width: '100%', color: '#000'},Platform.OS === "ios" && {height:30} ]}
+            onChangeText={text => setCity(text)}
+            placeholder={strings.CITY}
+            value={city}
+            textContentType='addressCity'
+            keyboardType={'default'}
+            onFocus={() => {
+              handleFocus(4)
+            }}
+            ref={ref => {
+              handleRef(4, ref)
+            }}
+          />
+        </View>
+
+        <View style={styles.inputField}>
+          <Image
+            source={require('../assets/ic_zip.png')}
+            style={{ height: 20, width: 20 }}
+          />
+          <TextInput
+            style={[{ paddingLeft: 10, width: '100%', color: '#000'},Platform.OS === "ios" && {height:30} ]}
+            onChangeText={text => setZipcode(text)}
+            placeholder={strings.ZIP}
+            value={zipcode}
+            keyboardType='number-pad'
+            textContentType='postalCode'
+            autoCompleteType={'postal-code'}
+            onFocus={() => {
+              handleFocus(5)
+            }}
+            ref={ref => {
+              handleRef(5, ref)
+            }}
+          />
+        </View>
+
+        <View
+          style={{
+            flex: 2,
+            alignItems: 'center'
+          }}
+        >
+          <Modal
+            animationType='slide'
+            transparent={false}
+            visible={modalVisible}
+            onRequestClose={() => {
+              // Alert.alert('Modal has been closed.');
+            }}
+          >
+            <SafeAreaView>
+              <View style={{ marginTop: 22 }}>
+                <View>
+                  <FlatList
+                    // ItemSeparatorComponent={<Separator />}
+                    data={countries}
+                    keyExtractor={item => item.code}
+                    renderItem={({ item, index, separators }) => (
+                      <TouchableHighlight
+                        key={index}
+                        onPress={() => _onPress(item)}
+                        onShowUnderlay={separators.highlight}
+                        onHideUnderlay={separators.unhighlight}
+                      >
+                        <View style={{ backgroundColor: 'white' }}>
+                          <View
+                            style={{
+                              flex: 1,
+                              flexDirection: 'row',
+                              justifyContent: 'space-between',
+                              padding: 10,
+                              borderBottomWidth: 1,
+                              borderBottomColor: '#eee'
+                            }}
+                          >
+                            <Text
+                              style={{
+                                fontSize: 20,
+                                color: '#222'
+                              }}
+                            >
+                              {item.name}
+                            </Text>
+                            <Text
+                              style={{
+                                fontSize: 20,
+                                color: '#666'
+                              }}
+                            >
+                              +{item.dial_code}
+                            </Text>
+                          </View>
+                        </View>
+                      </TouchableHighlight>
+                    )}
+                  />
+                </View>
+              </View>
+            </SafeAreaView>
+          </Modal>
+
+          <View style={{ flex: 1, flexDirection: 'row' }}>
+            <TouchableOpacity
+              style={[styles.code]}
+              onPress={() => setModalVisible(true)}
+            >
+              <Image
+                source={require('../assets/ic_phone.png')}
+                style={{ width: 20, height: 20, marginRight: 5,}}
+              />
+              <Text style={{}}>+{phCode}</Text>
+            </TouchableOpacity>
+
+            <TextInput
+              style={styles.code2}
+              onChangeText={text => setPhone(text)}
+              placeholder={strings.PHONE}
+              value={formatPhone(phone)}
+              keyboardType={'phone-pad'}
+              textContentType='telephoneNumber'
+              autoCompleteType={'tel'}
+              onFocus={() => {
+                handleFocus(6)
+              }}
+              ref={ref => {
+                handleRef(6, ref)
+              }}
+            />
+          </View>
+        </View>
+
+        <Text
+          style={{ color: '#7364BF', paddingTop: 10, paddingBottom: 20 }}
+        >
+          {strings.FOR_RECEIVING_INTERVIEW_CALLS}
+        </Text>
+
+        <View style={styles.inputField}>
+          <Image
+            source={require('../assets/ic_mail.png')}
+            style={{ height: 20, width: 20 }}
+          />
+          <TextInput
+            style={[{ paddingLeft: 10, width: '100%', color: '#000'},Platform.OS === "ios" && {height:30} ]}
+            onChangeText={text => setEmail(text)}
+            placeholder={strings.EMAIL}
+            value={email}
+            type='email'
+            textContentType='username'
+            keyboardType={'email-address'}
+            autoCompleteType={'email'}
+            onFocus={() => {
+              handleFocus(7)
+            }}
+            ref={ref => {
+              handleRef(7, ref)
+            }}
+            
+          />
+        </View>
+
+        <View style={styles.inputField}>
+          <Image
+            source={require('../assets/ic_password.png')}
+            style={{ height: 20, width: 20 }}
+          />
+          <TextInput
+            style={[{ paddingLeft: 10, width: '100%', color: '#000'},Platform.OS === "ios" && {height:30} ]}
+            onChangeText={text => setPassword(text)}
+            placeholder={strings.ENTER_PASSWORD}
+            value={password}
+            secureTextEntry={true}
+            textContentType={'newPassword'}
+            autoCompleteType={'password'}
+            onFocus={() => {
+              handleFocus(8)
+            }}
+            ref={ref => {
+              handleRef(8, ref)
+            }}
+          />
+        </View>
+
+        <View style={styles.inputField}>
+          <Image
+            source={require('../assets/ic_password.png')}
+            style={{ height: 20, width: 20 }}
+          />
+          <TextInput
+            style={[{ paddingLeft: 10, width: '100%', color: '#000'},Platform.OS === "ios" && {height:30} ]}
+            onChangeText={text => setPassword2(text)}
+            placeholder={strings.CONFIRM_PASSWORD}
+            value={password2}
+            secureTextEntry={true}
+            textContentType={'newPassword'}
+            autoCompleteType={'password'}
+            onFocus={() => {
+              handleFocus(9)
+            }}
+            ref={ref => {
+              handleRef(9, ref)
+            }}
+          />
+        </View>
+
+        {error ? (
+          <View style={{ flex: 1, padding: 20 }}>
+            <Text style={{ color: 'red' }}>{error}</Text>
+          </View>
+        ) : null}
+
+        <View style={{ flex: 1 }}>
+          <TouchableOpacity
+            style={{
+              flex: 1,
+              alignContent: 'center',
+              backgroundColor: '#5B42BB',
+              padding: 15,
+              borderRadius: 30
+            }}
+            onPress={() => handleSignup()}
+          >
+            <Text
+              style={{ color: '#fff', textAlign: 'center', fontSize: 18 }}
+            >
+              {strings.CREATE_ACCOUNT}
+            </Text>
+          </TouchableOpacity>
+        </View>
+            <View style={{height:300}}></View>
+      </KeyboardAwareScrollView>
+      <KeyboardAccessoryNavigation
+        onNext={handleFocusNext}
+        onPrevious={handleFocusPrev}
+        nextDisabled={nextFocusDisabled}
+        previousDisabled={previousFocusDisabled}
+        androidAdjustResize={Platform.OS == 'android'}
+        avoidKeyboard={true}
+        style={Platform.OS == "android" ? { top: 0 } : {top: isIphoneX ?30 : 0}}
+       inSafeAreaView="true"
+      />
       {/* </KeyboardAvoidingView> */}
-     
-  </SafeAreaView>
+
+    </SafeAreaView>
   )
 }
 
@@ -727,11 +731,11 @@ const styles = StyleSheet.create({
   container: {
     //  flex: 1,
     flexDirection: 'column',
-    padding: 20,
-    // backgroundColor: 'white'
+    paddingHorizontal: 20,
+    backgroundColor: 'white'
   },
   inputField: {
-    // height: 40,
+     height:Platform.OS=="ios"? 40:50,
     padding: 10,
     width: '100%',
     backgroundColor: '#fff',
@@ -739,61 +743,64 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     alignContent: 'center',
-    borderColor: '#fff',
-    borderWidth: 1,
+    borderColor: "#eee",
+        borderWidth: 1,
     marginBottom: 15,
     borderRadius: 8,
-    shadowColor: '#ccc',
-    shadowRadius: 4,
-    shadowOpacity: 0.75,
+    shadowColor: "#bbb",
     shadowOffset: {
       width: 0,
-      height: 0
+      height: 3,
     },
+    shadowOpacity: 0.23,
+    shadowRadius: 2.62,
+    elevation: 4,
     alignItems: 'center',
-    paddingVertical:5
-    
+    paddingVertical: 5
+
   },
   code: {
     backgroundColor: '#fff',
     flexDirection: 'row',
     borderRadius: 8,
-    borderColor: '#fff',
+    borderColor: "#eee",
     borderWidth: 1,
-    paddingTop: 15,
+    paddingTop: 10,
     paddingLeft: 10,
     // color: '#fff',
     width: '25%',
-    // height: 40,
+    height:Platform.OS=="ios"? 40:50,
     marginBottom: 10,
-    shadowColor: '#ccc',
-    shadowRadius: 4,
-    shadowOpacity: 0.75,
+    shadowColor: "#bbb",
     shadowOffset: {
       width: 0,
-      height: 0
+      height: 3,
     },
-    
+    shadowOpacity: 0.23,
+    shadowRadius: 2.62,
+    elevation: 4,
+
   },
   code2: {
     color: '#000',
     backgroundColor: '#fff',
     flexDirection: 'row',
     borderRadius: 8,
-    borderColor: '#fff',
+    borderColor: "#eee",
     borderWidth: 1,
     padding: 10,
     // color: '#fff',123
-    width: '70%',
+    width: '69%',
     // height: 40,
     marginLeft: '5%',
     marginBottom: 10,
-    shadowColor: '#ccc',
-    shadowRadius: 4,
-    shadowOpacity: 0.75,
+    shadowColor: "#bbb",
     shadowOffset: {
       width: 0,
-      height: 0
-    }
+      height: 3,
+    },
+    shadowOpacity: 0.23,
+    shadowRadius: 2.62,
+    elevation: 4,
   }
 })

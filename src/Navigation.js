@@ -207,7 +207,7 @@ export function Navigation(props) {
           name="SeekerForgotPassword"
           component={SeekerForgotPassword}
           options={{
-            headerShown: true,
+            headerShown: false,
             headerBackTitleVisible: false,
             headerTitle: "Forgot Password",
             headerStyle: {
@@ -396,7 +396,7 @@ export function AuthNavigation({navigation}){
           name="SeekerForgotPassword"
           component={SeekerForgotPassword}
           options={{
-            headerShown: true,
+            headerShown: false,
             headerBackTitleVisible: false,
             headerTitle: "Forgot Password",
             headerStyle: {

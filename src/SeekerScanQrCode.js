@@ -6,11 +6,17 @@ import {
   Button,
   Image,
   ImageBackground,
+  Dimensions,
+  SafeAreaView
 } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { BarCodeScanner } from "expo-barcode-scanner";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useIsFocused } from "@react-navigation/native";
 import {strings} from './translation/config';
+import DeviceInfo from 'react-native-device-info';
+const isIphoneX = DeviceInfo.hasNotch();
+
+const window = Dimensions.get("window");
 
 function SeekerScanQrCode({ navigation }) {
   const isFocused = useIsFocused();
@@ -49,22 +55,25 @@ function SeekerScanQrCode({ navigation }) {
   }
 
   return (
-    <View
-      style={{
-        flex: 1,
-        flexDirection: "column",
-        justifyContent: "flex-end",
-      }}
+    <LinearGradient
+    style={{ flex: 1 }}
+
+      colors={["#4E35AE", "#775ED7"]}
     >
+       <SafeAreaView >
       <BarCodeScanner
         onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-        style={StyleSheet.absoluteFillObject}
+        style={{ position: 'absolute',
+        left: 0,
+        right: 0,
+        top: isIphoneX? 50:20,
+        bottom: 0}}
       />
       <ImageBackground
         source={require("../assets/img_scan.png")}
-        style={{ width: "100%", height: "100%" }}
+        style={{  width: window.width,height:window.height,backgroundColor:'transparent '  }}
       >
-        <View style={{ flex: 1, alignItems: "center" }}>
+        <View style={{ flex: 1, alignItems: "center",backgroundColor:'transparent'}}>
           <View style={{ flex: 1, position: "absolute", top: "20%" }}>
             <Text style={{ color: "#fff", fontSize: 24 }}>{strings.APPLOYME}</Text>
           </View>
@@ -85,13 +94,13 @@ function SeekerScanQrCode({ navigation }) {
           </View>
         </View>
       </ImageBackground>
-
       {scanned && (
         <View style={{position:'absolute',bottom:0,width:'100%'}}>
         <Button title={strings.TAP_TO_SCAN_AGAIN}  onPress={() => setScanned(false)} />
         </View>
       )}
-    </View>
+      </SafeAreaView>
+      </LinearGradient>
   );
 }
 

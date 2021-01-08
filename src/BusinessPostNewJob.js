@@ -21,7 +21,8 @@ import { getUser, setUser, getToken } from "./utils/utils.js";
 import { postFormData } from "./utils/network.js";
 import { strings } from "./translation/config";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-
+import DeviceInfo from 'react-native-device-info';
+const isIphoneX = DeviceInfo.hasNotch();
 function BusinessPostNewJob({ navigation }) {
   const isFocused = useIsFocused();
 
@@ -190,7 +191,6 @@ function BusinessPostNewJob({ navigation }) {
                   ref={(ref) => {
                     handleRef(0, ref);
                   }}
-                  autoCorrect={false}
                 />
               </View>
             </View>
@@ -229,7 +229,6 @@ function BusinessPostNewJob({ navigation }) {
                   ref={(ref) => {
                     handleRef(1, ref);
                   }}
-                  autoCorrect={false}
                 />
               </View>
             </View>
@@ -268,7 +267,6 @@ function BusinessPostNewJob({ navigation }) {
                   ref={(ref) => {
                     handleRef(2, ref);
                   }}
-                  autoCorrect={false}
                 />
               </View>
             </View>

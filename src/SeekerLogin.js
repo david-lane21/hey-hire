@@ -13,6 +13,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Alert,
+  Dimensions
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { countries } from "./utils/consts.js";
@@ -22,6 +23,9 @@ import { KeyboardAccessoryNavigation } from "react-native-keyboard-accessory";
 import { Platform } from "react-native";
 import { strings } from "./translation/config";
 import { AuthContext } from "./navigation/context";
+import DeviceInfo from 'react-native-device-info';
+const isIphoneX = DeviceInfo.hasNotch();
+const window = Dimensions.get("window");
 
 function SeekerLogin({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
@@ -41,7 +45,8 @@ function SeekerLogin({ navigation }) {
   }
 
   function handlePassword(pass) {
-    setLoginButton(true);
+    if (pass.length > 0)
+      setLoginButton(true);
     setPassword(pass);
   }
 
@@ -100,7 +105,7 @@ function SeekerLogin({ navigation }) {
   function handleResend(tempUserData) {
     let form = new FormData();
     form.append("user_type", tempUserData.user_type);
-    form.append("phone",tempUserData.phone);
+    form.append("phone", tempUserData.phone);
 
 
     postFormData("send_verification_code", form)
@@ -116,7 +121,7 @@ function SeekerLogin({ navigation }) {
             number: phCode + " " + phone,
             email: tempUserData.email,
             otp: json.otp,
-            userId:tempUserData.user_id
+            userId: tempUserData.user_id
           });
         }
       })
@@ -166,259 +171,273 @@ function SeekerLogin({ navigation }) {
   }
 
   return (
+
     <LinearGradient style={styles.container} colors={["#4E35AE", "#775ED7"]}>
       <SafeAreaView style={{ flex: 1 }}>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <View
-            style={{
-              flex: 2,
-              alignItems: "flex-start",
-              marginHorizontal: "5%",
-            }}
-          >
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Image
-                source={require("../assets/ic_back_w.png")}
-                style={{
-                  width: 40,
-                  height: 30,
-                  marginTop: 20,
-                  // position: 'absolute',
-                  // left: 0,
-                  // top: 20
-                }}
-              />
-            </TouchableOpacity>
-          </View>
+        <View style={{ flexDirection: 'row', position: 'absolute', top: 0, left: 0, bottom: 0 }}>
+          <Image
+            style={{ width: '100%', height: (window.height), borderBottomLeftRadius: 8, borderBottomRightRadius: 8, opacity: 1 }}
+            source={require('../assets/home-bg.png')}
+            resizeMode={'cover'}
+          />
 
-          <View
-            style={{
-              // flex: 7,
-              alignItems: "center",
-              marginHorizontal: "5%",
-              marginVertical: "5%",
-            }}
-          >
-            <Image
-              source={require("../assets/logo_white_2.png")}
-              style={{
-                width: 150,
-                height: 160,
-                marginTop: 0,
-                opacity: 1,
-              }}
-              resizeMode={"stretch"}
-            />
-          </View>
+        </View>
 
-          <View style={{ flex: 1, alignItems: "center" }}>
-            <View
-              style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
-            >
-              <Text style={{ color: "#fff", fontSize: 18 }}>
-                {strings.LOG_IN_AS_A_JOB_SEEKER}
-              </Text>
-              <Image
-                source={require("../assets/ic_job_seeker.png")}
-                style={{ width: 20, height: 20, marginLeft: 5 }}
-              />
-            </View>
-          </View>
+        <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
 
-          <View
-            style={{
-              flex: 2,
-              alignItems: "center",
-              marginHorizontal: "5%",
-            }}
-          >
-            <Modal
-              animationType="slide"
-              transparent={false}
-              visible={modalVisible}
-              onRequestClose={() => {
-                // Alert.alert('Modal has been closed.');
-              }}
-            >
-              <SafeAreaView>
-                <View style={{ marginTop: 22, marginHorizontal: "5%" }}>
-                  <View>
-                    <FlatList
-                      // ItemSeparatorComponent={<Separator />}
-                      data={countries}
-                      keyExtractor={(item) => item.code}
-                      renderItem={({ item, index, separators }) => (
-                        <TouchableHighlight
-                          key={index}
-                          onPress={() => _onPress(item)}
-                          onShowUnderlay={separators.highlight}
-                          onHideUnderlay={separators.unhighlight}
-                        >
-                          <View style={{ backgroundColor: "white" }}>
-                            <View
-                              style={{
-                                flex: 1,
-                                flexDirection: "row",
-                                justifyContent: "space-between",
-                                padding: 10,
-                                borderBottomWidth: 1,
-                                borderBottomColor: "#eee",
-                              }}
-                            >
-                              <Text
-                                style={{
-                                  fontSize: 20,
-                                  color: "#222",
-                                }}
-                              >
-                                {item.name}
-                              </Text>
-                              <Text
-                                style={{
-                                  fontSize: 20,
-                                  color: "#666",
-                                }}
-                              >
-                                +{item.dial_code}
-                              </Text>
-                            </View>
-                          </View>
-                        </TouchableHighlight>
-                      )}
-                    />
-                  </View>
-                </View>
-              </SafeAreaView>
-            </Modal>
+
+          <View style={{ height: window.height - (isIphoneX ? 140 : 80), }}>
 
             <View
               style={{
-                // flex: 1,
-                flexDirection: "row",
-                marginVertical: 5,
+                alignItems: "flex-start",
+                marginHorizontal: "5%",
               }}
             >
-              <TouchableOpacity
-                style={styles.code}
-                onPress={() => setModalVisible(true)}
-              >
+              <TouchableOpacity onPress={() => navigation.goBack()}>
                 <Image
-                  source={require("../assets/ic_call-1.png")}
-                  style={{ width: 20, height: 20, marginRight: 5 }}
+                  source={require("../assets/ic_back_w.png")}
+                  style={{
+                    width: 40,
+                    height: 30,
+                    marginTop: 20,
+
+                  }}
                 />
-                <Text style={{ color: "#fff" }}>+{phCode}</Text>
               </TouchableOpacity>
-
-              <TextInput
-                style={styles.code2}
-                onChangeText={(text) => setPhone(text)}
-                placeholder={strings.PHONE}
-                value={formatPhone(phone)}
-                textContentType="telephoneNumber"
-                autoCompleteType={"tel"}
-                keyboardType={"phone-pad"}
-                onFocus={() => {
-                  handleFocus(0);
-                }}
-                ref={(ref) => {
-                  handleRef(0, ref);
-                }}
-              />
             </View>
-          </View>
 
-          <View
-            style={{
-              flex: 2,
-              marginHorizontal: "5%",
-              marginVertical: 10,
-            }}
-          >
-            <View style={{ flex: 1, flexDirection: "row" }}>
+            <View
+              style={{
+                alignItems: "center",
+                marginHorizontal: "5%",
+                marginVertical: 20
+              }}
+            >
               <Image
-                source={require("../assets/ic_lock.png")}
+                source={require("../assets/home-logo.png")}
                 style={{
-                  width: 15,
-                  height: 15,
-                  position: "absolute",
-                  top: 10,
-                  left: 10,
+                  width: 150,
+                  height: 150,
+                  marginTop: 0,
+                  opacity: 1,
                 }}
-              />
-              <TextInput
-                style={styles.code3}
-                secureTextEntry={true}
-                onChangeText={(text) => handlePassword(text)}
-                placeholder={strings.PASSWORD}
-                value={password}
-                textContentType="none"
-                autoCompleteType={"password"}
-                onFocus={() => {
-                  handleFocus(1);
-                }}
-                ref={(ref) => {
-                  handleRef(1, ref);
-                }}
+                resizeMode={"stretch"}
               />
             </View>
-          </View>
 
-          <View
-            style={{
-              flex: 2,
-              alignItems: "center",
-              marginHorizontal: "5%",
-              marginVertical: 5,
-            }}
-          >
-            <TouchableOpacity
-              style={
-                loginBotton
-                  ? {
-                      width: "100%",
-                      backgroundColor: "#fff",
-                      paddingTop: 12,
-                      paddingBottom: 12,
-                      borderRadius: 10,
-                    }
-                  : {
-                      width: "100%",
-                      backgroundColor: "rgba(255, 255, 255, 0.4)",
-                      paddingTop: 12,
-                      paddingBottom: 12,
-                      borderRadius: 10,
-                    }
-              }
-              onPress={() => handleLogin()}
+            <View style={{ alignItems: 'center', justifyContent: 'center', marginVertical: 5 }}>
+              <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#fff', textAlign: 'center' }}>{strings.SIGN_IN}</Text>
+            </View>
+
+            <View
+              style={{
+                alignItems: "center",
+                marginHorizontal: "5%",
+                marginVertical: 5
+              }}
+            >
+              <Modal
+                animationType="slide"
+                transparent={false}
+                visible={modalVisible}
+                onRequestClose={() => {
+                  // Alert.alert('Modal has been closed.');
+                }}
+              >
+                <SafeAreaView>
+                  <View style={{ marginTop: 22, marginHorizontal: "5%" }}>
+                    <View>
+                      <FlatList
+                        // ItemSeparatorComponent={<Separator />}
+                        data={countries}
+                        keyExtractor={(item) => item.code}
+                        renderItem={({ item, index, separators }) => (
+                          <TouchableHighlight
+                            key={index}
+                            onPress={() => _onPress(item)}
+                            onShowUnderlay={separators.highlight}
+                            onHideUnderlay={separators.unhighlight}
+                          >
+                            <View style={{ backgroundColor: "white" }}>
+                              <View
+                                style={{
+                                  flex: 1,
+                                  flexDirection: "row",
+                                  justifyContent: "space-between",
+                                  padding: 10,
+                                  borderBottomWidth: 1,
+                                  borderBottomColor: "#eee",
+                                }}
+                              >
+                                <Text
+                                  style={{
+                                    fontSize: 20,
+                                    color: "#222",
+                                  }}
+                                >
+                                  {item.name}
+                                </Text>
+                                <Text
+                                  style={{
+                                    fontSize: 20,
+                                    color: "#666",
+                                  }}
+                                >
+                                  +{item.dial_code}
+                                </Text>
+                              </View>
+                            </View>
+                          </TouchableHighlight>
+                        )}
+                      />
+                    </View>
+                  </View>
+                </SafeAreaView>
+              </Modal>
+
+              <View
+                style={{
+                  // flex: 1,
+                  flexDirection: "row",
+                  marginVertical: 5
+
+                }}
+              >
+                <TouchableOpacity
+                  style={styles.code}
+                  onPress={() => setModalVisible(true)}
+                >
+                  <Image
+                    source={require("../assets/ic_call-1.png")}
+                    style={{ width: 20, height: 20, marginRight: 5 }}
+                  />
+                  <Text style={{ color: "#fff" }}>+{phCode}</Text>
+                </TouchableOpacity>
+
+                <TextInput
+                  style={styles.code2}
+                  onChangeText={(text) => setPhone(text)}
+                  placeholder={strings.PHONE}
+                  value={formatPhone(phone)}
+                  textContentType="telephoneNumber"
+                  autoCompleteType={"tel"}
+                  keyboardType={"phone-pad"}
+                  onFocus={() => {
+                    handleFocus(0);
+                  }}
+                  ref={(ref) => {
+                    handleRef(0, ref);
+                  }}
+                />
+              </View>
+            </View>
+
+            <View
+              style={{
+                marginHorizontal: "5%",
+                marginVertical: 10,
+
+              }}
+            >
+              <View style={{ flexDirection: "row" }}>
+                <Image
+                  source={require("../assets/ic_lock.png")}
+                  style={{
+                    width: 15,
+                    height: 15,
+                    position: "absolute",
+                    top: 10,
+                    left: 10,
+                  }}
+                />
+                <TextInput
+                  style={styles.code3}
+                  secureTextEntry={true}
+                  onChangeText={(text) => handlePassword(text)}
+                  placeholder={strings.PASSWORD}
+                  value={password}
+                  textContentType="none"
+                  autoCompleteType={"password"}
+                  onFocus={() => {
+                    handleFocus(1);
+                  }}
+                  ref={(ref) => {
+                    handleRef(1, ref);
+                  }}
+                />
+              </View>
+            </View>
+
+            <View
+              style={{
+                alignItems: "center",
+                marginHorizontal: "5%",
+                marginVertical: 10,
+
+              }}
+            >
+
+              <TouchableOpacity style={[styles.button, loginBotton
+                ? { backgroundColor: "#fff", } : { backgroundColor: "rgba(255, 255, 255, 0.4)", }]}
+                onPress={() => handleLogin()}>
+
+                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{strings.SIGN_IN}</Text>
+              </TouchableOpacity>
+            </View>
+
+
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "center",
+
+              }}
             >
               <Text
-                style={{ textAlign: "center", fontSize: 18, color: "#4834A6" }}
+                style={{
+                  color: "#fff",
+                  fontSize: 16,
+                }}
               >
-                {strings.LOGIN}
+                {strings.DONT_ACCOUNT}
               </Text>
-            </TouchableOpacity>
-          </View>
+              <View style={{ borderBottomWidth: 0.5, borderBottomColor: '#fff' }}>
 
-          <View style={{ flex: 3, alignItems: "center" }}>
-            <Text
-              style={{
-                marginLeft: 6,
-                color: "#fff",
-                textDecorationLine: "underline",
-                fontSize: 16,
-              }}
-              onPress={() => navigation.navigate("SeekerForgotPassword")}
-            >
-              {strings.FORGOT_YOUR_PASSWORD}
-            </Text>
-          </View>
+                <Text
+                  style={{
+                    marginLeft: 6,
+                    color: "#fff",
+                    fontSize: 16,
+                    fontWeight: 'bold'
+                  }}
+                  onPress={() => navigation.navigate("SeekerSignup")}
+                >
+                  {strings.SIGN_UP}
+                </Text>
+              </View>
+            </View>
 
+
+
+            <View style={{ alignItems: 'center', justifyContent: 'center', marginVertical: 20 }}>
+              <View style={{ borderBottomWidth: 0.5, borderBottomColor: '#fff' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#fff', textAlign: 'center' }} onPress={() => navigation.navigate("SeekerForgotPassword")}>{strings.FORGOT_YOUR_PASSWORD}</Text>
+
+              </View>
+            </View>
+
+
+          </View>
           <View
             style={{
-              flex: 2,
               flexDirection: "row",
               justifyContent: "center",
-              marginTop: 30,
+              marginTop: 10,
+              bottom: 0,
+              borderTopWidth: 0.5,
+              borderTopColor: '#fff',
+              paddingVertical: 15,
             }}
           >
             <Text
@@ -427,24 +446,26 @@ function SeekerLogin({ navigation }) {
                 fontSize: 16,
               }}
             >
-              {strings.DONT_ACCOUNT}
+              {strings.BUSINESS_OWNER}
             </Text>
-            <Text
-              style={{
-                marginLeft: 6,
-                color: "#fff",
-                textDecorationLine: "underline",
-                fontSize: 16,
-              }}
-              onPress={() => navigation.navigate("SeekerSignup")}
-            >
-              {strings.SIGN_UP}
-            </Text>
-          </View>
+            <View style={{ borderBottomWidth: 0.5, borderBottomColor: '#fff' }}>
+              <Text
+                style={{
+                  marginLeft: 6,
+                  color: "#fff",
 
-          <View style={{ flex: 2, alignItems: "center" }}></View>
+                  fontSize: 16,
+                  fontWeight: 'bold'
+                }}
+                onPress={() => navigation.navigate("BusinessLogin")}
+              >
+                {strings.CLICK_HERE_TO_LOGIN}
+              </Text>
+            </View>
+          </View>
         </ScrollView>
       </SafeAreaView>
+
       <KeyboardAccessoryNavigation
         androidAdjustResize={Platform.OS == "android"}
         avoidKeyboard={Platform.OS == "android"}
@@ -452,7 +473,8 @@ function SeekerLogin({ navigation }) {
         onPrevious={handleFocusPrev}
         nextDisabled={nextFocusDisabled}
         previousDisabled={previousFocusDisabled}
-        style={Platform.OS == "android" && { top: 0 }}
+        avoidKeyboard={true}
+        style={Platform.OS == "android" ? { top: 0 } : { top: 0 }}
       />
     </LinearGradient>
   );
@@ -471,7 +493,7 @@ const styles = StyleSheet.create({
   },
   code: {
     flexDirection: "row",
-    borderRadius: 25,
+    borderRadius: 5,
     borderColor: "#fff",
     borderWidth: 1,
     paddingTop: 10,
@@ -482,7 +504,7 @@ const styles = StyleSheet.create({
   },
   code2: {
     flexDirection: "row",
-    borderRadius: 25,
+    borderRadius: 5,
     borderColor: "#fff",
     borderWidth: 1,
     padding: 10,
@@ -493,7 +515,7 @@ const styles = StyleSheet.create({
   },
   code3: {
     flexDirection: "row",
-    borderRadius: 25,
+    borderRadius: 5,
     borderColor: "#fff",
     borderWidth: 1,
     color: "#fff",
@@ -504,4 +526,16 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     paddingLeft: 30,
   },
+  button: {
+    width: '100%',
+    // flexDirection: 'column',
+    // height:70,
+    alignItems: 'center',
+    alignContent: 'center',
+    padding: 10,
+    paddingVertical: 15,
+    backgroundColor: '#F1F2F9',
+    marginBottom: 10,
+    borderRadius: 10,
+  }
 });

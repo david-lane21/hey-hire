@@ -27,7 +27,8 @@ import { KeyboardAccessoryNavigation } from "react-native-keyboard-accessory";
 import { strings } from "./translation/config";
 import { AuthContext } from "./navigation/context";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-
+import DeviceInfo from 'react-native-device-info';
+const isIphoneX = DeviceInfo.hasNotch();
 function SeekerFinishRegistration({ navigation }) {
   const scrollViewRef = useRef();
 
@@ -459,7 +460,7 @@ function SeekerFinishRegistration({ navigation }) {
 
   return (
       <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-      <KeyboardAwareScrollView>
+      <KeyboardAwareScrollView extraScrollHeight={Platform.OS === "ios"?-60:0}>
         <View
           style={{
             flexDirection: "row",
@@ -1080,7 +1081,7 @@ function SeekerFinishRegistration({ navigation }) {
           style={
             Platform.OS == "android"
               ? { top: 0, position: "absolute", zIndex: 9999 }
-              : { top: 0 }
+              : { top: isIphoneX ?20:0 }
           }
         />
         {/* </KeyboardAvoidingView> */}

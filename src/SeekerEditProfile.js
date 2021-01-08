@@ -14,6 +14,7 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   findNodeHandle,
+  StatusBar
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
@@ -30,6 +31,8 @@ import { useIsFocused } from "@react-navigation/native";
 import { KeyboardAccessoryNavigation } from "react-native-keyboard-accessory";
 import { strings } from "./translation/config";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import DeviceInfo from 'react-native-device-info';
+const isIphoneX = DeviceInfo.hasNotch();
 
 function SeekerEditProfile({ navigation, route }) {
   const scrollViewRef = useRef();
@@ -95,6 +98,7 @@ function SeekerEditProfile({ navigation, route }) {
         alert("Sorry, we need camera roll permissions to make this work!");
       }
       // }
+      console.log('Has Notch',DeviceInfo.hasNotch())
     })();
   }, []);
 
@@ -500,7 +504,7 @@ function SeekerEditProfile({ navigation, route }) {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-      <KeyboardAwareScrollView>
+      <KeyboardAwareScrollView extraScrollHeight={Platform.OS === "ios"?-60:0}>
         <View
           style={{
             flexDirection: "row",
@@ -1518,7 +1522,7 @@ function SeekerEditProfile({ navigation, route }) {
         style={
           Platform.OS == "android"
             ? { top: 0, position: "absolute", zIndex: 9999 }
-            : { top: 0 }
+            : { top: isIphoneX ?20:0 }
         }
         onNext={handleFocusNext}
         onPrevious={handleFocusPrev}
@@ -1527,7 +1531,7 @@ function SeekerEditProfile({ navigation, route }) {
       />
       {/* </KeyboardAvoidingView> */}
 
-      <View style={{ position: "absolute", bottom: 40, width: "100%" }}>
+      <View style={{ position: "absolute", bottom: isIphoneX?20: 0, width: "100%" }}>
         {error ? (
           <Text
             style={{ color: "red", padding: 20, backgroundColor: "#fff" }}

@@ -11,7 +11,7 @@
     "ACCOUNT":"ACCOUNT",
     "ENTER_PHONE_NUMBER":"Please enter the phone number",
     "ASSOCIATED_WITH_ACCOUNT":"associated with your account below",
-    "SEND":"Send",
+    "SEND":"Send Password Reset",
     "LOGOUT":"Logout",
     "EDIT":"Edit",
     "EMPLOYEES":"Employees",
@@ -29,7 +29,7 @@
     "UPDATE_JOB":"Update Job",
     "PHONE":"Phone",
     "PASSWORD":"Password",
-    "FORGOT_YOUR_PASSWORD":"Forgot your password?",
+    "FORGOT_YOUR_PASSWORD":"Forgot Your Password?",
     "DONT_ACCOUNT":"Dont have an account?",
     "REGISTER_BUSINESS":"Register Your Business",
     "LOG_IN_AS":"Log in as a business",
@@ -128,6 +128,16 @@
     "PLEASE_FILL_MISSING":"Please fill in the missing fields.",
     "PASSWORD_ERROR":"Password and Confirm Password must be same.",
     "CERTIFICATE_PLACEHOLDER":"ServSafe, TABC, etc. ",
-    "SEARCH_SPECIFIC_JOB":"Search for a specific job"
+    "SEARCH_SPECIFIC_JOB":"Search for a specific job",
+    "SIGN_IN":"Sign In",
+    "CREATE_AN_ACCOUNT":"Create An Account",
+    "OR":"or",
+    "TERM_OF_SERVICE":"Term of Service",
+    "PRIVACY_POLICY":"Privacy Policy",
+    "WELCOME_TO_APPLOYME":"Welcome to ApployMe!",
+    "BUSINESS_OWNER":"Business Owner",
+    "CLICK_HERE_TO_LOGIN":"Click here to Login",
+    "GO_BACK":"Go Back"
+
 
 }
