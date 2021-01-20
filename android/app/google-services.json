@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "105319717435",
+    "firebase_url": "https://apployme-568ca.firebaseio.com",
+    "project_id": "apployme-568ca",
+    "storage_bucket": "apployme-568ca.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:105319717435:android:467c591d5248dc92e65a1e",
+        "android_client_info": {
+          "package_name": "com.apployme"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "105319717435-o2pcfe9k45tv62o2sib22q99bvfd7d9i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDuYi6U8f8WcQNAKM1TRzuV24nZwjJIZJA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "105319717435-o2pcfe9k45tv62o2sib22q99bvfd7d9i.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "105319717435-coki524av9518oioq24ufasmvbfqkdq4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.apployme"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
