@@ -326,7 +326,7 @@ export function AppNavigation({navigation}){
 export function AuthNavigation({navigation}){
   return (
     <AuthNavigationStack.Navigator >
- <AuthNavigationStack.Screen
+ {/* <AuthNavigationStack.Screen
           name="HomeScreen"
           component={HomeScreen}
           options={{
@@ -334,7 +334,7 @@ export function AuthNavigation({navigation}){
             gestureEnabled:false
 
           }}
-        />
+        /> */}
         <AuthNavigationStack.Screen
           name="SeekerLogin"
           component={SeekerLogin}

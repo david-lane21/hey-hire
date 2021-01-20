@@ -22,6 +22,7 @@ import { setUser, setToken } from "./utils/utils.js";
 import { KeyboardAccessoryNavigation } from "react-native-keyboard-accessory";
 import { strings } from "./translation/config";
 import { AuthContext } from "./navigation/context";
+import CommonUtils from './utils/CommonUtils';
 
 function BusinessLogin({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
@@ -50,14 +51,14 @@ function BusinessLogin({ navigation }) {
   }
 
   function handleLogin() {
-    let token = deviceToken(128);
+    // let token = deviceToken(128);
+    let token = CommonUtils.deviceToken;
     let form = new FormData();
     form.append("phone", phCode + " " + phone);
     form.append("password", password);
     form.append("user_type", "1");
     form.append("device_tocken", token);
     setToken(token);
-console.log(token);
     postFormData("user_login", form)
       .then((res) => {
         return res.json();

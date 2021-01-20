@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Platform, Linking, View, Text } from "react-native";
+import { Platform, Linking, View, Text ,Alert} from "react-native";
 import Navigation, { AppNavigation, AuthNavigation } from "./src/Navigation";
 import PushNotificationIOS from "@react-native-community/push-notification-ios";
 import Constants from "expo-constants";
@@ -9,6 +9,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { AuthContext } from "./src/navigation/context";
 import { getUser } from "./src/utils/utils.js";
+import messaging from '@react-native-firebase/messaging';
+import CommonUtils from './src/utils/CommonUtils';
 
 console.disableYellowBox = true;
 
@@ -67,6 +69,11 @@ export default function App() {
   }, []);
 
   React.useEffect(() => {
+    // if(Platform.OS=="ios"){
+      CommonUtils.deviceTokenSet();
+  // }
+
+
     getUser().then((u) => {
       console.log(u);
       var userData = JSON.parse(u);
@@ -80,6 +87,14 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    // const unsubscribe = messaging().onMessage(async remoteMessage => {
+    //   console.log(remoteMessage.notification.title, remoteMessage.notification.body)
+    //   // Alert.alert(remoteMessage.notification.title, remoteMessage.notification.body);
+    // });
+
+    
+
+
     Linking.getInitialURL().then((url) => {
       console.log(url);
       if (url) handleOpenURL(url);
@@ -90,6 +105,8 @@ export default function App() {
         PushNotificationIOS.requestPermissions();
       }
     }, 2500);
+
+    // return unsubscribe;
   });
 
   function handleOpenURL(url) {

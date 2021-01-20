@@ -17,6 +17,8 @@ import { countries } from './utils/consts.js'
 import { postFormData } from './utils/network.js'
 import { strings } from './translation/config';
 import DeviceInfo from 'react-native-device-info';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+
 const isIphoneX = DeviceInfo.hasNotch();
 const window = Dimensions.get("window");
 
@@ -24,6 +26,7 @@ function SeekerForgotPassword({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [phCode, setPhCode] = useState('1')
   const [phone, setPhone] = useState('(214) 9985600')
+  const [error, setError] = useState('')
 
   function _onPress(item) {
     setModalVisible(false)
@@ -37,10 +40,19 @@ function SeekerForgotPassword({ navigation }) {
     return result;
   }
 
+  function formatPhoneAPI(str) {
+    let cleaned = str.replace(/\D/g, '')
+    let match = cleaned.match(/^(\d{3})(\d{3})(\d+)$/)
+    if (match) {
+      return '(' + match[1] + ') ' + match[2] + '-' + match[3]
+    }
+    return str;
+  }
+
   function handleRequest() {
     let token = deviceToken(128)
     let form = new FormData()
-    form.append('phone', phCode + ' ' + phone)
+    form.append('phone', phCode + ' ' + formatPhoneAPI(phone))
     form.append('user_type', '1')
     form.append('device_tocken', token)
 
@@ -60,9 +72,8 @@ function SeekerForgotPassword({ navigation }) {
 
   return (
     <LinearGradient style={styles.container} colors={["#4E35AE", "#775ED7"]}>
-      <SafeAreaView style={{ flex: 1 }}>
-
-        <View style={{ flexDirection: 'row', height: window.height, position: 'absolute', top: 0, left: 0 }}>
+    <SafeAreaView style={{ flex: 1 }}>
+    <View style={{ flexDirection: 'row', height: window.height, position: 'absolute', top: 0, left: 0 }}>
           <Image
             style={{ width: '100%', height: '100%', borderBottomLeftRadius: 8, borderBottomRightRadius: 8, opacity: 1 }}
             source={require('../assets/home-bg-1.png')}
@@ -70,7 +81,10 @@ function SeekerForgotPassword({ navigation }) {
           />
 
         </View>
+      <KeyboardAwareScrollView  extraScrollHeight={Platform.OS === "ios" ? 50 : 0} extraHeight={Platform.OS === "ios" ? 140:null} >
 
+
+        <View style={{ height: window.height - (isIphoneX ? 340 : 280), }}>
 
 
         <View
@@ -78,14 +92,14 @@ function SeekerForgotPassword({ navigation }) {
             alignItems: "center",
             marginHorizontal: "5%",
             marginTop: '10%',
-            marginVertical: 20
+            marginVertical: 20,
           }}
         >
           <Image
             source={require("../assets/home-logo.png")}
             style={{
-              width: 150,
-              height: 150,
+              width: 130,
+              height: 130,
               marginTop: 0,
               opacity: 1,
             }}
@@ -93,18 +107,18 @@ function SeekerForgotPassword({ navigation }) {
           />
         </View>
 
-        <View style={{ alignItems: 'center', justifyContent: 'center', marginVertical: 5 }}>
+        <View style={{ alignItems: 'center', justifyContent: 'center', marginVertical: 10 }}>
           <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#fff', textAlign: 'center' }}>{strings.FORGOT_YOUR_PASSWORD}</Text>
         </View>
 
-        <View style={{ alignItems: 'center', paddingTop: 30, paddingBottom: 30 }}>
-          <Text style={{ fontSize: 20, color: '#fff' }}>{strings.ENTER_PHONE_NUMBER}</Text>
-          <Text style={{ fontSize: 20, color: '#fff' }}>{strings.ASSOCIATED_WITH_ACCOUNT}</Text>
+        <View style={{ alignItems: 'center', paddingTop: 30, paddingBottom: 30,marginHorizontal:20 }}>
+          {/* <Text style={{ fontSize: 20, color: '#fff' }}>{strings.ENTER_PHONE_NUMBER}</Text> */}
+          <Text style={{ fontSize: 18, color: '#fff',textAlign:'center' }}>{strings.PASSWORD_INFO_TEXT}</Text>
         </View>
-
+</View>
         <View
           style={{
-            alignItems: 'center',
+            // alignItems: 'center',
             padding: 20
           }}>
           <Modal
@@ -155,6 +169,7 @@ function SeekerForgotPassword({ navigation }) {
             {/* </SafeAreaView> */}
           </Modal>
 
+          <Text style={{color:'#fff',fontSize:16,marginBottom:5}}>{strings.PHONE_NUMBER}</Text>
           <View style={{ flexDirection: 'row' }}>
             <TouchableOpacity style={styles.code} onPress={() => setModalVisible(true)}>
               <Image source={require('../assets/ic_call-1.png')} style={{ width: 20, height: 20, marginRight: 5 }} />
@@ -195,7 +210,7 @@ function SeekerForgotPassword({ navigation }) {
           </View>
         </View>
 
-
+</KeyboardAwareScrollView>
 
       </SafeAreaView>
     </LinearGradient>
@@ -207,7 +222,7 @@ export default SeekerForgotPassword;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center'
+    // alignItems: 'center'
   },
   header: {
     flex: 1,
@@ -218,11 +233,13 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderColor: '#fff',
     borderWidth: 1,
-    paddingTop: 10,
-    paddingLeft: 10,
+    // paddingTop: 10,
+    // paddingLeft: 10,
     color: 'red',
     width: '25%',
-    height: 40,
+    height: 50,
+    alignItems:'center',
+    justifyContent:'center'
   },
   code2: {
     flexDirection: 'row',
@@ -232,7 +249,7 @@ const styles = StyleSheet.create({
     padding: 10,
     color: '#fff',
     width: '70%',
-    height: 40,
+    height: 50,
     marginLeft: '5%',
   },
   code3: {

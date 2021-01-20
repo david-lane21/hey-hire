@@ -885,7 +885,7 @@ function SeekerFinishRegistration({ navigation }) {
                   source={require("../assets/ic_language.png")}
                   style={{ width: 17, height: 17, marginRight: 5 }}
                 />
-                <Text style={{ width: "100%", color: "#000" }}>{langs}</Text>
+                <Text style={{ width: "100%", color: "#000" }}>{langs?langs:strings.SELECT_YOUR_LANGUAGE}</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -1085,7 +1085,7 @@ function SeekerFinishRegistration({ navigation }) {
           }
         />
         {/* </KeyboardAvoidingView> */}
-        <View style={{ position: "absolute", bottom: 50, width: "100%" }}>
+        <View style={{ position: "absolute", bottom: isIphoneX?20: 0, width: "100%" }}>
           {error ? (
             <Text
               style={{ color: "red", padding: 20, backgroundColor: "#fff" }}

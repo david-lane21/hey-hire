@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -13,7 +13,8 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Alert,
-  Dimensions
+  Dimensions,
+  Linking
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { countries } from "./utils/consts.js";
@@ -24,6 +25,8 @@ import { Platform } from "react-native";
 import { strings } from "./translation/config";
 import { AuthContext } from "./navigation/context";
 import DeviceInfo from 'react-native-device-info';
+import CommonUtils from './utils/CommonUtils';
+
 const isIphoneX = DeviceInfo.hasNotch();
 const window = Dimensions.get("window");
 
@@ -38,6 +41,11 @@ function SeekerLogin({ navigation }) {
   const [nextFocusDisabled, setNextFocusDisabled] = useState(false);
   const [previousFocusDisabled, setPreviousFocusDisabled] = useState(false);
   const { signIn } = React.useContext(AuthContext);
+
+  const [value, setValue] = useState("");
+  const [contentHeight, setContentHeight] = useState(0);
+
+
 
   function _onPress(item) {
     setModalVisible(false);
@@ -60,14 +68,15 @@ function SeekerLogin({ navigation }) {
   }
 
   function handleLogin() {
-    let token = deviceToken(128);
+    // let token = deviceToken(128);
+    let token = CommonUtils.deviceToken;
     let form = new FormData();
-    form.append("phone", phCode + " " + phone);
+    form.append("phone", phCode + " " + formatPhone(phone));
     form.append("password", password);
     form.append("user_type", "2");
 
     form.append("device_tocken", token);
-
+    console.log('Login form',form);
     postFormData("user_login", form)
       .then((res) => {
         return res.json();
@@ -103,9 +112,10 @@ function SeekerLogin({ navigation }) {
   }
 
   function handleResend(tempUserData) {
+    console.log(phCode + " " + formatPhone(phone))
     let form = new FormData();
     form.append("user_type", tempUserData.user_type);
-    form.append("phone", tempUserData.phone);
+    form.append("phone", phCode + " " + formatPhone(phone));
 
 
     postFormData("send_verification_code", form)
@@ -113,7 +123,7 @@ function SeekerLogin({ navigation }) {
         return res.json();
       })
       .then((json) => {
-        console.log(json);
+        console.log('send verification', json);
         if (json.status_code == "300") {
           console.log(json.msg);
         } else {
@@ -137,7 +147,15 @@ function SeekerLogin({ navigation }) {
       return "(" + match[1] + ") " + match[2] + "-" + match[3];
     }
     return str;
+
+
   }
+
+  function onContentSizeChange(contentWidth, contentHeight) {
+    // Save the content height in state
+    setContentHeight(contentHeight);
+    console.log(contentHeight, window.height)
+  };
 
   // function _updatePhone(text){
   //   if(text.length > 3){
@@ -149,6 +167,15 @@ function SeekerLogin({ navigation }) {
   //   }
 
   // }
+
+  function gotoPrivacyPolicy() {
+    Linking.openURL('https://app.apployme.com/privacy_policy')
+  }
+
+  function gotoTermService() {
+    Linking.openURL('https://app.apployme.com/terms_of_service')
+
+  }
 
   function handleFocus(index) {
     setActiveInputIndex(index);
@@ -183,12 +210,14 @@ function SeekerLogin({ navigation }) {
 
         </View>
 
-        <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+        <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={true} scrollEnabled={contentHeight + 50 > window.height}
+          onContentSizeChange={onContentSizeChange}
+        >
 
 
-          <View style={{ height: window.height - (isIphoneX ? 140 : 80), }}>
+          <View style={{ height: window.height - (isIphoneX ? 200 : 135), justifyContent: 'center' }}>
 
-            <View
+            {/* <View
               style={{
                 alignItems: "flex-start",
                 marginHorizontal: "5%",
@@ -205,20 +234,20 @@ function SeekerLogin({ navigation }) {
                   }}
                 />
               </TouchableOpacity>
-            </View>
+            </View> */}
 
             <View
               style={{
                 alignItems: "center",
                 marginHorizontal: "5%",
-                marginVertical: 20
+                marginBottom: window.height * (isIphoneX?0.05: 0.02)
               }}
             >
               <Image
                 source={require("../assets/home-logo.png")}
                 style={{
-                  width: 150,
-                  height: 150,
+                  width: 120,
+                  height: 120,
                   marginTop: 0,
                   opacity: 1,
                 }}
@@ -226,15 +255,17 @@ function SeekerLogin({ navigation }) {
               />
             </View>
 
-            <View style={{ alignItems: 'center', justifyContent: 'center', marginVertical: 5 }}>
+            <View style={{ alignItems: 'center', justifyContent: 'center', marginVertical: isIphoneX?10:5, marginTop: 10 }}>
               <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#fff', textAlign: 'center' }}>{strings.SIGN_IN}</Text>
             </View>
 
+
+
             <View
               style={{
-                alignItems: "center",
+                // alignItems: "center",
                 marginHorizontal: "5%",
-                marginVertical: 5
+                marginBottom: 5
               }}
             >
               <Modal
@@ -243,10 +274,28 @@ function SeekerLogin({ navigation }) {
                 visible={modalVisible}
                 onRequestClose={() => {
                   // Alert.alert('Modal has been closed.');
+                  setModalVisible(false)
                 }}
               >
                 <SafeAreaView>
                   <View style={{ marginTop: 22, marginHorizontal: "5%" }}>
+                    <View
+                      style={{
+                        justifyContent: "flex-end",
+                        alignItems: 'flex-end',
+                      }}
+                    >
+
+                      <View style={{ marginRight: 20, paddingVertical: 5 }}>
+                        <TouchableOpacity
+                          onPress={() => setModalVisible(false)}
+                        >
+                          <Text style={{ color: "#4834A6", fontSize: 18 }}>
+                            {strings.DONE}
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
                     <View>
                       <FlatList
                         // ItemSeparatorComponent={<Separator />}
@@ -296,14 +345,16 @@ function SeekerLogin({ navigation }) {
                 </SafeAreaView>
               </Modal>
 
+              <Text style={{ color: '#fff', fontSize: 16 }}>{strings.PHONE_NUMBER}</Text>
               <View
                 style={{
                   // flex: 1,
                   flexDirection: "row",
-                  marginVertical: 5
+                  marginTop: 5
 
                 }}
               >
+
                 <TouchableOpacity
                   style={styles.code}
                   onPress={() => setModalVisible(true)}
@@ -340,14 +391,15 @@ function SeekerLogin({ navigation }) {
 
               }}
             >
-              <View style={{ flexDirection: "row" }}>
+              <Text style={{ color: '#fff', fontSize: 16, marginBottom: 5 }}>{strings.PASSWORD}</Text>
+              <View style={{ flexDirection: "row", }}>
                 <Image
                   source={require("../assets/ic_lock.png")}
                   style={{
                     width: 15,
                     height: 15,
                     position: "absolute",
-                    top: 10,
+                    top: 15,
                     left: 10,
                   }}
                 />
@@ -373,13 +425,13 @@ function SeekerLogin({ navigation }) {
               style={{
                 alignItems: "center",
                 marginHorizontal: "5%",
-                marginVertical: 10,
+                marginVertical: 5,
 
               }}
             >
 
-              <TouchableOpacity style={[styles.button, loginBotton
-                ? { backgroundColor: "#fff", } : { backgroundColor: "rgba(255, 255, 255, 0.4)", }]}
+              <TouchableOpacity style={[styles.button,
+              { backgroundColor: "#fff", }]}
                 onPress={() => handleLogin()}>
 
                 <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{strings.SIGN_IN}</Text>
@@ -391,7 +443,7 @@ function SeekerLogin({ navigation }) {
               style={{
                 flexDirection: "row",
                 justifyContent: "center",
-
+                marginVertical: 5
               }}
             >
               <Text
@@ -420,47 +472,63 @@ function SeekerLogin({ navigation }) {
 
 
 
-            <View style={{ alignItems: 'center', justifyContent: 'center', marginVertical: 20 }}>
+            <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: isIphoneX?25: 15 }}>
               <View style={{ borderBottomWidth: 0.5, borderBottomColor: '#fff' }}>
                 <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#fff', textAlign: 'center' }} onPress={() => navigation.navigate("SeekerForgotPassword")}>{strings.FORGOT_YOUR_PASSWORD}</Text>
-
               </View>
             </View>
 
 
+
           </View>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "center",
-              marginTop: 10,
-              bottom: 0,
-              borderTopWidth: 0.5,
-              borderTopColor: '#fff',
-              paddingVertical: 15,
-            }}
-          >
-            <Text
+          <View >
+            <View style={{ alignItems: 'center', justifyContent: 'center', marginVertical: 10 }}>
+              <View style={{ borderBottomWidth: 0.5, borderBottomColor: '#fff' }}>
+                <Text style={{ fontSize: 14, color: '#fff', textAlign: 'center' }} onPress={() => gotoTermService()} >{strings.TERM_OF_SERVICE}</Text>
+
+              </View>
+            </View>
+
+            <View style={{ alignItems: 'center', justifyContent: 'center', }}>
+              <View style={{ borderBottomWidth: 0.5, borderBottomColor: '#fff' }}>
+                <Text style={{ fontSize: 14, color: '#fff', textAlign: 'center' }} onPress={() => gotoPrivacyPolicy()} >{strings.PRIVACY_POLICY}</Text>
+
+              </View>
+            </View>
+
+            <View
               style={{
-                color: "#fff",
-                fontSize: 16,
+                flexDirection: "row",
+                justifyContent: "center",
+                marginTop: 10,
+                bottom: 0,
+                borderTopWidth: 0.5,
+                borderTopColor: '#fff',
+                paddingTop: 10,
               }}
             >
-              {strings.BUSINESS_OWNER}
-            </Text>
-            <View style={{ borderBottomWidth: 0.5, borderBottomColor: '#fff' }}>
               <Text
                 style={{
-                  marginLeft: 6,
                   color: "#fff",
-
                   fontSize: 16,
-                  fontWeight: 'bold'
                 }}
-                onPress={() => navigation.navigate("BusinessLogin")}
               >
-                {strings.CLICK_HERE_TO_LOGIN}
+                {strings.BUSINESS_OWNER}
               </Text>
+              <View style={{ borderBottomWidth: 0.5, borderBottomColor: '#fff' }}>
+                <Text
+                  style={{
+                    marginLeft: 6,
+                    color: "#fff",
+
+                    fontSize: 16,
+                    fontWeight: 'bold'
+                  }}
+                  onPress={() => navigation.navigate("BusinessLogin")}
+                >
+                  {strings.CLICK_HERE_TO_LOGIN}
+                </Text>
+              </View>
             </View>
           </View>
         </ScrollView>
@@ -496,11 +564,13 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderColor: "#fff",
     borderWidth: 1,
-    paddingTop: 10,
-    paddingLeft: 10,
+    // paddingTop: 10,
+    // paddingLeft: 10,
     color: "#fff",
-    width: "25%",
-    height: 40,
+    width: "20%",
+    // height: 50,
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   code2: {
     flexDirection: "row",
@@ -509,8 +579,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
     color: "#fff",
-    width: "70%",
-    height: 40,
+    width: "72%",
+    height: 50,
     marginLeft: "5%",
   },
   code3: {
@@ -520,11 +590,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     color: "#fff",
     width: "100%",
-    height: 40,
+    height: 50,
     paddingTop: 10,
     paddingRight: 10,
     paddingBottom: 10,
     paddingLeft: 30,
+    justifyContent: 'center'
   },
   button: {
     width: '100%',

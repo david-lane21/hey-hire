@@ -8,7 +8,8 @@ import {
   TouchableHighlight,
   ScrollView,
   RefreshControl,
-  Linking
+  Linking,
+  Alert
 } from "react-native";
 import { getUser,removeUser } from "./utils/utils.js";
 import { postFormData } from "./utils/network.js";
@@ -50,6 +51,7 @@ function SeekerHome({ navigation }) {
    
    
     (async () => {
+      
       try {
         let { status } = await Location.requestPermissionsAsync();
         if (status !== "granted") {
@@ -59,6 +61,7 @@ function SeekerHome({ navigation }) {
         setLatitude(loc.coords.latitude);
         setLongitude(loc.coords.longitude);
         console.log(loc);
+        loadDate();
         map.animateToRegion(
           {
             latitude: loc.coords.latitude,
@@ -77,6 +80,7 @@ function SeekerHome({ navigation }) {
           longitudeDelta: 0.0421,
         });
       } catch (error) {
+        try {
         let loc = await Location.getCurrentPositionAsync();
 
         map.animateToRegion(
@@ -97,6 +101,21 @@ function SeekerHome({ navigation }) {
           latitudeDelta: 0.0522,
           longitudeDelta: 0.0421,
         });
+      }catch(error){
+        console.log('Current Possigion',error);
+        loadDate();
+        Alert.alert(
+          "Location Permission issue",
+          error.message,
+          [
+            
+            { text: "Ok", onPress: () => Linking.openSettings() },
+          ],
+          { cancelable: false }
+        );
+       
+        Linking.openSettings()
+      }
 
       }
     })();
@@ -105,7 +124,7 @@ function SeekerHome({ navigation }) {
       Linking.removeEventListener('url',handleOpenURL);
 
     }
-  }, []);
+  }, [isFocused]);
 
   useEffect(() => {
     if (isFocused) {

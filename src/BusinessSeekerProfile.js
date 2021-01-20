@@ -90,7 +90,29 @@ function BusinessSeekerProfile({ route, navigation }) {
   }
 
   function onPressCall() {
-    Linking.openURL(`tel:${user.phone}`)
+    // Linking.openURL(`tel:${user.phone}`);
+
+    let form = new FormData();
+    form.append("phone", '+1 5417083275');
+    form.append("business_id", user.user_id);
+    form.append("message", 'Ready for interview');
+   
+    postFormData("/send_sms", form)
+    .then((res) => {
+      console.log("step 1");
+      return res.json();
+    })
+    .then((json) => {
+      console.log("step 2");
+      console.log(json);
+      Alert.alert("", json.msg);
+      if (json.status_code == 200) {
+        navigation.goBack();
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 
   }
 

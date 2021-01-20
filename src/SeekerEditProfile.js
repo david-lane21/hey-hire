@@ -98,7 +98,7 @@ function SeekerEditProfile({ navigation, route }) {
         alert("Sorry, we need camera roll permissions to make this work!");
       }
       // }
-      console.log('Has Notch',DeviceInfo.hasNotch())
+      console.log('Has Notch', DeviceInfo.hasNotch())
     })();
   }, []);
 
@@ -504,7 +504,7 @@ function SeekerEditProfile({ navigation, route }) {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-      <KeyboardAwareScrollView extraScrollHeight={Platform.OS === "ios"?-60:0}>
+      <KeyboardAwareScrollView extraScrollHeight={Platform.OS === "ios" ? -60 : 0}>
         <View
           style={{
             flexDirection: "row",
@@ -679,7 +679,7 @@ function SeekerEditProfile({ navigation, route }) {
               alignItems: "center",
             }}
           >
-            <Modal
+            {/* <Modal
               animationType="slide"
               transparent={false}
               visible={modalVisible}
@@ -736,7 +736,7 @@ function SeekerEditProfile({ navigation, route }) {
                   </View>
                 </View>
               </SafeAreaView>
-            </Modal>
+            </Modal> */}
 
             <View style={{ flex: 1, flexDirection: "row" }}>
               <TouchableOpacity
@@ -823,7 +823,21 @@ function SeekerEditProfile({ navigation, route }) {
             >
               <SafeAreaView>
                 <View style={{ marginTop: 22 }}>
-                  <View>
+                  <View
+                    style={{
+                      justifyContent: "flex-end",
+                      alignItems: 'flex-end',
+                    }}
+                  ><View style={{ marginRight: 20, paddingVertical: 5 }}>
+                      <TouchableOpacity
+                        onPress={() => setModalVisible(false)}
+                      >
+                        <Text style={{ color: "#4834A6", fontSize: 18 }}>
+                          {strings.DONE}
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View><View>
                     <FlatList
                       // ItemSeparatorComponent={<Separator />}
                       data={countries}
@@ -927,7 +941,7 @@ function SeekerEditProfile({ navigation, route }) {
           </View>
 
           <View style={{ flex: 1 }}>
-            <View style={{ flex: 1, padding: 10,paddingHorizontal:20 }}>
+            <View style={{ flex: 1, padding: 10, paddingHorizontal: 20 }}>
               <View
                 style={{
                   flex: 1,
@@ -1087,7 +1101,7 @@ function SeekerEditProfile({ navigation, route }) {
                       value: i,
                     };
                   })}
-                  
+
                 />
               </View>
             </View>
@@ -1314,7 +1328,7 @@ function SeekerEditProfile({ navigation, route }) {
                   source={require("../assets/ic_language.png")}
                   style={{ width: 17, height: 17, marginRight: 5 }}
                 />
-                <Text style={{ width: "95%", color: "#000" }}>{langs}</Text>
+                <Text style={{ width: "95%", color: "#000" }}>{langs ? langs : strings.SELECT_YOUR_LANGUAGE}</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -1340,7 +1354,7 @@ function SeekerEditProfile({ navigation, route }) {
                     { label: "Part Time", value: "Part Time" },
                     { label: "Flexible", value: "Flexible" },
                   ]}
-                 
+
                 />
               </View>
             </View>
@@ -1522,7 +1536,7 @@ function SeekerEditProfile({ navigation, route }) {
         style={
           Platform.OS == "android"
             ? { top: 0, position: "absolute", zIndex: 9999 }
-            : { top: isIphoneX ?20:0 }
+            : { top: isIphoneX ? 20 : 0 }
         }
         onNext={handleFocusNext}
         onPrevious={handleFocusPrev}
@@ -1531,7 +1545,7 @@ function SeekerEditProfile({ navigation, route }) {
       />
       {/* </KeyboardAvoidingView> */}
 
-      <View style={{ position: "absolute", bottom: isIphoneX?20: 0, width: "100%" }}>
+      <View style={{ position: "absolute", bottom: isIphoneX ? 20 : 0, width: "100%" }}>
         {error ? (
           <Text
             style={{ color: "red", padding: 20, backgroundColor: "#fff" }}

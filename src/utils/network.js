@@ -2,8 +2,8 @@ export function API_URL(url){
   // return process.env.REACT_APP_API_URL + 'api/' + url
   // return 'http://localhost:4000/apiv1/' + url
   // return "https://api.apployme.com/apiv1/" + url
-  return "https://stagapi.apployme.com/apiv1/" + url
-}
+     return "https://stagapi.apployme.com/apiv1/" + url
+} 
 
 export async function getRequest(url){
   let response = await fetch(API_URL(url), {
@@ -37,9 +37,8 @@ export async function getWithParamRequest(url,form){
     redirect: "follow",
     referrer: "no-referrer",  
     body:form
-  })
-
-  return response
+  });
+  return response;
 }
 
 export async function postFormData(url, form){
@@ -55,7 +54,8 @@ export async function postFormData(url, form){
     },
     redirect: "follow",
     referrer: "no-referrer",  
-    body: form
+    body: form,
+    
   });
   return response
 }
