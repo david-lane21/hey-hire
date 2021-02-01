@@ -8,13 +8,14 @@ import {
   ScrollView,
   ImageBackground,
   FlatList,
-  RefreshControl
+  RefreshControl,
+  Alert
 } from "react-native";
-import { getUser,getToken,removeUser } from "./utils/utils.js";
+import { getUser, getToken, removeUser } from "./utils/utils.js";
 import { postFormData } from "./utils/network.js";
 import { LinearGradient } from "expo-linear-gradient";
 import { useIsFocused } from "@react-navigation/native";
-import {strings} from './translation/config';
+import { strings } from './translation/config';
 import { AuthContext } from "./navigation/context";
 
 function BusinessHome({ navigation }) {
@@ -43,23 +44,23 @@ function BusinessHome({ navigation }) {
       let form = new FormData();
       form.append("user_token", u2.user_token);
       form.append("user_id", u2.user_id);
-      form.append("device_tocken",deviceToken);
-console.log(form);
+      form.append("device_tocken", deviceToken);
+      console.log(form);
       postFormData("business_profile", form)
         .then((res) => {
           return res.json();
         })
         .then((json) => {
-          console.log('Business Profile',json)
+          console.log('Business Profile', json)
           setProfile(json.data);
         })
         .catch((err) => {
           setRefresh(false);
           console.log(err);
-       
-      });
+
+        });
     });
-  // }
+    // }
   }, []);
 
 
@@ -77,9 +78,9 @@ console.log(form);
     getUser().then((u) => {
       let u2 = JSON.parse(u);
       console.log(u2)
-      setUser(u2);  
+      setUser(u2);
       getJob(u2);
-   
+
     });
   }
 
@@ -91,14 +92,14 @@ console.log(form);
 
     postFormData("user_job_list", form)
       .then((res) => {
-       return res.json();
+        return res.json();
       })
       .then((json) => {
         console.log("Response", json.data.length);
-        const suspendJob = json.data.filter((item)=>item.suspension==1);
-        const unuspendJob = json.data.filter((item)=>item.suspension==0);
+        const suspendJob = json.data.filter((item) => item.suspension == 1);
+        const unuspendJob = json.data.filter((item) => item.suspension == 0);
 
-        setJobs([...unuspendJob,...suspendJob]);
+        setJobs([...unuspendJob, ...suspendJob]);
         setRefresh(false);
       })
       .catch((err) => {
@@ -107,69 +108,83 @@ console.log(form);
       });
   }
 
+  function _onLogout() {
+    Alert.alert('ApployMe',
+      `Are you sure you want to logout now?`
+      , [
+        {
+          text: 'Logout', onPress: () => {
+            removeUser();
+            signOut();
+          }
+        },
+        { text: 'Cancel', onPress: () => console.log('OK Pressed') }
+      ])
+  }
+
   return (
     <LinearGradient
-      style={{ flex: 1}}
+      style={{ flex: 1 }}
       colors={["#4E35AE", "#775ED7"]}
     >
       <SafeAreaView>
-     
-      <View
-            style={{
-              // backgroundColor: '#4E35AE',
-             // flex: 1,
-              flexDirection: "row",
-              alignItems: "center",
-              borderBottomWidth: 1,
-              borderBottomColor: "#715FCB",
-              paddingBottom: 10,
-              paddingTop: 20,
-            }}
-          >
-            <View style={{ width: "33.3%" }}>
-              <TouchableOpacity
-                onPress={() =>{
-                  removeUser();
-                  signOut();
-                }}
-              >
-                <Text style={{ paddingLeft: 10, color: "#fff", fontSize: 18 }}>
-                  {strings.LOGOUT}
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <View style={{ width: "33.3%" }}>
-              <Image
-                source={require("../assets/title_header.png")}
-                style={{ width: 120, height: 25 }}
-              />
-            </View>
-            <View
-              style={{
-                width: "33.3%",
-                alignItems: "flex-end",
-                paddingRight: 15,
+
+        <View
+          style={{
+            // backgroundColor: '#4E35AE',
+            // flex: 1,
+            flexDirection: "row",
+            alignItems: "center",
+            borderBottomWidth: 1,
+            borderBottomColor: "#715FCB",
+            paddingBottom: 10,
+            paddingTop: 20,
+          }}
+        >
+          <View style={{ width: "33.3%" }}>
+            <TouchableOpacity
+              onPress={() => {
+
+                _onLogout();
               }}
             >
-              <TouchableOpacity
-                onPress={() => 
-                  navigation.navigate("BusinessLinks", {
-                    screen: "BusinessEditAccount",
-                  })}
-              >
-                <Image
-                  source={require("../assets/ic_settings.png")}
-                  style={{ width: 20, height: 20 }}
-                />
-              </TouchableOpacity>
-            </View>
+              <Text style={{ paddingLeft: 10, color: "#fff", fontSize: 18 }}>
+                {strings.LOGOUT}
+              </Text>
+            </TouchableOpacity>
           </View>
-      <ScrollView style={{marginBottom:50}} refreshControl={
-        <RefreshControl refreshing={refresh} onRefresh={() => { loadData() }}  tintColor={'#fff'}   />
-      }
-      
-      >
-           
+          <View style={{ width: "33.3%" }}>
+            <Image
+              source={require("../assets/title_header.png")}
+              style={{ width: 120, height: 25 }}
+            />
+          </View>
+          <View
+            style={{
+              width: "33.3%",
+              alignItems: "flex-end",
+              paddingRight: 15,
+            }}
+          >
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("BusinessLinks", {
+                  screen: "BusinessEditAccount",
+                })}
+            >
+              <Image
+                source={require("../assets/ic_settings.png")}
+                style={{ width: 20, height: 20 }}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+        <ScrollView style={{ marginBottom: 50 }} refreshControl={
+          <RefreshControl refreshing={refresh} onRefresh={() => { loadData() }} tintColor={'#fff'} />
+        }
+
+        >
+
           <View
             style={{
               flex: 1,
@@ -293,7 +308,7 @@ console.log(form);
               <View style={{ flex: 1, alignItems: "flex-end" }}>
                 <TouchableOpacity
                   onPress={() => {
-                     navigation.navigate("BusinessHomeStack", {
+                    navigation.navigate("BusinessHomeStack", {
                       screen: "BusinessHomePostNewJob",
                     })
                   }}
@@ -316,69 +331,69 @@ console.log(form);
             <FlatList
               data={jobs}
               keyExtractor={(item) => item.created_date}
-              style={{minHeight:300}}
+              style={{ minHeight: 300 }}
               renderItem={({ item, index, separators }) => (
-                <TouchableOpacity onPress={()=> {
+                <TouchableOpacity onPress={() => {
                   let job = item;
                   job.business = user;
                   navigation.navigate("BusinessHomeStack", {
-                  screen: "BusinessJobDetail",
-                  params: {job: job}
-                })
+                    screen: "BusinessJobDetail",
+                    params: { job: job }
+                  })
                 }}>
-                <View
-                  style={{
-                    backgroundColor: item.suspension==1? "#e2e2e2":"#fff",
-                    borderColor: "#eee",
-                    padding: 10,
-                    marginBottom: 15,
-                    borderWidth: 1,
-                    borderRadius: 10,
-                    shadowColor: "#888",
-                    shadowOffset: {
-                      width: 0,
-                      height: 3,
-                    },
-                    shadowOpacity: 0.23,
-                    shadowRadius: 2.62,
-                    elevation: 4,
-                    flex: 1,
-                    flexDirection: "row",
-                    alignItems: "center",
-                    marginHorizontal: 20,
-                  }}
-                >
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <View style={{ width: "20%" }}>
-                      <Image
-                        source={{ uri: user.avatar_image }}
-                        style={{
-                          width: 40,
-                          height: 40,
-                          backgroundColor: "#444",
-                          borderRadius: 40,
-                        }}
-                      />
-                    </View>
-                    <View style={{ width: "65%" }}>
-                      <Text style={{ fontSize: 16 }}>{item.position}</Text>
-                    </View>
-                    <View style={{ width: "15%", flexDirection: "row" }}>
-                      <Image
-                        source={require("../assets/ic_profile.png")}
-                        style={{ width: 20, height: 20, marginRight: 5 }}
-                      />
-                      <Text style={{ fontSize: 16, color: "#4834A6" }}>
-                        {item.cv_count}
-                      </Text>
+                  <View
+                    style={{
+                      backgroundColor: item.suspension == 1 ? "#e2e2e2" : "#fff",
+                      borderColor: "#eee",
+                      padding: 10,
+                      marginBottom: 15,
+                      borderWidth: 1,
+                      borderRadius: 10,
+                      shadowColor: "#888",
+                      shadowOffset: {
+                        width: 0,
+                        height: 3,
+                      },
+                      shadowOpacity: 0.23,
+                      shadowRadius: 2.62,
+                      elevation: 4,
+                      flex: 1,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      marginHorizontal: 20,
+                    }}
+                  >
+                    <View style={{ flexDirection: "row", alignItems: "center" }}>
+                      <View style={{ width: "20%" }}>
+                        <Image
+                          source={{ uri: user.avatar_image }}
+                          style={{
+                            width: 40,
+                            height: 40,
+                            backgroundColor: "#444",
+                            borderRadius: 40,
+                          }}
+                        />
+                      </View>
+                      <View style={{ width: "65%" }}>
+                        <Text style={{ fontSize: 16 }}>{item.position}</Text>
+                      </View>
+                      <View style={{ width: "15%", flexDirection: "row" }}>
+                        <Image
+                          source={require("../assets/ic_profile.png")}
+                          style={{ width: 20, height: 20, marginRight: 5 }}
+                        />
+                        <Text style={{ fontSize: 16, color: "#4834A6" }}>
+                          {item.cv_count}
+                        </Text>
+                      </View>
                     </View>
                   </View>
-                </View>
                 </TouchableOpacity>
               )}
             />
           </View>
-      </ScrollView>
+        </ScrollView>
       </SafeAreaView>
 
     </LinearGradient>

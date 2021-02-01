@@ -15,7 +15,7 @@ import HomeScreen from "./HomeScreen";
 import SeekerLogin from "./SeekerLogin";
 import BusinessLogin from "./BusinessLogin";
 import SeekerForgotPassword from "./SeekerForgotPassword";
-import BusinessForgotPassword from "./SeekerForgotPassword";
+import BusinessForgotPassword from "./BusinessForgotPassword";
 import SeekerSignup from "./SeekerSignup";
 import SeekerVerificationCode from "./SeekerVerificationCode";
 import BusinessSignup from "./BusinessSignup";
@@ -48,6 +48,7 @@ import BusinessClosedJobDetail from "./BusinessClosedJobDetail";
 import BusinessEmployees from "./BusinessEmployeers";
 import BusinessSubmittedApplication from "./BusinessSubmittedApplication";
 import SeekerEditPastPosition from "./SeekerEditPastPosition";
+import ForgotPassword from './ForgotPassword';
 
 const Stack = createStackNavigator();
 const Stack2 = createStackNavigator();
@@ -91,7 +92,7 @@ export function Navigation(props) {
           component={SeekerLinks}
           options={{
             headerShown: false,
-            gestureEnabled:false
+            gestureEnabled: false
 
           }}
         />
@@ -101,7 +102,7 @@ export function Navigation(props) {
           component={Business}
           options={{
             headerShown: false,
-            gestureEnabled:false
+            gestureEnabled: false
 
           }}
         />
@@ -111,7 +112,7 @@ export function Navigation(props) {
           component={BusinessLinks}
           options={{
             headerShown: false,
-            gestureEnabled:false
+            gestureEnabled: false
 
           }}
         />
@@ -239,94 +240,94 @@ export function Navigation(props) {
 export default Navigation;
 
 
-export function AppNavigation({navigation}){
+export function AppNavigation({ navigation }) {
   return (
     <AppNavigationStack.Navigator initialRouteName={'Seeker'}>
       <AppNavigationStack.Screen
-          name="Seeker"
-          component={Seeker}
-          options={{
-            headerShown: false,
-            gestureEnabled:false
+        name="Seeker"
+        component={Seeker}
+        options={{
+          headerShown: false,
+          gestureEnabled: false
 
-          }}
-        />
+        }}
+      />
 
-        <AppNavigationStack.Screen
-          name="SeekerLinks"
-          component={SeekerLinks}
-          options={{
-            headerShown: false,
-            gestureEnabled:false
+      <AppNavigationStack.Screen
+        name="SeekerLinks"
+        component={SeekerLinks}
+        options={{
+          headerShown: false,
+          gestureEnabled: false
 
-          }}
-        />
+        }}
+      />
 
-        <AppNavigationStack.Screen
-          name="Business"
-          component={Business}
-          options={{
-            headerShown: false,
-            gestureEnabled:false
+      <AppNavigationStack.Screen
+        name="Business"
+        component={Business}
+        options={{
+          headerShown: false,
+          gestureEnabled: false
 
-          }}
-        />
+        }}
+      />
 
-        <AppNavigationStack.Screen
-          name="BusinessLinks"
-          component={BusinessLinks}
-          options={{
-            headerShown: false,
-            gestureEnabled:false
+      <AppNavigationStack.Screen
+        name="BusinessLinks"
+        component={BusinessLinks}
+        options={{
+          headerShown: false,
+          gestureEnabled: false
 
-          }}
-        />
+        }}
+      />
 
-        <AppNavigationStack.Screen
-          name="BusinessEditAccount"
-          component={BusinessEditAccount}
-          options={{
-            headerShown: true,
-            headerBackTitleVisible: false,
-            headerTitle: "Edit Account",
-            headerStyle: {
-              backgroundColor: "#4E35AE",
-            },
-            headerTintColor: "#fff",
-            gestureEnabled:false
+      <AppNavigationStack.Screen
+        name="BusinessEditAccount"
+        component={BusinessEditAccount}
+        options={{
+          headerShown: true,
+          headerBackTitleVisible: false,
+          headerTitle: "Edit Account",
+          headerStyle: {
+            backgroundColor: "#4E35AE",
+          },
+          headerTintColor: "#fff",
+          gestureEnabled: false
 
-          }}
-        />
+        }}
+      />
 
-        <AppNavigationStack.Screen
-          name="BusinessPrinterOptions"
-          component={BusinessPrinterOptions}
-        />
-        <AppNavigationStack.Screen
-          name="BusinessSeekerProfileMain"
-          component={BusinessSeekerProfile}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <AppNavigationStack.Screen
-          name="BusinessVisitorDetail"
-          component={BusinessVisitorDetail}
-          options={{
-            headerShown: false,
-            gestureEnabled:false
+      <AppNavigationStack.Screen
+        name="BusinessPrinterOptions"
+        component={BusinessPrinterOptions}
+      />
+      <AppNavigationStack.Screen
+        name="BusinessSeekerProfileMain"
+        component={BusinessSeekerProfile}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <AppNavigationStack.Screen
+        name="BusinessVisitorDetail"
+        component={BusinessVisitorDetail}
+        options={{
+          headerShown: false,
+          gestureEnabled: false
 
-          }}
-        />     
-          </AppNavigationStack.Navigator>
+        }}
+      />
+    </AppNavigationStack.Navigator>
   );
 }
 
 
-export function AuthNavigation({navigation}){
+export function AuthNavigation({ navigation }) {
   return (
     <AuthNavigationStack.Navigator >
- {/* <AuthNavigationStack.Screen
+      {/* <AuthNavigationStack.Screen
           name="HomeScreen"
           component={HomeScreen}
           options={{
@@ -335,99 +336,99 @@ export function AuthNavigation({navigation}){
 
           }}
         /> */}
-        <AuthNavigationStack.Screen
-          name="SeekerLogin"
-          component={SeekerLogin}
-          options={{
-            headerShown: false,
-            gestureEnabled:false
+      <AuthNavigationStack.Screen
+        name="SeekerLogin"
+        component={SeekerLogin}
+        options={{
+          headerShown: false,
+          gestureEnabled: false
 
-          }}
-        />
-        <AuthNavigationStack.Screen
-          name="BusinessLogin"
-          component={BusinessLogin}
-          options={{
-            headerShown: false,
-            gestureEnabled:false
+        }}
+      />
+      <AuthNavigationStack.Screen
+        name="BusinessLogin"
+        component={BusinessLogin}
+        options={{
+          headerShown: false,
+          gestureEnabled: false
 
-          }}
-        />
-        <AuthNavigationStack.Screen
-          name="SeekerSignup"
-          component={SeekerSignup}
-          options={{
-            headerShown: true,
-            headerBackTitleVisible: false,
-            headerTitle: "REGISTRATION",
-            headerStyle: {
-              backgroundColor: "#fff",
-            },
-            headerTintColor: "#4E35AE",
-            gestureEnabled:false
+        }}
+      />
+      <AuthNavigationStack.Screen
+        name="SeekerSignup"
+        component={SeekerSignup}
+        options={{
+          headerShown: true,
+          headerBackTitleVisible: false,
+          headerTitle: "REGISTRATION",
+          headerStyle: {
+            backgroundColor: "#fff",
+          },
+          headerTintColor: "#4E35AE",
+          gestureEnabled: false
 
-          }}
-        />
-        <AuthNavigationStack.Screen
-          name="SeekerVerificationCode"
-          component={SeekerVerificationCode}
-          options={{
-            headerShown: false,
-            gestureEnabled:false
+        }}
+      />
+      <AuthNavigationStack.Screen
+        name="SeekerVerificationCode"
+        component={SeekerVerificationCode}
+        options={{
+          headerShown: false,
+          gestureEnabled: false
 
-          }}
-        />
-        <AuthNavigationStack.Screen
-          name="BusinessSignup"
-          component={BusinessSignup}
-          options={{
-            headerShown: true,
-            headerBackTitleVisible: false,
-            headerTitle: "apployMe",
-            headerStyle: {
-              backgroundColor: "#4E35AE",
-            },
-            headerTintColor: "#fff",
-            gestureEnabled:false
+        }}
+      />
+      <AuthNavigationStack.Screen
+        name="BusinessSignup"
+        component={BusinessSignup}
+        options={{
+          headerShown: true,
+          headerBackTitleVisible: false,
+          headerTitle: "apployMe",
+          headerStyle: {
+            backgroundColor: "#4E35AE",
+          },
+          headerTintColor: "#fff",
+          gestureEnabled: false
 
-          }}
-        />
-        <AuthNavigationStack.Screen
-          name="SeekerForgotPassword"
-          component={SeekerForgotPassword}
-          options={{
-            headerShown: false,
-            headerBackTitleVisible: false,
-            headerTitle: "Forgot Password",
-            headerStyle: {
-              backgroundColor: "#4E35AE",
-            },
-            headerTintColor: "#fff",
-            gestureEnabled:false
+        }}
+      />
+      <AuthNavigationStack.Screen
+        name="SeekerForgotPassword"
+        component={SeekerForgotPassword}
+        options={{
+          headerShown: false,
+          headerBackTitleVisible: false,
+          headerTitle: "Forgot Password",
+          headerStyle: {
+            backgroundColor: "#4E35AE",
+          },
+          headerTintColor: "#fff",
+          gestureEnabled: false
 
-          }}
-        />
-        <AuthNavigationStack.Screen
-          name="BusinessForgotPassword"
-          component={BusinessForgotPassword}
-          options={{
-            headerShown: true,
-            headerBackTitleVisible: false,
-            headerTitle: "Forgot Password",
-            headerStyle: {
-              backgroundColor: "#4E35AE",
-            },
-            headerTintColor: "#fff",
-            gestureEnabled:false
+        }}
+      />
+      <AuthNavigationStack.Screen
+        name="BusinessForgotPassword"
+        component={BusinessForgotPassword}
+        options={{
+          headerShown: true,
+          headerBackTitleVisible: false,
+          headerTitle: "Forgot Password",
+          headerStyle: {
+            backgroundColor: "#4E35AE",
+          },
+          headerTintColor: "#fff",
+          gestureEnabled: false
 
-          }}
-        />
-        <Stack2.Screen
+        }}
+      />
+      <Stack2.Screen
         name="SeekerFinishRegistration"
         component={SeekerFinishRegistration}
         options={{
           headerShown: false,
-          gestureEnabled:false
+          gestureEnabled: false
 
         }}
       />
@@ -439,8 +440,23 @@ export function AuthNavigation({navigation}){
         }}
       />
 
+      <Stack.Screen
+        name="ForgotPassword"
+        component={ForgotPassword}
+        options={{
+          headerShown: true,
+          headerBackTitleVisible: false,
+          headerTitle: "Forgot Password",
+          headerStyle: {
+            backgroundColor: "#4E35AE",
+          },
+          headerTintColor: "#fff",
+        }}
+      />
+
     </AuthNavigationStack.Navigator>
-  )}
+  )
+}
 
 function Seeker({ navigation }) {
   let home = require("../assets/tabbar_home_active.png");
@@ -767,10 +783,10 @@ function Icon(props) {
       style={
         props.border
           ? {
-              borderBottomWidth: 2,
-              borderBottomColor: "#5F46BF",
-              paddingBottom: 5,
-            }
+            borderBottomWidth: 2,
+            borderBottomColor: "#5F46BF",
+            paddingBottom: 5,
+          }
           : { paddingBottom: 5 }
       }
     >

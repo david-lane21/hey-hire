@@ -11,7 +11,7 @@ import {
   Linking,
   Alert
 } from "react-native";
-import { getUser,removeUser } from "./utils/utils.js";
+import { getUser, removeUser } from "./utils/utils.js";
 import { postFormData } from "./utils/network.js";
 import { LinearGradient } from "expo-linear-gradient";
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
@@ -19,7 +19,7 @@ import * as Location from "expo-location";
 import { useIsFocused } from "@react-navigation/native";
 import { Dimensions } from "react-native";
 import Header from "./components/Header";
-import {strings} from './translation/config';
+import { strings } from './translation/config';
 import NavigationService from './utils/NavigationService';
 import { AuthContext } from "./navigation/context";
 
@@ -47,11 +47,11 @@ function SeekerHome({ navigation }) {
 
   useEffect(() => {
 
-    Linking.addEventListener('url',handleOpenURL);
-   
-   
+    Linking.addEventListener('url', handleOpenURL);
+
+
     (async () => {
-      
+
       try {
         let { status } = await Location.requestPermissionsAsync();
         if (status !== "granted") {
@@ -61,7 +61,7 @@ function SeekerHome({ navigation }) {
         setLatitude(loc.coords.latitude);
         setLongitude(loc.coords.longitude);
         console.log(loc);
-        loadDate();
+        ///loadDate();
         map.animateToRegion(
           {
             latitude: loc.coords.latitude,
@@ -71,7 +71,7 @@ function SeekerHome({ navigation }) {
           },
           500
         );
-       
+
 
         setRegion({
           latitude: loc.coords.latitude,
@@ -81,119 +81,138 @@ function SeekerHome({ navigation }) {
         });
       } catch (error) {
         try {
-        let loc = await Location.getCurrentPositionAsync();
+          let loc = await Location.getCurrentPositionAsync();
 
-        map.animateToRegion(
-          {
+          map.animateToRegion(
+            {
+              latitude: loc.coords.latitude,
+              longitude: loc.coords.longitude,
+              latitudeDelta: 0.0522,
+              longitudeDelta: 0.0421,
+            },
+            500
+          );
+          // setLocation(loc.coords);
+          setLatitude(loc.coords.latitude);
+          setLongitude(loc.coords.longitude);
+          setRegion({
             latitude: loc.coords.latitude,
             longitude: loc.coords.longitude,
             latitudeDelta: 0.0522,
             longitudeDelta: 0.0421,
-          },
-          500
-        );
-        // setLocation(loc.coords);
-        setLatitude( loc.coords.latitude);
-        setLongitude( loc.coords.longitude);
-        setRegion({
-          latitude: loc.coords.latitude,
-          longitude: loc.coords.longitude,
-          latitudeDelta: 0.0522,
-          longitudeDelta: 0.0421,
-        });
-      }catch(error){
-        console.log('Current Possigion',error);
-        loadDate();
-        Alert.alert(
-          "Location Permission issue",
-          error.message,
-          [
-            
-            { text: "Ok", onPress: () => Linking.openSettings() },
-          ],
-          { cancelable: false }
-        );
-       
-        Linking.openSettings()
-      }
+          });
+        } catch (error) {
+          console.log('Current Possigion', error);
+          //loadDate();
+          Alert.alert(
+            "Location Permission issue",
+            error.message,
+            [
+
+              { text: "Ok", onPress: () => Linking.openSettings() },
+            ],
+            { cancelable: false }
+          );
+
+          Linking.openSettings()
+        }
 
       }
     })();
 
-    return ()=>{
-      Linking.removeEventListener('url',handleOpenURL);
+    return () => {
+      Linking.removeEventListener('url', handleOpenURL);
 
     }
   }, [isFocused]);
 
   useEffect(() => {
     if (isFocused) {
-      setTimeout(()=>{
+      setTimeout(() => {
         loadDate();
-      },500);
-     
+      }, 500);
+
     }
   }, [isFocused]);
 
-  function handleOpenURL(event){
-    console.log('Handle open url',NavigationService,event);
+  function handleOpenURL(event) {
+    console.log('Handle open url', NavigationService, event);
     let businessId = event.url.split("/").filter(Boolean).pop();
     console.log(businessId / 33469);
-    NavigationService.navigate("SeekerHomeAvailableJobs", 
-      
-       { biz_id: businessId / 33469 },
+    NavigationService.navigate("SeekerHomeAvailableJobs",
+
+      { biz_id: businessId / 33469 },
     );
   }
 
- async function loadDate() {
-  let loc = await Location.getLastKnownPositionAsync(); 
-    getUser().then((u) => {
-      let u2 = JSON.parse(u);
-      setUser1(u2);
+  async function loadDate() {
+    try {
+      let loc = await Location.getLastKnownPositionAsync();
+      getUser().then((u) => {
+        let u2 = JSON.parse(u);
+        setUser1(u2);
 
-      let form = new FormData();
-      form.append("user_token", u2.user_token);
-      form.append("user_id", u2.user_id);
+        let form = new FormData();
+        form.append("user_token", u2.user_token);
+        form.append("user_id", u2.user_id);
 
-      postFormData("user_profile", form)
-        .then((res) => {
-          return res.json();
-        })
-        .then((json) => {
-          console.log(json);
-          json.data.avatar_image = json.data.avatar_image + "?random_number=" +             new Date().getTime();
-          setProfile(json.data);
-          sortPositions(json.data);
-          postFormData("get_all_business", form)
-            .then((json2) => {
-              return json2.json();
-            })
-            .then((json2) => {
-              let bizList = json2.data.filter(
-                (b) => parseFloat(b.latitude) && parseFloat(b.longitude) && b.is_active==1
-              );
-              bizList = bizList.map((b) => {
-                b.distance_in_km = haversine_distance(
-                  loc.coords.latitude || latitude,
-                  loc.coords.longitude || longitude,
-                  b.latitude,b.longitude,
-                  "K"
-                ); //.toFixed(1)
-                return b;
+        postFormData("user_profile", form)
+          .then((res) => {
+            return res.json();
+          })
+          .then((json) => {
+            console.log(json);
+            json.data.avatar_image = json.data.avatar_image + "?random_number=" + new Date().getTime();
+            setProfile(json.data);
+            sortPositions(json.data);
+            postFormData("get_all_business", form)
+              .then((json2) => {
+                return json2.json();
+              })
+              .then((json2) => {
+                let bizList = json2.data.filter(
+                  (b) => parseFloat(b.latitude) && parseFloat(b.longitude) && b.is_active == 1
+                );
+                bizList = bizList.map((b) => {
+                  b.distance_in_km = haversine_distance(
+                    loc.coords.latitude || latitude,
+                    loc.coords.longitude || longitude,
+                    b.latitude, b.longitude,
+                    "K"
+                  ); //.toFixed(1)
+                  return b;
+                });
+
+                bizList = bizList.sort(
+                  (a, b) => a.distance_in_km - b.distance_in_km
+                );
+                console.log(bizList);
+                setBusinesses(bizList);
+                setRefresh(false);
               });
-              
-              bizList = bizList.sort(
-                (a, b) => a.distance_in_km - b.distance_in_km
-              );
-              console.log(bizList);
-              setBusinesses(bizList);
-              setRefresh(false);
-            });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      });
+    }
+    catch (error) {
+      console.log('Current Possigion', error);
+      Alert.alert(
+        "Location Permission issue",
+        error.message,
+        [
+
+          {
+            text: "Ok", onPress: () => {
+              refreshData();
+              Linking.openSettings();
+            }
+          },
+        ],
+        { cancelable: false }
+      );
+    }
   }
 
   function sortPositions(data) {
@@ -260,10 +279,10 @@ function SeekerHome({ navigation }) {
     }
   }
 
-   function distance(lat1, lon1, lat2, lon2, unit) {
-   
+  function distance(lat1, lon1, lat2, lon2, unit) {
+
     console.log(lat1, lon1, lat2, lon2, unit)
-        if (lat1 == lat2 && lon1 == lon2) {
+    if (lat1 == lat2 && lon1 == lon2) {
       return 0;
     } else {
       var radlat1 = (Math.PI * lat1) / 180;
@@ -293,27 +312,41 @@ function SeekerHome({ navigation }) {
   function distanceInKM(lat1, lon1, lat2, lon2) {
     var p = 0.017453292519943295;    // Math.PI / 180
     var c = Math.cos;
-    var a = 0.5 - c((lat2 - lat1) * p)/2 + 
-            c(lat1 * p) * c(lat2 * p) * 
-            (1 - c((lon2 - lon1) * p))/2;
-  console.log(12742 * Math.asin(Math.sqrt(a)))
+    var a = 0.5 - c((lat2 - lat1) * p) / 2 +
+      c(lat1 * p) * c(lat2 * p) *
+      (1 - c((lon2 - lon1) * p)) / 2;
+    console.log(12742 * Math.asin(Math.sqrt(a)))
     return 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
   }
 
   function haversine_distance(lat1, lon1, lat2, lon2) {
     var R = 3958.8; // Radius of the Earth in miles
-    var rlat1 = lat1 * (Math.PI/180); // Convert degrees to radians
-    var rlat2 = lat2 * (Math.PI/180); // Convert degrees to radians
-    var difflat = rlat2-rlat1; // Radian difference (latitudes)
-    var difflon = (lon2-lon1) * (Math.PI/180); // Radian difference (longitudes)
+    var rlat1 = lat1 * (Math.PI / 180); // Convert degrees to radians
+    var rlat2 = lat2 * (Math.PI / 180); // Convert degrees to radians
+    var difflat = rlat2 - rlat1; // Radian difference (latitudes)
+    var difflon = (lon2 - lon1) * (Math.PI / 180); // Radian difference (longitudes)
 
-    var d = 2 * R * Math.asin(Math.sqrt(Math.sin(difflat/2)*Math.sin(difflat/2)+Math.cos(rlat1)*Math.cos(rlat2)*Math.sin(difflon/2)*Math.sin(difflon/2)));
+    var d = 2 * R * Math.asin(Math.sqrt(Math.sin(difflat / 2) * Math.sin(difflat / 2) + Math.cos(rlat1) * Math.cos(rlat2) * Math.sin(difflon / 2) * Math.sin(difflon / 2)));
     return d;
   }
 
-  function refreshData(){
+  function refreshData() {
     setRefresh(true);
-loadDate();
+    loadDate();
+  }
+
+  function _onLogout() {
+    Alert.alert('ApployMe',
+      `Are you sure you want to logout now?`
+      , [
+        {
+          text: 'Logout', onPress: () => {
+            removeUser();
+            signOut();
+          }
+        },
+        { text: 'Cancel', onPress: () => console.log('OK Pressed') }
+      ])
   }
 
   return (
@@ -321,67 +354,67 @@ loadDate();
       style={{ flex: 1 }}
       colors={["#4E35AE", "#775ED7"]}
     >
-              <SafeAreaView>
+      <SafeAreaView>
 
-      <View
-            style={{
-              // backgroundColor: '#4E35AE',
-             // flex: 1,
-              flexDirection: "row",
-              alignItems: "center",
-              borderBottomWidth: 1,
-              borderBottomColor: "#715FCB",
-              paddingBottom: 10,
-              paddingTop: 20,
-            }}
-          >
-             <View style={{flex:1,alignItems:'center' }}>
-              <Image
-                source={require("../assets/title_header.png")}
-                style={{ width: 120, height: 25 }}
-              />
-            </View>
-            <View style={{ position:'absolute',left:5 }}>
-              <TouchableOpacity
-                onPress={() => {
-                  removeUser();
-                  signOut();
-                }}
-                style={{padding:5}}
-              >
-                <Text style={{ paddingHorizontal: 10, color: "#fff", fontSize: 18 }}>
-                  {strings.LOGOUT}
-                </Text>
-              </TouchableOpacity>
-            </View>
-           
-            <View style={{ position:'absolute',right:5 }}>
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate("SeekerLinks", {
-                    screen: "SeekerEditProfile",
-                    params: {
-                      profile: profile,
-                    },
-                  })
-                }
-              >
-                <Text
-                  style={{
-                    paddingRight: 10,
-                    textAlign: "right",
-                    color: "#fff",
-                    fontSize: 18,
-                  }}
-                >
-                  {strings.EDIT_PROFILE}
-                </Text>
-              </TouchableOpacity>
-            </View>
+        <View
+          style={{
+            // backgroundColor: '#4E35AE',
+            // flex: 1,
+            flexDirection: "row",
+            alignItems: "center",
+            borderBottomWidth: 1,
+            borderBottomColor: "#715FCB",
+            paddingBottom: 10,
+            paddingTop: 20,
+          }}
+        >
+          <View style={{ flex: 1, alignItems: 'center' }}>
+            <Image
+              source={require("../assets/title_header.png")}
+              style={{ width: 120, height: 25 }}
+            />
           </View>
-      <ScrollView style={{marginBottom:50}} refreshControl={
-        <RefreshControl refreshing={refresh} onRefresh={() => { refreshData() }}  tintColor={'#fff'}   />
-      }>  
+          <View style={{ position: 'absolute', left: 5 }}>
+            <TouchableOpacity
+              onPress={() => {
+
+                _onLogout();
+              }}
+              style={{ padding: 5 }}
+            >
+              <Text style={{ paddingHorizontal: 10, color: "#fff", fontSize: 18 }}>
+                {strings.LOGOUT}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={{ position: 'absolute', right: 5 }}>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("SeekerLinks", {
+                  screen: "SeekerEditProfile",
+                  params: {
+                    profile: profile,
+                  },
+                })
+              }
+            >
+              <Text
+                style={{
+                  paddingRight: 10,
+                  textAlign: "right",
+                  color: "#fff",
+                  fontSize: 18,
+                }}
+              >
+                {strings.EDIT_PROFILE}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        <ScrollView style={{ marginBottom: 50 }} refreshControl={
+          <RefreshControl refreshing={refresh} onRefresh={() => { refreshData() }} tintColor={'#fff'} />
+        }>
           {/* <View
             style={{
               // backgroundColor: '#4E35AE',
@@ -553,7 +586,7 @@ loadDate();
                 flexDirection: "row",
                 alignItems: "center",
                 alignContent: "center",
-                marginTop:10
+                marginTop: 10
               }}
             >
               <Image
@@ -646,7 +679,7 @@ loadDate();
                         flex: 1,
                         borderBottomColor: "#715FCB",
                         borderBottomWidth: 1,
-                        marginTop:2.5
+                        marginTop: 2.5
                       }}
                     ></View>
                   </View>
@@ -786,11 +819,11 @@ loadDate();
                             }}
                           />
                         ) : (
-                          <Image
-                            source={require("../assets/ApployMeLogo.png")}
-                            style={{ width: 50, height: 50, margin: 10 }}
-                          />
-                        )}
+                            <Image
+                              source={require("../assets/ApployMeLogo.png")}
+                              style={{ width: 50, height: 50, margin: 10 }}
+                            />
+                          )}
                         <Text style={{ flex: 1, fontSize: 12, color: "#444" }}>
                           {biz.business_name}
                         </Text>
@@ -804,7 +837,7 @@ loadDate();
               })}
             </ScrollView>
           </View>
-      </ScrollView>
+        </ScrollView>
       </SafeAreaView>
 
     </LinearGradient>

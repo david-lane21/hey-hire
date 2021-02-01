@@ -66,12 +66,55 @@ function BusinessSeekerProfile({ route, navigation }) {
   }
 
   function handleHire() {
+
+    Alert.alert('ApployMe',
+
+      `You are about to hire ${user.first_name} ${user.last_name} For The Following ${user.job_detail[0].position}.  Proceed?`
+      , [
+        {
+          text: 'Yes', onPress: () => {
+
+
+            let form = new FormData();
+            form.append("user_token", userToken);
+            form.append("user_id", user.user_id);
+            form.append("job_id", user.job_detail[0].id);
+            form.append("status", "1");
+            postFormData("/get_hired", form)
+              .then((res) => {
+                console.log("step 1");
+                return res.json();
+              })
+              .then((json) => {
+                console.log("step 2");
+                console.log(json);
+                Alert.alert("", json.msg);
+                if (json.status_code == 200) {
+                  navigation.goBack();
+                }
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+          }
+        },
+        { text: 'Not Now', onPress: () => console.log('OK Pressed') }
+      ])
+
+
+  }
+
+
+
+  function onPressCall() {
+    // Linking.openURL(`tel:${user.phone}`);
+
     let form = new FormData();
-    form.append("user_token", userToken);
-    form.append("user_id", user.user_id);
-    form.append("job_id", user.job_detail[0].id);
-    form.append("status", "1");
-    postFormData("/get_hired", form)
+    form.append("phone", '+1 5417083275');
+    form.append("business_id", user.user_id);
+    form.append("message", 'Ready for interview');
+
+    postFormData("/send_sms", form)
       .then((res) => {
         console.log("step 1");
         return res.json();
@@ -87,32 +130,6 @@ function BusinessSeekerProfile({ route, navigation }) {
       .catch((error) => {
         console.log(error);
       });
-  }
-
-  function onPressCall() {
-    // Linking.openURL(`tel:${user.phone}`);
-
-    let form = new FormData();
-    form.append("phone", '+1 5417083275');
-    form.append("business_id", user.user_id);
-    form.append("message", 'Ready for interview');
-   
-    postFormData("/send_sms", form)
-    .then((res) => {
-      console.log("step 1");
-      return res.json();
-    })
-    .then((json) => {
-      console.log("step 2");
-      console.log(json);
-      Alert.alert("", json.msg);
-      if (json.status_code == 200) {
-        navigation.goBack();
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-    });
 
   }
 
@@ -410,7 +427,7 @@ function BusinessSeekerProfile({ route, navigation }) {
               paddingBottom: 10,
             }}
           >
-            <Text style={{ fontSize: 18,marginLeft: 10 ,marginBottom:5 }}>{strings.EDUCATIONS}</Text>
+            <Text style={{ fontSize: 18, marginLeft: 10, marginBottom: 5 }}>{strings.EDUCATIONS}</Text>
             <View
               style={{
                 width: "100%",
@@ -443,7 +460,7 @@ function BusinessSeekerProfile({ route, navigation }) {
               paddingBottom: 10,
             }}
           >
-            <Text style={{ fontSize: 18, marginLeft: 10 ,marginBottom:5}}>{strings.CERTIFICATION}</Text>
+            <Text style={{ fontSize: 18, marginLeft: 10, marginBottom: 5 }}>{strings.CERTIFICATION}</Text>
             <View
               style={{
                 width: "100%",
@@ -476,7 +493,7 @@ function BusinessSeekerProfile({ route, navigation }) {
               paddingBottom: 10,
             }}
           >
-            <Text style={{ fontSize: 18, marginLeft: 10 ,marginBottom:5}}>{strings.LANGUAGE}</Text>
+            <Text style={{ fontSize: 18, marginLeft: 10, marginBottom: 5 }}>{strings.LANGUAGE}</Text>
             <View
               style={{
                 width: "100%",
@@ -509,7 +526,7 @@ function BusinessSeekerProfile({ route, navigation }) {
               paddingBottom: 10,
             }}
           >
-            <Text style={{ fontSize: 18,marginLeft: 10 ,marginBottom:5}}>{strings.LEVEL_OF_EDUCATION}</Text>
+            <Text style={{ fontSize: 18, marginLeft: 10, marginBottom: 5 }}>{strings.LEVEL_OF_EDUCATION}</Text>
             <View
               style={{
                 width: "100%",
@@ -542,7 +559,7 @@ function BusinessSeekerProfile({ route, navigation }) {
               paddingBottom: 10,
             }}
           >
-            <Text style={{ fontSize: 18, marginLeft: 10 ,marginBottom:5}}>{strings.NAME_OF_INSTITUTION}</Text>
+            <Text style={{ fontSize: 18, marginLeft: 10, marginBottom: 5 }}>{strings.NAME_OF_INSTITUTION}</Text>
             <View
               style={{
                 width: "100%",
@@ -578,7 +595,7 @@ function BusinessSeekerProfile({ route, navigation }) {
               paddingBottom: 10,
             }}
           >
-            <Text style={{ fontSize: 18,marginLeft: 10 ,marginBottom:5}}>{strings.AVAILABILITY}</Text>
+            <Text style={{ fontSize: 18, marginLeft: 10, marginBottom: 5 }}>{strings.AVAILABILITY}</Text>
             <View
               style={{
                 width: "100%",
@@ -635,7 +652,7 @@ function BusinessSeekerProfile({ route, navigation }) {
                 width: "100%",
                 padding: 20,
                 backgroundColor: "#fff",
-                paddingBottom:10
+                paddingBottom: 10
               }}
             >
               <TouchableOpacity
@@ -678,20 +695,20 @@ function BusinessSeekerProfile({ route, navigation }) {
                 style={{
                   width: "100%",
                   borderColor: "#4834A6",
-                  paddingVertical:10,
+                  paddingVertical: 10,
                   borderRadius: 50,
                   borderWidth: 1,
-                  flexDirection:'row',
-                  alignItems:'center'
+                  flexDirection: 'row',
+                  alignItems: 'center'
                 }}
                 onPress={() => onPressCall()}
               >
                 <Text
-                  style={{width:'95%', textAlign: "center", fontSize: 18, color: "#4834A6" }}
+                  style={{ width: '95%', textAlign: "center", fontSize: 18, color: "#4834A6" }}
                 >{strings.INTERVIEW_OPTIONS}</Text>
                 <Image
                   source={require("../assets/ic_call.png")}
-                  style={{ width: 20, height: 20,  right: 20, }}
+                  style={{ width: 20, height: 20, right: 20, }}
                 />
               </TouchableOpacity>
             </View>
@@ -709,22 +726,22 @@ function BusinessSeekerProfile({ route, navigation }) {
               <TouchableOpacity
                 style={{
                   width: "100%",
-                  paddingVertical:10,
+                  paddingVertical: 10,
                   borderRadius: 50,
                   borderWidth: 1,
-                  flexDirection:'row',
-                  alignItems:'center'
+                  flexDirection: 'row',
+                  alignItems: 'center'
                 }}
                 onPress={() => notRelevant()}
               >
                 <Text
-                  style={{width:'95%', textAlign: "center", fontSize: 18, color: "#000" }}
+                  style={{ width: '95%', textAlign: "center", fontSize: 18, color: "#000" }}
                 >
                   {strings.NOT_RELEVANT}
                 </Text>
                 <Image
                   source={require("../assets/ic_close_black.png")}
-                  style={{ width: 20, height: 20,  right: 20,  }}
+                  style={{ width: 20, height: 20, right: 20, }}
                 />
               </TouchableOpacity>
             </View>

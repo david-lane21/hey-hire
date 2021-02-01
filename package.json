@@ -33,7 +33,7 @@
     "react-native-fs": "^2.16.6",
     "react-native-gesture-handler": "~1.6.0",
     "react-native-image-to-pdf": "^1.2.0",
-    "react-native-keyboard-accessory": "^0.1.12",
+    "react-native-keyboard-accessory": "^0.1.13",
     "react-native-keyboard-aware-scroll-view": "^0.9.3",
     "react-native-localization": "^2.1.6",
     "react-native-maps": "0.27.1",

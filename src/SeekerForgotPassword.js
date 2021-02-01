@@ -18,6 +18,7 @@ import { postFormData } from './utils/network.js'
 import { strings } from './translation/config';
 import DeviceInfo from 'react-native-device-info';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { Alert } from 'react-native';
 
 const isIphoneX = DeviceInfo.hasNotch();
 const window = Dimensions.get("window");
@@ -25,7 +26,7 @@ const window = Dimensions.get("window");
 function SeekerForgotPassword({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [phCode, setPhCode] = useState('1')
-  const [phone, setPhone] = useState('(214) 9985600')
+  const [phone, setPhone] = useState('')
   const [error, setError] = useState('')
 
   function _onPress(item) {
@@ -53,17 +54,23 @@ function SeekerForgotPassword({ navigation }) {
     let token = deviceToken(128)
     let form = new FormData()
     form.append('phone', phCode + ' ' + formatPhoneAPI(phone))
-    form.append('user_type', '1')
-    form.append('device_tocken', token)
+    form.append('user_type', '2')
 
-    postFormData('user_login', form)
+    postFormData('user_forgot_password', form)
       .then(res => {
         return res.json()
       })
       .then(json => {
         // setUser(json.data)
         // setToken(token)
-        console.log(json.data)
+        console.log(json);
+        if (json.status_code == 200) {
+          Alert.alert("", json.msg);
+          navigation.goBack();
+        } else {
+          Alert.alert("", json.msg);
+
+        }
       })
       .catch(err => {
         console.log(err)
@@ -72,8 +79,8 @@ function SeekerForgotPassword({ navigation }) {
 
   return (
     <LinearGradient style={styles.container} colors={["#4E35AE", "#775ED7"]}>
-    <SafeAreaView style={{ flex: 1 }}>
-    <View style={{ flexDirection: 'row', height: window.height, position: 'absolute', top: 0, left: 0 }}>
+      <SafeAreaView style={{ flex: 1 }}>
+        <View style={{ flexDirection: 'row', height: window.height, position: 'absolute', top: 0, left: 0 }}>
           <Image
             style={{ width: '100%', height: '100%', borderBottomLeftRadius: 8, borderBottomRightRadius: 8, opacity: 1 }}
             source={require('../assets/home-bg-1.png')}
@@ -81,112 +88,114 @@ function SeekerForgotPassword({ navigation }) {
           />
 
         </View>
-      <KeyboardAwareScrollView  extraScrollHeight={Platform.OS === "ios" ? 50 : 0} extraHeight={Platform.OS === "ios" ? 140:null} >
+        <KeyboardAwareScrollView extraScrollHeight={Platform.OS === "ios" ? 50 : 0} extraHeight={Platform.OS === "ios" ? 140 : null} >
 
 
-        <View style={{ height: window.height - (isIphoneX ? 340 : 280), }}>
+          <View style={{ height: window.height - (isIphoneX ? 340 : 280), }}>
 
 
-        <View
-          style={{
-            alignItems: "center",
-            marginHorizontal: "5%",
-            marginTop: '10%',
-            marginVertical: 20,
-          }}
-        >
-          <Image
-            source={require("../assets/home-logo.png")}
-            style={{
-              width: 130,
-              height: 130,
-              marginTop: 0,
-              opacity: 1,
-            }}
-            resizeMode={"stretch"}
-          />
-        </View>
-
-        <View style={{ alignItems: 'center', justifyContent: 'center', marginVertical: 10 }}>
-          <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#fff', textAlign: 'center' }}>{strings.FORGOT_YOUR_PASSWORD}</Text>
-        </View>
-
-        <View style={{ alignItems: 'center', paddingTop: 30, paddingBottom: 30,marginHorizontal:20 }}>
-          {/* <Text style={{ fontSize: 20, color: '#fff' }}>{strings.ENTER_PHONE_NUMBER}</Text> */}
-          <Text style={{ fontSize: 18, color: '#fff',textAlign:'center' }}>{strings.PASSWORD_INFO_TEXT}</Text>
-        </View>
-</View>
-        <View
-          style={{
-            // alignItems: 'center',
-            padding: 20
-          }}>
-          <Modal
-            animationType="slide"
-            transparent={false}
-            visible={modalVisible}
-            onRequestClose={() => {
-              // Alert.alert('Modal has been closed.');
-            }}>
-            {/* <SafeAreaView> */}
-            <View style={{ marginTop: 22 }}>
-              <View>
-                <FlatList
-                  // ItemSeparatorComponent={<Separator />}
-                  data={countries}
-                  keyExtractor={(item) => item.code}
-                  renderItem={({ item, index, separators }) => (
-                    <TouchableHighlight
-                      key={index}
-                      onPress={() => _onPress(item)}
-                      onShowUnderlay={separators.highlight}
-                      onHideUnderlay={separators.unhighlight}>
-                      <View style={{ backgroundColor: 'white' }}>
-                        <View style={{
-                          flex: 1,
-                          flexDirection: 'row',
-                          justifyContent: 'space-between',
-                          padding: 10,
-                          borderBottomWidth: 1,
-                          borderBottomColor: '#eee',
-
-                        }}>
-                          <Text style={{
-                            fontSize: 20,
-                            color: '#222'
-                          }}>{item.name}</Text>
-                          <Text style={{
-                            fontSize: 20,
-                            color: '#666'
-                          }}>+{item.dial_code}</Text>
-                        </View>
-                      </View>
-                    </TouchableHighlight>
-                  )}
-                />
-              </View>
+            <View
+              style={{
+                alignItems: "center",
+                marginHorizontal: "5%",
+                marginTop: '10%',
+                marginVertical: 20,
+              }}
+            >
+              <Image
+                source={require("../assets/home-logo.png")}
+                style={{
+                  width: 130,
+                  height: 130,
+                  marginTop: 0,
+                  opacity: 1,
+                }}
+                resizeMode={"stretch"}
+              />
             </View>
-            {/* </SafeAreaView> */}
-          </Modal>
 
-          <Text style={{color:'#fff',fontSize:16,marginBottom:5}}>{strings.PHONE_NUMBER}</Text>
-          <View style={{ flexDirection: 'row' }}>
-            <TouchableOpacity style={styles.code} onPress={() => setModalVisible(true)}>
-              <Image source={require('../assets/ic_call-1.png')} style={{ width: 20, height: 20, marginRight: 5 }} />
-              <Text style={{ color: '#fff' }}>+{phCode}</Text>
-            </TouchableOpacity>
+            <View style={{ alignItems: 'center', justifyContent: 'center', marginVertical: 10 }}>
+              <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#fff', textAlign: 'center' }}>{strings.FORGOT_YOUR_PASSWORD}</Text>
+            </View>
 
-            <TextInput
-              style={styles.code2}
-              onChangeText={text => setPhone(text)}
-              placeholder={strings.PHONE_NUMBER}
-              value={phone}
-              textContentType="telephoneNumber"
-            />
+            <View style={{ alignItems: 'center', paddingTop: 30, paddingBottom: 30, marginHorizontal: 20 }}>
+              {/* <Text style={{ fontSize: 20, color: '#fff' }}>{strings.ENTER_PHONE_NUMBER}</Text> */}
+              <Text style={{ fontSize: 18, color: '#fff', textAlign: 'center' }}>{strings.PASSWORD_INFO_TEXT}</Text>
+            </View>
           </View>
-        </View>
+          <View
+            style={{
+              // alignItems: 'center',
+              padding: 20
+            }}>
+            <Modal
+              animationType="slide"
+              transparent={false}
+              visible={modalVisible}
+              onRequestClose={() => {
+                // Alert.alert('Modal has been closed.');
+              }}>
+              {/* <SafeAreaView> */}
+              <View style={{ marginTop: 22 }}>
+                <View>
+                  <FlatList
+                    // ItemSeparatorComponent={<Separator />}
+                    data={countries}
+                    keyExtractor={(item) => item.code}
+                    renderItem={({ item, index, separators }) => (
+                      <TouchableHighlight
+                        key={index}
+                        onPress={() => _onPress(item)}
+                        onShowUnderlay={separators.highlight}
+                        onHideUnderlay={separators.unhighlight}>
+                        <View style={{ backgroundColor: 'white' }}>
+                          <View style={{
+                            flex: 1,
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            padding: 10,
+                            borderBottomWidth: 1,
+                            borderBottomColor: '#eee',
 
-        {/* <View style={{ alignItems: 'center', padding: 20}}>
+                          }}>
+                            <Text style={{
+                              fontSize: 20,
+                              color: '#222'
+                            }}>{item.name}</Text>
+                            <Text style={{
+                              fontSize: 20,
+                              color: '#666'
+                            }}>+{item.dial_code}</Text>
+                          </View>
+                        </View>
+                      </TouchableHighlight>
+                    )}
+                  />
+                </View>
+              </View>
+              {/* </SafeAreaView> */}
+            </Modal>
+
+            <Text style={{ color: '#fff', fontSize: 16, marginBottom: 5 }}>{strings.PHONE_NUMBER}</Text>
+            <View style={{ flexDirection: 'row' }}>
+              <TouchableOpacity style={styles.code} onPress={() => setModalVisible(true)}>
+                <Image source={require('../assets/ic_call-1.png')} style={{ width: 20, height: 20, marginRight: 5 }} />
+                <Text style={{ color: '#fff' }}>+{phCode}</Text>
+              </TouchableOpacity>
+
+              <TextInput
+                style={styles.code2}
+                onChangeText={text => setPhone(text)}
+                placeholder={strings.PHONE_NUMBER}
+                value={formatPhoneAPI(phone)}
+                textContentType="telephoneNumber"
+                placeholderTextColor={'#fff'}
+                            keyboardType={'phone-pad'}
+              />
+            </View>
+          </View>
+
+          {/* <View style={{ alignItems: 'center', padding: 20}}>
           <TouchableOpacity 
           style={{width:'100%', backgroundColor: '#4834A6', paddingTop: 15, paddingBottom: 15, borderRadius: 25,height:52}}
           onPress={() => handleRequest()}>
@@ -194,23 +203,23 @@ function SeekerForgotPassword({ navigation }) {
           </TouchableOpacity>
         </View> */}
 
-        <TouchableOpacity style={styles.button}
-          onPress={() => handleRequest()}>
+          <TouchableOpacity style={styles.button}
+            onPress={() => handleRequest()}>
 
-          <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{strings.SEND}</Text>
-        </TouchableOpacity>
+            <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{strings.SEND}</Text>
+          </TouchableOpacity>
 
-        <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 20 }}>
-          <View style={{ borderBottomWidth: 0.5, borderBottomColor: '#fff' }}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#fff', textAlign: 'center' }} >{strings.GO_BACK}</Text>
+          <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 20 }}>
+            <View style={{ borderBottomWidth: 0.5, borderBottomColor: '#fff' }}>
+              <TouchableOpacity onPress={() => navigation.goBack()}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#fff', textAlign: 'center' }} >{strings.GO_BACK}</Text>
 
-            </TouchableOpacity>
+              </TouchableOpacity>
 
+            </View>
           </View>
-        </View>
 
-</KeyboardAwareScrollView>
+        </KeyboardAwareScrollView>
 
       </SafeAreaView>
     </LinearGradient>
@@ -238,8 +247,8 @@ const styles = StyleSheet.create({
     color: 'red',
     width: '25%',
     height: 50,
-    alignItems:'center',
-    justifyContent:'center'
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   code2: {
     flexDirection: 'row',

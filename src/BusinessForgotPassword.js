@@ -9,15 +9,17 @@ import {
   TextInput,
   StyleSheet,
   TouchableOpacity,
-  TouchableHighlight
+  TouchableHighlight,
+  Alert
 } from 'react-native'
 import {countries} from './utils/consts.js'
 import {strings} from './translation/config';
+import { postFormData } from './utils/network.js'
 
 function BusinessForgotPassword({navigation}){
   const [modalVisible, setModalVisible] = useState(false);
   const [phCode, setPhCode] = useState('1')
-  const [phone, setPhone] = useState('(214) 9985600')
+  const [phone, setPhone] = useState('')
 
   function _onPress(item){
     setModalVisible(false)
@@ -31,25 +33,39 @@ function BusinessForgotPassword({navigation}){
     return result;
   }
 
-  function handleRequest(){
+  function formatPhoneAPI(str) {
+    let cleaned = str.replace(/\D/g, '')
+    let match = cleaned.match(/^(\d{3})(\d{3})(\d+)$/)
+    if (match) {
+      return '(' + match[1] + ') ' + match[2] + '-' + match[3]
+    }
+    return str;
+  }
+
+  function handleRequest() {
     let token = deviceToken(128)
     let form = new FormData()
-    form.append('phone', phCode + ' ' + phone)
-    form.append('user_type', '2')
-    form.append('device_tocken', token)
-    
-    postFormData('user_login', form)
-    .then(res => {
-      return res.json()
-    })
-    .then(json => {
-      // setUser(json.data)
-      // setToken(token)
-      console.log(json.data)
-    })
-    .catch(err => {
-      console.log(err)
-    })
+    form.append('business_number', phCode + ' ' + formatPhoneAPI(phone))
+    form.append('user_type', '1')
+    postFormData('user_forgot_password', form)
+      .then(res => {
+        return res.json()
+      })
+      .then(json => {
+        // setUser(json.data)
+        // setToken(token)
+        console.log(json);
+        if (json.status_code == 200) {
+          Alert.alert("", json.msg);
+          navigation.goBack();
+        } else {
+          Alert.alert("", json.msg);
+
+        }
+      })
+      .catch(err => {
+        console.log(err)
+      })
   }
 
   return(
@@ -121,14 +137,16 @@ function BusinessForgotPassword({navigation}){
               style={styles.code2}
               onChangeText={text => setPhone(text)}
               placeholder={strings.PHONE_NUMBER}
-              value={phone}
+              value={formatPhoneAPI(phone)}
+              keyboardType={'phone-pad'}
+
             />
           </View>
         </View>
 
         <View style={{flex: 1, alignItems: 'center', padding: 20}}>
           <TouchableOpacity 
-          style={{width:'100%', backgroundColor: '#4834A6', paddingTop: 15, paddingBottom: 15, borderRadius: 25}}
+          style={{width:'100%', backgroundColor: '#4834A6',  borderRadius: 25,height:'100%',alignItems:'center',justifyContent:'center'}}
           onPress={() => handleRequest()}>
             <Text style={{textAlign: 'center', fontSize: 18, color: '#fff'}}>{strings.SEND}</Text>
           </TouchableOpacity>

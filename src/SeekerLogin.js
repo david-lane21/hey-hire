@@ -14,14 +14,17 @@ import {
   KeyboardAvoidingView,
   Alert,
   Dimensions,
-  Linking
+  Linking,
+  Platform,
+  Keyboard
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import * as Location from "expo-location";
 import { countries } from "./utils/consts.js";
-import { postFormData } from "./utils/network.js";
+import { postFormData,getBaseURL } from "./utils/network.js";
 import { setUser, setToken } from "./utils/utils.js";
 import { KeyboardAccessoryNavigation } from "react-native-keyboard-accessory";
-import { Platform } from "react-native";
+import { useIsFocused } from "@react-navigation/native";
 import { strings } from "./translation/config";
 import { AuthContext } from "./navigation/context";
 import DeviceInfo from 'react-native-device-info';
@@ -31,11 +34,13 @@ const isIphoneX = DeviceInfo.hasNotch();
 const window = Dimensions.get("window");
 
 function SeekerLogin({ navigation }) {
+  const isFocused = useIsFocused();
+
   const [modalVisible, setModalVisible] = useState(false);
   const [loginBotton, setLoginButton] = useState(false);
   const [phCode, setPhCode] = useState("1");
-  const [phone, setPhone] = useState("(214) 9985600");
-  const [password, setPassword] = useState("12345678");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
   const [activeInputIndex, setActiveInputIndex] = useState(0);
   const [inputs, setInputs] = useState([]);
   const [nextFocusDisabled, setNextFocusDisabled] = useState(false);
@@ -45,6 +50,44 @@ function SeekerLogin({ navigation }) {
   const [value, setValue] = useState("");
   const [contentHeight, setContentHeight] = useState(0);
 
+
+  useEffect(() => {
+
+
+    (async () => {
+
+      try {
+        let { status } = await Location.requestPermissionsAsync();
+        console.log('Location Permission',status);
+        if (status !== "granted") {
+          Alert.alert(
+            "Location Permission issue",
+            "Permission to access location was denied",
+            [
+  
+              { text: "Ok", onPress: () => Linking.openSettings() },
+            ],
+            { cancelable: false }
+          );
+  
+        }
+
+      } catch (error) {
+
+        Alert.alert(
+          "Location Permission issue",
+          error.message,
+          [
+
+            { text: "Ok", onPress: () => Linking.openSettings() },
+          ],
+          { cancelable: false }
+        );
+
+      }
+    })();
+
+  }, [isFocused]);
 
 
   function _onPress(item) {
@@ -68,15 +111,16 @@ function SeekerLogin({ navigation }) {
   }
 
   function handleLogin() {
-    // let token = deviceToken(128);
-    let token = CommonUtils.deviceToken;
+    let token = deviceToken(128);
+    let fireBaseToken = CommonUtils.deviceToken;
+    console.log('Firebase token',fireBaseToken);
     let form = new FormData();
     form.append("phone", phCode + " " + formatPhone(phone));
     form.append("password", password);
     form.append("user_type", "2");
 
-    form.append("device_tocken", token);
-    console.log('Login form',form);
+    form.append("device_tocken", fireBaseToken || token);
+    console.log('Login form', form);
     postFormData("user_login", form)
       .then((res) => {
         return res.json();
@@ -103,7 +147,7 @@ function SeekerLogin({ navigation }) {
             console.log(json.data.user_type);
           }
         } else {
-          Alert.alert("", json.msg);
+          Alert.alert("", json.msg || json);
         }
       })
       .catch((err) => {
@@ -177,6 +221,12 @@ function SeekerLogin({ navigation }) {
 
   }
 
+
+  function gotoForgotPassword(){
+    const baseURL = getBaseURL('employee_forgot_password');
+    navigation.navigate('ForgotPassword',{url:baseURL});
+  }
+
   function handleFocus(index) {
     setActiveInputIndex(index);
     setNextFocusDisabled(index === inputs.length - 1);
@@ -197,9 +247,16 @@ function SeekerLogin({ navigation }) {
     setInputs(inputs);
   }
 
+  function _onButtonClick(){
+    inputs[0].focus()
+    Keyboard.dismiss();
+    
+    
+  }
+
   return (
 
-    <LinearGradient style={styles.container} colors={["#4E35AE", "#775ED7"]}>
+    <LinearGradient style={styles.container} colors={["#4E35AE", "#775ED7"]} >
       <SafeAreaView style={{ flex: 1 }}>
         <View style={{ flexDirection: 'row', position: 'absolute', top: 0, left: 0, bottom: 0 }}>
           <Image
@@ -212,7 +269,7 @@ function SeekerLogin({ navigation }) {
 
         <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={true} scrollEnabled={contentHeight + 50 > window.height}
           onContentSizeChange={onContentSizeChange}
-        >
+          keyboardShouldPersistTaps='always' keyboardDismissMode='on-drag'     >
 
 
           <View style={{ height: window.height - (isIphoneX ? 200 : 135), justifyContent: 'center' }}>
@@ -240,7 +297,7 @@ function SeekerLogin({ navigation }) {
               style={{
                 alignItems: "center",
                 marginHorizontal: "5%",
-                marginBottom: window.height * (isIphoneX?0.05: 0.02)
+                marginBottom: window.height * (isIphoneX ? 0.05 : 0.02)
               }}
             >
               <Image
@@ -255,7 +312,7 @@ function SeekerLogin({ navigation }) {
               />
             </View>
 
-            <View style={{ alignItems: 'center', justifyContent: 'center', marginVertical: isIphoneX?10:5, marginTop: 10 }}>
+            <View style={{ alignItems: 'center', justifyContent: 'center', marginVertical: isIphoneX ? 10 : 5, marginTop: 10 }}>
               <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#fff', textAlign: 'center' }}>{strings.SIGN_IN}</Text>
             </View>
 
@@ -374,6 +431,8 @@ function SeekerLogin({ navigation }) {
                   textContentType="telephoneNumber"
                   autoCompleteType={"tel"}
                   keyboardType={"phone-pad"}
+                  placeholderTextColor={'#fff'}
+
                   onFocus={() => {
                     handleFocus(0);
                   }}
@@ -411,6 +470,7 @@ function SeekerLogin({ navigation }) {
                   value={password}
                   textContentType="none"
                   autoCompleteType={"password"}
+                  placeholderTextColor={'#fff'}
                   onFocus={() => {
                     handleFocus(1);
                   }}
@@ -472,9 +532,9 @@ function SeekerLogin({ navigation }) {
 
 
 
-            <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: isIphoneX?25: 15 }}>
+            <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: isIphoneX ? 25 : 15 }}>
               <View style={{ borderBottomWidth: 0.5, borderBottomColor: '#fff' }}>
-                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#fff', textAlign: 'center' }} onPress={() => navigation.navigate("SeekerForgotPassword")}>{strings.FORGOT_YOUR_PASSWORD}</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#fff', textAlign: 'center' }} onPress={gotoForgotPassword}>{strings.FORGOT_YOUR_PASSWORD}</Text>
               </View>
             </View>
 
@@ -539,6 +599,7 @@ function SeekerLogin({ navigation }) {
         avoidKeyboard={Platform.OS == "android"}
         onNext={handleFocusNext}
         onPrevious={handleFocusPrev}
+        onDone={_onButtonClick}
         nextDisabled={nextFocusDisabled}
         previousDisabled={previousFocusDisabled}
         avoidKeyboard={true}

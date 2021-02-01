@@ -14,10 +14,11 @@ import {
   Platform,
   ScrollView,
   Alert,
+  Linking
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { countries } from "./utils/consts.js";
-import { postFormData } from "./utils/network.js";
+import { postFormData ,getBaseURL} from "./utils/network.js";
 import { setUser, setToken } from "./utils/utils.js";
 import { KeyboardAccessoryNavigation } from "react-native-keyboard-accessory";
 import { strings } from "./translation/config";
@@ -27,8 +28,8 @@ import CommonUtils from './utils/CommonUtils';
 function BusinessLogin({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [phCode, setPhCode] = useState("1");
-  const [phone, setPhone] = useState("(877) 9951411");
-  const [password, setPassword] = useState("12345678");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
   const [activeInputIndex, setActiveInputIndex] = useState(0);
   const [inputs, setInputs] = useState([]);
   const [nextFocusDisabled, setNextFocusDisabled] = useState(false);
@@ -73,7 +74,7 @@ function BusinessLogin({ navigation }) {
             console.log(json.data.user_type);
           }
         } else {
-          Alert.alert("", json.msg);
+          Alert.alert("", json.msg || json);
         }
       })
       .catch((err) => {
@@ -88,6 +89,13 @@ function BusinessLogin({ navigation }) {
       return "(" + match[1] + ") " + match[2] + "-" + match[3];
     }
     return str;
+  }
+
+  function gotoForgotPassword(){
+    const baseURL = getBaseURL('forgot_password');
+    // Linking.openURL(baseURL);
+    navigation.navigate('ForgotPassword',{url:baseURL});
+
   }
 
   function handleFocus(index) {
@@ -326,7 +334,7 @@ function BusinessLogin({ navigation }) {
                   textDecorationLine: "underline",
                   fontSize: 16,
                 }}
-                onPress={() => navigation.navigate("BusinessForgotPassword")}
+                onPress={() => gotoForgotPassword()}
               >
                 {strings.FORGOT_YOUR_PASSWORD}
               </Text>
