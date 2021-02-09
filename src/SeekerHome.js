@@ -9,7 +9,9 @@ import {
   ScrollView,
   RefreshControl,
   Linking,
-  Alert
+  Alert,
+  Dimensions,
+  PermissionsAndroid
 } from "react-native";
 import { getUser, removeUser } from "./utils/utils.js";
 import { postFormData } from "./utils/network.js";
@@ -17,11 +19,14 @@ import { LinearGradient } from "expo-linear-gradient";
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import { useIsFocused } from "@react-navigation/native";
-import { Dimensions } from "react-native";
+import Geolocation from 'react-native-geolocation-service';
+
 import Header from "./components/Header";
 import { strings } from './translation/config';
 import NavigationService from './utils/NavigationService';
 import { AuthContext } from "./navigation/context";
+import CommonUtils from "./utils/CommonUtils.js";
+import { Platform } from "react-native";
 
 function SeekerHome({ navigation }) {
   const isFocused = useIsFocused();
@@ -46,43 +51,100 @@ function SeekerHome({ navigation }) {
   const [longitude, setLongitude] = useState("-96.797");
 
   useEffect(() => {
+    if (isFocused) {
+      setTimeout(() => {
+        loadDate();
+      }, 500);
+
+    }
+  }, [isFocused]);
+
+  useEffect(() => {
 
     Linking.addEventListener('url', handleOpenURL);
-
-
     (async () => {
+      if (Platform.OS == "android") {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+        if (granted) {
 
-      try {
-        let { status } = await Location.requestPermissionsAsync();
-        if (status !== "granted") {
-          setError("Permission to access location was denied");
+          Geolocation.getCurrentPosition(
+            (loc) => {
+              console.log(loc);
+              setLatitude(loc.coords.latitude);
+              setLongitude(loc.coords.longitude);
+              console.log(loc);
+              map.animateToRegion(
+                {
+                  latitude: loc.coords.latitude,
+                  longitude: loc.coords.longitude,
+                  latitudeDelta: 0.0522,
+                  longitudeDelta: 0.0421,
+                },
+                500
+              );
+
+              CommonUtils.setLocation(loc.coords.latitude, loc.coords.longitude);
+              setRegion({
+                latitude: loc.coords.latitude,
+                longitude: loc.coords.longitude,
+                latitudeDelta: 0.0522,
+                longitudeDelta: 0.0421,
+              });
+            },
+            (error) => {
+              // See error code charts below.
+              console.log(error.code, error.message, error);
+            },
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+          );
         }
-        let loc = await Location.getLastKnownPositionAsync();
-        setLatitude(loc.coords.latitude);
-        setLongitude(loc.coords.longitude);
-        console.log(loc);
-        ///loadDate();
-        map.animateToRegion(
-          {
-            latitude: loc.coords.latitude,
-            longitude: loc.coords.longitude,
-            latitudeDelta: 0.0522,
-            longitudeDelta: 0.0421,
-          },
-          500
-        );
+      } else {
+        // const status = await Geolocation.requestAuthorization('whenInUse');
+        // if (status === 'granted') {
+        //   Geolocation.getCurrentPosition(
+        //     (loc) => {
+        //       console.log(loc);
+        //       setLatitude(loc.coords.latitude);
+        //       setLongitude(loc.coords.longitude);
+        //       console.log(loc);
+        //       map.animateToRegion(
+        //         {
+        //           latitude: loc.coords.latitude,
+        //           longitude: loc.coords.longitude,
+        //           latitudeDelta: 0.0522,
+        //           longitudeDelta: 0.0421,
+        //         },
+        //         500
+        //       );
+
+        //       CommonUtils.setLocation(loc.coords.latitude, loc.coords.longitude);
+        //       setRegion({
+        //         latitude: loc.coords.latitude,
+        //         longitude: loc.coords.longitude,
+        //         latitudeDelta: 0.0522,
+        //         longitudeDelta: 0.0421,
+        //       });
+        //     },
+        //     (error) => {
+        //       // See error code charts below.
+        //       console.log(error.code, error.message, error);
+        //     },
+        //     { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+        //   );
+
+        // }
 
 
-        setRegion({
-          latitude: loc.coords.latitude,
-          longitude: loc.coords.longitude,
-          latitudeDelta: 0.0522,
-          longitudeDelta: 0.0421,
-        });
-      } catch (error) {
         try {
-          let loc = await Location.getCurrentPositionAsync();
-
+          let { status } = await Location.requestPermissionsAsync();
+          if (status !== "granted") {
+            setError("Permission to access location was denied");
+          }
+          let loc = await Location.getLastKnownPositionAsync();
+          setLatitude(loc.coords.latitude);
+          setLongitude(loc.coords.longitude);
+          console.log(loc);
           map.animateToRegion(
             {
               latitude: loc.coords.latitude,
@@ -92,9 +154,8 @@ function SeekerHome({ navigation }) {
             },
             500
           );
-          // setLocation(loc.coords);
-          setLatitude(loc.coords.latitude);
-          setLongitude(loc.coords.longitude);
+
+          CommonUtils.setLocation(loc.coords.latitude, loc.coords.longitude);
           setRegion({
             latitude: loc.coords.latitude,
             longitude: loc.coords.longitude,
@@ -102,21 +163,45 @@ function SeekerHome({ navigation }) {
             longitudeDelta: 0.0421,
           });
         } catch (error) {
-          console.log('Current Possigion', error);
-          //loadDate();
-          Alert.alert(
-            "Location Permission issue",
-            error.message,
-            [
+          try {
+            let loc = await Location.getCurrentPositionAsync();
 
-              { text: "Ok", onPress: () => Linking.openSettings() },
-            ],
-            { cancelable: false }
-          );
+            map.animateToRegion(
+              {
+                latitude: loc.coords.latitude,
+                longitude: loc.coords.longitude,
+                latitudeDelta: 0.0522,
+                longitudeDelta: 0.0421,
+              },
+              500
+            );
+            // setLocation(loc.coords);
+            setLatitude(loc.coords.latitude);
+            setLongitude(loc.coords.longitude);
+            CommonUtils.setLocation(loc.coords.latitude, loc.coords.longitude);
 
-          Linking.openSettings()
+            setRegion({
+              latitude: loc.coords.latitude,
+              longitude: loc.coords.longitude,
+              latitudeDelta: 0.0522,
+              longitudeDelta: 0.0421,
+            });
+          } catch (error) {
+            console.log('Current Possigion', error);
+            //loadDate();
+            Alert.alert(
+              "Location Permission issue",
+              error.message,
+              [
+
+                { text: "Ok", onPress: () => Linking.openSettings() },
+              ],
+              { cancelable: false }
+            );
+
+            Linking.openSettings()
+          }
         }
-
       }
     })();
 
@@ -126,14 +211,7 @@ function SeekerHome({ navigation }) {
     }
   }, [isFocused]);
 
-  useEffect(() => {
-    if (isFocused) {
-      setTimeout(() => {
-        loadDate();
-      }, 500);
 
-    }
-  }, [isFocused]);
 
   function handleOpenURL(event) {
     console.log('Handle open url', NavigationService, event);
@@ -147,6 +225,8 @@ function SeekerHome({ navigation }) {
 
   async function loadDate() {
     try {
+      console.log(strings.getLanguage())
+
       let loc = await Location.getLastKnownPositionAsync();
       getUser().then((u) => {
         let u2 = JSON.parse(u);
@@ -161,7 +241,6 @@ function SeekerHome({ navigation }) {
             return res.json();
           })
           .then((json) => {
-            console.log(json);
             json.data.avatar_image = json.data.avatar_image + "?random_number=" + new Date().getTime();
             setProfile(json.data);
             sortPositions(json.data);
@@ -186,7 +265,6 @@ function SeekerHome({ navigation }) {
                 bizList = bizList.sort(
                   (a, b) => a.distance_in_km - b.distance_in_km
                 );
-                console.log(bizList);
                 setBusinesses(bizList);
                 setRefresh(false);
               });
@@ -390,13 +468,16 @@ function SeekerHome({ navigation }) {
 
           <View style={{ position: 'absolute', right: 5 }}>
             <TouchableOpacity
-              onPress={() =>
-                navigation.navigate("SeekerLinks", {
-                  screen: "SeekerEditProfile",
-                  params: {
-                    profile: profile,
-                  },
-                })
+              onPress={() => {
+                if (profile) {
+                  navigation.navigate("SeekerLinks", {
+                    screen: "SeekerEditProfile",
+                    params: {
+                      profile: profile,
+                    },
+                  });
+                }
+              }
               }
             >
               <Text

@@ -16,14 +16,16 @@ import {
   Dimensions,
   Linking,
   Platform,
-  Keyboard
+  Keyboard,
+  PermissionsAndroid
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Location from "expo-location";
 import { countries } from "./utils/consts.js";
-import { postFormData,getBaseURL } from "./utils/network.js";
+import { postFormData, getBaseURL } from "./utils/network.js";
 import { setUser, setToken } from "./utils/utils.js";
 import { KeyboardAccessoryNavigation } from "react-native-keyboard-accessory";
+import Geolocation from 'react-native-geolocation-service';
 import { useIsFocused } from "@react-navigation/native";
 import { strings } from "./translation/config";
 import { AuthContext } from "./navigation/context";
@@ -53,6 +55,36 @@ function SeekerLogin({ navigation }) {
 
   useEffect(() => {
 
+    if (Platform.OS == "android") {
+      PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then((granted) => {
+          console.log('Grb', granted);
+          if (granted != 'granted') {
+            Alert.alert(
+              "Location Permission issue",
+              "",
+              [
+
+                { text: "Ok", onPress: () => Linking.openSettings() },
+              ],
+              { cancelable: false }
+            );
+
+          }
+        }).catch((error) => {
+          Alert.alert(
+            "Location Permission issue",
+            error.message,
+            [
+
+              { text: "Ok", onPress: () => Linking.openSettings() },
+            ],
+            { cancelable: false }
+          );
+
+
+        });
+    }else{
 
     (async () => {
 
@@ -64,12 +96,12 @@ function SeekerLogin({ navigation }) {
             "Location Permission issue",
             "Permission to access location was denied",
             [
-  
+
               { text: "Ok", onPress: () => Linking.openSettings() },
             ],
             { cancelable: false }
           );
-  
+
         }
 
       } catch (error) {
@@ -86,6 +118,7 @@ function SeekerLogin({ navigation }) {
 
       }
     })();
+    }
 
   }, [isFocused]);
 
@@ -113,7 +146,7 @@ function SeekerLogin({ navigation }) {
   function handleLogin() {
     let token = deviceToken(128);
     let fireBaseToken = CommonUtils.deviceToken;
-    console.log('Firebase token',fireBaseToken);
+    console.log('Firebase token', fireBaseToken);
     let form = new FormData();
     form.append("phone", phCode + " " + formatPhone(phone));
     form.append("password", password);
@@ -222,9 +255,9 @@ function SeekerLogin({ navigation }) {
   }
 
 
-  function gotoForgotPassword(){
+  function gotoForgotPassword() {
     const baseURL = getBaseURL('employee_forgot_password');
-    navigation.navigate('ForgotPassword',{url:baseURL});
+    navigation.navigate('ForgotPassword', { url: baseURL });
   }
 
   function handleFocus(index) {
@@ -247,11 +280,11 @@ function SeekerLogin({ navigation }) {
     setInputs(inputs);
   }
 
-  function _onButtonClick(){
+  function _onButtonClick() {
     inputs[0].focus()
     Keyboard.dismiss();
-    
-    
+
+
   }
 
   return (

@@ -40,8 +40,8 @@ export default function AlertPopup({ visible, job, onClose }) {
           <View
             style={{
               borderRadius: 5,
-              width: "90%",
-              marginHorizontal: "5%",
+              width: "75%",
+              marginHorizontal: "15%",
               alignItems: "center",
             }}
           >

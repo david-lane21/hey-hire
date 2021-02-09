@@ -14,7 +14,7 @@ import { postFormData } from './utils/network.js'
 import { getUser } from './utils/utils.js';
 import { useIsFocused } from "@react-navigation/native";
 import {strings} from './translation/config';
-
+import CommonUtils from './utils/CommonUtils';
 function SeekerAppliedJobs({ navigation }) {
   const isFocused = useIsFocused();
   const [appliedJobs, setAppliedJobs] = useState([])
@@ -124,7 +124,8 @@ const [message,setMessage] = useState(null);
   const list = filteredJobs.map((item => {
     // console.log(item)
     const isLiked = likedJobs.filter((item1) => item.id == item1.id);
-    console.log('isLiked', isLiked,item)
+    console.log('isLiked',item);
+    const distance = CommonUtils.distance(parseFloat(item.business.latitude),parseFloat(item.business.longitude),"K")
     return (
       <TouchableOpacity key={item.id+""+item.like + ""+item.aplied} onPress={() => navigation.navigate('SeekerAppliedJobs0', {
         screen: 'SeekerJobDetail',
@@ -168,7 +169,7 @@ const [message,setMessage] = useState(null);
                   : null}
               </View>
 
-              <Text style={{ fontSize: 14, color: '#555' }}>{item.business.business_name}</Text>
+              <Text style={{ fontSize: 14, color: '#555',textAlignVertical:'center' }} numberOfLines={1}>{item.business.business_name} {' • '} {distance} {strings.MILES_AWAY}</Text>
               <Text style={{ fontSize: 12, color: '#888' }}>{item.business.address}</Text>
             </View>
           </View>
@@ -247,8 +248,8 @@ const [message,setMessage] = useState(null);
                 <Image source={require('../assets/ic_filter_w.png')} style={{}} />
               </View>
             </View>
-
-            {list}
+            <View style={{marginVertical:10}}>{list}</View>
+            
             {message!=null&& <Text style={{ fontSize: 18,textAlign:'center' }}>{message}</Text>}
           </View>
         </ScrollView>

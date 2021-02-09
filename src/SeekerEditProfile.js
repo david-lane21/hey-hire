@@ -14,7 +14,8 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   findNodeHandle,
-  StatusBar
+  StatusBar,
+  Alert
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
@@ -39,9 +40,7 @@ function SeekerEditProfile({ navigation, route }) {
 
   const isFocused = useIsFocused();
   const tempProfile = route.params.profile;
-  let p = tempProfile.phone.split(" ");
-  let p1 = p[0].replace(/\+/g, "");
-  let p2 = p[1] + " " + p[2];
+
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
   const [modalVisible3, setModalVisible3] = useState(false);
@@ -61,8 +60,8 @@ function SeekerEditProfile({ navigation, route }) {
   const [state, setState] = useState(tempProfile.state);
   const [city, setCity] = useState(tempProfile.city);
   const [zipcode, setZipcode] = useState(tempProfile.zip_code);
-  const [phCode, setPhCode] = useState(p1);
-  const [phone, setPhone] = useState(p2);
+  const [phCode, setPhCode] = useState('');
+  const [phone, setPhone] = useState('');
   const [email, setEmail] = useState(tempProfile.email);
   const [bio, setBio] = useState(tempProfile.bio);
   const [skills, setSkills] = useState(tempProfile.skill);
@@ -91,14 +90,25 @@ function SeekerEditProfile({ navigation, route }) {
 
 
   useEffect(() => {
+
+    const tempProfile = route.params.profile;
+    let p = tempProfile.phone.split(" ");
+    let p1 = p[0].replace(/\+/g, "");
+    let p2 = p[1] + " " + p[2];
+    setPhCode(p1);
+    setPhone(p2);
     (async () => {
-      // if (Constants.platform.ios) {
-      const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
-      if (status != "granted") {
-        alert("Sorry, we need camera roll permissions to make this work!");
+      if (Constants.platform.ios) {
+        try {
+          const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
+          console.log(status);
+          if (status != "granted") {
+            Alert.alert("Sorry, we need camera roll permissions to make this work!");
+          }
+        } catch (error) {
+          console.log('Error', setError)
+        }
       }
-      // }
-      console.log('Has Notch', DeviceInfo.hasNotch())
     })();
   }, []);
 

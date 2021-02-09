@@ -39,8 +39,8 @@ export default function ConfirmationAlert({ visible, job,onClose,onSendCV }) {
           <View
             style={{
               borderRadius: 5,
-              width: "90%",
-              marginHorizontal: "5%",
+              width: "75%",
+              marginHorizontal: "15%",
               alignItems: "center",
             }}
           >
@@ -66,7 +66,7 @@ export default function ConfirmationAlert({ visible, job,onClose,onSendCV }) {
                 style={{
                   alignItems: "center",
                   justifyContent: "center",
-                  marginTop: 40,
+                  marginTop: 50,
                   marginHorizontal:20
                 }}
               >
@@ -74,7 +74,7 @@ export default function ConfirmationAlert({ visible, job,onClose,onSendCV }) {
                   {strings.YOU_ARE_ABOUT_TO} <Text style={{textDecorationLine:'underline',color:'#fff'}}>{job.position}</Text> {strings.POSTION_AT} <Text  style={{textDecorationLine:'underline',color:'#fff'}}>{job.business.business_name}</Text>
                 </Text>
               </View>
-              <View style={{ marginVertical: 20, alignItems: "center" }}>
+              <View style={{ marginVertical: 20, alignItems: "center",marginTop:30 }}>
                 <TouchableOpacity
                   style={[
                     {
