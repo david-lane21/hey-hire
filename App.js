@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Platform, Linking, View, Text ,Alert} from "react-native";
+import { Platform, Linking, View, Text ,Alert,I18nManager} from "react-native";
 import Navigation, { AppNavigation, AuthNavigation } from "./src/Navigation";
 import PushNotificationIOS from "@react-native-community/push-notification-ios";
 import Constants from "expo-constants";
@@ -73,9 +73,9 @@ export default function App() {
       CommonUtils.deviceTokenSet();
   // }
 
+  // I18nManager.allowRTL(true);
 
     getUser().then((u) => {
-      console.log(u);
       var userData = JSON.parse(u);
       if (userData && userData.is_verified == 1) {
         setUserToken(JSON.parse(u));
@@ -87,16 +87,9 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    // const unsubscribe = messaging().onMessage(async remoteMessage => {
-    //   console.log(remoteMessage.notification.title, remoteMessage.notification.body)
-    //   // Alert.alert(remoteMessage.notification.title, remoteMessage.notification.body);
-    // });
-
-    
-
+   
 
     Linking.getInitialURL().then((url) => {
-      console.log(url);
       if (url) handleOpenURL(url);
     });
     setTimeout(async () => {
@@ -104,7 +97,7 @@ export default function App() {
       if (Constants.platform.ios) {
         PushNotificationIOS.requestPermissions();
       }
-    }, 2500);
+    }, Platform.OS=="android"?1000: 2500);
 
     // return unsubscribe;
   });

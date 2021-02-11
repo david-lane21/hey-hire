@@ -13,9 +13,8 @@ import {
   Platform,
   ActivityIndicator,
   KeyboardAvoidingView,
-  findNodeHandle,
-  StatusBar,
-  Alert
+  Alert,
+  PermissionsAndroid
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
@@ -100,14 +99,38 @@ function SeekerEditProfile({ navigation, route }) {
     (async () => {
       if (Constants.platform.ios) {
         try {
-          const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
-          console.log(status);
-          if (status != "granted") {
+          const status1 = await ImagePicker.requestCameraRollPermissionsAsync();
+          if (status1.status !== 'granted') {
             Alert.alert("Sorry, we need camera roll permissions to make this work!");
           }
         } catch (error) {
           console.log('Error', setError)
         }
+      } else {
+        PermissionsAndroid.requestMultiple(
+          [PermissionsAndroid.PERMISSIONS.CAMERA, PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE]).then((granted) => {
+            if (granted["android.permission.READ_EXTERNAL_STORAGE"] != 'granted') {
+              Alert.alert(
+                "Permission issue",
+                "",
+                [
+
+                  { text: "Ok" },
+                ],
+                { cancelable: false }
+              );
+
+            }
+          }).catch((error) => {
+            Alert.alert(
+              "Permission issue",
+              error.message,
+              [
+                { text: "Ok" },
+              ],
+              { cancelable: false }
+            );
+          });
       }
     })();
   }, []);
@@ -413,14 +436,7 @@ function SeekerEditProfile({ navigation, route }) {
     setActiveInputIndex(index);
     setNextFocusDisabled(index === inputs.length - 1);
     setPreviousFocusDisabled(index === 0);
-    // const inputHandle = findNodeHandle(inputs[index]);
-    // var scrollResponder = scrollViewRef.current.getScrollResponder();
 
-    // scrollResponder.scrollResponderScrollNativeHandleToKeyboard(
-    //   inputHandle, // The TextInput node handle
-    //   480, // The scroll view's bottom "contentInset" (default 0)
-    //   true // Prevent negative scrolling
-    // ); 
   }
 
   function handleFocusNext() {

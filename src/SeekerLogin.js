@@ -31,6 +31,7 @@ import { strings } from "./translation/config";
 import { AuthContext } from "./navigation/context";
 import DeviceInfo from 'react-native-device-info';
 import CommonUtils from './utils/CommonUtils';
+import GeolocationNew from '@react-native-community/geolocation';
 
 const isIphoneX = DeviceInfo.hasNotch();
 const window = Dimensions.get("window");
@@ -56,13 +57,54 @@ function SeekerLogin({ navigation }) {
   useEffect(() => {
 
     if (Platform.OS == "android") {
-      PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then((granted) => {
-          console.log('Grb', granted);
-          if (granted != 'granted') {
+      setTimeout(() => {
+        GeolocationNew.getCurrentPosition((position) => {
+          console.log('Geo location Permission', position);
+        }, (error) => {
+          console.log('Geo location Permission Error', error);
+
+        }, {
+          enableHighAccuracy: true
+        });
+      }, 2500);
+      setTimeout(() => {
+
+        PermissionsAndroid.requestMultiple(
+          [PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION]).then((granted) => {
+            if (granted["android.permission.ACCESS_COARSE_LOCATION"] != 'granted') {
+              Alert.alert(
+                "Location Permission issue",
+                "",
+                [
+
+                  { text: "Ok", onPress: () => Linking.openSettings() },
+                ],
+                { cancelable: false }
+              );
+
+            }
+          }).catch((error) => {
             Alert.alert(
               "Location Permission issue",
-              "",
+              error.message,
+              [
+                { text: "Ok", onPress: () => Linking.openSettings() },
+              ],
+              { cancelable: false }
+            );
+          });
+      }, 3000);
+    } else {
+
+      (async () => {
+
+        try {
+          let { status } = await Location.requestPermissionsAsync();
+          console.log('Location Permission', status);
+          if (status !== "granted") {
+            Alert.alert(
+              "Location Permission issue",
+              "Permission to access location was denied",
               [
 
                 { text: "Ok", onPress: () => Linking.openSettings() },
@@ -71,53 +113,20 @@ function SeekerLogin({ navigation }) {
             );
 
           }
-        }).catch((error) => {
+
+        } catch (error) {
+
           Alert.alert(
             "Location Permission issue",
             error.message,
             [
-
-              { text: "Ok", onPress: () => Linking.openSettings() },
-            ],
-            { cancelable: false }
-          );
-
-
-        });
-    }else{
-
-    (async () => {
-
-      try {
-        let { status } = await Location.requestPermissionsAsync();
-        console.log('Location Permission',status);
-        if (status !== "granted") {
-          Alert.alert(
-            "Location Permission issue",
-            "Permission to access location was denied",
-            [
-
               { text: "Ok", onPress: () => Linking.openSettings() },
             ],
             { cancelable: false }
           );
 
         }
-
-      } catch (error) {
-
-        Alert.alert(
-          "Location Permission issue",
-          error.message,
-          [
-
-            { text: "Ok", onPress: () => Linking.openSettings() },
-          ],
-          { cancelable: false }
-        );
-
-      }
-    })();
+      })();
     }
 
   }, [isFocused]);
@@ -231,7 +240,6 @@ function SeekerLogin({ navigation }) {
   function onContentSizeChange(contentWidth, contentHeight) {
     // Save the content height in state
     setContentHeight(contentHeight);
-    console.log(contentHeight, window.height)
   };
 
   // function _updatePhone(text){

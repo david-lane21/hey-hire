@@ -20,6 +20,7 @@ import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import { useIsFocused } from "@react-navigation/native";
 import Geolocation from 'react-native-geolocation-service';
+import GeolocationNew from '@react-native-community/geolocation';
 
 import Header from "./components/Header";
 import { strings } from './translation/config';
@@ -66,32 +67,61 @@ function SeekerHome({ navigation }) {
       if (Platform.OS == "android") {
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
-        if (granted) {
+        if (granted == 'granted') {
 
-          Geolocation.getCurrentPosition(
-            (loc) => {
-              console.log(loc);
-              setLatitude(loc.coords.latitude);
-              setLongitude(loc.coords.longitude);
-              console.log(loc);
-              map.animateToRegion(
-                {
-                  latitude: loc.coords.latitude,
-                  longitude: loc.coords.longitude,
-                  latitudeDelta: 0.0522,
-                  longitudeDelta: 0.0421,
-                },
-                500
-              );
-
-              CommonUtils.setLocation(loc.coords.latitude, loc.coords.longitude);
-              setRegion({
+          GeolocationNew.getCurrentPosition((loc) => {
+            console.log('Location', loc);
+            setLatitude(loc.coords.latitude);
+            setLongitude(loc.coords.longitude);
+            console.log(loc);
+            map.animateToRegion(
+              {
                 latitude: loc.coords.latitude,
                 longitude: loc.coords.longitude,
                 latitudeDelta: 0.0522,
                 longitudeDelta: 0.0421,
-              });
+              },
+              500
+            );
+
+            CommonUtils.setLocation(loc.coords.latitude, loc.coords.longitude);
+            setRegion({
+              latitude: loc.coords.latitude,
+              longitude: loc.coords.longitude,
+              latitudeDelta: 0.0522,
+              longitudeDelta: 0.0421,
+            });
+          },
+            (error) => {
+              // See error code charts below.
+              console.log(error.code, error.message, error);
             },
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+          );
+
+          Geolocation.getCurrentPosition((loc) => {
+            console.log('Location', loc);
+            setLatitude(loc.coords.latitude);
+            setLongitude(loc.coords.longitude);
+            console.log(loc);
+            map.animateToRegion(
+              {
+                latitude: loc.coords.latitude,
+                longitude: loc.coords.longitude,
+                latitudeDelta: 0.0522,
+                longitudeDelta: 0.0421,
+              },
+              500
+            );
+
+            CommonUtils.setLocation(loc.coords.latitude, loc.coords.longitude);
+            setRegion({
+              latitude: loc.coords.latitude,
+              longitude: loc.coords.longitude,
+              latitudeDelta: 0.0522,
+              longitudeDelta: 0.0421,
+            });
+          },
             (error) => {
               // See error code charts below.
               console.log(error.code, error.message, error);
@@ -207,25 +237,21 @@ function SeekerHome({ navigation }) {
 
     return () => {
       Linking.removeEventListener('url', handleOpenURL);
-
     }
   }, [isFocused]);
 
 
 
   function handleOpenURL(event) {
-    console.log('Handle open url', NavigationService, event);
     let businessId = event.url.split("/").filter(Boolean).pop();
-    console.log(businessId / 33469);
     NavigationService.navigate("SeekerHomeAvailableJobs",
-
       { biz_id: businessId / 33469 },
     );
   }
 
   async function loadDate() {
     try {
-      console.log(strings.getLanguage())
+      // console.log(strings.getLanguage())
 
       let loc = await Location.getLastKnownPositionAsync();
       getUser().then((u) => {
@@ -275,12 +301,10 @@ function SeekerHome({ navigation }) {
       });
     }
     catch (error) {
-      console.log('Current Possigion', error);
       Alert.alert(
         "Location Permission issue",
         error.message,
         [
-
           {
             text: "Ok", onPress: () => {
               refreshData();
