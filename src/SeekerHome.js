@@ -929,7 +929,7 @@ function SeekerHome({ navigation }) {
                               style={{ width: 50, height: 50, margin: 10 }}
                             />
                           )}
-                        <Text style={{ flex: 1, fontSize: 12, color: "#444" }}>
+                        <Text style={{  fontSize: 12, color: "#444",flexShrink:1}} numberOfLines={1} ellipsizeMode="tail">
                           {biz.business_name}
                         </Text>
                         <Text style={{ flex: 1, fontSize: 10, color: "#444" }}>

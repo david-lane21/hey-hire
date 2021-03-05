@@ -97,7 +97,7 @@ export default function App() {
       if (Constants.platform.ios) {
         PushNotificationIOS.requestPermissions();
       }
-    }, Platform.OS=="android"?1000: 2500);
+    }, Platform.OS=="android"?1000: 2000);
 
     // return unsubscribe;
   });

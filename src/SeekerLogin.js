@@ -473,7 +473,8 @@ function SeekerLogin({ navigation }) {
                   autoCompleteType={"tel"}
                   keyboardType={"phone-pad"}
                   placeholderTextColor={'#fff'}
-
+                  cursorColor={'#fff'}
+                  selectionColor={'#fff'}
                   onFocus={() => {
                     handleFocus(0);
                   }}
@@ -512,6 +513,9 @@ function SeekerLogin({ navigation }) {
                   textContentType="none"
                   autoCompleteType={"password"}
                   placeholderTextColor={'#fff'}
+                  cursorColor={'#fff'}
+                  selectionColor={'#fff'}
+                  underlineColor={'#fff'}
                   onFocus={() => {
                     handleFocus(1);
                   }}

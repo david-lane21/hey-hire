@@ -15,7 +15,9 @@
 		468EB0A02566770E006DD7F5 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 468EB09F2566770E006DD7F5 /* assets */; };
 		842BCDBB2539E10600D5F393 /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 842BCDBA2539E10600D5F393 /* main.jsbundle */; };
 		8487DEA6253D69270020AB9E /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8487DEA5253D69260020AB9E /* SplashScreen.storyboard */; };
+		9C01183D25D6410900E87B6B /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9C01183C25D6410900E87B6B /* Storyboard.storyboard */; };
 		9C7D487525B19B7E004B35C1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9C7D487425B19B7D004B35C1 /* GoogleService-Info.plist */; };
+		9CC0BD9B25D17DD100045A77 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CC0BD9A25D17DD100045A77 /* File.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -271,7 +273,10 @@
 		845EEFF3254291CA00323994 /* apployme.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = apployme.entitlements; path = apployMe/apployme.entitlements; sourceTree = "<group>"; };
 		8487DEA5253D69260020AB9E /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = apployMe/SplashScreen.storyboard; sourceTree = "<group>"; };
 		8AC623DBF3A3E2CB072F81F2 /* Pods-apployMe.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-apployMe.release.xcconfig"; path = "Target Support Files/Pods-apployMe/Pods-apployMe.release.xcconfig"; sourceTree = "<group>"; };
+		9C01183C25D6410900E87B6B /* Storyboard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Storyboard.storyboard; sourceTree = "<group>"; };
 		9C7D487425B19B7D004B35C1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		9CC0BD9925D17DD100045A77 /* apployMe-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "apployMe-Bridging-Header.h"; sourceTree = "<group>"; };
+		9CC0BD9A25D17DD100045A77 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		D43FF9D506E70904424FA7E9 /* libPods-apployMe.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-apployMe.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
@@ -300,6 +305,9 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				0731D3B524204D62009CAE85 /* Expo.plist */,
+				9CC0BD9A25D17DD100045A77 /* File.swift */,
+				9CC0BD9925D17DD100045A77 /* apployMe-Bridging-Header.h */,
+				9C01183C25D6410900E87B6B /* Storyboard.storyboard */,
 			);
 			name = apployMe;
 			sourceTree = "<group>";
@@ -777,6 +785,7 @@
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				9259FA5393A29EB3F687CD84 /* [CP] Copy Pods Resources */,
 				2FB0155BB53E3F84A33B1CB4 /* [CP-User] [RNFB] Core Configuration */,
+				9C0118A625D6589400E87B6B /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -798,6 +807,7 @@
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = X2K4T58M49;
+						LastSwiftMigration = 1230;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -854,6 +864,7 @@
 				0731D3B824204D62009CAE85 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				842BCDBB2539E10600D5F393 /* main.jsbundle in Resources */,
+				9C01183D25D6410900E87B6B /* Storyboard.storyboard in Resources */,
 				9C7D487525B19B7E004B35C1 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -902,6 +913,23 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-apployMe/Pods-apployMe-resources.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		9C0118A625D6589400E87B6B /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n# Output version & build number to the APP_VERSION label on LaunchScreen.storyboard\n\n";
 		};
 		F8BC737F2AD7A05944D9E2A1 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -952,6 +980,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
+				9CC0BD9B25D17DD100045A77 /* File.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -964,16 +993,17 @@
 			baseConfigurationReference = 3B47C5AFCB8BDE514B7D1AC6 /* Pods-apployMe.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 118;
+				CURRENT_PROJECT_VERSION = 130;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = X2K4T58M49;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				INFOPLIST_FILE = apployMe/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 7.4;
+				MARKETING_VERSION = 2.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -982,6 +1012,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.apployme;
 				PRODUCT_NAME = apployme;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "apployMe-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -992,15 +1025,16 @@
 			baseConfigurationReference = 8AC623DBF3A3E2CB072F81F2 /* Pods-apployMe.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 118;
+				CURRENT_PROJECT_VERSION = 130;
 				DEVELOPMENT_TEAM = X2K4T58M49;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				INFOPLIST_FILE = apployMe/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 7.4;
+				MARKETING_VERSION = 2.0;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1010,6 +1044,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.apployme;
 				PRODUCT_NAME = apployme;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "apployMe-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};

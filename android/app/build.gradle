@@ -133,8 +133,8 @@ android {
         applicationId 'com.apployme'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 4
-        versionName "1.1"
+        versionCode 2
+        versionName "1.0"
     }
     splits {
         abi {
@@ -151,15 +151,21 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            storeFile file('apployme.jks')
+            storePassword "7S&HG[]c:4CU}xS4"
+            keyAlias 'apployme'
+            keyPassword '7S&HG[]c:4CU}xS4'
+        }
     }
     buildTypes {
         debug {
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
         }
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://facebook.github.io/react-native/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }

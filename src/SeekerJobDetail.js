@@ -20,7 +20,7 @@ import { useIsFocused } from "@react-navigation/native";
 function SeekerJobDetail({ route, navigation }) {
   const isFocused = useIsFocused();
 
-  const tempJob = Object.assign({}, route.params.job, {}) ;
+  const tempJob = Object.assign({}, route.params.job, {});
   const [user, setUser] = useState({});
   const [job, setJob] = useState(tempJob);
   const [modal1, setModal1] = useState(false);
@@ -104,7 +104,7 @@ function SeekerJobDetail({ route, navigation }) {
       .then((json) => {
         console.log(job.like, url, json);
         if (json.status_code == 200) {
-          const tempJob = Object.assign({}, job, {}) ;
+          const tempJob = Object.assign({}, job, {});
           if (tempJob.like == '1') {
             tempJob.like = 0;
           } else {
@@ -241,8 +241,8 @@ function SeekerJobDetail({ route, navigation }) {
             </View>
           </View>
         </View>
-        <ScrollView       style={{marginBottom:50}}
->
+        <ScrollView style={{ marginBottom: 50 }}
+        >
 
 
           <View style={{ flex: 1, alignItems: "center", padding: 20 }}>
@@ -373,8 +373,32 @@ function SeekerJobDetail({ route, navigation }) {
                 {job.experience}
               </Text>
             </View>
-
+            {job.aplied == '1' ?
             <View
+              style={{
+                flex: 1,
+                alignItems: "center",
+                marginTop: 20,
+                width: "100%",
+              }}
+            >
+              <TouchableOpacity
+                style={{
+                  width: "100%",
+                  backgroundColor: "#f00",
+                  paddingTop: 12,
+                  paddingBottom: 12,
+                  borderRadius: 50,
+                }}
+                onPress={() => onCancelCV()}
+              >
+                <Text
+                  style={{ textAlign: "center", fontSize: 18, color: "#fff" }}
+                >
+                  {strings.CANCEL_APPLICATION}
+                </Text>
+              </TouchableOpacity>
+            </View> :  <View
               style={{
                 flex: 1,
                 alignItems: "center",
@@ -398,7 +422,7 @@ function SeekerJobDetail({ route, navigation }) {
                   {strings.SEND_APPLICATION}
                 </Text>
               </TouchableOpacity>
-            </View>
+            </View>}
           </View>
           <ConfirmationAlert
             visible={modal1}
