@@ -19,7 +19,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import { useIsFocused } from "@react-navigation/native";
-import Geolocation from 'react-native-geolocation-service';
 import GeolocationNew from '@react-native-community/geolocation';
 
 import Header from "./components/Header";
@@ -48,8 +47,8 @@ function SeekerHome({ navigation }) {
   });
   const [refresh, setRefresh] = useState(false);
   const { signOut } = React.useContext(AuthContext);
-  const [latitude, setLatitude] = useState("32.7767");
-  const [longitude, setLongitude] = useState("-96.797");
+  const [latitude, setLatitude] = useState(32.7767);
+  const [longitude, setLongitude] = useState(-96.797);
 
   useEffect(() => {
     if (isFocused) {
@@ -69,11 +68,13 @@ function SeekerHome({ navigation }) {
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
         if (granted == 'granted') {
 
-          GeolocationNew.getCurrentPosition((loc) => {
-            console.log('Location', loc);
-            setLatitude(loc.coords.latitude);
-            setLongitude(loc.coords.longitude);
-            console.log(loc);
+        
+          Location.getLastKnownPositionAsync().then((loc) => {
+            console.log('LAst location',loc);
+const coords=loc.coords;
+
+            setLatitude(coords.latitude);
+            setLongitude(coords.longitude);
             map.animateToRegion(
               {
                 latitude: loc.coords.latitude,
@@ -91,79 +92,67 @@ function SeekerHome({ navigation }) {
               latitudeDelta: 0.0522,
               longitudeDelta: 0.0421,
             });
-          },
-            (error) => {
-              // See error code charts below.
-              console.log(error.code, error.message, error);
-            },
-            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-          );
+            loadDate();
 
-          Geolocation.getCurrentPosition((loc) => {
-            console.log('Location', loc);
-            setLatitude(loc.coords.latitude);
-            setLongitude(loc.coords.longitude);
-            console.log(loc);
-            map.animateToRegion(
-              {
+          }).catch((error) => {
+           Location.getCurrentPositionAsync().then((loc)=>{
+
+       
+
+              map.animateToRegion(
+                {
+                  latitude: loc.coords.latitude,
+                  longitude: loc.coords.longitude,
+                  latitudeDelta: 0.0522,
+                  longitudeDelta: 0.0421,
+                },
+                500
+              );
+              // setLocation(loc.coords);
+              setLatitude(loc.coords.latitude);
+              setLongitude(loc.coords.longitude);
+              CommonUtils.setLocation(loc.coords.latitude, loc.coords.longitude);
+
+              setRegion({
                 latitude: loc.coords.latitude,
                 longitude: loc.coords.longitude,
                 latitudeDelta: 0.0522,
                 longitudeDelta: 0.0421,
-              },
-              500
-            );
+              });
+              loadDate();
 
-            CommonUtils.setLocation(loc.coords.latitude, loc.coords.longitude);
-            setRegion({
-              latitude: loc.coords.latitude,
-              longitude: loc.coords.longitude,
-              latitudeDelta: 0.0522,
-              longitudeDelta: 0.0421,
+            }).catch( (error)=> {
+              console.log('Current Possigion', error);
+            
+              map.animateToRegion(
+                {
+                  latitude: latitude,
+                  longitude: longitude,
+                  latitudeDelta: 0.0522,
+                  longitudeDelta: 0.0421,
+                },
+                500
+              );
+              // setLocation(loc.coords);
+              setLatitude(latitude);
+              setLongitude(longitude);
+              CommonUtils.setLocation(latitude, longitude);
+
+              setRegion({
+                latitude:latitude,
+                longitude: longitude,
+                latitudeDelta: 0.0522,
+                longitudeDelta: 0.0421,
+              });
+              loadDate();
+
             });
-          },
-            (error) => {
-              // See error code charts below.
-              console.log(error.code, error.message, error);
-            },
-            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-          );
+          });
+
+
         }
       } else {
-        // const status = await Geolocation.requestAuthorization('whenInUse');
-        // if (status === 'granted') {
-        //   Geolocation.getCurrentPosition(
-        //     (loc) => {
-        //       console.log(loc);
-        //       setLatitude(loc.coords.latitude);
-        //       setLongitude(loc.coords.longitude);
-        //       console.log(loc);
-        //       map.animateToRegion(
-        //         {
-        //           latitude: loc.coords.latitude,
-        //           longitude: loc.coords.longitude,
-        //           latitudeDelta: 0.0522,
-        //           longitudeDelta: 0.0421,
-        //         },
-        //         500
-        //       );
 
-        //       CommonUtils.setLocation(loc.coords.latitude, loc.coords.longitude);
-        //       setRegion({
-        //         latitude: loc.coords.latitude,
-        //         longitude: loc.coords.longitude,
-        //         latitudeDelta: 0.0522,
-        //         longitudeDelta: 0.0421,
-        //       });
-        //     },
-        //     (error) => {
-        //       // See error code charts below.
-        //       console.log(error.code, error.message, error);
-        //     },
-        //     { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-        //   );
-
-        // }
 
 
         try {
@@ -192,6 +181,8 @@ function SeekerHome({ navigation }) {
             latitudeDelta: 0.0522,
             longitudeDelta: 0.0421,
           });
+          loadDate();
+
         } catch (error) {
           try {
             let loc = await Location.getCurrentPositionAsync();
@@ -216,20 +207,33 @@ function SeekerHome({ navigation }) {
               latitudeDelta: 0.0522,
               longitudeDelta: 0.0421,
             });
+            loadDate();
+
           } catch (error) {
             console.log('Current Possigion', error);
-            //loadDate();
-            Alert.alert(
-              "Location Permission issue",
-              error.message,
-              [
-
-                { text: "Ok", onPress: () => Linking.openSettings() },
-              ],
-              { cancelable: false }
+           
+            
+            map.animateToRegion(
+              {
+                latitude: latitude,
+                longitude: longitude,
+                latitudeDelta: 0.0522,
+                longitudeDelta: 0.0421,
+              },
+              500
             );
+            // setLocation(loc.coords);
+            setLatitude(latitude);
+            setLongitude(longitude);
+            CommonUtils.setLocation(latitude, longitude);
 
-            Linking.openSettings()
+            setRegion({
+              latitude:latitude,
+              longitude: longitude,
+              latitudeDelta: 0.0522,
+              longitudeDelta: 0.0421,
+            });
+             loadDate();
           }
         }
       }
@@ -251,9 +255,8 @@ function SeekerHome({ navigation }) {
 
   async function loadDate() {
     try {
-      // console.log(strings.getLanguage())
+      console.log(latitude,longitude,region)
 
-      let loc = await Location.getLastKnownPositionAsync();
       getUser().then((u) => {
         let u2 = JSON.parse(u);
         setUser1(u2);
@@ -279,12 +282,8 @@ function SeekerHome({ navigation }) {
                   (b) => parseFloat(b.latitude) && parseFloat(b.longitude) && b.is_active == 1
                 );
                 bizList = bizList.map((b) => {
-                  b.distance_in_km = haversine_distance(
-                    loc.coords.latitude || latitude,
-                    loc.coords.longitude || longitude,
-                    b.latitude, b.longitude,
-                    "K"
-                  ); //.toFixed(1)
+                
+                  b.distance_in_km =  CommonUtils.distance(b.latitude,b.longitude,"K")
                   return b;
                 });
 
@@ -301,19 +300,7 @@ function SeekerHome({ navigation }) {
       });
     }
     catch (error) {
-      Alert.alert(
-        "Location Permission issue",
-        error.message,
-        [
-          {
-            text: "Ok", onPress: () => {
-              refreshData();
-              Linking.openSettings();
-            }
-          },
-        ],
-        { cancelable: false }
-      );
+     console.log('Load data error',error);
     }
   }
 
@@ -924,16 +911,16 @@ function SeekerHome({ navigation }) {
                             }}
                           />
                         ) : (
-                            <Image
-                              source={require("../assets/ApployMeLogo.png")}
-                              style={{ width: 50, height: 50, margin: 10 }}
-                            />
-                          )}
-                        <Text style={{  fontSize: 12, color: "#444",flexShrink:1}} numberOfLines={1} ellipsizeMode="tail">
+                          <Image
+                            source={require("../assets/ApployMeLogo.png")}
+                            style={{ width: 50, height: 50, margin: 10 }}
+                          />
+                        )}
+                        <Text style={{ fontSize: 12, color: "#444", flexShrink: 1 }} numberOfLines={1} ellipsizeMode="tail">
                           {biz.business_name}
                         </Text>
                         <Text style={{ flex: 1, fontSize: 10, color: "#444" }}>
-                          {biz.distance_in_km.toFixed(1)} {strings.MILES}
+                          {biz.distance_in_km} {strings.MILES}
                         </Text>
                       </View>
                     </TouchableHighlight>

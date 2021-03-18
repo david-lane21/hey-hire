@@ -46,11 +46,11 @@
 	<key>NSContactsUsageDescription</key>
 	<string>Allow apployMe experiences to access your contacts</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Allow apployMe to use your location</string>
+	<string>Allow apployMe to use your location to show you available positions at active businesses based on your current location and to allow apployMe to notify you about newly added positions based on your current location</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Allow apployMe to use your location</string>
+	<string>Allow apployMe to always use your location to notify you about newly added positions at active businesses by your preferences and based on your current location</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Allow apployMe to use your location</string>
+	<string>Allow apployMe to use your location to show you available positions at active businesses based on your current location only while using the app</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Allow apployMe to access your microphone</string>
 	<key>NSMotionUsageDescription</key>

@@ -25,7 +25,6 @@ import { countries } from "./utils/consts.js";
 import { postFormData, getBaseURL } from "./utils/network.js";
 import { setUser, setToken } from "./utils/utils.js";
 import { KeyboardAccessoryNavigation } from "react-native-keyboard-accessory";
-import Geolocation from 'react-native-geolocation-service';
 import { useIsFocused } from "@react-navigation/native";
 import { strings } from "./translation/config";
 import { AuthContext } from "./navigation/context";
@@ -77,21 +76,14 @@ function SeekerLogin({ navigation }) {
                 "",
                 [
 
-                  { text: "Ok", onPress: () => Linking.openSettings() },
+                  { text: "Ok",onPress:()=>{} },
                 ],
                 { cancelable: false }
               );
 
             }
           }).catch((error) => {
-            Alert.alert(
-              "Location Permission issue",
-              error.message,
-              [
-                { text: "Ok", onPress: () => Linking.openSettings() },
-              ],
-              { cancelable: false }
-            );
+            
           });
       }, 3000);
     } else {
@@ -107,7 +99,7 @@ function SeekerLogin({ navigation }) {
               "Permission to access location was denied",
               [
 
-                { text: "Ok", onPress: () => Linking.openSettings() },
+                { text: "Ok",onPress:()=>{} },
               ],
               { cancelable: false }
             );
@@ -120,9 +112,9 @@ function SeekerLogin({ navigation }) {
             "Location Permission issue",
             error.message,
             [
-              { text: "Ok", onPress: () => Linking.openSettings() },
+              { text: "Ok",onPress:()=>{} },
             ],
-            { cancelable: false }
+            { cancelable: trues }
           );
 
         }

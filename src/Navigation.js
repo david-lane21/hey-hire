@@ -93,7 +93,6 @@ export function Navigation(props) {
           options={{
             headerShown: false,
             gestureEnabled: false
-
           }}
         />
 
