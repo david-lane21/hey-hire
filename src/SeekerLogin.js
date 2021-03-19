@@ -70,18 +70,7 @@ function SeekerLogin({ navigation }) {
 
         PermissionsAndroid.requestMultiple(
           [PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION]).then((granted) => {
-            if (granted["android.permission.ACCESS_COARSE_LOCATION"] != 'granted') {
-              Alert.alert(
-                "Location Permission issue",
-                "",
-                [
-
-                  { text: "Ok",onPress:()=>{} },
-                ],
-                { cancelable: false }
-              );
-
-            }
+           
           }).catch((error) => {
             
           });
@@ -93,29 +82,9 @@ function SeekerLogin({ navigation }) {
         try {
           let { status } = await Location.requestPermissionsAsync();
           console.log('Location Permission', status);
-          if (status !== "granted") {
-            Alert.alert(
-              "Location Permission issue",
-              "Permission to access location was denied",
-              [
-
-                { text: "Ok",onPress:()=>{} },
-              ],
-              { cancelable: false }
-            );
-
-          }
-
+          
         } catch (error) {
 
-          Alert.alert(
-            "Location Permission issue",
-            error.message,
-            [
-              { text: "Ok",onPress:()=>{} },
-            ],
-            { cancelable: trues }
-          );
 
         }
       })();
