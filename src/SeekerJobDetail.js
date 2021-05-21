@@ -22,10 +22,10 @@ function SeekerJobDetail({ route, navigation }) {
 
   const tempJob = Object.assign({}, route.params.job, {});
   const [user, setUser] = useState({});
+  const [business,setBusiness] = useState(tempJob.business);
   const [job, setJob] = useState(tempJob);
   const [modal1, setModal1] = useState(false);
   const [modal2, setModal2] = useState(false);
-
   useEffect(() => {
     if (isFocused) {
       getUser().then((u) => {
@@ -41,7 +41,9 @@ function SeekerJobDetail({ route, navigation }) {
             return res.json();
           })
           .then((json) => {
-            // console.log("Detail", json.data);
+            console.log("Detail", json.data);
+            setJob(
+            Object.assign(json.data));
           })
           .catch((err) => {
             console.log(err);
@@ -224,7 +226,7 @@ function SeekerJobDetail({ route, navigation }) {
                     source={require("../assets/ic_checked_white.png")}
                     style={{ width: 20, height: 20 }}
                   />
-                </TouchableOpacity> : job.like == 1 ? <TouchableOpacity style={{ flex: 1, alignItems: 'center' }} onPress={() => addWishlist()} >
+                </TouchableOpacity> : job.like == '1' ? <TouchableOpacity style={{ flex: 1, alignItems: 'center' }} onPress={() => addWishlist()} >
                   <Image
                     source={require("../assets/ic_heart_filled_w.png")}
                     style={{ width: 25, height: 25 }}
@@ -247,14 +249,14 @@ function SeekerJobDetail({ route, navigation }) {
 
           <View style={{ flex: 1, alignItems: "center", padding: 20 }}>
             <Image
-              source={{ uri: job.business.avatar_image }}
+              source={{ uri: business.avatar_image }}
               style={{ width: 100, height: 100, borderRadius: 50 }}
             />
           </View>
 
           <View style={{ flex: 1, alignItems: "center", marginHorizontal: 20 }}>
             <Text style={{ color: "#fff", fontSize: 22, textAlign: 'center' }}>
-              {job.business.business_name}
+              {business.business_name}
             </Text>
           </View>
 
@@ -281,7 +283,7 @@ function SeekerJobDetail({ route, navigation }) {
                 style={{ width: 13, height: 13 }}
               />
               <Text style={{ color: "#fff", marginLeft: 5 }}>
-                {job.business.address}
+                {business.address}
               </Text>
             </View>
           </View>
@@ -296,7 +298,7 @@ function SeekerJobDetail({ route, navigation }) {
             }}
           >
             <Text style={{ color: "#fff" }}>
-              {job.business.business_detail}
+              {business.business_detail}
             </Text>
           </View>
 
@@ -372,6 +374,22 @@ function SeekerJobDetail({ route, navigation }) {
               <Text style={{ marginBottom: 30, marginTop: 10 }}>
                 {job.experience}
               </Text>
+              <View
+                style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
+              >
+                <Image
+                  source={require("../assets/ic_certificate.png")}
+                  style={{ width: 20, height: 20 }}
+                />
+                <Text
+                  style={{ fontSize: 16, marginLeft: 10, fontWeight: "bold" }}
+                >
+                  {strings.REQUIRED_CERTIFICATIONS}
+                </Text>
+              </View>
+              <Text style={{ marginBottom: 30, marginTop: 10 }}>
+                {job.required_certifications?job.required_certifications.map((item)=>item+"\n"):''}
+              </Text>
             </View>
             {job.aplied == '1' ?
             <View
@@ -427,12 +445,14 @@ function SeekerJobDetail({ route, navigation }) {
           <ConfirmationAlert
             visible={modal1}
             job={job}
+            business={business}
             onClose={() => setModal1(false)}
             onSendCV={() => onSendCV()}
           />
           <AlertPopup
             visible={modal2}
             job={job}
+            business={business}
             onClose={() => setModal2(false)}
           />
         </ScrollView>

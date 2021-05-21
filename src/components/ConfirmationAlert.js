@@ -14,7 +14,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import {strings} from '../translation/config';
 
-export default function ConfirmationAlert({ visible, job,onClose,onSendCV }) {
+export default function ConfirmationAlert({ visible,business, job,onClose,onSendCV }) {
   return (
     <Modal
       animationType="fade"
@@ -54,7 +54,7 @@ export default function ConfirmationAlert({ visible, job,onClose,onSendCV }) {
               }}
             >
               <Image
-               source={{uri: job.business.avatar_image}}
+               source={{uri: business.avatar_image}}
                 style={{ height: 70, width: 70, borderRadius: 50 }}
               />
             </View>
@@ -71,7 +71,7 @@ export default function ConfirmationAlert({ visible, job,onClose,onSendCV }) {
                 }}
               >
                 <Text style={[{ textAlign: "center", color: "rgba(255,255,255,0.7)" }]}>
-                  {strings.YOU_ARE_ABOUT_TO} <Text style={{textDecorationLine:'underline',color:'#fff'}}>{job.position}</Text> {strings.POSTION_AT} <Text  style={{textDecorationLine:'underline',color:'#fff'}}>{job.business.business_name}</Text>
+                  {strings.YOU_ARE_ABOUT_TO} <Text style={{textDecorationLine:'underline',color:'#fff'}}>{job.position}</Text> {strings.POSTION_AT} <Text  style={{textDecorationLine:'underline',color:'#fff'}}>{business.business_name}</Text>
                 </Text>
               </View>
               <View style={{ marginVertical: 20, alignItems: "center",marginTop:30 }}>

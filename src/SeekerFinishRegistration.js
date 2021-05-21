@@ -20,14 +20,14 @@ import * as ImagePicker from "expo-image-picker";
 import Constants from "expo-constants";
 import { educationLevels, countries, languages } from "./utils/consts.js";
 import { getUser, setUser, getToken } from "./utils/utils.js";
-import { postFormData } from "./utils/network.js";
+import { postFormData, getRequest } from "./utils/network.js";
 import RNPickerSelect from "react-native-picker-select";
 import { useIsFocused } from "@react-navigation/native";
 import { KeyboardAccessoryNavigation } from "react-native-keyboard-accessory";
 import { strings } from "./translation/config";
 import { AuthContext } from "./navigation/context";
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import DeviceInfo from 'react-native-device-info';
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import DeviceInfo from "react-native-device-info";
 const isIphoneX = DeviceInfo.hasNotch();
 function SeekerFinishRegistration({ navigation }) {
   const scrollViewRef = useRef();
@@ -75,6 +75,7 @@ function SeekerFinishRegistration({ navigation }) {
   const [skill, setSkill] = useState("");
   const [loading, setLoading] = useState(false);
   const [multiline, setMultiline] = useState(false);
+  const [categoriesList, setCategoriesList] = useState([]);
 
   const [currentScroll, setCurrentScroll] = useState(null);
 
@@ -86,15 +87,31 @@ function SeekerFinishRegistration({ navigation }) {
   useEffect(() => {
     (async () => {
       if (Constants.platform.ios) {
-        const {
-          status,
-        } = await ImagePicker.requestCameraRollPermissionsAsync();
+        const { status } =
+          await ImagePicker.requestCameraRollPermissionsAsync();
         if (status !== "granted") {
           alert("Sorry, we need camera roll permissions to make this work!");
         }
       }
+      getJobCategories();
     })();
   }, []);
+
+  function getJobCategories() {
+    let form = new FormData();
+
+    form.append("user_token", user.user_token);
+    form.append("user_id", user.user_id);
+    getRequest("get_categories")
+      .then((res) => {
+        return res.json();
+      })
+      .then((json) => {
+        const jsonCategories = json.data;
+
+        setCategoriesList(jsonCategories);
+      });
+  }
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -329,6 +346,13 @@ function SeekerFinishRegistration({ navigation }) {
     form.append("sixteen", sixteen || false);
     form.append("convictions", convictions || false);
     form.append("skill", skills.toString());
+    form.append(
+      "preferred_business_categories",
+      categoriesList
+        .filter((item) => item.selected)
+        .map((item) => item.category_id)
+        .toString()
+    );
     setLoading(true);
 
     postFormData("update_user", form)
@@ -417,9 +441,22 @@ function SeekerFinishRegistration({ navigation }) {
     }
   }
 
+  function addToCategoreis(item) {
+    let listCategories = categoriesList;
+    listCategories.map((i) => {
+      if (i.category_id == item.category_id) {
+        i.selected = !i.selected;
+      }
+      return i;
+    });
+    console.log(listCategories);
+    setCategoriesList([...listCategories]);
+  }
+
   function renderSkill(item) {
     return (
       <View
+        key={item.index.toString()}
         style={{
           borderWidth: 1,
           borderColor: "#3482FF",
@@ -459,8 +496,10 @@ function SeekerFinishRegistration({ navigation }) {
   }
 
   return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-      <KeyboardAwareScrollView extraScrollHeight={Platform.OS === "ios"?-60:0}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+      <KeyboardAwareScrollView
+        extraScrollHeight={Platform.OS === "ios" ? -60 : 0}
+      >
         <View
           style={{
             flexDirection: "row",
@@ -509,607 +548,752 @@ function SeekerFinishRegistration({ navigation }) {
             />
           </View>
         )}
-      
 
-          <View style={{ flex: 1 }}>
-            <View style={{ flex: 1, padding: 10,paddingHorizontal:20 }}>
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: "row",
-                  alignItems: "center",
-                  paddingHorizontal: 10,
-                  marginBottom: 5
-                }}
-              >
-                <Image
-                  source={require("../assets/icon_note.png")}
-                  style={{ width: 12, height: 12 }}
-                />
-                <Text style={{ paddingLeft: 10, fontSize: 18 }}>
-                  {strings.BIO}
-                </Text>
-              </View>
-              <View
-                style={{
-                  backgroundColor: "#fff",
-                  borderColor: "#eee",
-                  padding: 5,
-                  marginBottom: 15,
-
-                  // marginRight: 10,
-                  borderWidth: 1,
-                  borderRadius: 10,
-                  shadowColor: "#bbb",
-                  shadowOffset: {
-                    width: 0,
-                    height: 3,
-                  },
-                  shadowOpacity: 0.23,
-                  shadowRadius: 2.62,
-                  elevation: 4,
-                }}
-              >
-                <TextInput
-                  style={{
-                    width: "100%",
-                    color: "#666",
-                    textAlignVertical: "top",
-                  }}
-                  onChangeText={(text) => setBio(text)}
-                  placeholder={BIO_PLACEHOLDER}
-                  value={bio}
-                  multiline={true}
-                  editable={true}
-                  // autoFocus={true}
-                  numberOfLines={5}
-                  onFocus={() => {
-                    handleFocus(8);
-                  }}
-                  ref={(ref) => {
-                    handleRef(8, ref);
-                  }}
-                />
-              </View>
-            </View>
-          </View>
-
-          <View style={{ flex: 1 }}>
-            <View style={{ flex: 1, padding: 20 }}>
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <Image
-                  source={require("../assets/ic_star.png")}
-                  style={{ width: 12, height: 12 }}
-                />
-                <Text style={{ paddingLeft: 10, fontSize: 18 }}>
-                  {strings.SKILLS}
-                </Text>
-              </View>
-              <View
-                style={{
-                  flex: 1,
-                      alignItems: "flex-start",
-                      backgroundColor: "#fff",
-                  borderColor: "#eee",
-                  paddingTop: 13,
-                  paddingLeft: 13,
-                  marginBottom: 15,
-                  borderWidth: 1,
-                  borderRadius: 10,
-                  shadowColor: "#bbb",
-                  shadowOffset: {
-                    width: 0,
-                    height: 3,
-                  },
-                  shadowOpacity: 0.23,
-                  shadowRadius: 2.62,
-                  elevation: 4,
-                }}
-              >
-                {/* <FlatList
-                    data={skills}
-                    keyExtractor={(item) => item}
-                    renderItem={renderSkill}
-                  /> */}
-                <View
-                  style={{ flex: 1, flexDirection: "row", flexWrap: "wrap" }}
-                >
-                  {skills.map((item, index) => {
-                    return renderSkill({ item, index });
-                  })}
-                </View>
-                <View
-                  style={{
-                    borderColor: "#eee",
-                    marginBottom: 5,
-                    paddingHorizontal: 5,
-                    // marginRight: 10,
-                    borderWidth: 1,
-                    borderRadius: 10,
-                    margin: 5,
-                  }}
-                >
-                  <TextInput
-                    style={{ width: "100%", color: "#000" }}
-                    placeholder={strings.ENTER_SKILL}
-                    textContentType="none"
-                    onSubmitEditing={() => addSkill()}
-                    returnKeyType={"done"}
-                    onEndEditing={() => addSkill()}
-                    value={skill}
-                    onChangeText={(text) => onChangeSkill(text)}
-                  />
-                </View>
-              </View>
-            </View>
-          </View>
-
-          <View style={{ flex: 1 }}>
-            <View>
-              <Text style={{ fontSize: 18, paddingLeft: 20,marginBottom: 5 }}>
-                {strings.LEVEL_OF_EDUCATION}
-              </Text>
-              <View style={styles.code3}>
-                <Image
-                  source={require("../assets/ic_educate.png")}
-                  style={{ width: 20, height: 20, marginRight: 5 }}
-                />
-                <RNPickerSelect
-                  onValueChange={(value) => _edulevel(value)}
-                  value={eduLevel}
-                  style={pickerSelectStyles}
-                  items={educationLevels.map((i) => {
-                    return {
-                      label: i,
-                      value: i,
-                    };
-                  })}
-                  
-                />
-              </View>
-            </View>
-          </View>
-
-          <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 18, paddingLeft: 20 ,marginBottom: 5}}>
-              {strings.NAME_OF_INSTITUTION}
-            </Text>
-            <View style={styles.code}>
-              <Image
-                source={require("../assets/ic_educate.png")}
-                style={{ width: 20, height: 20, marginRight: 5 }}
-              />
-              <TextInput
-                style={{ width: "100%", color: "#000" }}
-                onChangeText={(text) => setInstitution(text)}
-                placeholder={strings.INSTITUTION}
-                value={institution}
-                textContentType="none"
-                onFocus={() => {
-                  handleFocus(9);
-                }}
-                ref={(ref) => {
-                  handleRef(9, ref);
-                }}
-              />
-            </View>
-          </View>
-
-          <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 18, paddingLeft: 20,marginBottom: 5 }}>
-              {strings.CERTIFICATION} {strings.OPTIONAL}
-            </Text>
-            <View style={styles.code}>
-              <Image
-                source={require("../assets/ic_file_number.png")}
-                style={{ width: 17, height: 17, marginRight: 5 }}
-              />
-              <TextInput
-                style={{ width: "100%", color: "#000" }}
-                onChangeText={(text) => setCertificate(text)}
-                placeholder={strings.CERTIFICATE_PLACEHOLDER}
-                value={certificate}
-                textContentType="none"
-                onFocus={() => {
-                  handleFocus(10);
-                }}
-                ref={(ref) => {
-                  handleRef(10, ref);
-                }}
-              />
-            </View>
-          </View>
-
-          <View style={{ flex: 1 }}>
-            <Modal
-              animationType="slide"
-              transparent={false}
-              visible={modalVisible2}
-              onRequestClose={() => {
-                // Alert.alert('Modal has been closed.');
-              }}
-            >
-              <SafeAreaView>
-                <View style={{ marginTop: 22, height: "89%" }}>
-                  <View>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        paddingBottom: 20,
-                        paddingTop: 20,
-                      }}
-                    >
-                      <View style={{ width: "20%", marginLeft: 15 }}>
-                        <TouchableOpacity
-                          onPress={() => setModalVisible2(false)}
-                        >
-                          <Image
-                            source={require("../assets/ic_back.png")}
-                            style={{ width: 28, height: 22 }}
-                          />
-                        </TouchableOpacity>
-                      </View>
-                      <View style={{ width: "60%" }}>
-                        <Text style={{ color: "#4834A6", fontSize: 18 }}>
-                          {strings.ADD_YOUR_LANGUAGES}
-                        </Text>
-                      </View>
-                      <View style={{ width: "60%" }}>
-                        <TouchableOpacity
-                          onPress={() => setModalVisible2(false)}
-                        >
-                          <Text style={{ color: "#4834A6", fontSize: 18 }}>
-                            {strings.DONE}
-                          </Text>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-
-                    <View
-                      style={{
-                        width: "85%",
-                        margin: 20,
-                        backgroundColor: "#fff",
-                        padding: 10,
-                        borderRadius: 8,
-                        borderWidth: 1,
-                        borderColor: "#ddd",
-                      }}
-                    >
-                      <View style={{ width: "15%" }}>
-                        <Image
-                          source={require("../assets/ic_search.png")}
-                          style={{ position: "absolute" }}
-                        />
-                      </View>
-                      <View style={{ width: "70%", paddingLeft: 20 }}>
-                        <TextInput
-                          style={{
-                            width: "100%",
-                            paddingLeft: 10,
-                            color: "#000",
-                          }}
-                          onChangeText={(text) => searchLangs(text)}
-                          placeholder={strings.SEARCH}
-                          value={search}
-                        />
-                      </View>
-                    </View>
-
-                    <FlatList
-                      // ItemSeparatorComponent={<Separator />}
-                      data={filteredLangs}
-                      keyExtractor={(item) => item.code}
-                      renderItem={({ item, index, separators }) => (
-                        <View
-                          key={index}
-                          onPress={() => _onPress3(item)}
-                          onShowUnderlay={separators.highlight}
-                          onHideUnderlay={separators.unhighlight}
-                        >
-                          <View style={{ backgroundColor: "white" }}>
-                            <View
-                              style={{
-                                flex: 1,
-                                flexDirection: "row",
-                                alignItems: "center",
-                                padding: 10,
-                                borderBottomWidth: 1,
-                                borderBottomColor: "#eee",
-                              }}
-                            >
-                              {isLangSelected(item) ? (
-                                <TouchableOpacity
-                                  onPress={() => removeFromLangs(item)}
-                                >
-                                  <Image
-                                    source={require("../assets/ic_selected.png")}
-                                    style={{
-                                      width: 17,
-                                      height: 17,
-                                      marginRight: 10,
-                                      marginLeft: 20,
-                                    }}
-                                  />
-                                </TouchableOpacity>
-                              ) : (
-                                <TouchableOpacity
-                                  onPress={() => addToLangs(item)}
-                                >
-                                  <Image
-                                    source={require("../assets/ic_add_blue.png")}
-                                    style={{
-                                      width: 17,
-                                      height: 17,
-                                      marginRight: 10,
-                                      marginLeft: 20,
-                                    }}
-                                  />
-                                </TouchableOpacity>
-                              )}
-
-                              <Text
-                                style={{
-                                  fontSize: 20,
-                                  color: "#222",
-                                }}
-                              >
-                                {item}
-                              </Text>
-                            </View>
-                          </View>
-                        </View>
-                      )}
-                    />
-                  </View>
-                </View>
-              </SafeAreaView>
-            </Modal>
-
-            <Text style={{ fontSize: 18, paddingLeft: 20,marginBottom: 5 }}>
-              {strings.LANGUAGE}
-            </Text>
-            <TouchableOpacity
-              style={styles.code}
-              onPress={() => setModalVisible2(true)}
-            >
-              <View style={{ flexDirection: "row" }}>
-                <Image
-                  source={require("../assets/ic_language.png")}
-                  style={{ width: 17, height: 17, marginRight: 5 }}
-                />
-                <Text style={{ width: "100%", color: "#000" }}>{langs?langs:strings.SELECT_YOUR_LANGUAGE}</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-
-          <View style={{ flex: 1 }}>
-            <View>
-              <Text style={{ fontSize: 18, paddingLeft: 20 ,marginBottom: 5}}>
-                {strings.AVAILABILITY}
-              </Text>
-              <View style={styles.code3}>
-                <Image
-                  source={require("../assets/ic_educate.png")}
-                  style={{ width: 20, height: 20, marginRight: 5 }}
-                />
-                <RNPickerSelect
-                  onValueChange={(value) => _availability(value)}
-                  value={availability}
-                  style={pickerSelectStyles}
-                  items={[
-                    { label: "Full Time", value: "Full Time" },
-                    { label: "Part Time", value: "Part Time" },
-                    { label: "Flexible", value: "Flexible" },
-                  ]}
-                  
-                />
-              </View>
-            </View>
-          </View>
-
-          <View style={{ flex: 1 }}>
-            <TouchableOpacity
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                paddingLeft: 20,
-                paddingTop: 15,
-                paddingBottom: 15,
-                alignItems: "center",
-              }}
-              onPress={() => toggleEligible()}
-            >
-              {eligible ? (
-                <Image
-                  source={require("../assets/checkbox_checked.png")}
-                  style={{ width: 25, height: 25, marginRight: 5 }}
-                />
-              ) : (
-                <Image
-                  source={require("../assets/checkbox_blank.png")}
-                  style={{ width: 25, height: 25, marginRight: 5 }}
-                />
-              )}
-              <Text style={{ paddingLeft: 5, color: "#3482FF" }}>
-                {strings.ARE_YOU_ELEGIBLE}
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={{ flex: 1 }}>
-            <TouchableOpacity
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                paddingLeft: 20,
-                paddingTop: 15,
-                paddingBottom: 15,
-                alignItems: "center",
-              }}
-              onPress={() => toggleSixteen()}
-            >
-              {sixteen ? (
-                <Image
-                  source={require("../assets/checkbox_checked.png")}
-                  style={{ width: 25, height: 25, marginRight: 5 }}
-                />
-              ) : (
-                <Image
-                  source={require("../assets/checkbox_blank.png")}
-                  style={{ width: 25, height: 25, marginRight: 5 }}
-                />
-              )}
-              <Text style={{ paddingLeft: 5, color: "#3482FF" }}>
-                {strings.ARE_YOU_AT_LEAST}
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={{ flex: 1 }}>
-            <TouchableOpacity
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                paddingLeft: 20,
-                paddingTop: 15,
-                paddingBottom: 15,
-                alignItems: "center",
-              }}
-              onPress={() => toggleConvictions()}
-            >
-              {convictions ? (
-                <Image
-                  source={require("../assets/checkbox_checked.png")}
-                  style={{ width: 25, height: 25, marginRight: 5 }}
-                />
-              ) : (
-                <Image
-                  source={require("../assets/checkbox_blank.png")}
-                  style={{ width: 25, height: 25, marginRight: 5 }}
-                />
-              )}
-              <View style={{ flex: 1 }}>
-                <Text style={{ paddingLeft: 5, color: "#3482FF" }}>
-                  {strings.HAVE_YOU_EVER_BEEN_CONVICTED}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-
-          <View style={{ flex: 1, marginBottom: 30 }}>
+        <View style={{ flex: 1 }}>
+          <View style={{ flex: 1, padding: 10, paddingHorizontal: 20 }}>
             <View
               style={{
                 flex: 1,
                 flexDirection: "row",
-                paddingLeft: 20,
-                marginTop: 20,
-                paddingBottom: 20,
+                alignItems: "center",
+                paddingHorizontal: 10,
+                marginBottom: 5,
+              }}
+            >
+              <Image
+                source={require("../assets/icon_note.png")}
+                style={{ width: 12, height: 12 }}
+              />
+              <Text style={{ paddingLeft: 10, fontSize: 18 }}>
+                {strings.BIO}
+              </Text>
+            </View>
+            <View
+              style={{
+                backgroundColor: "#fff",
+                borderColor: "#eee",
+                padding: 5,
+                marginBottom: 15,
+
+                // marginRight: 10,
+                borderWidth: 1,
+                borderRadius: 10,
+                shadowColor: "#bbb",
+                shadowOffset: {
+                  width: 0,
+                  height: 3,
+                },
+                shadowOpacity: 0.23,
+                shadowRadius: 2.62,
+                elevation: 4,
+              }}
+            >
+              <TextInput
+                style={{
+                  width: "100%",
+                  color: "#666",
+                  textAlignVertical: "top",
+                }}
+                onChangeText={(text) => setBio(text)}
+                placeholder={BIO_PLACEHOLDER}
+                value={bio}
+                multiline={true}
+                editable={true}
+                // autoFocus={true}
+                numberOfLines={5}
+                onFocus={() => {
+                  handleFocus(8);
+                }}
+                ref={(ref) => {
+                  handleRef(8, ref);
+                }}
+              />
+            </View>
+          </View>
+        </View>
+
+        <View style={{ flex: 1 }}>
+          <Modal
+            animationType="slide"
+            transparent={false}
+            visible={modalVisible3}
+            onRequestClose={() => {
+              // Alert.alert('Modal has been closed.');
+            }}
+          >
+            <SafeAreaView>
+              <View style={{ marginTop: 22, height: "89%" }}>
+                <View>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      paddingBottom: 20,
+                      paddingTop: 20,
+                    }}
+                  >
+                    <View style={{ width: "20%", marginLeft: 15 }}>
+                      <TouchableOpacity onPress={() => setModalVisible3(false)}>
+                        <Image
+                          source={require("../assets/ic_back.png")}
+                          style={{ width: 28, height: 22 }}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                    <View style={{ width: "60%" }}>
+                      <Text
+                        style={{
+                          color: "#4834A6",
+                          fontSize: 18,
+                          textAlign: "center",
+                        }}
+                      >
+                        {strings.JOB_CATEGORIES}
+                      </Text>
+                    </View>
+                    <View style={{ width: "20%" }}>
+                      <TouchableOpacity onPress={() => setModalVisible3(false)}>
+                        <Text style={{ color: "#4834A6", fontSize: 18 }}>
+                          {strings.DONE}
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+
+                  <FlatList
+                    data={categoriesList}
+                    keyExtractor={(item) => item.category_id.toString()}
+                    renderItem={({ item, index, separators }) => (
+                      <View
+                        key={index}
+                        onPress={() => _onPress3(item)}
+                        onShowUnderlay={separators.highlight}
+                        onHideUnderlay={separators.unhighlight}
+                      >
+                        <View style={{ backgroundColor: "white" }}>
+                          <TouchableOpacity
+                            style={{
+                              flex: 1,
+                              flexDirection: "row",
+                              alignItems: "center",
+                              padding: 10,
+                              borderBottomWidth: 1,
+                              borderBottomColor: "#eee",
+                            }}
+                            onPress={() => addToCategoreis(item)}
+                          >
+                            {item.selected ? (
+                              <View>
+                                <Image
+                                  source={require("../assets/ic_selected.png")}
+                                  style={{
+                                    width: 17,
+                                    height: 17,
+                                    marginRight: 10,
+                                    marginLeft: 20,
+                                  }}
+                                />
+                              </View>
+                            ) : (
+                              <View>
+                                <Image
+                                  source={require("../assets/ic_add_blue.png")}
+                                  style={{
+                                    width: 17,
+                                    height: 17,
+                                    marginRight: 10,
+                                    marginLeft: 20,
+                                  }}
+                                />
+                              </View>
+                            )}
+
+                            <Text
+                              style={{
+                                fontSize: 20,
+                                color: "#222",
+                              }}
+                            >
+                              {item.category_name}
+                            </Text>
+                          </TouchableOpacity>
+                        </View>
+                      </View>
+                    )}
+                  />
+                </View>
+              </View>
+            </SafeAreaView>
+          </Modal>
+          <Text
+            style={{
+              fontSize: 18,
+              paddingLeft: 20,
+              marginBottom: 5,
+            }}
+          >
+            {strings.JOB_CATEGORIES}
+          </Text>
+          <TouchableOpacity
+            style={styles.code}
+            onPress={() => setModalVisible3(true)}
+          >
+            <View style={{ flexDirection: "row" }}>
+              <Image
+                source={require("../assets/ic_file_number.png")}
+                style={{ width: 17, height: 17, marginRight: 5 }}
+              />
+              <Text style={{ width: "95%", color: "#000" }}>
+                {categoriesList.filter((item) => item.selected).length > 0
+                  ? categoriesList
+                      .filter((item) => item.selected)
+                      .map((item) => item.category_name)
+                      .toString()
+                  : strings.SELECT_JOB_CATEGORIES}
+              </Text>
+            </View>
+          </TouchableOpacity>
+          <View style={[{ marginHorizontal: 20 }]}>
+            <Text style={{ fontSize: 12 }}>
+              Please select the business categories that most closely match the
+              job you're looking to apply to. When a business posts a new job,
+              we'll be able to notify you. You may choose as many categories as
+              you like!
+            </Text>
+          </View>
+        </View>
+
+        <View style={{ flex: 1 }}>
+          <View style={{ flex: 1, padding: 20 }}>
+            <View
+              style={{
+                flex: 1,
+                flexDirection: "row",
                 alignItems: "center",
               }}
             >
               <Image
-                source={require("../assets/ic_past_positions.png")}
-                style={{ width: 20, height: 20, marginRight: 5 }}
+                source={require("../assets/ic_star.png")}
+                style={{ width: 12, height: 12 }}
               />
-              <Text style={{ fontSize: 18 }}>
-                {strings.PAST_POSTIONS} {strings.OPTIONAL}
+              <Text style={{ paddingLeft: 10, fontSize: 18 }}>
+                {strings.SKILLS}
               </Text>
             </View>
-            <View style={{ flex: 1 }}>
-              {positions.map((p) => {
-                return (
-                  <View
-                    key={p.post_id}
-                    style={{
-                      flex: 1,
-                      flexDirection: "row",
-                      paddingLeft: 20,
-                      paddingBottom: 20,
-                    }}
-                  >
-                    <View style={{ width: "10%", paddingRight: 20 }}>
-                      <Image
-                        source={require("../assets/ic_edit.png")}
-                        style={{ width: 20, height: 20, marginRight: 5 }}
-                      />
-                    </View>
-                    <View style={{ width: "90%" }}>
-                      <Text style={{ color: "#999", fontSize: 12 }}>
-                        {dateFormat(p.from_date)} - {dateFormat(p.to_date)}
-                      </Text>
-                      <Text style={{ fontSize: 14, width: "90%" }}>
-                        {p.category}, {p.company_name}, {p.city_name}{" "}
-                      </Text>
-                    </View>
-                  </View>
-                );
-              })}
-
-              <TouchableOpacity
+            <View
+              style={{
+                flex: 1,
+                alignItems: "flex-start",
+                backgroundColor: "#fff",
+                borderColor: "#eee",
+                paddingTop: 13,
+                paddingLeft: 13,
+                marginBottom: 15,
+                borderWidth: 1,
+                borderRadius: 10,
+                shadowColor: "#bbb",
+                shadowOffset: {
+                  width: 0,
+                  height: 3,
+                },
+                shadowOpacity: 0.23,
+                shadowRadius: 2.62,
+                elevation: 4,
+              }}
+            >
+              {/* <FlatList
+                    data={skills}
+                    keyExtractor={(item) => item}
+                    renderItem={renderSkill}
+                  /> */}
+              <View style={{ flex: 1, flexDirection: "row", flexWrap: "wrap" }}>
+                {skills.map((item, index) => {
+                  return renderSkill({ item, index });
+                })}
+              </View>
+              <View
                 style={{
-                  alignSelf: "center",
-                  marginTop: 20,
-                  marginBottom: 160,
+                  borderColor: "#eee",
+                  marginBottom: 5,
+                  paddingHorizontal: 5,
+                  // marginRight: 10,
+                  borderWidth: 1,
+                  borderRadius: 10,
+                  margin: 5,
                 }}
-                onPress={() => navigation.navigate("SeekerAddPastPosition")}
               >
-                <Text style={{ color: "#4E35AE", fontSize: 16 }}>
-                  + {strings.ADD_PAST_POSTION}
-                </Text>
-              </TouchableOpacity>
+                <TextInput
+                  style={{ width: "100%", color: "#000" }}
+                  placeholder={strings.ENTER_SKILL}
+                  textContentType="none"
+                  onSubmitEditing={() => addSkill()}
+                  returnKeyType={"done"}
+                  onEndEditing={() => addSkill()}
+                  value={skill}
+                  onChangeText={(text) => onChangeSkill(text)}
+                />
+              </View>
             </View>
           </View>
-          <View style={{ height: 20 }}></View>
+        </View>
 
-          </KeyboardAwareScrollView>
-                  <KeyboardAccessoryNavigation
-          onNext={handleFocusNext}
-          onPrevious={handleFocusPrev}
-          onPress={handleFocusNext}
-          nextDisabled={nextFocusDisabled}
-          previousDisabled={previousFocusDisabled}
-          androidAdjustResize={Platform.OS == "android"}
-          avoidKeyboard={true}
-          style={
-            Platform.OS == "android"
-              ? { top: 0, position: "absolute", zIndex: 9999 }
-              : { top: isIphoneX ?20:0 }
-          }
-        />
-        {/* </KeyboardAvoidingView> */}
-        <View style={{ position: "absolute", bottom: isIphoneX?20: 0, width: "100%" }}>
-          {error ? (
-            <Text
-              style={{ color: "red", padding: 20, backgroundColor: "#fff" }}
-            >
-              {error}
+        <View style={{ flex: 1 }}>
+          <View>
+            <Text style={{ fontSize: 18, paddingLeft: 20, marginBottom: 5 }}>
+              {strings.LEVEL_OF_EDUCATION}
             </Text>
-          ) : null}
+            <View style={styles.code3}>
+              <Image
+                source={require("../assets/ic_educate.png")}
+                style={{ width: 20, height: 20, marginRight: 5 }}
+              />
+              <RNPickerSelect
+                onValueChange={(value) => _edulevel(value)}
+                value={eduLevel}
+                style={pickerSelectStyles}
+                items={educationLevels.map((i) => {
+                  return {
+                    label: i,
+                    value: i,
+                  };
+                })}
+              />
+            </View>
+          </View>
+        </View>
+
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 18, paddingLeft: 20, marginBottom: 5 }}>
+            {strings.NAME_OF_INSTITUTION}
+          </Text>
+          <View style={styles.code}>
+            <Image
+              source={require("../assets/ic_educate.png")}
+              style={{ width: 20, height: 20, marginRight: 5 }}
+            />
+            <TextInput
+              style={{ width: "100%", color: "#000" }}
+              onChangeText={(text) => setInstitution(text)}
+              placeholder={strings.INSTITUTION}
+              value={institution}
+              textContentType="none"
+              onFocus={() => {
+                handleFocus(9);
+              }}
+              ref={(ref) => {
+                handleRef(9, ref);
+              }}
+            />
+          </View>
+        </View>
+
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 18, paddingLeft: 20, marginBottom: 5 }}>
+            {strings.CERTIFICATION} {strings.OPTIONAL}
+          </Text>
+          <View style={styles.code}>
+            <Image
+              source={require("../assets/ic_certificate.png")}
+              style={{ width: 17, height: 17, marginRight: 5 }}
+            />
+            <TextInput
+              style={{ width: "100%", color: "#000" }}
+              onChangeText={(text) => setCertificate(text)}
+              placeholder={strings.CERTIFICATE_PLACEHOLDER}
+              value={certificate}
+              textContentType="none"
+              onFocus={() => {
+                handleFocus(10);
+              }}
+              ref={(ref) => {
+                handleRef(10, ref);
+              }}
+            />
+          </View>
+        </View>
+
+        <View style={{ flex: 1 }}>
+          <Modal
+            animationType="slide"
+            transparent={false}
+            visible={modalVisible2}
+            onRequestClose={() => {
+              // Alert.alert('Modal has been closed.');
+            }}
+          >
+            <SafeAreaView>
+              <View style={{ marginTop: 22, height: "89%" }}>
+                <View>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      paddingBottom: 20,
+                      paddingTop: 20,
+                    }}
+                  >
+                    <View style={{ width: "20%", marginLeft: 15 }}>
+                      <TouchableOpacity onPress={() => setModalVisible2(false)}>
+                        <Image
+                          source={require("../assets/ic_back.png")}
+                          style={{ width: 28, height: 22 }}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                    <View style={{ width: "60%" }}>
+                      <Text style={{ color: "#4834A6", fontSize: 18 }}>
+                        {strings.ADD_YOUR_LANGUAGES}
+                      </Text>
+                    </View>
+                    <View style={{ width: "60%" }}>
+                      <TouchableOpacity onPress={() => setModalVisible2(false)}>
+                        <Text style={{ color: "#4834A6", fontSize: 18 }}>
+                          {strings.DONE}
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+
+                  <View
+                    style={{
+                      width: "85%",
+                      margin: 20,
+                      backgroundColor: "#fff",
+                      padding: 10,
+                      borderRadius: 8,
+                      borderWidth: 1,
+                      borderColor: "#ddd",
+                    }}
+                  >
+                    <View style={{ width: "15%" }}>
+                      <Image
+                        source={require("../assets/ic_search.png")}
+                        style={{ position: "absolute" }}
+                      />
+                    </View>
+                    <View style={{ width: "70%", paddingLeft: 20 }}>
+                      <TextInput
+                        style={{
+                          width: "100%",
+                          paddingLeft: 10,
+                          color: "#000",
+                        }}
+                        onChangeText={(text) => searchLangs(text)}
+                        placeholder={strings.SEARCH}
+                        value={search}
+                      />
+                    </View>
+                  </View>
+
+                  <FlatList
+                    // ItemSeparatorComponent={<Separator />}
+                    data={filteredLangs}
+                    keyExtractor={(item) => item.code}
+                    renderItem={({ item, index, separators }) => (
+                      <View
+                        key={index}
+                        onPress={() => _onPress3(item)}
+                        onShowUnderlay={separators.highlight}
+                        onHideUnderlay={separators.unhighlight}
+                      >
+                        <View style={{ backgroundColor: "white" }}>
+                          <View
+                            style={{
+                              flex: 1,
+                              flexDirection: "row",
+                              alignItems: "center",
+                              padding: 10,
+                              borderBottomWidth: 1,
+                              borderBottomColor: "#eee",
+                            }}
+                          >
+                            {isLangSelected(item) ? (
+                              <TouchableOpacity
+                                onPress={() => removeFromLangs(item)}
+                              >
+                                <Image
+                                  source={require("../assets/ic_selected.png")}
+                                  style={{
+                                    width: 17,
+                                    height: 17,
+                                    marginRight: 10,
+                                    marginLeft: 20,
+                                  }}
+                                />
+                              </TouchableOpacity>
+                            ) : (
+                              <TouchableOpacity
+                                onPress={() => addToLangs(item)}
+                              >
+                                <Image
+                                  source={require("../assets/ic_add_blue.png")}
+                                  style={{
+                                    width: 17,
+                                    height: 17,
+                                    marginRight: 10,
+                                    marginLeft: 20,
+                                  }}
+                                />
+                              </TouchableOpacity>
+                            )}
+
+                            <Text
+                              style={{
+                                fontSize: 20,
+                                color: "#222",
+                              }}
+                            >
+                              {item}
+                            </Text>
+                          </View>
+                        </View>
+                      </View>
+                    )}
+                  />
+                </View>
+              </View>
+            </SafeAreaView>
+          </Modal>
+
+          <Text style={{ fontSize: 18, paddingLeft: 20, marginBottom: 5 }}>
+            {strings.LANGUAGE}
+          </Text>
+          <TouchableOpacity
+            style={styles.code}
+            onPress={() => setModalVisible2(true)}
+          >
+            <View style={{ flexDirection: "row" }}>
+              <Image
+                source={require("../assets/ic_language.png")}
+                style={{ width: 17, height: 17, marginRight: 5 }}
+              />
+              <Text style={{ width: "100%", color: "#000" }}>
+                {langs ? langs : strings.SELECT_YOUR_LANGUAGE}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+
+        <View style={{ flex: 1 }}>
+          <View>
+            <Text style={{ fontSize: 18, paddingLeft: 20, marginBottom: 5 }}>
+              {strings.AVAILABILITY}
+            </Text>
+            <View style={styles.code3}>
+              <Image
+                source={require("../assets/ic_educate.png")}
+                style={{ width: 20, height: 20, marginRight: 5 }}
+              />
+              <RNPickerSelect
+                onValueChange={(value) => _availability(value)}
+                value={availability}
+                style={pickerSelectStyles}
+                items={[
+                  { label: "Full Time", value: "Full Time" },
+                  { label: "Part Time", value: "Part Time" },
+                  { label: "Flexible", value: "Flexible" },
+                ]}
+              />
+            </View>
+          </View>
+        </View>
+
+        <View style={{ flex: 1 }}>
           <TouchableOpacity
             style={{
               flex: 1,
-              alignContent: "center",
-              backgroundColor: "#5B42BB",
-              padding: 15,
+              flexDirection: "row",
+              paddingLeft: 20,
+              paddingTop: 15,
+              paddingBottom: 15,
+              alignItems: "center",
             }}
-            onPress={() => handleUpdate()}
+            onPress={() => toggleEligible()}
           >
-            <Text style={{ color: "#fff", textAlign: "center", fontSize: 18 }}>
-              {strings.FINISH_REGISTRATION}
+            {eligible ? (
+              <Image
+                source={require("../assets/checkbox_checked.png")}
+                style={{ width: 25, height: 25, marginRight: 5 }}
+              />
+            ) : (
+              <Image
+                source={require("../assets/checkbox_blank.png")}
+                style={{ width: 25, height: 25, marginRight: 5 }}
+              />
+            )}
+            <Text style={{ paddingLeft: 5, color: "#3482FF" }}>
+              {strings.ARE_YOU_ELEGIBLE}
             </Text>
           </TouchableOpacity>
         </View>
-      </SafeAreaView>
 
-     
+        <View style={{ flex: 1 }}>
+          <TouchableOpacity
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              paddingLeft: 20,
+              paddingTop: 15,
+              paddingBottom: 15,
+              alignItems: "center",
+            }}
+            onPress={() => toggleSixteen()}
+          >
+            {sixteen ? (
+              <Image
+                source={require("../assets/checkbox_checked.png")}
+                style={{ width: 25, height: 25, marginRight: 5 }}
+              />
+            ) : (
+              <Image
+                source={require("../assets/checkbox_blank.png")}
+                style={{ width: 25, height: 25, marginRight: 5 }}
+              />
+            )}
+            <Text style={{ paddingLeft: 5, color: "#3482FF" }}>
+              {strings.ARE_YOU_AT_LEAST}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={{ flex: 1 }}>
+          <TouchableOpacity
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              paddingLeft: 20,
+              paddingTop: 15,
+              paddingBottom: 15,
+              alignItems: "center",
+            }}
+            onPress={() => toggleConvictions()}
+          >
+            {convictions ? (
+              <Image
+                source={require("../assets/checkbox_checked.png")}
+                style={{ width: 25, height: 25, marginRight: 5 }}
+              />
+            ) : (
+              <Image
+                source={require("../assets/checkbox_blank.png")}
+                style={{ width: 25, height: 25, marginRight: 5 }}
+              />
+            )}
+            <View style={{ flex: 1 }}>
+              <Text style={{ paddingLeft: 5, color: "#3482FF" }}>
+                {strings.HAVE_YOU_EVER_BEEN_CONVICTED}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+
+        <View style={{ flex: 1, marginBottom: 30 }}>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              paddingLeft: 20,
+              marginTop: 20,
+              paddingBottom: 20,
+              alignItems: "center",
+            }}
+          >
+            <Image
+              source={require("../assets/ic_past_positions.png")}
+              style={{ width: 20, height: 20, marginRight: 5 }}
+            />
+            <Text style={{ fontSize: 18 }}>
+              {strings.PAST_POSTIONS} {strings.OPTIONAL}
+            </Text>
+          </View>
+          <View style={{ flex: 1 }}>
+            {positions.map((p) => {
+              return (
+                <View
+                  key={p.post_id}
+                  style={{
+                    flex: 1,
+                    flexDirection: "row",
+                    paddingLeft: 20,
+                    paddingBottom: 20,
+                  }}
+                >
+                  <View style={{ width: "10%", paddingRight: 20 }}>
+                    <Image
+                      source={require("../assets/ic_edit.png")}
+                      style={{ width: 20, height: 20, marginRight: 5 }}
+                    />
+                  </View>
+                  <View style={{ width: "90%" }}>
+                    <Text style={{ color: "#999", fontSize: 12 }}>
+                      {dateFormat(p.from_date)} - {dateFormat(p.to_date)}
+                    </Text>
+                    <Text style={{ fontSize: 14, width: "90%" }}>
+                      {p.category}, {p.company_name}, {p.city_name}{" "}
+                    </Text>
+                  </View>
+                </View>
+              );
+            })}
+
+            <TouchableOpacity
+              style={{
+                alignSelf: "center",
+                marginTop: 20,
+                marginBottom: 160,
+              }}
+              onPress={() => navigation.navigate("SeekerAddPastPosition")}
+            >
+              <Text style={{ color: "#4E35AE", fontSize: 16 }}>
+                + {strings.ADD_PAST_POSTION}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={{ height: 20 }}></View>
+      </KeyboardAwareScrollView>
+      <KeyboardAccessoryNavigation
+        onNext={handleFocusNext}
+        onPrevious={handleFocusPrev}
+        onPress={handleFocusNext}
+        nextDisabled={nextFocusDisabled}
+        previousDisabled={previousFocusDisabled}
+        androidAdjustResize={Platform.OS == "android"}
+        avoidKeyboard={true}
+        style={
+          Platform.OS == "android"
+            ? { top: 0, position: "absolute", zIndex: 9999 }
+            : { top: isIphoneX ? 20 : 0 }
+        }
+      />
+      {/* </KeyboardAvoidingView> */}
+      <View
+        style={{
+          position: "absolute",
+          bottom: isIphoneX ? 20 : 0,
+          width: "100%",
+        }}
+      >
+        {error ? (
+          <Text style={{ color: "red", padding: 20, backgroundColor: "#fff" }}>
+            {error}
+          </Text>
+        ) : null}
+        <TouchableOpacity
+          style={{
+            flex: 1,
+            alignContent: "center",
+            backgroundColor: "#5B42BB",
+            padding: 15,
+          }}
+          onPress={() => handleUpdate()}
+        >
+          <Text style={{ color: "#fff", textAlign: "center", fontSize: 18 }}>
+            {strings.FINISH_REGISTRATION}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 }
 

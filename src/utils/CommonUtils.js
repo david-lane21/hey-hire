@@ -13,12 +13,10 @@ class CommonUtil {
     deviceTokenSet = async () => {
 
         const token = await messaging().getToken();
-        console.log('Coomon util', token);
         this.deviceToken = token;
     }
 
     setLocation(lat, long) {
-        console.log('Set locaiton',lat,long);
         this.lat = lat;
         this.long = long;
     }
@@ -37,7 +35,6 @@ class CommonUtil {
             var difflon = (lon2 - lon1) * (Math.PI / 180); // Radian difference (longitudes)
 
             var d = 2 * R * Math.asin(Math.sqrt(Math.sin(difflat / 2) * Math.sin(difflat / 2) + Math.cos(rlat1) * Math.cos(rlat2) * Math.sin(difflon / 2) * Math.sin(difflon / 2)));
-            console.log(lat1,lon1,lat2)
             return d.toFixed(1);
         }
     }

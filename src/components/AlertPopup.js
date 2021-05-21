@@ -15,7 +15,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import {strings} from '../translation/config';
 
 
-export default function AlertPopup({ visible, job, onClose }) {
+export default function AlertPopup({ visible,business, job, onClose }) {
   return (
     <Modal
       animationType="fade"
@@ -55,7 +55,7 @@ export default function AlertPopup({ visible, job, onClose }) {
               }}
             >
               <Image
-                source={{ uri: job.business.avatar_image }}
+                source={{ uri: business.avatar_image }}
                 style={{ height: 70, width: 70, borderRadius: 50 }}
               />
             </View>
@@ -88,7 +88,7 @@ export default function AlertPopup({ visible, job, onClose }) {
                     },
                   ]}
                 >
-                  {strings.YOUR_APPLICATION_HAS_BEEN_SEND} {job.business.business_name}
+                  {strings.YOUR_APPLICATION_HAS_BEEN_SEND} {business.business_name}
                 </Text>
                 <Text
                   style={[

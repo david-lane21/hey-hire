@@ -22,7 +22,7 @@ import {strings} from './translation/config';
 
 
 function SeekerAvailableJobs({ route, navigation }) {
-  console.log(route)
+
     // const [bizId, setBizId] = useState(route.params.biz_id)
   const isFocused = useIsFocused();
   const [user, setUser] = useState({});
@@ -55,9 +55,9 @@ function SeekerAvailableJobs({ route, navigation }) {
         .then((json) => { 
           setRefresh(false);
 
-          console.log("-----------");
-          console.log(json.data);
-          console.log("+++++++++++");
+          // console.log("-----------");
+          // console.log(json.data);
+          // console.log("+++++++++++");
 
           if(json.data && typeof json.data=="object"){
                       setProfile(json.data);
@@ -97,7 +97,6 @@ function SeekerAvailableJobs({ route, navigation }) {
   function getHired(job) {
     let tempJob = job;
     tempJob.business = profile;
-    console.log(route);
     if (route.name == "SeekerHomeAvailableJobs") {
       navigation.navigate("SeekerHomeJobDetail", { job: tempJob });
     } else {

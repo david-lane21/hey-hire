@@ -70,7 +70,6 @@ function SeekerHome({ navigation }) {
 
         
           Location.getLastKnownPositionAsync().then((loc) => {
-            console.log('LAst location',loc);
 const coords=loc.coords;
 
             setLatitude(coords.latitude);
@@ -255,7 +254,6 @@ const coords=loc.coords;
 
   async function loadDate() {
     try {
-      console.log(latitude,longitude,region)
 
       getUser().then((u) => {
         let u2 = JSON.parse(u);
@@ -270,6 +268,7 @@ const coords=loc.coords;
             return res.json();
           })
           .then((json) => {
+            console.log('profile',json.data)
             json.data.avatar_image = json.data.avatar_image + "?random_number=" + new Date().getTime();
             setProfile(json.data);
             sortPositions(json.data);

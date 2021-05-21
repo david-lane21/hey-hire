@@ -142,5 +142,10 @@
     "PASSWORD_INFO_TEXT": "Not a problem, input your email below and we will send you a reset link",
     "SELECT_YOUR_LANGUAGE": "Select your languages",
     "MILES_AWAY": "miles away",
-    "CANCEL_APPLICATION":"Cancel Application"
+    "CANCEL_APPLICATION":"Cancel Application",
+    "CONNECT_YOUR_INSTAGRAM":"Connect your Instagram",
+    "INSTRAGRAM_CONNECTED":"Instagram Connected",
+    "REQUIRED_CERTIFICATIONS":"Required certifications",
+    "JOB_CATEGORIES":"Job Categories",
+    "SELECT_JOB_CATEGORIES":"Select Job Categories"
 }

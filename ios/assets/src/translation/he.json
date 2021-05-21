@@ -141,6 +141,12 @@
     "GO_BACK": "חזרה אחורה",
     "PASSWORD_INFO_TEXT": "אין בעיה, עליך לרשום את הדוא\"ל שלך למטה ונשלח לך קישור איפוס.",
     "SELECT_YOUR_LANGUAGE": "בחירת שפות",
-    "MILES_AWAY": "קילומטרים (מרחק)"
+    "MILES_AWAY": "קילומטרים (מרחק)",
+    "CANCEL_APPLICATION":"בטל בקשה",
+    "CONNECT_YOUR_INSTAGRAM":"חבר את האינסטגרם שלך",
+    "INSTRAGRAM_CONNECTED":"אינסטגרם מחובר",
+    "REQUIRED_CERTIFICATIONS":"אישורים נדרשים",
+    "JOB_CATEGORIES":"קטגוריות עבודה",
+    "SELECT_JOB_CATEGORIES":"בחר קטגוריות משרה"
 
 }
