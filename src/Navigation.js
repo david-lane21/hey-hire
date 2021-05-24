@@ -49,6 +49,7 @@ import BusinessEmployees from "./BusinessEmployeers";
 import BusinessSubmittedApplication from "./BusinessSubmittedApplication";
 import SeekerEditPastPosition from "./SeekerEditPastPosition";
 import ForgotPassword from './ForgotPassword';
+import SeekerBusinessList from './SeekerBusinessList';
 
 const Stack = createStackNavigator();
 const Stack2 = createStackNavigator();
@@ -512,6 +513,13 @@ function SeekerHomeRoute({ navigation }) {
       <Stack3.Screen
         name="SeekerHome"
         component={SeekerHome}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack3.Screen
+        name="SeekerBusinessList"
+        component={SeekerBusinessList}
         options={{
           headerShown: false,
         }}

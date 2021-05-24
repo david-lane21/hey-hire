@@ -11,7 +11,7 @@ import {
   Linking,
   Alert,
   Dimensions,
-  PermissionsAndroid
+  PermissionsAndroid,
 } from "react-native";
 import { getUser, removeUser } from "./utils/utils.js";
 import { postFormData } from "./utils/network.js";
@@ -19,11 +19,11 @@ import { LinearGradient } from "expo-linear-gradient";
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import { useIsFocused } from "@react-navigation/native";
-import GeolocationNew from '@react-native-community/geolocation';
+import GeolocationNew from "@react-native-community/geolocation";
 
 import Header from "./components/Header";
-import { strings } from './translation/config';
-import NavigationService from './utils/NavigationService';
+import { strings } from "./translation/config";
+import NavigationService from "./utils/NavigationService";
 import { AuthContext } from "./navigation/context";
 import CommonUtils from "./utils/CommonUtils.js";
 import { Platform } from "react-native";
@@ -55,49 +55,23 @@ function SeekerHome({ navigation }) {
       setTimeout(() => {
         loadDate();
       }, 500);
-
     }
   }, [isFocused]);
 
   useEffect(() => {
-
-    Linking.addEventListener('url', handleOpenURL);
+    Linking.addEventListener("url", handleOpenURL);
     (async () => {
       if (Platform.OS == "android") {
         const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
-        if (granted == 'granted') {
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+        );
+        if (granted == "granted") {
+          Location.getLastKnownPositionAsync()
+            .then((loc) => {
+              const coords = loc.coords;
 
-        
-          Location.getLastKnownPositionAsync().then((loc) => {
-const coords=loc.coords;
-
-            setLatitude(coords.latitude);
-            setLongitude(coords.longitude);
-            map.animateToRegion(
-              {
-                latitude: loc.coords.latitude,
-                longitude: loc.coords.longitude,
-                latitudeDelta: 0.0522,
-                longitudeDelta: 0.0421,
-              },
-              500
-            );
-
-            CommonUtils.setLocation(loc.coords.latitude, loc.coords.longitude);
-            setRegion({
-              latitude: loc.coords.latitude,
-              longitude: loc.coords.longitude,
-              latitudeDelta: 0.0522,
-              longitudeDelta: 0.0421,
-            });
-            loadDate();
-
-          }).catch((error) => {
-           Location.getCurrentPositionAsync().then((loc)=>{
-
-       
-
+              setLatitude(coords.latitude);
+              setLongitude(coords.longitude);
               map.animateToRegion(
                 {
                   latitude: loc.coords.latitude,
@@ -107,11 +81,11 @@ const coords=loc.coords;
                 },
                 500
               );
-              // setLocation(loc.coords);
-              setLatitude(loc.coords.latitude);
-              setLongitude(loc.coords.longitude);
-              CommonUtils.setLocation(loc.coords.latitude, loc.coords.longitude);
 
+              CommonUtils.setLocation(
+                loc.coords.latitude,
+                loc.coords.longitude
+              );
               setRegion({
                 latitude: loc.coords.latitude,
                 longitude: loc.coords.longitude,
@@ -119,41 +93,61 @@ const coords=loc.coords;
                 longitudeDelta: 0.0421,
               });
               loadDate();
+            })
+            .catch((error) => {
+              Location.getCurrentPositionAsync()
+                .then((loc) => {
+                  map.animateToRegion(
+                    {
+                      latitude: loc.coords.latitude,
+                      longitude: loc.coords.longitude,
+                      latitudeDelta: 0.0522,
+                      longitudeDelta: 0.0421,
+                    },
+                    500
+                  );
+                  // setLocation(loc.coords);
+                  setLatitude(loc.coords.latitude);
+                  setLongitude(loc.coords.longitude);
+                  CommonUtils.setLocation(
+                    loc.coords.latitude,
+                    loc.coords.longitude
+                  );
 
-            }).catch( (error)=> {
-              console.log('Current Possigion', error);
-            
-              map.animateToRegion(
-                {
-                  latitude: latitude,
-                  longitude: longitude,
-                  latitudeDelta: 0.0522,
-                  longitudeDelta: 0.0421,
-                },
-                500
-              );
-              // setLocation(loc.coords);
-              setLatitude(latitude);
-              setLongitude(longitude);
-              CommonUtils.setLocation(latitude, longitude);
+                  setRegion({
+                    latitude: loc.coords.latitude,
+                    longitude: loc.coords.longitude,
+                    latitudeDelta: 0.0522,
+                    longitudeDelta: 0.0421,
+                  });
+                  loadDate();
+                })
+                .catch((error) => {
+                  map.animateToRegion(
+                    {
+                      latitude: latitude,
+                      longitude: longitude,
+                      latitudeDelta: 0.0522,
+                      longitudeDelta: 0.0421,
+                    },
+                    500
+                  );
+                  // setLocation(loc.coords);
+                  setLatitude(latitude);
+                  setLongitude(longitude);
+                  CommonUtils.setLocation(latitude, longitude);
 
-              setRegion({
-                latitude:latitude,
-                longitude: longitude,
-                latitudeDelta: 0.0522,
-                longitudeDelta: 0.0421,
-              });
-              loadDate();
-
+                  setRegion({
+                    latitude: latitude,
+                    longitude: longitude,
+                    latitudeDelta: 0.0522,
+                    longitudeDelta: 0.0421,
+                  });
+                  loadDate();
+                });
             });
-          });
-
-
         }
       } else {
-
-
-
         try {
           let { status } = await Location.requestPermissionsAsync();
           if (status !== "granted") {
@@ -181,7 +175,6 @@ const coords=loc.coords;
             longitudeDelta: 0.0421,
           });
           loadDate();
-
         } catch (error) {
           try {
             let loc = await Location.getCurrentPositionAsync();
@@ -207,11 +200,7 @@ const coords=loc.coords;
               longitudeDelta: 0.0421,
             });
             loadDate();
-
           } catch (error) {
-            console.log('Current Possigion', error);
-           
-            
             map.animateToRegion(
               {
                 latitude: latitude,
@@ -227,34 +216,31 @@ const coords=loc.coords;
             CommonUtils.setLocation(latitude, longitude);
 
             setRegion({
-              latitude:latitude,
+              latitude: latitude,
               longitude: longitude,
               latitudeDelta: 0.0522,
               longitudeDelta: 0.0421,
             });
-             loadDate();
+            loadDate();
           }
         }
       }
     })();
 
     return () => {
-      Linking.removeEventListener('url', handleOpenURL);
-    }
+      Linking.removeEventListener("url", handleOpenURL);
+    };
   }, [isFocused]);
-
-
 
   function handleOpenURL(event) {
     let businessId = event.url.split("/").filter(Boolean).pop();
-    NavigationService.navigate("SeekerHomeAvailableJobs",
-      { biz_id: businessId / 33469 },
-    );
+    NavigationService.navigate("SeekerHomeAvailableJobs", {
+      biz_id: businessId / 33469,
+    });
   }
 
   async function loadDate() {
     try {
-
       getUser().then((u) => {
         let u2 = JSON.parse(u);
         setUser1(u2);
@@ -268,8 +254,8 @@ const coords=loc.coords;
             return res.json();
           })
           .then((json) => {
-            console.log('profile',json.data)
-            json.data.avatar_image = json.data.avatar_image + "?random_number=" + new Date().getTime();
+            json.data.avatar_image =
+              json.data.avatar_image + "?random_number=" + new Date().getTime();
             setProfile(json.data);
             sortPositions(json.data);
             postFormData("get_all_business", form)
@@ -277,18 +263,30 @@ const coords=loc.coords;
                 return json2.json();
               })
               .then((json2) => {
+                
                 let bizList = json2.data.filter(
-                  (b) => parseFloat(b.latitude) && parseFloat(b.longitude) && b.is_active == 1
+                  (b) =>
+                    parseFloat(b.latitude) &&
+                    parseFloat(b.longitude) &&
+                    b.is_active == 1
                 );
                 bizList = bizList.map((b) => {
-                
-                  b.distance_in_km =  CommonUtils.distance(b.latitude,b.longitude,"K")
+                  b.distance_in_km = CommonUtils.distance(
+                    b.latitude,
+                    b.longitude,
+                    "K"
+                  );
                   return b;
                 });
+                bizList = bizList.filter(
+                  (item) => item.distance_in_km <20
+                );
 
                 bizList = bizList.sort(
                   (a, b) => a.distance_in_km - b.distance_in_km
                 );
+                console.log('Business list',bizList);
+
                 setBusinesses(bizList);
                 setRefresh(false);
               });
@@ -297,9 +295,8 @@ const coords=loc.coords;
             console.log(err);
           });
       });
-    }
-    catch (error) {
-     console.log('Load data error',error);
+    } catch (error) {
+      console.log("Load data error", error);
     }
   }
 
@@ -368,8 +365,7 @@ const coords=loc.coords;
   }
 
   function distance(lat1, lon1, lat2, lon2, unit) {
-
-    console.log(lat1, lon1, lat2, lon2, unit)
+    console.log(lat1, lon1, lat2, lon2, unit);
     if (lat1 == lat2 && lon1 == lon2) {
       return 0;
     } else {
@@ -398,12 +394,13 @@ const coords=loc.coords;
   }
 
   function distanceInKM(lat1, lon1, lat2, lon2) {
-    var p = 0.017453292519943295;    // Math.PI / 180
+    var p = 0.017453292519943295; // Math.PI / 180
     var c = Math.cos;
-    var a = 0.5 - c((lat2 - lat1) * p) / 2 +
-      c(lat1 * p) * c(lat2 * p) *
-      (1 - c((lon2 - lon1) * p)) / 2;
-    console.log(12742 * Math.asin(Math.sqrt(a)))
+    var a =
+      0.5 -
+      c((lat2 - lat1) * p) / 2 +
+      (c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p))) / 2;
+    console.log(12742 * Math.asin(Math.sqrt(a)));
     return 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
   }
 
@@ -414,7 +411,18 @@ const coords=loc.coords;
     var difflat = rlat2 - rlat1; // Radian difference (latitudes)
     var difflon = (lon2 - lon1) * (Math.PI / 180); // Radian difference (longitudes)
 
-    var d = 2 * R * Math.asin(Math.sqrt(Math.sin(difflat / 2) * Math.sin(difflat / 2) + Math.cos(rlat1) * Math.cos(rlat2) * Math.sin(difflon / 2) * Math.sin(difflon / 2)));
+    var d =
+      2 *
+      R *
+      Math.asin(
+        Math.sqrt(
+          Math.sin(difflat / 2) * Math.sin(difflat / 2) +
+            Math.cos(rlat1) *
+              Math.cos(rlat2) *
+              Math.sin(difflon / 2) *
+              Math.sin(difflon / 2)
+        )
+      );
     return d;
   }
 
@@ -424,26 +432,21 @@ const coords=loc.coords;
   }
 
   function _onLogout() {
-    Alert.alert('ApployMe',
-      `Are you sure you want to logout now?`
-      , [
-        {
-          text: 'Logout', onPress: () => {
-            removeUser();
-            signOut();
-          }
+    Alert.alert("ApployMe", `Are you sure you want to logout now?`, [
+      {
+        text: "Logout",
+        onPress: () => {
+          removeUser();
+          signOut();
         },
-        { text: 'Cancel', onPress: () => console.log('OK Pressed') }
-      ])
+      },
+      { text: "Cancel", onPress: () => console.log("OK Pressed") },
+    ]);
   }
 
   return (
-    <LinearGradient
-      style={{ flex: 1 }}
-      colors={["#4E35AE", "#775ED7"]}
-    >
+    <LinearGradient style={{ flex: 1 }} colors={["#4E35AE", "#775ED7"]}>
       <SafeAreaView>
-
         <View
           style={{
             // backgroundColor: '#4E35AE',
@@ -456,27 +459,28 @@ const coords=loc.coords;
             paddingTop: 20,
           }}
         >
-          <View style={{ flex: 1, alignItems: 'center' }}>
+          <View style={{ flex: 1, alignItems: "center" }}>
             <Image
               source={require("../assets/title_header.png")}
               style={{ width: 120, height: 25 }}
             />
           </View>
-          <View style={{ position: 'absolute', left: 5 }}>
+          <View style={{ position: "absolute", left: 5 }}>
             <TouchableOpacity
               onPress={() => {
-
                 _onLogout();
               }}
               style={{ padding: 5 }}
             >
-              <Text style={{ paddingHorizontal: 10, color: "#fff", fontSize: 18 }}>
+              <Text
+                style={{ paddingHorizontal: 10, color: "#fff", fontSize: 18 }}
+              >
                 {strings.LOGOUT}
               </Text>
             </TouchableOpacity>
           </View>
 
-          <View style={{ position: 'absolute', right: 5 }}>
+          <View style={{ position: "absolute", right: 5 }}>
             <TouchableOpacity
               onPress={() => {
                 if (profile) {
@@ -487,8 +491,7 @@ const coords=loc.coords;
                     },
                   });
                 }
-              }
-              }
+              }}
             >
               <Text
                 style={{
@@ -503,9 +506,18 @@ const coords=loc.coords;
             </TouchableOpacity>
           </View>
         </View>
-        <ScrollView style={{ marginBottom: 50 }} refreshControl={
-          <RefreshControl refreshing={refresh} onRefresh={() => { refreshData() }} tintColor={'#fff'} />
-        }>
+        <ScrollView
+          style={{ marginBottom: 50 }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refresh}
+              onRefresh={() => {
+                refreshData();
+              }}
+              tintColor={"#fff"}
+            />
+          }
+        >
           {/* <View
             style={{
               // backgroundColor: '#4E35AE',
@@ -677,7 +689,7 @@ const coords=loc.coords;
                 flexDirection: "row",
                 alignItems: "center",
                 alignContent: "center",
-                marginTop: 10
+                marginTop: 10,
               }}
             >
               <Image
@@ -770,7 +782,7 @@ const coords=loc.coords;
                         flex: 1,
                         borderBottomColor: "#715FCB",
                         borderBottomWidth: 1,
-                        marginTop: 2.5
+                        marginTop: 2.5,
                       }}
                     ></View>
                   </View>
@@ -796,7 +808,7 @@ const coords=loc.coords;
                 zoomEnabled={true}
               >
                 <Marker
-                  draggable={true}
+                  draggable={false}
                   key={"mkr.user_id"}
                   coordinate={{
                     latitude: parseFloat(latitude),
@@ -812,7 +824,7 @@ const coords=loc.coords;
                 {businesses.map((mkr, idx) => {
                   return (
                     <Marker
-                      draggable={true}
+                      draggable={false}
                       key={mkr.user_id}
                       title={mkr.business_name}
                       ref={(r) => {
@@ -915,7 +927,11 @@ const coords=loc.coords;
                             style={{ width: 50, height: 50, margin: 10 }}
                           />
                         )}
-                        <Text style={{ fontSize: 12, color: "#444", flexShrink: 1 }} numberOfLines={1} ellipsizeMode="tail">
+                        <Text
+                          style={{ fontSize: 12, color: "#444", flexShrink: 1 }}
+                          numberOfLines={1}
+                          ellipsizeMode="tail"
+                        >
                           {biz.business_name}
                         </Text>
                         <Text style={{ flex: 1, fontSize: 10, color: "#444" }}>
@@ -926,11 +942,45 @@ const coords=loc.coords;
                   );
                 }
               })}
+
+<TouchableHighlight
+                      key={'view_more'}
+                      onPress={() =>
+                        navigation.navigate("SeekerBusinessList")
+                      }
+                      style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.001)" }}
+                      underlayColor="rgba(0,0,0,0.001)"
+                    >
+                      <View
+                        style={{
+                          flex: 1,
+                          alignItems: "center",
+                          margin: 10,
+                          width: 125,
+                          height: 120,
+                          borderRadius: 8,
+                          backgroundColor: "#3C2E8F",
+                          padding: 10,
+                        }}
+                      >
+                        <Text
+                          style={{
+                            flex: 1,
+                            color: "#fff",
+                            fontSize: 20,
+                            fontWeight: "400",
+                            marginTop: 20,
+                            textAlign: "center",
+                          }}
+                        >
+                          {'Tap to view more businesses'}
+                        </Text>
+                      </View>
+                    </TouchableHighlight>
             </ScrollView>
           </View>
         </ScrollView>
       </SafeAreaView>
-
     </LinearGradient>
   );
 }

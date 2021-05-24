@@ -55,9 +55,9 @@ function SeekerAvailableJobs({ route, navigation }) {
         .then((json) => { 
           setRefresh(false);
 
-          // console.log("-----------");
-          // console.log(json.data);
-          // console.log("+++++++++++");
+          console.log("-----------");
+          console.log(json.data);
+          console.log("+++++++++++");
 
           if(json.data && typeof json.data=="object"){
                       setProfile(json.data);
