@@ -336,16 +336,16 @@ function SeekerEditProfile({ navigation, route }) {
     form.append("education_level", eduLevel);
     form.append("certificate", certificate);
     form.append("language", langs);
-    form.append("eligible", eligible);
-    form.append("sixteen", sixteen);
-    form.append("convictions", convictions);
+    form.append("eligible", eligible||false);
+    form.append("sixteen", sixteen || false);
+    form.append("convictions", convictions || false);
     form.append("skill", skills.toString());
     form.append(
       "preferred_business_categories",
       categoriesList
         .filter((item) => item.selected)
         .map((item) => item.category_id)
-        .toString()
+        .toString() 
     );
     console.log(form);
     setLoading(true);

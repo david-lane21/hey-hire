@@ -7,6 +7,7 @@ import {
   TextInput,
   Image,
   TouchableOpacity,
+  RefreshControl,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -24,13 +25,14 @@ function SeekerBusinessList({ navigation }) {
   const [search, setSearch] = useState("");
   const [message, setMessage] = useState(null);
   const [limit, setLimit] = useState(25);
+  const [refresh, setRefresh] = useState(false);
+
   function searchJobs(txt) {
     setSearch(txt);
 
     let text = txt.toLowerCase();
     if (text == "") {
       setFilteredJobs(businesses.slice(0, limit));
-
     } else {
       let jobs = businesses.filter((j) =>
         j.business_name.toLowerCase().includes(text)
@@ -47,6 +49,8 @@ function SeekerBusinessList({ navigation }) {
   }, [isFocused]);
 
   function loadData() {
+    setRefresh(true);
+
     getUser().then((u) => {
       let u2 = JSON.parse(u);
       // console.log(u2)
@@ -88,6 +92,7 @@ function SeekerBusinessList({ navigation }) {
             setBusinesses(bizList);
             setFilteredJobs(bizList.slice(0, limit));
           }
+          setRefresh(false);
         })
         .catch((err) => {
           console.log(err);
@@ -154,9 +159,10 @@ function SeekerBusinessList({ navigation }) {
             <View style={{ flex: 1 }}>
               <Text
                 style={{
-                  fontSize: 14,
-                  color: "#555",
+                  fontSize: 16,
+                  color: "#111",
                   textAlignVertical: "center",
+                  fontWeight: "500",
                 }}
                 numberOfLines={1}
               >
@@ -194,9 +200,27 @@ function SeekerBusinessList({ navigation }) {
               style={{ width: 120, height: 25 }}
             />
           </View>
+          <View style={{ position: "absolute", left: 5 }}>
+          <TouchableOpacity onPress={navigation.goBack}>
+                <Image
+                  source={require("../assets/ic_back_w.png")}
+                  style={{ width: 28, height: 25, marginLeft: 10 }}
+                />
+              </TouchableOpacity>
+          </View>
         </View>
 
-        <ScrollView style={{ backgroundColor: "#4E35AE", marginBottom: 50 }}>
+        <ScrollView
+          style={{ backgroundColor: "#fff", marginBottom: 50 }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refresh}
+              onRefresh={() => {
+                loadData();
+              }}
+            />
+          }
+        >
           <View style={{ backgroundColor: "#F4F5FA", minHeight: 1000 }}>
             <View
               style={{
