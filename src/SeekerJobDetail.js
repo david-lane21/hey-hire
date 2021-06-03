@@ -73,6 +73,8 @@ function SeekerJobDetail({ route, navigation }) {
           Alert.alert("", json.msg);
         } else {
           setModal2(true);
+          const tempJob = Object.assign({}, job, {aplied:"1"});
+          setJob(tempJob);
         }
 
         console.log("+++++++++++");
@@ -332,12 +334,12 @@ function SeekerJobDetail({ route, navigation }) {
                   style={{ width: 20, height: 20 }}
                 />
                 <Text
-                  style={{ fontSize: 16, marginLeft: 5, fontWeight: "bold" }}
+                  style={{ fontSize: 20, marginLeft: 5, fontWeight: "600", }}
                 >
                   {strings.START_DATE}
                 </Text>
               </View>
-              <Text style={{ marginBottom: 30, marginTop: 10 }}>
+              <Text style={{ marginBottom: 30, marginTop: 10,fontSize: 15 }}>
                 {dateFormat(job.start_date)}
               </Text>
 
@@ -349,12 +351,12 @@ function SeekerJobDetail({ route, navigation }) {
                   style={{ width: 15, height: 15 }}
                 />
                 <Text
-                  style={{ fontSize: 16, marginLeft: 10, fontWeight: "bold" }}
+                  style={{ fontSize: 20, marginLeft: 10, fontWeight: "600" }}
                 >
                   {strings.POSITION_DESCRIPTION}
                 </Text>
               </View>
-              <Text style={{ marginBottom: 30, marginTop: 10 }}>
+              <Text style={{ marginBottom: 30, marginTop: 10,fontSize: 15}}>
                 {job.position_desc}
               </Text>
 
@@ -366,12 +368,12 @@ function SeekerJobDetail({ route, navigation }) {
                   style={{ width: 20, height: 20 }}
                 />
                 <Text
-                  style={{ fontSize: 16, marginLeft: 10, fontWeight: "bold" }}
+                  style={{ fontSize: 20, marginLeft: 10, fontWeight: "600" }}
                 >
                   {strings.REQUIRED_EXPERIENCE}
                 </Text>
               </View>
-              <Text style={{ marginBottom: 30, marginTop: 10 }}>
+              <Text style={{ marginBottom: 30, marginTop: 10,fontSize: 15, }}>
                 {job.experience}
               </Text>
               <View
@@ -382,12 +384,12 @@ function SeekerJobDetail({ route, navigation }) {
                   style={{ width: 20, height: 20 }}
                 />
                 <Text
-                  style={{ fontSize: 16, marginLeft: 10, fontWeight: "bold" }}
+                  style={{ fontSize: 20, marginLeft: 10, fontWeight: "600" }}
                 >
                   {strings.REQUIRED_CERTIFICATIONS}
                 </Text>
               </View>
-              <Text style={{ marginBottom: 30, marginTop: 10 }}>
+              <Text style={{ marginBottom: 30, marginTop: 10,fontSize: 15 }}>
                 {job.required_certifications?job.required_certifications.map((item)=>item+"\n"):''}
               </Text>
             </View>

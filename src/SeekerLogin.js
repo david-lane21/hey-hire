@@ -122,7 +122,7 @@ function SeekerLogin({ navigation }) {
     form.append("password", password);
     form.append("user_type", "2");
 
-    form.append("device_tocken", fireBaseToken || token);
+    form.append("device_tocken", fireBaseToken);
     console.log('Login form', form);
     postFormData("user_login", form)
       .then((res) => {
@@ -145,7 +145,7 @@ function SeekerLogin({ navigation }) {
               setUser(tempUserData);
               setToken(token);
               signIn(tempUserData);
-            }
+            } 
           } else {
             console.log(json.data.user_type);
           }

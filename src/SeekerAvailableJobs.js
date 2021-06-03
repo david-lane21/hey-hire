@@ -10,7 +10,7 @@ import {
   ImageBackground,
   Alert,
   RefreshControl,
-  Dimensions
+  Dimensions,
 } from "react-native";
 import { getUser } from "./utils/utils.js";
 import { postFormData } from "./utils/network.js";
@@ -18,23 +18,21 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useIsFocused } from "@react-navigation/native";
 const window = Dimensions.get("window");
 import Header from "./components/Header";
-import {strings} from './translation/config';
-
+import { strings } from "./translation/config";
 
 function SeekerAvailableJobs({ route, navigation }) {
-
-    // const [bizId, setBizId] = useState(route.params.biz_id)
+  // const [bizId, setBizId] = useState(route.params.biz_id)
   const isFocused = useIsFocused();
   const [user, setUser] = useState({});
   const [profile, setProfile] = useState({});
   const [jobs, setJobs] = useState([]);
   const [error, setError] = useState(null);
-  const [jobError,setJobError] = useState(null);
+  const [jobError, setJobError] = useState(null);
   const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     // console.log(isFocused)   }
-    loadDate()
+    loadDate();
   }, [isFocused]);
 
   function loadDate() {
@@ -52,31 +50,32 @@ function SeekerAvailableJobs({ route, navigation }) {
         .then((res) => {
           return res.json();
         })
-        .then((json) => { 
+        .then((json) => {
           setRefresh(false);
 
           console.log("-----------");
           console.log(json.data);
           console.log("+++++++++++");
 
-          if(json.data && typeof json.data=="object"){
-                      setProfile(json.data);
+          if (json.data && typeof json.data == "object") {
+            setProfile(json.data);
 
-          if (json.data.is_active == "1") {
-            if(json.data.job_count == 0){
-              setJobError( "This business is currently not hiring. But don't worry, there are many more businesses to work at on our network! Keep hunting!");
-            }else{
-            setJobs(json.data.job);
+            if (json.data.is_active == "1") {
+              if (json.data.job_count == 0) {
+                setJobError(
+                  "This business is currently not hiring. But don't worry, there are many more businesses to work at on our network! Keep hunting!"
+                );
+              } else {
+                setJobs(json.data.job);
+              }
+            } else if (json.data.is_active == "1" && json.data.job_count == 0) {
+              setError("We're sorry, this business is currently inactive.");
+            } else if (is_active == 0 || job_count == 0) {
+              setJobError(
+                "This business is currently not hiring. But don't worry, there are many more businesses to work at on our network! Keep hunting!"
+              );
             }
-          } else if (json.data.is_active == "1" && json.data.job_count == 0) {
-            setError("We're sorry, this business is currently inactive.");
-          } else if (is_active == 0 || job_count == 0) {
-            setJobError(
-              "This business is currently not hiring. But don't worry, there are many more businesses to work at on our network! Keep hunting!"
-            );
-          }
-        }
-          else  {
+          } else {
             setError("We're sorry, this business is currently inactive.");
           }
         })
@@ -105,8 +104,6 @@ function SeekerAvailableJobs({ route, navigation }) {
         params: { job: tempJob },
       });
     }
-
-    
   }
 
   function addWishlist(job) {
@@ -115,9 +112,9 @@ function SeekerAvailableJobs({ route, navigation }) {
     form.append("user_id", user.user_id);
     form.append("job_id", job.id);
 
-    let url = 'add_like';
-    if(job.like==1){
-      url="remove_like"
+    let url = "add_like";
+    if (job.like == 1) {
+      url = "remove_like";
     }
 
     postFormData(url, form)
@@ -126,15 +123,14 @@ function SeekerAvailableJobs({ route, navigation }) {
       })
       .then((json) => {
         // console.log('-----------')
-        console.log(url,json);
+        console.log(url, json);
         if (json.status_code == 200) {
           let findJob = jobs.map((item) => {
             if (item.id == job.id) {
-              if(job.like==1){
-              item.like = 0;
-              }else{
+              if (job.like == 1) {
+                item.like = 0;
+              } else {
                 item.like = 1;
-
               }
             }
             return item;
@@ -150,71 +146,71 @@ function SeekerAvailableJobs({ route, navigation }) {
   }
 
   return (
-    <LinearGradient
-    style={{flex:1}}
-    colors={["#4E35AE", "#775ED7"]}
-  >
-    <SafeAreaView>
-
-       <View
+    <LinearGradient style={{ flex: 1 }} colors={["#4E35AE", "#775ED7"]}>
+      <SafeAreaView>
+        <View
+          style={{
+            backgroundColor: "#4E35AE",
+            flexDirection: "row",
+            alignItems: "center",
+            borderBottomWidth: 1,
+            borderBottomColor: "#715FCB",
+            paddingBottom: 10,
+            paddingTop: 20,
+          }}
+        >
+          <View style={{ width: "33.3%" }}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Image
+                source={require("../assets/ic_back_w.png")}
+                style={{ width: 28, height: 25, marginLeft: 10 }}
+              />
+            </TouchableOpacity>
+          </View>
+          <View style={{ width: "33.3%" }}>
+            <Image
+              source={require("../assets/title_header.png")}
+              style={{ width: 120, height: 25 }}
+            />
+          </View>
+          <View
             style={{
-              backgroundColor: "#4E35AE",
-              flexDirection: "row",
-              alignItems: "center",
-              borderBottomWidth: 1,
-              borderBottomColor: "#715FCB",
-              paddingBottom: 10,
-              paddingTop: 20,
+              width: "33.3%",
+              alignItems: "flex-end",
+              paddingRight: 15,
             }}
           >
-            <View style={{ width: "33.3%" }}>
-              <TouchableOpacity onPress={() => navigation.goBack()}>
-                <Image
-                  source={require("../assets/ic_back_w.png")}
-                  style={{ width: 28, height: 25, marginLeft: 10 }}
-                />
-              </TouchableOpacity>
-            </View>
-            <View style={{ width: "33.3%" }}>
-              <Image
-                source={require("../assets/title_header.png")}
-                style={{ width: 120, height: 25 }}
-              />
-            </View>
-            <View
-              style={{
-                width: "33.3%",
-                alignItems: "flex-end",
-                paddingRight: 15,
-              }}
-            >
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate("SeekerLinks", {
-                    screen: "SeekerEditProfile",
-                  })
-                }
-              >
-                
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("SeekerLinks", {
+                  screen: "SeekerEditProfile",
+                })
+              }
+            ></TouchableOpacity>
           </View>
-      <ScrollView horizontal={false}  
-      style={{marginBottom:50}}
-      refreshControl={
-        <RefreshControl refreshing={refresh} onRefresh={() => { loadDate() }} tintColor={'#fff'}
-        />
-      }>
-         
+        </View>
+        <ScrollView
+          horizontal={false}
+          style={{ marginBottom: 50 }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refresh}
+              onRefresh={() => {
+                loadDate();
+              }}
+              tintColor={"#fff"}
+            />
+          }
+        >
           {error ? (
             <View
               style={{
                 // justifyContent: "center",
                 alignItem: "center",
-                 marginTop:window.height/2-100,
-                 marginHorizontal:20,
-                 minHeight:window.height/2,
-                 backgroundColor:'#fff'
+                marginTop: window.height / 2 - 100,
+                marginHorizontal: 20,
+                minHeight: window.height / 2,
+                backgroundColor: "#fff",
               }}
             >
               <Text style={{ textAlign: "center" }}>{error}</Text>
@@ -242,8 +238,16 @@ function SeekerAvailableJobs({ route, navigation }) {
                   </ImageBackground>
                 </View>
 
-                <View style={{ flex: 1, alignItems: "center",marginHorizontal:20 }}>
-                  <Text style={{ color: "#fff", fontSize: 22,textAlign:'center' }}>
+                <View
+                  style={{
+                    flex: 1,
+                    alignItems: "center",
+                    marginHorizontal: 20,
+                  }}
+                >
+                  <Text
+                    style={{ color: "#fff", fontSize: 22, textAlign: "center" }}
+                  >
                     {profile.business_name}
                   </Text>
                 </View>
@@ -300,132 +304,132 @@ function SeekerAvailableJobs({ route, navigation }) {
                   </Text>
                 </View>
               </LinearGradient>
-              { jobError ?
-               <View
-               style={{
-                //  justifyContent: "center",
-                 alignItem: "center",
-                   paddingTop:100,
-                  marginHorizontal:20,
-                  minHeight:400
-               }}
-             >
-               <Text style={{ textAlign: "center" }}>{jobError}</Text>
-             </View> :
-              <View
-                style={{
-                  flex: 1,
-                  backgroundColor: "#fff",
-                  minHeight: 450,
-                  padding: 20,
-                }}
-              >
-                <View style={{ maxWidth: "100%" }}>
-                  <Text style={{ fontSize: 22, paddingBottom: 5 }}>
-                    Currently hiring for:
-                  </Text>
-                  <Text
-                    style={{ fontSize: 12, color: "#888", marginBottom: 30 }}
-                  >
-                    {strings.TAP_JOB_TO_APPLY}
-                  </Text>
+              {jobError ? (
+                <View
+                  style={{
+                    //  justifyContent: "center",
+                    alignItem: "center",
+                    paddingTop: 100,
+                    marginHorizontal: 20,
+                    minHeight: 400,
+                  }}
+                >
+                  <Text style={{ textAlign: "center" }}>{jobError}</Text>
                 </View>
+              ) : (
+                <View
+                  style={{
+                    flex: 1,
+                    backgroundColor: "#fff",
+                    minHeight: 450,
+                    padding: 20,
+                  }}
+                >
+                  <View style={{ maxWidth: "100%" }}>
+                    <Text style={{ fontSize: 22, paddingBottom: 5 }}>
+                      Currently hiring for:
+                    </Text>
+                    <Text
+                      style={{ fontSize: 12, color: "#888", marginBottom: 30 }}
+                    >
+                      {strings.TAP_JOB_TO_APPLY}
+                    </Text>
+                  </View>
 
-                <View style={{ flex: 1 }}>
-                  {jobs.map((j) => {
-                    return (
-                      <View
-                        key={j.id}
-                        style={{
-                          padding: 15,
-                          borderWidth: 1,
-                          borderColor: "#eee",
-                          borderRadius: 12,
-                          marginBottom: 5,
-                        }}
-                      >
+                  <View style={{ flex: 1 }}>
+                    {jobs.map((j) => {
+                      return (
                         <View
-                          style={{ flexDirection: "row", alignItems: "center" }}
+                          key={j.id}
+                          style={{
+                            padding: 15,
+                            borderWidth: 1,
+                            borderColor: "#eee",
+                            borderRadius: 12,
+                            marginBottom: 5,
+                          }}
                         >
-                          <View style={{ width: "15%" }}>
-                            <Image
-                              source={{ uri: profile.avatar_image }}
-                              style={{
-                                width: 40,
-                                height: 40,
-                                borderWidth: 1,
-                                borderColor: "#ccc",
-                                borderRadius: 50,
-                              }}
-                            />
-                          </View>
-                          <TouchableOpacity
-                            onPress={() => getHired(j)}
-                            style={{ width: "77%" }}
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              alignItems: "center",
+                            }}
                           >
-                            <View>
-                              <Text
+                            <View style={{ width: "15%" }}>
+                              <Image
+                                source={{ uri: profile.avatar_image }}
                                 style={{
-                                  fontSize: 18,
-                                  color: "#444",
-                                  marginBottom: 5,
+                                  width: 40,
+                                  height: 40,
+                                  borderWidth: 1,
+                                  borderColor: "#ccc",
+                                  borderRadius: 50,
                                 }}
-                              >
-                                {j.position}
-                              </Text>
-                              <View
-                                style={{
-                                  flexDirection: "row",
-                                  alignContent: "center",
-                                }}
-                              >
-                                <Image
-                                  source={require("../assets/ic_location.png")}
+                              />
+                            </View>
+                            <TouchableOpacity
+                              onPress={() => getHired(j)}
+                              style={{ width: "77%" }}
+                            >
+                              <View>
+                                <Text
                                   style={{
-                                    width: 13,
-                                    height: 13,
-                                    marginRight: 5,
+                                    fontSize: 18,
+                                    color: "#444",
+                                    marginBottom: 5,
                                   }}
-                                />
-                                <Text style={{ fontSize: 12, color: "#999" }}>
-                                  {profile.address}
+                                >
+                                  {j.position}
                                 </Text>
+                                <View
+                                  style={{
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  <Image
+                                    source={require("../assets/ic_location.png")}
+                                    style={{
+                                      width: 13,
+                                      height: 13,
+                                      marginRight: 5,
+                                    }}
+                                  />
+                                  <Text style={{ fontSize: 12, color: "#999" }}>
+                                    {profile.address}
+                                  </Text>
+                                </View>
                               </View>
-                            </View>
-                          </TouchableOpacity>
+                            </TouchableOpacity>
 
-                          <TouchableOpacity
-                            onPress={() => addWishlist(j)}
-                          
-                          >
-                            <View style={{ width: 40 }}>
-                              {j.like != "0" ? (
-                                <Image
-                                  source={require("../assets/ic_heart_purple_header.png")}
-                                  style={{ width: 30, height: 30 }}
-                                  resizeMode={"stretch"}
-                                />
-                              ) : (
-                                <Image
-                                  source={require("../assets/ic_heart_gray_header.png")}
-                                  style={{ width: 30, height: 30 }}
-                                  resizeMode={"stretch"}
-                                />
-                              )}
-                            </View>
-                          </TouchableOpacity>
+                            <TouchableOpacity onPress={() => addWishlist(j)}>
+                              <View style={{ width: 40 }}>
+                                {j.like != "0" ? (
+                                  <Image
+                                    source={require("../assets/ic_heart_purple_header.png")}
+                                    style={{ width: 30, height: 30 }}
+                                    resizeMode={"stretch"}
+                                  />
+                                ) : (
+                                  <Image
+                                    source={require("../assets/ic_heart_gray_header.png")}
+                                    style={{ width: 30, height: 30 }}
+                                    resizeMode={"stretch"}
+                                  />
+                                )}
+                              </View>
+                            </TouchableOpacity>
+                          </View>
                         </View>
-                      </View>
-                    );
-                  })}
+                      );
+                    })}
+                  </View>
                 </View>
-              </View>
-          }
+              )}
             </View>
           )}
-      </ScrollView>
+        </ScrollView>
       </SafeAreaView>
-
     </LinearGradient>
     // </LinearGradient>
   );

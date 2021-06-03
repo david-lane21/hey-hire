@@ -153,6 +153,7 @@ function SeekerEditProfile({ navigation, route }) {
         return res.json();
       })
       .then((json) => {
+        console.log('res',json)
         const jsonCategories = json.data;
         let tempBusinessCategories = tempProfile.preferred_business_categories;
         tempBusinessCategories.map((item) => {
@@ -162,6 +163,7 @@ function SeekerEditProfile({ navigation, route }) {
             }
           });
         });
+        console.log('JSON',jsonCategories)
         setCategoriesList(jsonCategories);
       });
   }
@@ -1099,7 +1101,7 @@ function SeekerEditProfile({ navigation, route }) {
                   style={{ width: 17, height: 17, marginRight: 5 }}
                 />
                 <Text style={{ width: "95%", color: "#000" }}>
-                  {categoriesList.filter((item) => item.selected).length > 0
+                  {categoriesList?.filter((item) => item.selected).length > 0
                     ? categoriesList
                         .filter((item) => item.selected)
                         .map((item) => item.category_name)

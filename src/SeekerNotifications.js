@@ -16,7 +16,7 @@ import {postFormData} from './utils/network.js'
 import {getUser} from './utils/utils.js';
 import { useIsFocused } from "@react-navigation/native";
 import {strings} from './translation/config';
-
+import moment from 'moment';
 function SeekerNotifications({navigation}){
   const isFocused = useIsFocused();
 
@@ -105,6 +105,8 @@ function SeekerNotifications({navigation}){
         <View style={{flex:8,marginHorizontal:20}}>
         <Text style={{fontWeight:'bold',fontSize:16}}>{item.item.position_name}</Text>
         <Text style={{marginRight:10}}>{item.item.message}</Text>
+        <Text style={{ fontSize: 12, textAlign: 'right' ,fontWeight:'bold'}}>{moment.utc(item.item.created_date).fromNow()}</Text>
+
         </View>
         
       </View>

@@ -142,7 +142,7 @@ function SeekerBusinessList({ navigation }) {
             marginHorizontal: 10,
           }}
         >
-          <View style={{ width: "20%" }}>
+          <View style={{ width: "17%" }}>
             <Image
               source={{ uri: item.avatar_image }}
               style={{
@@ -166,11 +166,27 @@ function SeekerBusinessList({ navigation }) {
                 }}
                 numberOfLines={1}
               >
-                {item.business_name} {" • "} {distance} {strings.MILES_AWAY}
+                {item.business_name}
               </Text>
-              <Text style={{ fontSize: 12, color: "#888" }}>
-                {item.address}
-              </Text>
+              <View style={{ flexDirection: "row", marginTop: 2.5,width:'75%' }}>
+                <Text
+                  style={{
+                    fontSize: 12,
+                    color: "#888",
+                    fontWeight: "600",
+                    textAlignVertical: "center",
+                  }}
+                >{item.address}</Text>
+                <Text
+                  style={{
+                    fontSize: 12,
+                    color: "#888",
+                    textAlignVertical: "center",
+                  }}
+                >{" • "}{distance} {strings.MILES_AWAY}</Text>
+              </View>
+
+             
             </View>
           </View>
         </View>
@@ -218,6 +234,7 @@ function SeekerBusinessList({ navigation }) {
               onRefresh={() => {
                 loadData();
               }}
+              tintColor={'#4E35AE'}
             />
           }
         >
