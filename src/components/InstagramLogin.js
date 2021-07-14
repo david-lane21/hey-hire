@@ -20,7 +20,7 @@ import { WebView } from 'react-native-webview';
 
 export default function InstagramLoginPopup({ visible, userId, onClose }) {
     const id = userId * 33469;
-    const url = 'https://stagingapp.apployme.com/instagram/auth/' + id;
+    const url = 'https://app.apployme.com/instagram/auth/' + id;
     return (
         <Modal
             animationType="fade"

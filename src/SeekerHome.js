@@ -93,6 +93,7 @@ function SeekerHome({ navigation }) {
                 longitudeDelta: 0.0421,
               });
               loadDate();
+              CommonUtils.updateUserLocation(loc.coords.latitude,loc.coords.longitude);
             })
             .catch((error) => {
               Location.getCurrentPositionAsync()
@@ -121,6 +122,8 @@ function SeekerHome({ navigation }) {
                     longitudeDelta: 0.0421,
                   });
                   loadDate();
+                  CommonUtils.updateUserLocation(loc.coords.latitude,loc.coords.longitude);
+
                 })
                 .catch((error) => {
                   map.animateToRegion(
@@ -175,6 +178,8 @@ function SeekerHome({ navigation }) {
             longitudeDelta: 0.0421,
           });
           loadDate();
+          CommonUtils.updateUserLocation(loc.coords.latitude,loc.coords.longitude);
+
         } catch (error) {
           try {
             let loc = await Location.getCurrentPositionAsync();
@@ -200,6 +205,8 @@ function SeekerHome({ navigation }) {
               longitudeDelta: 0.0421,
             });
             loadDate();
+            CommonUtils.updateUserLocation(loc.coords.latitude,loc.coords.longitude);
+
           } catch (error) {
             map.animateToRegion(
               {
@@ -234,9 +241,17 @@ function SeekerHome({ navigation }) {
 
   function handleOpenURL(event) {
     let businessId = event.url.split("/").filter(Boolean).pop();
+    const calBusinessId = parseInt(businessId / 33469);
+    console.log('Hand',calBusinessId>0)
+    if(calBusinessId>1){
     NavigationService.navigate("SeekerHomeAvailableJobs", {
       biz_id: businessId / 33469,
     });
+  }else{
+    NavigationService.navigate("SeekerHomeAvailableJobs", {
+      biz_id: businessId ,
+    });
+  }
   }
 
   async function loadDate() {
@@ -254,6 +269,7 @@ function SeekerHome({ navigation }) {
             return res.json();
           })
           .then((json) => {
+          
             json.data.avatar_image =
               json.data.avatar_image + "?random_number=" + new Date().getTime();
             setProfile(json.data);
@@ -263,7 +279,7 @@ function SeekerHome({ navigation }) {
                 return json2.json();
               })
               .then((json2) => {
-                
+
                 let bizList = json2.data.filter(
                   (b) =>
                     parseFloat(b.latitude) &&
@@ -279,13 +295,13 @@ function SeekerHome({ navigation }) {
                   return b;
                 });
                 bizList = bizList.filter(
-                  (item) => item.distance_in_km <20
+                  (item) => item.distance_in_km < 20
                 );
 
                 bizList = bizList.sort(
                   (a, b) => a.distance_in_km - b.distance_in_km
                 );
-                console.log('Business list',bizList);
+                console.log('Business list', bizList);
 
                 setBusinesses(bizList);
                 setRefresh(false);
@@ -417,10 +433,10 @@ function SeekerHome({ navigation }) {
       Math.asin(
         Math.sqrt(
           Math.sin(difflat / 2) * Math.sin(difflat / 2) +
-            Math.cos(rlat1) *
-              Math.cos(rlat2) *
-              Math.sin(difflon / 2) *
-              Math.sin(difflon / 2)
+          Math.cos(rlat1) *
+          Math.cos(rlat2) *
+          Math.sin(difflon / 2) *
+          Math.sin(difflon / 2)
         )
       );
     return d;
@@ -943,40 +959,40 @@ function SeekerHome({ navigation }) {
                 }
               })}
 
-<TouchableHighlight
-                      key={'view_more'}
-                      onPress={() =>
-                        navigation.navigate("SeekerBusinessList")
-                      }
-                      style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.001)" }}
-                      underlayColor="rgba(0,0,0,0.001)"
-                    >
-                      <View
-                        style={{
-                          flex: 1,
-                          alignItems: "center",
-                          margin: 10,
-                          width: 125,
-                          height: 120,
-                          borderRadius: 8,
-                          backgroundColor: "#3C2E8F",
-                          padding: 10,
-                        }}
-                      >
-                        <Text
-                          style={{
-                            flex: 1,
-                            color: "#fff",
-                            fontSize: 20,
-                            fontWeight: "400",
-                            marginTop: 20,
-                            textAlign: "center",
-                          }}
-                        >
-                          {'Tap to view more businesses'}
-                        </Text>
-                      </View>
-                    </TouchableHighlight>
+              <TouchableHighlight
+                key={'view_more'}
+                onPress={() =>
+                  navigation.navigate("SeekerBusinessList")
+                }
+                style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.001)" }}
+                underlayColor="rgba(0,0,0,0.001)"
+              >
+                <View
+                  style={{
+                    flex: 1,
+                    alignItems: "center",
+                    margin: 10,
+                    width: 125,
+                    height: 120,
+                    borderRadius: 8,
+                    backgroundColor: "#3C2E8F",
+                    padding: 10,
+                  }}
+                >
+                  <Text
+                    style={{
+                      flex: 1,
+                      color: "#fff",
+                      fontSize: 20,
+                      fontWeight: "400",
+                      marginTop: 20,
+                      textAlign: "center",
+                    }}
+                  >
+                    {'Tap to view more businesses'}
+                  </Text>
+                </View>
+              </TouchableHighlight>
             </ScrollView>
           </View>
         </ScrollView>

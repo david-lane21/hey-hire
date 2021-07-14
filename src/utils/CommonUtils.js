@@ -1,5 +1,8 @@
 import messaging from "@react-native-firebase/messaging";
 import { Platform } from "react-native";
+import { postFormData } from "./network";
+import { getUser, removeUser } from "./utils.js";
+
 class CommonUtil {
   constructor() {
     // this.deviceTokenSet();
@@ -54,6 +57,33 @@ class CommonUtil {
         );
       return d.toFixed(1);
     }
+  }
+
+  updateUserLocation(latitude,longitude){
+      console.log(latitude,longitude,this.lat,this.long)
+    getUser().then((u) => {
+      let u2 = JSON.parse(u);
+
+  console.log(u2)
+
+    let form = new FormData();
+    
+    form.append("user_token", u2.user_token);
+    form.append("user_id", u2.user_id);
+    form.append("latitude",latitude);
+    form.append("longitude",longitude);
+    console.log(form,this.long,this.lat)
+    postFormData("update_user_location", form)
+    .then((res) => {
+      return res.json();
+    })
+    .then((json) => {
+      console.log('Update user location',json)
+    })
+    .catch((err) => {
+      console.log('Update user location Error',err);
+    });
+  });
   }
 }
 export default new CommonUtil();

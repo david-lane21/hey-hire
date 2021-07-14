@@ -15,7 +15,7 @@ import ConfirmationAlert from "./components/ConfirmationAlert";
 import AlertPopup from "./components/AlertPopup";
 import { strings } from './translation/config';
 import { useIsFocused } from "@react-navigation/native";
-
+import moment from 'moment';
 
 function SeekerJobDetail({ route, navigation }) {
   const isFocused = useIsFocused();
@@ -43,7 +43,7 @@ function SeekerJobDetail({ route, navigation }) {
           .then((json) => {
             console.log("Detail", json.data);
             setJob(
-            Object.assign(json.data));
+            Object.assign(json.data,{applied_on:tempJob.applied_on}));
           })
           .catch((err) => {
             console.log(err);
@@ -55,6 +55,10 @@ function SeekerJobDetail({ route, navigation }) {
   function handlePostCV() {
     setModal1(true);
   }
+
+  function formatDate(d) {
+    return `${("0" + (d.getMonth() + 1)).slice(-2)}/${("0" + d.getDate()).slice(-2)}/${d.getFullYear()}`;
+  }  
 
   function onSendCV() {
     let form = new FormData();
@@ -267,6 +271,21 @@ function SeekerJobDetail({ route, navigation }) {
               {strings.CURRENTLY_VIEWING_POSTION}: {job.position}
             </Text>
           </View>
+
+          {job.applied_on&&<View
+              style={{
+                flex: 1,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text style={{ color: "#fff" }}>{strings.APPLIED_ON}: </Text>
+
+              <Text style={{ color: "#fff", fontSize: 14 }}>
+                {moment(job.applied_on).format('MM/DD/YYYY')}
+              </Text>
+            </View>}
 
           <View
             style={{

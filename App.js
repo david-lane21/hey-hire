@@ -104,12 +104,19 @@ export default function App() {
 
   function handleOpenURL(url) {
     let businessId = url.split("/").filter(Boolean).pop();
-    console.log(businessId / 33469);
+    const calBusinessId = parseInt(businessId / 33469);
+    console.log('App',calBusinessId)
+    if(calBusinessId>0){
     NavigationService.navigate(
       "SeekerHomeAvailableJobs",
-
       { biz_id: businessId / 33469 }
     );
+    }else{
+      NavigationService.navigate(
+        "SeekerHomeAvailableJobs",
+        { biz_id: businessId  }
+      );
+    }
   }
 
   if (isLoading) {
@@ -130,3 +137,10 @@ export default function App() {
 
   // return <Navigation></Navigation>;
 }
+
+
+
+
+
+
+

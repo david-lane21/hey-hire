@@ -63,7 +63,7 @@ function SeekerSignup({ navigation }) {
   const [currentScroll, setCurrentScroll] = useState(null);
   const [phoneMaxLength, setPhoneMaxLength] = useState(20);
   const [phCountryCode, setPhCountryCode] = useState("US");
-  const [keyboardHeight,setKeyboardHeight] = useState(301);
+  const [keyboardHeight, setKeyboardHeight] = useState(301);
 
   useEffect(() => {
     const phoneNumber = getExampleNumber(phCountryCode, examples)
@@ -72,38 +72,38 @@ function SeekerSignup({ navigation }) {
     Keyboard.addListener("keyboardDidShow", _keyboardDidShow);
     Keyboard.addListener("keyboardDidHide", _keyboardDidHide);
 
-      ; (async () => {
-        let { status } = await Location.requestPermissionsAsync()
-        if (status !== 'granted') {
-          setError('Permission to access location was denied')
-        }
-        const status1 = await ImagePicker.requestCameraRollPermissionsAsync();
-        if (status1.status !== 'granted') {
-          alert('Sorry, we need camera roll permissions to make this work!')
-        }
+    ; (async () => {
+      let { status } = await Location.requestPermissionsAsync()
+      if (status !== 'granted') {
+        setError('Permission to access location was denied')
+      }
+      const status1 = await ImagePicker.requestCameraRollPermissionsAsync();
+      if (status1.status !== 'granted') {
+        alert('Sorry, we need camera roll permissions to make this work!')
+      }
 
-        Location.getLastKnownPositionAsync().then((loc) => {
-          setAddressField(loc)
-          setLocation(loc)
-        }).catch(error => {
-          Location.getCurrentPositionAsync({}).then((location) => {
-            setAddressField(location)
-            setLocation(location)
-          }).catch(err => {
-            Alert.alert("", err.message)
-          });
+      Location.getLastKnownPositionAsync().then((loc) => {
+        setAddressField(loc)
+        setLocation(loc)
+      }).catch(error => {
+        Location.getCurrentPositionAsync({}).then((location) => {
+          setAddressField(location)
+          setLocation(location)
+        }).catch(err => {
+          Alert.alert("", err.message)
         });
-      })()
+      });
+    })()
   }, [])
 
 
   const _keyboardDidShow = (event) => {
-    console.log("Keyboard Shown",event);
-setKeyboardHeight(event.endCoordinates.height)
+    console.log("Keyboard Shown", event);
+    setKeyboardHeight(event.endCoordinates.height)
   };
 
   const _keyboardDidHide = (event) => {
-    console.log("Keyboard Hidden",event);
+    console.log("Keyboard Hidden", event);
     setKeyboardHeight(301)
 
   };
@@ -218,158 +218,162 @@ setKeyboardHeight(event.endCoordinates.height)
 
   function handleSignup() {
 
-    if(validation() == true) {
+    if (validation() == true) {
 
 
-    if (
-      firstName &&
-      lastName &&
-      address &&
-      city &&
-      state &&
-      phone &&
-      email &&
-      password &&
-      password2
-    ) {
-      if (password == password2 && password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/)) {
-        let token = deviceToken(128)
-        // let token = CommonUtils.deviceToken;
-        let form = new FormData()
-        form.append('first_name', firstName)
-        form.append('last_name', lastName)
-        form.append('address', address)
-        form.append('email', email)
-        form.append('city', city)
-        form.append('state', state)
-        form.append('country', country)
-        form.append('phone', phCode + ' ' + formatPhoneAPI(phone))
-        form.append('user_type', '2')
-        form.append('password', password)
-        form.append('device_tocken', token)
-        if (image) {
-          form.append('avatar_image', {
-            uri: image,
-            name: 'avatar.jpg',
-            type: 'image/jpeg'
-          })
-        }
+      if (
+        firstName &&
+        lastName &&
+        address &&
+        city &&
+        state &&
+        phone &&
+        email &&
+        password &&
+        password2
+      ) {
+        if (password == password2 && password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/)) {
+          let token = deviceToken(128)
+          // let token = CommonUtils.deviceToken;
+          let form = new FormData()
+          form.append('first_name', firstName)
+          form.append('last_name', lastName)
+          form.append('address', address)
+          form.append('email', email)
+          form.append('city', city)
+          form.append('state', state)
+          form.append('country', country)
+          form.append('phone', phCode + ' ' + formatPhoneAPI(phone))
+          form.append('user_type', '2')
+          form.append('password', password)
+          form.append('device_tocken', token)
+          if (image) {
+            form.append('avatar_image', {
+              uri: image,
+              name: 'avatar.jpg',
+              type: 'image/jpeg'
+            })
+          }
 
-        form.append('zip_code', zipcode)
-        console.log(form);
-        postFormData('user_register', form)
-          .then(res => {
-            return res.json()
-          })
-          .then(json => {
-            console.log('Registration', json)
-            if (json.status_code == '200') {
-              setError('')
-              setUser(json.data)
-              setToken(token)
-              navigation.navigate('SeekerVerificationCode', {
-                number: phCode + ' ' + phone,
-                email: email,
-                otp: json.otp,
-                userId: json.data.user_id
-              })
-            } else {
-              if (json.msg) {
-                setError(json.msg)
+          form.append('zip_code', zipcode)
+          console.log(form);
+          postFormData('user_register', form)
+            .then(res => {
+              return res.json()
+            })
+            .then(json => {
+              console.log('Registration', json)
+              if (json.status_code == '200') {
+                setError('')
+                setUser(json.data)
+                setToken(token)
+                navigation.navigate('SeekerVerificationCode', {
+                  number: phCode + ' ' + phone,
+                  email: email,
+                  otp: json.otp,
+                  userId: json.data.user_id
+                })
               } else {
-                setError(json)
+                if (json.msg) {
+                  setError(json.msg)
+                } else {
+                  setError(json)
+                }
               }
-            }
-          })
-          .catch(err => {
-            console.log(err)
-          });
-      } else {
-        if (!password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/)) {
-          Alert.alert("Error", strings.PASSWORD_ERROR_2);
+            })
+            .catch(err => {
+              console.log(err)
+            });
         } else {
-          Alert.alert("Error", strings.PASSWORD_ERROR);
+          if (!password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/)) {
+            Alert.alert("Error", strings.PASSWORD_ERROR_2);
+          } else {
+            Alert.alert("Error", strings.PASSWORD_ERROR);
+          }
         }
-      }
-    } else {
-      if (password !== password2) {
-        setError(strings.PASSWORD_ERROR)
       } else {
-        setError(strings.PLEASE_FILL_MISSING)
+        if (password !== password2) {
+          setError(strings.PASSWORD_ERROR)
+        } else {
+          setError(strings.PLEASE_FILL_MISSING)
+        }
       }
     }
-  }
   }
 
   function isValidatePresence(string) {
-        
+
     return string.trim();
-    
-}
 
-  function validation()  {
-        
-    if (!firstName || isValidatePresence(firstName)=="") {
-         Alert.alert( "Error...",  "Enter a valid First name before continuing!" )
-        return false
-    }
-    else if (!lastName || isValidatePresence(lastName)=="") {
-       Alert.alert( "Error...",  "Enter a valid Last name before continuing!" )
-        return false
-    }
-    else if (!country || isValidatePresence(country)=="") {
-       Alert.alert( "Error...",  "Enter a valid Country before continuing!" )
-        return false
-    }
-    else if (!address || isValidatePresence(address)=="") {
-       Alert.alert( "Error...",  "Enter a valid Address before continuing!" )
-        return false
-    }
-    else if (!state || isValidatePresence(state)=="") {
-       Alert.alert( "Error...",  "Enter a valid State name before continuing!" )
-        return false
-    }
-    else if (!zipcode || isValidatePresence(zipcode)=="") {
-       Alert.alert( "Error...",  "Enter a valid Zipcode before continuing!" )
-        return false
-    }
-    else if (!city || isValidatePresence(city)=="") {
-       Alert.alert( "Error...",  "Enter a valid City name before continuing!" )
-        return false
-    }
- 
-else if (!phone|| isValidatePresence(phone)=="") {
-   Alert.alert( "Error...",  "Enter a valid Phone Number before continuing!" )
-        return false
-    }
-    else if (!email || isValidatePresence(email)=="") {
-       Alert.alert( "Error...",  "Enter a valid Email before continuing!" )
-        return false
-    }
-    else if (!email.match(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/      )) {
-       Alert.alert("Error...",  "Enter a valid email before continuing!" )
-        return false
+  }
+
+  function validation() {
+    if (!image) {
+      Alert.alert("Error...", "Please select profile picture before continuing!")
+      return false
     }
 
-    else if (!password || isValidatePresence(password)=="") {
-      Alert.alert( "Error...", "Enter a valid password before continuing!")
-       return false
-   }
-    else if ( !password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/)) {
-       Alert.alert( "Error...",  strings.PASSWORD_ERROR_2 )
-        return false
+    if (!firstName || isValidatePresence(firstName) == "") {
+      Alert.alert("Error...", "Enter a valid First name before continuing!")
+      return false
     }
-    
-    else if (password!==password2 ){
-        Alert.alert("Error...", "Passwords don't match")
-        return false
+    else if (!lastName || isValidatePresence(lastName) == "") {
+      Alert.alert("Error...", "Enter a valid Last name before continuing!")
+      return false
     }
-   
-        
+    else if (!country || isValidatePresence(country) == "") {
+      Alert.alert("Error...", "Enter a valid Country before continuing!")
+      return false
+    }
+    else if (!address || isValidatePresence(address) == "") {
+      Alert.alert("Error...", "Enter a valid Address before continuing!")
+      return false
+    }
+    else if (!state || isValidatePresence(state) == "") {
+      Alert.alert("Error...", "Enter a valid State name before continuing!")
+      return false
+    }
+    else if (!zipcode || isValidatePresence(zipcode) == "") {
+      Alert.alert("Error...", "Enter a valid Zipcode before continuing!")
+      return false
+    }
+    else if (!city || isValidatePresence(city) == "") {
+      Alert.alert("Error...", "Enter a valid City name before continuing!")
+      return false
+    }
+
+    else if (!phone || isValidatePresence(phone) == "") {
+      Alert.alert("Error...", "Enter a valid Phone Number before continuing!")
+      return false
+    }
+    else if (!email || isValidatePresence(email) == "") {
+      Alert.alert("Error...", "Enter a valid Email before continuing!")
+      return false
+    }
+    else if (!email.match(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/)) {
+      Alert.alert("Error...", "Enter a valid email before continuing!")
+      return false
+    }
+
+    else if (!password || isValidatePresence(password) == "") {
+      Alert.alert("Error...", "Enter a valid password before continuing!")
+      return false
+    }
+    else if (!password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/)) {
+      Alert.alert("Error...", strings.PASSWORD_ERROR_2)
+      return false
+    }
+
+    else if (password !== password2) {
+      Alert.alert("Error...", "Passwords don't match")
+      return false
+    }
+
+
     else {
-        return true
+      return true
     }
-}
+  }
 
 
 
@@ -404,7 +408,7 @@ else if (!phone|| isValidatePresence(phone)=="") {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <KeyboardAwareScrollView style={[styles.container]} extraScrollHeight={Platform.OS === "ios" ? 50 : 0} extraHeight={Platform.OS === "ios" ? 140:null} >
+      <KeyboardAwareScrollView style={[styles.container]} extraScrollHeight={Platform.OS === "ios" ? 50 : 0} extraHeight={Platform.OS === "ios" ? 140 : null} >
 
 
         <View style={{ flex: 1, alignItems: 'center', padding: 20 }}>
@@ -420,16 +424,16 @@ else if (!phone|| isValidatePresence(phone)=="") {
                 }}
               />
             ) : (
-                <Image
-                  source={{ uri: image }}
-                  style={{
-                    width: 100,
-                    height: 100,
-                    borderRadius: 50,
-                    alignSelf: 'center'
-                  }}
-                />
-              )}
+              <Image
+                source={{ uri: image }}
+                style={{
+                  width: 100,
+                  height: 100,
+                  borderRadius: 50,
+                  alignSelf: 'center'
+                }}
+              />
+            )}
             <TouchableOpacity
               onPress={pickImage}
               style={{ position: 'absolute', top: 0, right: 0 }}
@@ -868,7 +872,7 @@ else if (!phone|| isValidatePresence(phone)=="") {
             </Text>
           </TouchableOpacity>
         </View>
-        <View style={{height:50}}></View>
+        <View style={{ height: 50 }}></View>
       </KeyboardAwareScrollView>
       <KeyboardAccessoryNavigation
         onNext={handleFocusNext}
@@ -877,7 +881,7 @@ else if (!phone|| isValidatePresence(phone)=="") {
         previousDisabled={previousFocusDisabled}
         androidAdjustResize={Platform.OS == 'android'}
         avoidKeyboard={Platform.OS == 'android'}
-        style={Platform.OS == "android" ? { top: 0 } : { top: isIphoneX ? keyboardHeight>301? -310:-270 : keyboardHeight>216? -260:-230 }}
+        style={Platform.OS == "android" ? { top: 0 } : { top: isIphoneX ? keyboardHeight > 301 ? -310 : -270 : keyboardHeight > 216 ? -260 : -230 }}
       />
       {/* </KeyboardAvoidingView> */}
 

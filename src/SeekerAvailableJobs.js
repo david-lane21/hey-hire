@@ -11,6 +11,7 @@ import {
   Alert,
   RefreshControl,
   Dimensions,
+  Platform
 } from "react-native";
 import { getUser } from "./utils/utils.js";
 import { postFormData } from "./utils/network.js";
@@ -36,6 +37,7 @@ function SeekerAvailableJobs({ route, navigation }) {
   }, [isFocused]);
 
   function loadDate() {
+    console.log(route.params.biz_id);
     setRefresh(true);
     getUser().then((u) => {
       let u2 = JSON.parse(u);
@@ -353,9 +355,10 @@ function SeekerAvailableJobs({ route, navigation }) {
                             style={{
                               flexDirection: "row",
                               alignItems: "center",
+                              // justifyContent:'space-between'
                             }}
                           >
-                            <View style={{ width: "15%" }}>
+                            <View style={{  }}>
                               <Image
                                 source={{ uri: profile.avatar_image }}
                                 style={{
@@ -369,14 +372,14 @@ function SeekerAvailableJobs({ route, navigation }) {
                             </View>
                             <TouchableOpacity
                               onPress={() => getHired(j)}
-                              style={{ width: "77%" }}
+                              style={{ marginRight:80,marginLeft:10 }}
                             >
-                              <View>
                                 <Text
                                   style={{
                                     fontSize: 18,
-                                    color: "#444",
+                                    color: "#222",
                                     marginBottom: 5,
+                                    fontWeight: Platform.OS === 'ios' ? '600' : 'bold'
                                   }}
                                 >
                                   {j.position}
@@ -395,14 +398,13 @@ function SeekerAvailableJobs({ route, navigation }) {
                                       marginRight: 5,
                                     }}
                                   />
-                                  <Text style={{ fontSize: 12, color: "#999" }}>
+                                  <Text style={{ fontSize: 12, color: "#999", }}>
                                     {profile.address}
                                   </Text>
                                 </View>
-                              </View>
                             </TouchableOpacity>
 
-                            <TouchableOpacity onPress={() => addWishlist(j)}>
+                            <TouchableOpacity onPress={() => addWishlist(j)} style={{position:'absolute', right:0}}>
                               <View style={{ width: 40 }}>
                                 {j.like != "0" ? (
                                   <Image

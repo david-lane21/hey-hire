@@ -146,6 +146,8 @@ function SeekerAppliedJobs({ navigation }) {
   const list = filteredJobs.map((item) => {
     // console.log(item)
     const isLiked = likedJobs.filter((item1) => item.id == item1.id);
+    const isApplied = appliedJobs.filter((item1) => item.id == item1.id);
+
     const distance = CommonUtils.distance(
       parseFloat(item.business.latitude),
       parseFloat(item.business.longitude),
@@ -158,7 +160,7 @@ function SeekerAppliedJobs({ navigation }) {
         onPress={() =>
           navigation.navigate("SeekerAppliedJobs0", {
             screen: "SeekerJobDetail",
-            params: { job: item },
+            params: { job: isApplied.length>0?isApplied[0]: item },
           })
         }
       >
