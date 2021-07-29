@@ -21,6 +21,7 @@ import { countries } from "./utils/consts.js";
 import { postFormData ,getBaseURL} from "./utils/network.js";
 import { setUser, setToken } from "./utils/utils.js";
 import { KeyboardAccessoryNavigation } from "react-native-keyboard-accessory";
+import { WebView } from 'react-native-webview';
 import { strings } from "./translation/config";
 import { AuthContext } from "./navigation/context";
 import CommonUtils from './utils/CommonUtils';
@@ -118,268 +119,272 @@ function BusinessLogin({ navigation }) {
     setInputs(inputs);
   }
 
-  return (
-    <View style={{ flex: 1 }}>
-      <View style={styles.container}>
-        <SafeAreaView style={{ flex: 1, width: "90%" }}>
-          <ScrollView showsVerticalScrollIndicator={false}>
-            <View
-              style={{
-                flex: 2,
-                alignItems: "flex-start",
-              }}
-            >
-              <TouchableOpacity onPress={() => navigation.goBack()}>
-                <Image
-                  source={require("../assets/ic_back2.png")}
-                  style={{
-                    width: 40,
-                    height: 30,
-                    marginTop: 20,
-                    // position: 'absolute',
-                    // left: 0,
-                    // top: 20
-                  }}
-                />
-              </TouchableOpacity>
-            </View>
+  return(
+    <WebView source={{ uri: 'https://app.apployme.com' }} style={{ }} />
+  )
 
-            <View
-              style={{
-                flex: 5,
-                alignItems: "center",
-                marginVertical: 10,
-              }}
-            >
-              <Image
-                source={require("../assets/logo.png")}
-                style={{
-                  width: 200,
-                  height: 140,
-                  marginTop: 0,
-                }}
-              />
-            </View>
+  // return (
+  //   <View style={{ flex: 1 }}>
+  //     <View style={styles.container}>
+  //       <SafeAreaView style={{ flex: 1, width: "90%" }}>
+  //         <ScrollView showsVerticalScrollIndicator={false}>
+  //           <View
+  //             style={{
+  //               flex: 2,
+  //               alignItems: "flex-start",
+  //             }}
+  //           >
+  //             <TouchableOpacity onPress={() => navigation.goBack()}>
+  //               <Image
+  //                 source={require("../assets/ic_back2.png")}
+  //                 style={{
+  //                   width: 40,
+  //                   height: 30,
+  //                   marginTop: 20,
+  //                   // position: 'absolute',
+  //                   // left: 0,
+  //                   // top: 20
+  //                 }}
+  //               />
+  //             </TouchableOpacity>
+  //           </View>
 
-            <View style={{ flex: 2, alignItems: "center" }}>
-              <View style={{ flex: 1, flexDirection: "row", marginTop: 15 }}>
-                <Text
-                  style={{
-                    color: "#4834A6",
-                    fontSize: 18,
-                  }}
-                >
-                  {strings.LOG_IN_AS}
-                </Text>
-                <Image
-                  source={require("../assets/ic_open_purple.png")}
-                  style={{ width: 30, height: 30, marginLeft: 5 }}
-                  resizeMode={"stretch"}
-                />
-              </View>
-            </View>
+  //           <View
+  //             style={{
+  //               flex: 5,
+  //               alignItems: "center",
+  //               marginVertical: 10,
+  //             }}
+  //           >
+  //             <Image
+  //               source={require("../assets/logo.png")}
+  //               style={{
+  //                 width: 200,
+  //                 height: 140,
+  //                 marginTop: 0,
+  //               }}
+  //             />
+  //           </View>
 
-            <View
-              style={{
-                flex: 2,
-                alignItems: "center",
-                marginVertical: 5,
-                marginHorizontal: 5,
-              }}
-            >
-              <Modal
-                animationType="slide"
-                transparent={false}
-                visible={modalVisible}
-                onRequestClose={() => {
-                  // Alert.alert('Modal has been closed.');
-                }}
-              >
-                <SafeAreaView>
-                  <View style={{ marginTop: 22 }}>
-                    <View>
-                      <FlatList
-                        // ItemSeparatorComponent={<Separator />}
-                        data={countries}
-                        keyExtractor={(item) => item.code}
-                        renderItem={({ item, index, separators }) => (
-                          <TouchableHighlight
-                            key={index}
-                            onPress={() => _onPress(item)}
-                            onShowUnderlay={separators.highlight}
-                            onHideUnderlay={separators.unhighlight}
-                          >
-                            <View style={{ backgroundColor: "white" }}>
-                              <View
-                                style={{
-                                  flex: 1,
-                                  flexDirection: "row",
-                                  justifyContent: "space-between",
-                                  padding: 10,
-                                  borderBottomWidth: 1,
-                                  borderBottomColor: "#eee",
-                                }}
-                              >
-                                <Text
-                                  style={{
-                                    fontSize: 20,
-                                    color: "#222",
-                                  }}
-                                >
-                                  {item.name}
-                                </Text>
-                                <Text
-                                  style={{
-                                    fontSize: 20,
-                                    color: "#666",
-                                  }}
-                                >
-                                  +{item.dial_code}
-                                </Text>
-                              </View>
-                            </View>
-                          </TouchableHighlight>
-                        )}
-                      />
-                    </View>
-                  </View>
-                </SafeAreaView>
-              </Modal>
+  //           <View style={{ flex: 2, alignItems: "center" }}>
+  //             <View style={{ flex: 1, flexDirection: "row", marginTop: 15 }}>
+  //               <Text
+  //                 style={{
+  //                   color: "#4834A6",
+  //                   fontSize: 18,
+  //                 }}
+  //               >
+  //                 {strings.LOG_IN_AS}
+  //               </Text>
+  //               <Image
+  //                 source={require("../assets/ic_open_purple.png")}
+  //                 style={{ width: 30, height: 30, marginLeft: 5 }}
+  //                 resizeMode={"stretch"}
+  //               />
+  //             </View>
+  //           </View>
 
-              <View style={{ flex: 1, flexDirection: "row" }}>
-                <TouchableOpacity
-                  style={styles.code}
-                  onPress={() => setModalVisible(true)}
-                >
-                  <Image
-                    source={require("../assets/ic_call.png")}
-                    style={{ width: 20, height: 20, marginRight: 5 }}
-                  />
-                  <Text style={{ color: "#4834A6" }}>+{phCode}</Text>
-                </TouchableOpacity>
+  //           <View
+  //             style={{
+  //               flex: 2,
+  //               alignItems: "center",
+  //               marginVertical: 5,
+  //               marginHorizontal: 5,
+  //             }}
+  //           >
+  //             <Modal
+  //               animationType="slide"
+  //               transparent={false}
+  //               visible={modalVisible}
+  //               onRequestClose={() => {
+  //                 // Alert.alert('Modal has been closed.');
+  //               }}
+  //             >
+  //               <SafeAreaView>
+  //                 <View style={{ marginTop: 22 }}>
+  //                   <View>
+  //                     <FlatList
+  //                       // ItemSeparatorComponent={<Separator />}
+  //                       data={countries}
+  //                       keyExtractor={(item) => item.code}
+  //                       renderItem={({ item, index, separators }) => (
+  //                         <TouchableHighlight
+  //                           key={index}
+  //                           onPress={() => _onPress(item)}
+  //                           onShowUnderlay={separators.highlight}
+  //                           onHideUnderlay={separators.unhighlight}
+  //                         >
+  //                           <View style={{ backgroundColor: "white" }}>
+  //                             <View
+  //                               style={{
+  //                                 flex: 1,
+  //                                 flexDirection: "row",
+  //                                 justifyContent: "space-between",
+  //                                 padding: 10,
+  //                                 borderBottomWidth: 1,
+  //                                 borderBottomColor: "#eee",
+  //                               }}
+  //                             >
+  //                               <Text
+  //                                 style={{
+  //                                   fontSize: 20,
+  //                                   color: "#222",
+  //                                 }}
+  //                               >
+  //                                 {item.name}
+  //                               </Text>
+  //                               <Text
+  //                                 style={{
+  //                                   fontSize: 20,
+  //                                   color: "#666",
+  //                                 }}
+  //                               >
+  //                                 +{item.dial_code}
+  //                               </Text>
+  //                             </View>
+  //                           </View>
+  //                         </TouchableHighlight>
+  //                       )}
+  //                     />
+  //                   </View>
+  //                 </View>
+  //               </SafeAreaView>
+  //             </Modal>
 
-                <TextInput
-                  style={styles.code2}
-                  onChangeText={(text) => setPhone(text)}
-                  placeholder={strings.PHONE}
-                  value={formatPhone(phone)}
-                  keyboardType={'phone-pad'}
-                  onFocus={() => {
-                    handleFocus(0);
-                  }}
-                  ref={(ref) => {
-                    handleRef(0, ref);
-                  }}
-                />
-              </View>
-            </View>
+  //             <View style={{ flex: 1, flexDirection: "row" }}>
+  //               <TouchableOpacity
+  //                 style={styles.code}
+  //                 onPress={() => setModalVisible(true)}
+  //               >
+  //                 <Image
+  //                   source={require("../assets/ic_call.png")}
+  //                   style={{ width: 20, height: 20, marginRight: 5 }}
+  //                 />
+  //                 <Text style={{ color: "#4834A6" }}>+{phCode}</Text>
+  //               </TouchableOpacity>
 
-            <View style={{ flex: 2 }}>
-              <View
-                style={{ flex: 1, flexDirection: "row", marginVertical: 5 }}
-              >
-                <Image
-                  source={require("../assets/ic_password.png")}
-                  style={{
-                    width: 15,
-                    height: 15,
-                    position: "absolute",
-                    top: 10,
-                    left: 10,
-                  }}
-                />
-                <TextInput
-                  style={styles.code3}
-                  secureTextEntry={true}
-                  onChangeText={(text) => setPassword(text)}
-                  placeholder={strings.PASSWORD}
-                  value={password}
-                  textContentType="none"
-                  onFocus={() => {
-                    handleFocus(1);
-                  }}
-                  ref={(ref) => {
-                    handleRef(1, ref);
-                  }}
-                />
-              </View>
-            </View>
+  //               <TextInput
+  //                 style={styles.code2}
+  //                 onChangeText={(text) => setPhone(text)}
+  //                 placeholder={strings.PHONE}
+  //                 value={formatPhone(phone)}
+  //                 keyboardType={'phone-pad'}
+  //                 onFocus={() => {
+  //                   handleFocus(0);
+  //                 }}
+  //                 ref={(ref) => {
+  //                   handleRef(0, ref);
+  //                 }}
+  //               />
+  //             </View>
+  //           </View>
 
-            <View style={{ flex: 2, alignItems: "center", marginVertical: 5 }}>
-              <TouchableOpacity
-                style={{
-                  width: "100%",
-                  backgroundColor:
-                    phone && password ? "#4834A6" : "rgb(179,169,227)",
-                  paddingTop: 12,
-                  paddingBottom: 12,
-                  borderRadius: 10,
-                }}
-                onPress={() => handleLogin()}
-                disabled={!(phone && password)}
-              >
-                <Text
-                  style={{ textAlign: "center", fontSize: 18, color: "#fff" }}
-                >
-                  {strings.LOGIN}
-                </Text>
-              </TouchableOpacity>
-            </View>
+  //           <View style={{ flex: 2 }}>
+  //             <View
+  //               style={{ flex: 1, flexDirection: "row", marginVertical: 5 }}
+  //             >
+  //               <Image
+  //                 source={require("../assets/ic_password.png")}
+  //                 style={{
+  //                   width: 15,
+  //                   height: 15,
+  //                   position: "absolute",
+  //                   top: 10,
+  //                   left: 10,
+  //                 }}
+  //               />
+  //               <TextInput
+  //                 style={styles.code3}
+  //                 secureTextEntry={true}
+  //                 onChangeText={(text) => setPassword(text)}
+  //                 placeholder={strings.PASSWORD}
+  //                 value={password}
+  //                 textContentType="none"
+  //                 onFocus={() => {
+  //                   handleFocus(1);
+  //                 }}
+  //                 ref={(ref) => {
+  //                   handleRef(1, ref);
+  //                 }}
+  //               />
+  //             </View>
+  //           </View>
 
-            <View style={{ flex: 3, alignItems: "center" }}>
-              <Text
-                style={{
-                  marginLeft: 6,
-                  color: "#4834A6",
-                  textDecorationLine: "underline",
-                  fontSize: 16,
-                }}
-                onPress={() => gotoForgotPassword()}
-              >
-                {strings.FORGOT_YOUR_PASSWORD}
-              </Text>
-            </View>
+  //           <View style={{ flex: 2, alignItems: "center", marginVertical: 5 }}>
+  //             <TouchableOpacity
+  //               style={{
+  //                 width: "100%",
+  //                 backgroundColor:
+  //                   phone && password ? "#4834A6" : "rgb(179,169,227)",
+  //                 paddingTop: 12,
+  //                 paddingBottom: 12,
+  //                 borderRadius: 10,
+  //               }}
+  //               onPress={() => handleLogin()}
+  //               disabled={!(phone && password)}
+  //             >
+  //               <Text
+  //                 style={{ textAlign: "center", fontSize: 18, color: "#fff" }}
+  //               >
+  //                 {strings.LOGIN}
+  //               </Text>
+  //             </TouchableOpacity>
+  //           </View>
 
-            <View style={{ flex: 1, alignItems: "center", marginTop: 30 }}>
-              <Text style={{ color: "#4834A6", fontSize: 20 }}>
-                {strings.DONT_ACCOUNT}
-              </Text>
-            </View>
+  //           <View style={{ flex: 3, alignItems: "center" }}>
+  //             <Text
+  //               style={{
+  //                 marginLeft: 6,
+  //                 color: "#4834A6",
+  //                 textDecorationLine: "underline",
+  //                 fontSize: 16,
+  //               }}
+  //               onPress={() => gotoForgotPassword()}
+  //             >
+  //               {strings.FORGOT_YOUR_PASSWORD}
+  //             </Text>
+  //           </View>
 
-            <View
-              style={{
-                flex: 1,
-                alignItems: "center",
-              }}
-            >
-              <Text
-                style={{
-                  marginLeft: 6,
-                  color: "#4834A6",
-                  textDecorationLine: "underline",
-                  fontSize: 16,
-                }}
-                onPress={() => navigation.navigate("BusinessSignup")}
-              >
-                {strings.REGISTER_BUSINESS}
-              </Text>
-            </View>
+  //           <View style={{ flex: 1, alignItems: "center", marginTop: 30 }}>
+  //             <Text style={{ color: "#4834A6", fontSize: 20 }}>
+  //               {strings.DONT_ACCOUNT}
+  //             </Text>
+  //           </View>
 
-            <View style={{ flex: 3, alignItems: "center" }}></View>
-          </ScrollView>
-        </SafeAreaView>
-      </View>
-      <KeyboardAccessoryNavigation
-        androidAdjustResize={Platform.OS == "android"}
-        avoidKeyboard={Platform.OS == "android"}
-        onNext={handleFocusNext}
-        onPrevious={handleFocusPrev}
-        nextDisabled={nextFocusDisabled}
-        previousDisabled={previousFocusDisabled}
-        style={Platform.OS == "android" && { top: 0 }}
-      />
-    </View>
-  );
+  //           <View
+  //             style={{
+  //               flex: 1,
+  //               alignItems: "center",
+  //             }}
+  //           >
+  //             <Text
+  //               style={{
+  //                 marginLeft: 6,
+  //                 color: "#4834A6",
+  //                 textDecorationLine: "underline",
+  //                 fontSize: 16,
+  //               }}
+  //               onPress={() => navigation.navigate("BusinessSignup")}
+  //             >
+  //               {strings.REGISTER_BUSINESS}
+  //             </Text>
+  //           </View>
+
+  //           <View style={{ flex: 3, alignItems: "center" }}></View>
+  //         </ScrollView>
+  //       </SafeAreaView>
+  //     </View>
+  //     <KeyboardAccessoryNavigation
+  //       androidAdjustResize={Platform.OS == "android"}
+  //       avoidKeyboard={Platform.OS == "android"}
+  //       onNext={handleFocusNext}
+  //       onPrevious={handleFocusPrev}
+  //       nextDisabled={nextFocusDisabled}
+  //       previousDisabled={previousFocusDisabled}
+  //       style={Platform.OS == "android" && { top: 0 }}
+  //     />
+  //   </View>
+  // );
 }
 
 export default BusinessLogin;

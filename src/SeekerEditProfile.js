@@ -38,6 +38,7 @@ import DeviceInfo from "react-native-device-info";
 import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import InstagramLoginPopup from "./components/InstagramLogin.js";
+import Loader from './components/Loader';
 
 const isIphoneX = DeviceInfo.hasNotch();
 
@@ -552,26 +553,9 @@ function SeekerEditProfile({ navigation, route }) {
             </Text>
           </View>
         </View>
-        {loading && (
-          <View
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              backgroundColor: "rgba(0,0,0,0.5)",
-              width: "100%",
-              height: "100%",
-              zIndex: 999,
-            }}
-          >
-            <ActivityIndicator
-              animating={true}
-              size={"large"}
-              style={{ top: "50%" }}
-              color={"#fff"}
-            />
-          </View>
-        )}
+
+        <Loader  loading={loading}/>
+       
         {/* <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : null}
       keyboardVerticalOffset={Platform.OS === "ios" ? 10 : 40}      

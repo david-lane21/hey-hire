@@ -349,7 +349,13 @@ export function AuthNavigation({ navigation }) {
         name="BusinessLogin"
         component={BusinessLogin}
         options={{
-          headerShown: false,
+          headerShown: true,
+          headerBackTitleVisible: false,
+          headerTitle: "apployMe",
+          headerStyle: {
+            backgroundColor: "#4E35AE",
+          },
+          headerTintColor: "#fff",
           gestureEnabled: false
 
         }}

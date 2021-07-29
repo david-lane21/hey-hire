@@ -315,72 +315,107 @@ function SeekerFinishRegistration({ navigation }) {
   }
 
   function handleUpdate() {
-    if (bio) {
-      let form = new FormData();
-      form.append("first_name", firstName);
-      form.append("last_name", lastName);
-      form.append("address", address);
-      form.append("email", email);
-      form.append("city", city);
-      form.append("bio", bio);
-      form.append("zip_code", zipcode);
-      form.append("state", state);
-      form.append("country", country);
-      form.append("phone", phCode + " " + phone);
-      form.append("user_type", "2");
-      form.append("user_token", user.user_token);
-      form.append("user_id", user.user_id);
-      form.append("device_tocken", deviceToken);
-      if (image) {
-        form.append("avatar_image", {
-          uri: image,
-          name: "avatar.jpg",
-          type: "image/jpeg",
-        });
+    if (validation() == true) {
+      if (bio) {
+        let form = new FormData();
+        form.append("first_name", firstName);
+        form.append("last_name", lastName);
+        form.append("address", address);
+        form.append("email", email);
+        form.append("city", city);
+        form.append("bio", bio);
+        form.append("zip_code", zipcode);
+        form.append("state", state);
+        form.append("country", country);
+        form.append("phone", phCode + " " + phone);
+        form.append("user_type", "2");
+        form.append("user_token", user.user_token);
+        form.append("user_id", user.user_id);
+        form.append("device_tocken", deviceToken);
+        if (image) {
+          form.append("avatar_image", {
+            uri: image,
+            name: "avatar.jpg",
+            type: "image/jpeg",
+          });
+        }
+
+        form.append("availability", availability);
+        form.append("education", institution);
+        form.append("education_level", eduLevel);
+        form.append("certificate", certificate);
+        form.append("language", langs);
+        form.append("eligible", eligible || false);
+        form.append("sixteen", sixteen || false);
+        form.append("convictions", convictions || false);
+        form.append("skill", skills.toString());
+        form.append(
+          "preferred_business_categories",
+          categoriesList
+            .filter((item) => item.selected)
+            .map((item) => item.category_id)
+            .toString()
+        );
+        setLoading(true);
+
+        postFormData("update_user", form)
+          .then((res) => {
+            return res.json();
+          })
+          .then((json) => {
+            console.log(json);
+            setLoading(false);
+
+            if (json.status_code != "200") {
+              setError(json.msg);
+            } else {
+              setUser(json.data);
+              // navigation.goBack()
+              signIn(json.data);
+
+              // navigation.navigate("Seeker");
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else {
+        Alert.alert('Error...', 'Please fill bio about you before continuing!')
       }
-
-      form.append("availability", availability);
-      form.append("education", institution);
-      form.append("education_level", eduLevel);
-      form.append("certificate", certificate);
-      form.append("language", langs);
-      form.append("eligible", eligible || false);
-      form.append("sixteen", sixteen || false);
-      form.append("convictions", convictions || false);
-      form.append("skill", skills.toString());
-      form.append(
-        "preferred_business_categories",
-        categoriesList
-          .filter((item) => item.selected)
-          .map((item) => item.category_id)
-          .toString()
-      );
-      setLoading(true);
-
-      postFormData("update_user", form)
-        .then((res) => {
-          return res.json();
-        })
-        .then((json) => {
-          console.log(json);
-          setLoading(false);
-
-          if (json.status_code != "200") {
-            setError(json.msg);
-          } else {
-            setUser(json.data);
-            // navigation.goBack()
-            signIn(json.data);
-
-            // navigation.navigate("Seeker");
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } else {
-      Alert.alert('Error...', 'Please fill bio about you before continuing!')
     }
+  }
+
+  function validation() {
+
+    if (!bio) {
+      Alert.alert("Error...", "Please enter Bio")
+      return false
+    }
+
+    if (categoriesList
+      .filter((item) => item.selected).length == 0) {
+      Alert.alert("Error...", "Please select Job Categories")
+      return false
+    }
+  
+
+    
+    if (!langs) {
+      Alert.alert("Error...", "Please select language.")
+      return false
+    }
+
+    if (!eduLevel) {
+      Alert.alert("Error...", "Please select level of education")
+      return false
+    }
+
+    if (!availability) {
+      Alert.alert("Error...", "Please select availability.")
+      return false
+    }
+
+
   }
 
   function handleFocus(index) {

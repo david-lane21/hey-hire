@@ -33,7 +33,7 @@ import parsePhoneNumber from 'libphonenumber-js'
 import examples from 'libphonenumber-js/examples.mobile.json'
 import { getExampleNumber } from 'libphonenumber-js';
 // import CommonUtils from './utils/CommonUtils';
-
+import Loader from './components/Loader';
 const isIphoneX = DeviceInfo.hasNotch();
 function SeekerSignup({ navigation }) {
   const scrollViewRef = useRef();
@@ -64,6 +64,7 @@ function SeekerSignup({ navigation }) {
   const [phoneMaxLength, setPhoneMaxLength] = useState(20);
   const [phCountryCode, setPhCountryCode] = useState("US");
   const [keyboardHeight, setKeyboardHeight] = useState(301);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const phoneNumber = getExampleNumber(phCountryCode, examples)
@@ -119,17 +120,19 @@ function SeekerSignup({ navigation }) {
     console.log('setAddressField', loc);
     setTimeout(() => {
       Location.reverseGeocodeAsync(loc).then((addressObject) => {
-        console.log(addressObject)
-        const street =
-          (addressObject[0].name || '') +
-          ' ' +
-          (addressObject[0].street !== addressObject[0].name
-            ? addressObject[0].street || ''
-            : '')
+        console.log(addressObject);
+        let name = addressObject[0].name || '';
+        let street = addressObject[0].street || '';
+
+
+        if (street && !(name.includes(street))) {
+          name = name + ' ' + street;
+        }
+
         const country = countries.find(
           item => item.code == addressObject[0].isoCountryCode
         );
-        setAddress(street)
+        setAddress(name)
         setState(addressObject[0].region)
         setCity(addressObject[0].city)
         setCountry(country.name)
@@ -219,8 +222,6 @@ function SeekerSignup({ navigation }) {
   function handleSignup() {
 
     if (validation() == true) {
-
-
       if (
         firstName &&
         lastName &&
@@ -257,6 +258,8 @@ function SeekerSignup({ navigation }) {
 
           form.append('zip_code', zipcode)
           console.log(form);
+          setLoading(true);
+
           postFormData('user_register', form)
             .then(res => {
               return res.json()
@@ -266,7 +269,9 @@ function SeekerSignup({ navigation }) {
               if (json.status_code == '200') {
                 setError('')
                 setUser(json.data)
-                setToken(token)
+                setToken(token);
+                setLoading(false);
+
                 navigation.navigate('SeekerVerificationCode', {
                   number: phCode + ' ' + phone,
                   email: email,
@@ -409,7 +414,7 @@ function SeekerSignup({ navigation }) {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <KeyboardAwareScrollView style={[styles.container]} extraScrollHeight={Platform.OS === "ios" ? 50 : 0} extraHeight={Platform.OS === "ios" ? 140 : null} >
-
+        <Loader loading={loading} />
 
         <View style={{ flex: 1, alignItems: 'center', padding: 20 }}>
           <View style={{ width: 140, height: 140, alignSelf: 'center' }}>
