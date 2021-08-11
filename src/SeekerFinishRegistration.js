@@ -315,6 +315,7 @@ function SeekerFinishRegistration({ navigation }) {
   }
 
   function handleUpdate() {
+    console.log(validation())
     if (validation() == true) {
       if (bio) {
         let form = new FormData();
@@ -392,7 +393,7 @@ function SeekerFinishRegistration({ navigation }) {
       return false
     }
 
-    if (categoriesList
+    else if (categoriesList
       .filter((item) => item.selected).length == 0) {
       Alert.alert("Error...", "Please select Job Categories")
       return false
@@ -400,20 +401,23 @@ function SeekerFinishRegistration({ navigation }) {
   
 
     
-    if (!langs) {
+    else if (!langs) {
       Alert.alert("Error...", "Please select language.")
       return false
     }
 
-    if (!eduLevel) {
+    else if (!eduLevel) {
       Alert.alert("Error...", "Please select level of education")
       return false
     }
 
-    if (!availability) {
+    else if (!availability) {
       Alert.alert("Error...", "Please select availability.")
       return false
     }
+else{
+    return true;
+}
 
 
   }

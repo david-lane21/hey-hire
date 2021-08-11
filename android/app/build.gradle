@@ -133,8 +133,8 @@ android {
         applicationId 'com.apployme'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 15
-        versionName "2.0.6"
+        versionCode 16
+        versionName "2.0.7"
     }
     splits {
         abi {

@@ -354,7 +354,15 @@ function SeekerEditProfile({ navigation, route }) {
     setLoading(true);
     postFormData("update_user", form)
       .then((res) => {
-        return res.json();
+        console.log(res);
+        if(res.status==200){
+          return res.json();
+        }else{
+          setLoading(false);
+          Alert.alert('Error','Profile image is too large.')
+
+          return res.text()
+        }
       })
       .then((json) => {
         console.log("update user", json);
@@ -374,7 +382,7 @@ function SeekerEditProfile({ navigation, route }) {
           // navigation.navigate("Seeker");
         }
       })
-      .catch((err) => {
+      .catch((err) => { 
         console.log(err, err.message);
       });
   }

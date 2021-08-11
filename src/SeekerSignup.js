@@ -262,7 +262,14 @@ function SeekerSignup({ navigation }) {
 
           postFormData('user_register', form)
             .then(res => {
-              return res.json()
+              if(res.status==200){
+                return res.json();
+              }else{
+                setLoading(false);
+          Alert.alert('Error','Profile image is too large.')
+
+          return res.text()
+              }
             })
             .then(json => {
               console.log('Registration', json)
