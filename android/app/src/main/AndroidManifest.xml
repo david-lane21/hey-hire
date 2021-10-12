@@ -94,7 +94,21 @@
                 <data android:scheme="apployme" android:host="qr"
                       />
               </intent-filter>
+              <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="apployme" android:host="instagram-success"
+                      />
+              </intent-filter>
 
+ <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="apployme" android:host="instagram-failure"
+                      />
+              </intent-filter>
     </activity>
     <activity android:name="com.facebook.react.devsupport.DevSettingsActivity"/>
     <activity

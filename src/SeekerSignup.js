@@ -244,7 +244,7 @@ function SeekerSignup({ navigation }) {
           form.append('city', city)
           form.append('state', state)
           form.append('country', country)
-          form.append('phone', phCode + ' ' + formatPhoneAPI(phone))
+          form.append('phone', phCode + ' ' + formatPhone(phone))
           form.append('user_type', '2')
           form.append('password', password)
           form.append('device_tocken', token)
@@ -296,6 +296,7 @@ function SeekerSignup({ navigation }) {
             .catch(err => {
               console.log(err)
             });
+            
         } else {
           if (!password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/)) {
             Alert.alert("Error", strings.PASSWORD_ERROR_2);

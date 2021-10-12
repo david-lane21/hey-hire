@@ -7,31 +7,38 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  ImageBackground,
+  Linking,
 } from "react-native";
-import { getUser } from "./utils/utils.js";
+import { getUser, setUser } from "./utils/utils.js";
 import { postFormData } from "./utils/network.js";
 import { LinearGradient } from "expo-linear-gradient";
 import ConfirmationAlert from "./components/ConfirmationAlert";
 import AlertPopup from "./components/AlertPopup";
-import { strings } from './translation/config';
+import { strings } from "./translation/config";
 import { useIsFocused } from "@react-navigation/native";
-import moment from 'moment';
+import moment from "moment";
+import InstagramLoginPopup from "./components/InstagramLogin.js";
+import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
 
 function SeekerJobDetail({ route, navigation }) {
   const isFocused = useIsFocused();
 
   const tempJob = Object.assign({}, route.params.job, {});
-  const [user, setUser] = useState({});
-  const [business,setBusiness] = useState(tempJob.business);
+  const [user, setUser1] = useState({});
+  const [business, setBusiness] = useState(tempJob.business);
   const [job, setJob] = useState(tempJob);
   const [modal1, setModal1] = useState(false);
   const [modal2, setModal2] = useState(false);
+  const [instaModalShow, setInstaModalShow] = useState(false);
+
   useEffect(() => {
+    Linking.addEventListener("url", handleOpenURL);
     if (isFocused) {
       getUser().then((u) => {
         let u2 = JSON.parse(u);
-        // console.log(u2)
-        setUser(u2);
+        console.log("Local user", u2);
+        setUser1(u2);
         let form = new FormData();
         form.append("user_token", u2.user_token);
         form.append("job_id", route.params.job.id);
@@ -41,24 +48,67 @@ function SeekerJobDetail({ route, navigation }) {
             return res.json();
           })
           .then((json) => {
-            console.log("Detail", json.data);
+            console.log("Detail", json);
             setJob(
-            Object.assign(json.data,{applied_on:tempJob.applied_on}));
+              Object.assign(json.data, { applied_on: tempJob.applied_on })
+            );
           })
           .catch((err) => {
             console.log(err);
           });
       });
     }
+
+    return () => {
+      Linking.removeEventListener("url", handleOpenURL);
+    };
   }, [isFocused]);
+
+  function handleOpenURL(event) {
+    let businessId = event.url.split("/").filter(Boolean).pop();
+    console.log("Hand", event.url, businessId);
+    if (businessId == "instagram-success") {
+      Alert.alert("Instagram connected successfully");
+      onCloseInstagramConnect();
+    } else if (businessId == "instagram-failure") {
+      Alert.alert("Instagram not connected");
+    }
+  }
 
   function handlePostCV() {
     setModal1(true);
   }
 
-  function formatDate(d) {
-    return `${("0" + (d.getMonth() + 1)).slice(-2)}/${("0" + d.getDate()).slice(-2)}/${d.getFullYear()}`;
-  }  
+  function onCloseInstagramConnect() {
+    console.log(user);
+    setInstaModalShow(false);
+
+    getUser().then((u) => {
+      let u2 = JSON.parse(u);
+      console.log("Local user", u2);
+      setUser1(u2);
+      let form = new FormData();
+      form.append("user_token", u2.user_token);
+      form.append("user_id", u2.user_id);
+      console.log("profile data", form);
+      postFormData("user_profile", form)
+        .then((res) => {
+          console.log("Prifile data", res);
+          return res.json();
+        })
+        .then((json) => {
+          console.log("Profile data", json);
+          var tempUserData = u2;
+          tempUserData.instagram_connected = json.data.instagram_connected;
+          console.log("tem", tempUserData);
+          setUser1(tempUserData);
+          setUser(tempUserData);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    });
+  }
 
   function onSendCV() {
     let form = new FormData();
@@ -77,7 +127,7 @@ function SeekerJobDetail({ route, navigation }) {
           Alert.alert("", json.msg);
         } else {
           setModal2(true);
-          const tempJob = Object.assign({}, job, {aplied:"1"});
+          const tempJob = Object.assign({}, job, { aplied: "1" });
           setJob(tempJob);
         }
 
@@ -98,12 +148,10 @@ function SeekerJobDetail({ route, navigation }) {
     form.append("user_id", user.user_id);
     form.append("job_id", job.id);
 
-    let url = 'add_like';
-    if (job.like == '1') {
-      url = "remove_like"
+    let url = "add_like";
+    if (job.like == "1") {
+      url = "remove_like";
     }
-
-
 
     postFormData(url, form)
       .then((res) => {
@@ -113,14 +161,13 @@ function SeekerJobDetail({ route, navigation }) {
         console.log(job.like, url, json);
         if (json.status_code == 200) {
           const tempJob = Object.assign({}, job, {});
-          if (tempJob.like == '1') {
+          if (tempJob.like == "1") {
             tempJob.like = 0;
           } else {
-            tempJob.like = '1';
+            tempJob.like = "1";
           }
           setJob((job) => tempJob);
         }
-
       })
       .catch((err) => {
         console.log(err);
@@ -129,25 +176,22 @@ function SeekerJobDetail({ route, navigation }) {
 
   function onCancelCV() {
     Alert.alert(
-      'Confirm',
-      'Are you sure you want to revoke your application?',
+      "Confirm",
+      "Are you sure you want to revoke your application?",
       [
-
         {
-          text: 'Cancel',
-          onPress: () => {
-
-
-          },
-          style: 'cancel'
+          text: "Cancel",
+          onPress: () => {},
+          style: "cancel",
         },
         {
-          text: 'OK', onPress: () => {
+          text: "OK",
+          onPress: () => {
             let form = new FormData();
             form.append("user_token", user.user_token);
             form.append("user_id", user.user_id);
             form.append("job_id", job.id);
-            form.append("cv_id", job.cv_id)
+            form.append("cv_id", job.cv_id);
 
             postFormData("cancel_cv", form)
               .then((res) => {
@@ -157,23 +201,22 @@ function SeekerJobDetail({ route, navigation }) {
                 console.log("-----------");
                 console.log(json.status_code);
                 if (json.status_code == 200) {
-                  Alert.alert("Successful", json.msg)
+                  Alert.alert("Successful", json.msg);
 
                   navigation.goBack();
                 } else {
-                  Alert.alert("Error", json.msg)
+                  Alert.alert("Error", json.msg);
                 }
               })
               .catch((err) => {
                 console.log(err);
               });
-          }
-        }
+          },
+        },
       ],
       { cancelable: false }
     );
   }
-
 
   function dateFormat(date) {
     if (date) {
@@ -185,12 +228,8 @@ function SeekerJobDetail({ route, navigation }) {
   }
 
   return (
-    <LinearGradient
-      style={{ flex: 1 }}
-      colors={["#4E35AE", "#775ED7"]}
-    >
+    <LinearGradient style={{ flex: 1 }} colors={["#4E35AE", "#775ED7"]}>
       <SafeAreaView>
-
         <View
           style={{
             // backgroundColor: '#4E35AE',
@@ -226,20 +265,28 @@ function SeekerJobDetail({ route, navigation }) {
               style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
             >
               <View style={{ flex: 2 }}></View>
-              {job.aplied == '1' ?
-                <TouchableOpacity style={{ flex: 1 }} onPress={() => onCancelCV()}>
+              {job.aplied == "1" ? (
+                <TouchableOpacity
+                  style={{ flex: 1 }}
+                  onPress={() => onCancelCV()}
+                >
                   <Image
                     source={require("../assets/ic_checked_white.png")}
                     style={{ width: 20, height: 20 }}
                   />
-                </TouchableOpacity> : job.like == '1' ? <TouchableOpacity style={{ flex: 1, alignItems: 'center' }} onPress={() => addWishlist()} >
+                </TouchableOpacity>
+              ) : job.like == "1" ? (
+                <TouchableOpacity
+                  style={{ flex: 1, alignItems: "center" }}
+                  onPress={() => addWishlist()}
+                >
                   <Image
                     source={require("../assets/ic_heart_filled_w.png")}
                     style={{ width: 25, height: 25 }}
-                    resizeMode={'stretch'}
+                    resizeMode={"stretch"}
                   />
-                </TouchableOpacity> : null
-              }
+                </TouchableOpacity>
+              ) : null}
               <TouchableOpacity style={{ flex: 1 }}>
                 <Image
                   source={require("../assets/ic_share_w.png")}
@@ -249,10 +296,7 @@ function SeekerJobDetail({ route, navigation }) {
             </View>
           </View>
         </View>
-        <ScrollView style={{ marginBottom: 50 }}
-        >
-
-
+        <ScrollView style={{ marginBottom: 50 }}>
           <View style={{ flex: 1, alignItems: "center", padding: 20 }}>
             <Image
               source={{ uri: business.avatar_image }}
@@ -261,7 +305,7 @@ function SeekerJobDetail({ route, navigation }) {
           </View>
 
           <View style={{ flex: 1, alignItems: "center", marginHorizontal: 20 }}>
-            <Text style={{ color: "#fff", fontSize: 22, textAlign: 'center' }}>
+            <Text style={{ color: "#fff", fontSize: 22, textAlign: "center" }}>
               {business.business_name}
             </Text>
           </View>
@@ -272,7 +316,8 @@ function SeekerJobDetail({ route, navigation }) {
             </Text>
           </View>
 
-          {job.applied_on&&<View
+          {job.applied_on && (
+            <View
               style={{
                 flex: 1,
                 flexDirection: "row",
@@ -283,9 +328,10 @@ function SeekerJobDetail({ route, navigation }) {
               <Text style={{ color: "#fff" }}>{strings.APPLIED_ON}: </Text>
 
               <Text style={{ color: "#fff", fontSize: 14 }}>
-                {moment(job.applied_on).format('MM/DD/YYYY')}
+                {moment(job.applied_on).format("MM/DD/YYYY")}
               </Text>
-            </View>}
+            </View>
+          )}
 
           <View
             style={{
@@ -318,9 +364,7 @@ function SeekerJobDetail({ route, navigation }) {
               borderBottomColor: "#715FCB",
             }}
           >
-            <Text style={{ color: "#fff" }}>
-              {business.business_detail}
-            </Text>
+            <Text style={{ color: "#fff" }}>{business.business_detail}</Text>
           </View>
 
           <View
@@ -353,12 +397,12 @@ function SeekerJobDetail({ route, navigation }) {
                   style={{ width: 20, height: 20 }}
                 />
                 <Text
-                  style={{ fontSize: 20, marginLeft: 5, fontWeight: "600", }}
+                  style={{ fontSize: 20, marginLeft: 5, fontWeight: "600" }}
                 >
                   {strings.START_DATE}
                 </Text>
               </View>
-              <Text style={{ marginBottom: 30, marginTop: 10,fontSize: 15 }}>
+              <Text style={{ marginBottom: 30, marginTop: 10, fontSize: 15 }}>
                 {dateFormat(job.start_date)}
               </Text>
 
@@ -375,7 +419,7 @@ function SeekerJobDetail({ route, navigation }) {
                   {strings.POSITION_DESCRIPTION}
                 </Text>
               </View>
-              <Text style={{ marginBottom: 30, marginTop: 10,fontSize: 15}}>
+              <Text style={{ marginBottom: 30, marginTop: 10, fontSize: 15 }}>
                 {job.position_desc}
               </Text>
 
@@ -392,7 +436,7 @@ function SeekerJobDetail({ route, navigation }) {
                   {strings.REQUIRED_EXPERIENCE}
                 </Text>
               </View>
-              <Text style={{ marginBottom: 30, marginTop: 10,fontSize: 15, }}>
+              <Text style={{ marginBottom: 30, marginTop: 10, fontSize: 15 }}>
                 {job.experience}
               </Text>
               <View
@@ -408,60 +452,172 @@ function SeekerJobDetail({ route, navigation }) {
                   {strings.REQUIRED_CERTIFICATIONS}
                 </Text>
               </View>
-              <Text style={{ marginBottom: 30, marginTop: 10,fontSize: 15 }}>
-                {job.required_certifications?job.required_certifications.map((item)=>item+"\n"):''}
+              <Text style={{ marginBottom: 30, marginTop: 10, fontSize: 15 }}>
+                {job.required_certifications
+                  ? job.required_certifications.map((item) => item + "\n")
+                  : ""}
               </Text>
+              {job.requires_instagram && (
+                <View>
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Image
+                      source={require("../assets/instagram-brands.png")}
+                      style={{ width: 20, height: 20, tintColor: "#4834A6" }}
+                    />
+                    <Text
+                      style={{
+                        fontSize: 20,
+                        marginLeft: 10,
+                        fontWeight: "600",
+                      }}
+                    >
+                      {"Instagram required"}
+                    </Text>
+                  </View>
+
+                  <Text
+                    style={{ marginBottom: 30, marginTop: 10, fontSize: 15 }}
+                  >
+                    {business.business_name}{" "}
+                    {
+                      "is requesting that you connect your Instagram account to your profile to apply for this position.Please connect your Instagram"
+                    }
+                  </Text>
+                  {!user.instagram_connected ? (
+                    <View>
+                      <Text
+                        style={{ marginBottom: 20, marginTop: 5, fontSize: 15 }}
+                      >
+                        {"Please connect your Instagram"}
+                      </Text>
+                      <ImageBackground
+                        source={require("../assets/insta-connect-bg.png")}
+                        style={{
+                          borderRadius: 40,
+                        }}
+                        resizeMode={"stretch"}
+                      >
+                        <TouchableOpacity
+                          style={{
+                            padding: 12,
+                            flexDirection: "row",
+                            paddingVertical: 15,
+                            alignItems: "center",
+                            // justifyContent: 'center'
+                          }}
+                          onPress={() => {
+                            setInstaModalShow(true);
+                           
+                          }}
+                        >
+                          <AntDesign
+                            name="instagram"
+                            size={32}
+                            color="white"
+                            style={{ position: "absolute", left: 20 }}
+                          />
+                          <Text
+                            style={{
+                              color: "#fff",
+                              fontSize: 18,
+                              marginLeft: 50,
+                              fontWeight: "bold",
+                            }}
+                          >
+                            {strings.CONNECT_YOUR_INSTAGRAM}
+                          </Text>
+                          <MaterialCommunityIcons
+                            name={"checkbox-blank-circle-outline"}
+                            size={32}
+                            color="white"
+                            style={{ position: "absolute", right: 20 }}
+                          />
+                        </TouchableOpacity>
+                      </ImageBackground>
+                    </View>
+                  ) : (
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        marginTop: 5,
+                      }}
+                    >
+                      <Text style={{ fontSize: 15, marginRight: 5 }}>
+                        {"Your account is connected to Instagram"}
+                      </Text>
+                      <Image
+                        source={require("../assets/checkbox_checked.png")}
+                        style={{ width: 20, height: 20 }}
+                      />
+                    </View>
+                  )}
+                </View>
+              )}
             </View>
-            {job.aplied == '1' ?
-            <View
-              style={{
-                flex: 1,
-                alignItems: "center",
-                marginTop: 20,
-                width: "100%",
-              }}
-            >
-              <TouchableOpacity
+            {job.aplied == "1" ? (
+              <View
                 style={{
+                  flex: 1,
+                  alignItems: "center",
+                  marginTop: 20,
                   width: "100%",
-                  backgroundColor: "#f00",
-                  paddingTop: 12,
-                  paddingBottom: 12,
-                  borderRadius: 50,
                 }}
-                onPress={() => onCancelCV()}
               >
-                <Text
-                  style={{ textAlign: "center", fontSize: 18, color: "#fff" }}
+                <TouchableOpacity
+                  style={{
+                    width: "100%",
+                    backgroundColor: "#f00",
+                    paddingTop: 12,
+                    paddingBottom: 12,
+                    borderRadius: 50,
+                  }}
+                  onPress={() => onCancelCV()}
                 >
-                  {strings.CANCEL_APPLICATION}
-                </Text>
-              </TouchableOpacity>
-            </View> :  <View
-              style={{
-                flex: 1,
-                alignItems: "center",
-                marginTop: 20,
-                width: "100%",
-              }}
-            >
-              <TouchableOpacity
+                  <Text
+                    style={{ textAlign: "center", fontSize: 18, color: "#fff" }}
+                  >
+                    {strings.CANCEL_APPLICATION}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <View
                 style={{
+                  flex: 1,
+                  alignItems: "center",
+                  marginTop: 20,
                   width: "100%",
-                  backgroundColor: "#4834A6",
-                  paddingTop: 12,
-                  paddingBottom: 12,
-                  borderRadius: 50,
                 }}
-                onPress={() => handlePostCV()}
               >
-                <Text
-                  style={{ textAlign: "center", fontSize: 18, color: "#fff" }}
+                <TouchableOpacity
+                  style={{
+                    width: "100%",
+                    backgroundColor:
+                      job.requires_instagram && !user.instagram_connected
+                        ? "#a8a4a6"
+                        : "#4834A6",
+                    paddingTop: 12,
+                    paddingBottom: 12,
+                    borderRadius: 50,
+                  }}
+                  onPress={() => handlePostCV()}
+                  disabled={job.requires_instagram && !user.instagram_connected}
                 >
-                  {strings.SEND_APPLICATION}
-                </Text>
-              </TouchableOpacity>
-            </View>}
+                  <Text
+                    style={{ textAlign: "center", fontSize: 18, color: "#fff" }}
+                  >
+                    {strings.SEND_APPLICATION}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
           </View>
           <ConfirmationAlert
             visible={modal1}
@@ -476,9 +632,15 @@ function SeekerJobDetail({ route, navigation }) {
             business={business}
             onClose={() => setModal2(false)}
           />
+          <InstagramLoginPopup
+            userId={user.user_id}
+            visible={instaModalShow}
+            onClose={() => {
+              onCloseInstagramConnect();
+            }}
+          />
         </ScrollView>
       </SafeAreaView>
-
     </LinearGradient>
   );
 }

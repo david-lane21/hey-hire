@@ -16,6 +16,7 @@ import {
   Alert,
   PermissionsAndroid,
   ImageBackground,
+  Switch
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
@@ -85,7 +86,10 @@ function SeekerEditProfile({ navigation, route }) {
   const [isInstagramConnect, setIsInstagramConnect] = useState(
     tempProfile.instagram_connected || false
   );
+const [covid_vaccinated,setCovid_vaccinated] = useState(tempProfile.covid_vaccinated);
+
   const [instaModalShow, setInstaModalShow] = useState(false);
+  const [isVaccinated,setIsVaccinated] = useState(false);
 
   const [activeInputIndex, setActiveInputIndex] = useState(0);
   const [inputs, setInputs] = useState([]);
@@ -242,6 +246,10 @@ function SeekerEditProfile({ navigation, route }) {
     setConvictions(!convictions);
   }
 
+  function toggleVaccinated(){
+    setCovid_vaccinated(!covid_vaccinated);
+  }
+
   function toggleEligible() {
     setEligible(!eligible);
   }
@@ -342,7 +350,9 @@ function SeekerEditProfile({ navigation, route }) {
     form.append("eligible", eligible||false);
     form.append("sixteen", sixteen || false);
     form.append("convictions", convictions || false);
+    form.append("covid_vaccinated",covid_vaccinated || false);
     form.append("skill", skills.toString());
+    form.append("instagram_connected",isInstagramConnect);
     form.append(
       "preferred_business_categories",
       categoriesList
@@ -377,7 +387,9 @@ function SeekerEditProfile({ navigation, route }) {
           //   tempUserData.avatar_image +
           //   "?random_number=" +
           //   new Date().getTime();
-          setUser(json.data);
+          var tempUserData = json.data;
+          tempUserData.instagram_connected = isInstagramConnect;
+          setUser(tempUserData);
           // // navigation.goBack()
           // navigation.navigate("Seeker");
         }
@@ -521,6 +533,27 @@ function SeekerEditProfile({ navigation, route }) {
     if (!tempProfile.instagram_connected) {
       setInstaModalShow(true);
     }
+  }
+
+  function onCloseInstagramConnect(){
+    setInstaModalShow(false);
+    let form = new FormData();
+    form.append("user_token", user.user_token);
+    form.append("user_id", user.user_id);
+    postFormData("user_profile", form)
+    .then((res) => {
+      console.log('Prifile data',res)
+      return res.json();
+      
+    })
+    .then((json) => {
+      console.log('Profile data',json);
+      setIsInstagramConnect(json.data.instagram_connected);
+
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   }
 
   function addToCategoreis(item) {
@@ -1163,7 +1196,7 @@ function SeekerEditProfile({ navigation, route }) {
                     flexWrap: "wrap",
                   }}
                 >
-                  {skills.map((item, index) => {
+                  {skills && skills.map((item, index) => {
                     return renderSkill({ item, index });
                   })}
                 </View>
@@ -1583,6 +1616,37 @@ function SeekerEditProfile({ navigation, route }) {
             </TouchableOpacity>
           </View>
 
+          <View style={{ flex: 1 }}>
+            <TouchableOpacity
+              style={{
+                flex: 1,
+                flexDirection: "row",
+                paddingLeft: 20,
+                paddingTop: 15,
+                paddingBottom: 15,
+                alignItems: "center",
+              }}
+              onPress={() => toggleVaccinated()}
+            >
+              {covid_vaccinated ? (
+                <Image
+                  source={require("../assets/checkbox_checked.png")}
+                  style={{ width: 25, height: 25, marginRight: 5 }}
+                />
+              ) : (
+                <Image
+                  source={require("../assets/checkbox_blank.png")}
+                  style={{ width: 25, height: 25, marginRight: 5 }}
+                />
+              )}
+              <View style={{ flex: 1 }}>
+                <Text style={{ paddingLeft: 5, color: "#3482FF" }}>
+                  {strings.ARE_VACCINATED} {strings.OPTIONAL}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+
           <View style={{ flex: 1, marginBottom: 30 }}>
             <View
               style={{
@@ -1657,6 +1721,7 @@ function SeekerEditProfile({ navigation, route }) {
                   + {strings.ADD_PAST_POSTION}
                 </Text>
               </TouchableOpacity>
+
               <ImageBackground
                 source={require("../assets/insta-connect-bg.png")}
                 style={{
@@ -1722,14 +1787,21 @@ function SeekerEditProfile({ navigation, route }) {
               <View style={{ height: 35 }}></View>
             </View>
           </View>
+          
         </View>
         {/* </ScrollView> */}
+
 
         <InstagramLoginPopup
           userId={user.user_id}
           visible={instaModalShow}
-          onClose={() => setInstaModalShow(false)}
+          onClose={() => {
+            onCloseInstagramConnect()
+            }}
         />
+
+
+
       </KeyboardAwareScrollView>
 
       <KeyboardAccessoryNavigation

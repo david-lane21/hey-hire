@@ -68,6 +68,7 @@ function SeekerFinishRegistration({ navigation }) {
   const [convictions, setConvictions] = useState(false);
   const [availability, setAvailability] = useState("");
   const [positions, setPositions] = useState([]);
+  const [covid_vaccinated,setCovid_vaccinated] = useState(false);
 
   const [activeInputIndex, setActiveInputIndex] = useState(0);
   const [inputs, setInputs] = useState([]);
@@ -190,6 +191,11 @@ function SeekerFinishRegistration({ navigation }) {
     setConvictions(!convictions);
   }
 
+
+  function toggleVaccinated(){
+    setCovid_vaccinated(!covid_vaccinated);
+  }
+
   function toggleEligible() {
     setEligible(!eligible);
   }
@@ -282,6 +288,7 @@ function SeekerFinishRegistration({ navigation }) {
           setSixteen(json.data.sixteen);
           setConvictions(json.data.convictions);
           setPositions(json.data.position);
+          setCovid_vaccinated(json.data.covid_vaccinated)
         })
         .catch((err) => {
           console.log(err);
@@ -349,6 +356,7 @@ function SeekerFinishRegistration({ navigation }) {
         form.append("eligible", eligible || false);
         form.append("sixteen", sixteen || false);
         form.append("convictions", convictions || false);
+        form.append("covid_vaccinated",covid_vaccinated || false);
         form.append("skill", skills.toString());
         form.append(
           "preferred_business_categories",
@@ -1230,6 +1238,37 @@ else{
             </View>
           </TouchableOpacity>
         </View>
+
+        <View style={{ flex: 1 }}>
+            <TouchableOpacity
+              style={{
+                flex: 1,
+                flexDirection: "row",
+                paddingLeft: 20,
+                paddingTop: 15,
+                paddingBottom: 15,
+                alignItems: "center",
+              }}
+              onPress={() => toggleVaccinated()}
+            >
+              {covid_vaccinated ? (
+                <Image
+                  source={require("../assets/checkbox_checked.png")}
+                  style={{ width: 25, height: 25, marginRight: 5 }}
+                />
+              ) : (
+                <Image
+                  source={require("../assets/checkbox_blank.png")}
+                  style={{ width: 25, height: 25, marginRight: 5 }}
+                />
+              )}
+              <View style={{ flex: 1 }}>
+                <Text style={{ paddingLeft: 5, color: "#3482FF" }}>
+                  {strings.ARE_VACCINATED} {strings.OPTIONAL}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
 
         <View style={{ flex: 1, marginBottom: 30 }}>
           <View
