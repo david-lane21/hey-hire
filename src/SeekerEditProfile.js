@@ -16,7 +16,7 @@ import {
   Alert,
   PermissionsAndroid,
   ImageBackground,
-  Switch
+  Switch,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
@@ -39,7 +39,7 @@ import DeviceInfo from "react-native-device-info";
 import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import InstagramLoginPopup from "./components/InstagramLogin.js";
-import Loader from './components/Loader';
+import Loader from "./components/Loader";
 
 const isIphoneX = DeviceInfo.hasNotch();
 
@@ -86,10 +86,12 @@ function SeekerEditProfile({ navigation, route }) {
   const [isInstagramConnect, setIsInstagramConnect] = useState(
     tempProfile.instagram_connected || false
   );
-const [covid_vaccinated,setCovid_vaccinated] = useState(tempProfile.covid_vaccinated);
+  const [covid_vaccinated, setCovid_vaccinated] = useState(
+    tempProfile.covid_vaccinated
+  );
 
   const [instaModalShow, setInstaModalShow] = useState(false);
-  const [isVaccinated,setIsVaccinated] = useState(false);
+  const [isVaccinated, setIsVaccinated] = useState(false);
 
   const [activeInputIndex, setActiveInputIndex] = useState(0);
   const [inputs, setInputs] = useState([]);
@@ -158,7 +160,7 @@ const [covid_vaccinated,setCovid_vaccinated] = useState(tempProfile.covid_vaccin
         return res.json();
       })
       .then((json) => {
-        console.log('res',json)
+        console.log("res", json);
         const jsonCategories = json.data;
         let tempBusinessCategories = tempProfile.preferred_business_categories;
         tempBusinessCategories.map((item) => {
@@ -168,7 +170,7 @@ const [covid_vaccinated,setCovid_vaccinated] = useState(tempProfile.covid_vaccin
             }
           });
         });
-        console.log('JSON',jsonCategories)
+        console.log("JSON", jsonCategories);
         setCategoriesList(jsonCategories);
       });
   }
@@ -246,7 +248,7 @@ const [covid_vaccinated,setCovid_vaccinated] = useState(tempProfile.covid_vaccin
     setConvictions(!convictions);
   }
 
-  function toggleVaccinated(){
+  function toggleVaccinated() {
     setCovid_vaccinated(!covid_vaccinated);
   }
 
@@ -347,31 +349,31 @@ const [covid_vaccinated,setCovid_vaccinated] = useState(tempProfile.covid_vaccin
     form.append("education_level", eduLevel);
     form.append("certificate", certificate);
     form.append("language", langs);
-    form.append("eligible", eligible||false);
+    form.append("eligible", eligible || false);
     form.append("sixteen", sixteen || false);
     form.append("convictions", convictions || false);
-    form.append("covid_vaccinated",covid_vaccinated || false);
+    form.append("covid_vaccinated", covid_vaccinated || false);
     form.append("skill", skills.toString());
-    form.append("instagram_connected",isInstagramConnect);
+    form.append("instagram_connected", isInstagramConnect);
     form.append(
       "preferred_business_categories",
       categoriesList
         .filter((item) => item.selected)
         .map((item) => item.category_id)
-        .toString() 
+        .toString()
     );
     console.log(form);
     setLoading(true);
     postFormData("update_user", form)
       .then((res) => {
         console.log(res);
-        if(res.status==200){
+        if (res.status == 200) {
           return res.json();
-        }else{
+        } else {
           setLoading(false);
-          Alert.alert('Error','Profile image is too large.')
+          Alert.alert("Error", "Profile image is too large.");
 
-          return res.text()
+          return res.text();
         }
       })
       .then((json) => {
@@ -394,7 +396,7 @@ const [covid_vaccinated,setCovid_vaccinated] = useState(tempProfile.covid_vaccin
           // navigation.navigate("Seeker");
         }
       })
-      .catch((err) => { 
+      .catch((err) => {
         console.log(err, err.message);
       });
   }
@@ -530,30 +532,46 @@ const [covid_vaccinated,setCovid_vaccinated] = useState(tempProfile.covid_vaccin
   }
 
   function handleInstaConnect() {
-    if (!tempProfile.instagram_connected) {
+    if (isInstagramConnect) {
+      Alert.alert(
+        "",
+        "Are you sure you want to disconnect from instagram?",
+        [
+          {
+            text: "Cancel",
+            onPress: () => {},
+            style: "cancel",
+          },
+          {
+            text: "OK",
+            onPress: () => {
+              setInstaModalShow(true);
+            },
+          },
+        ]
+      );
+    } else {
       setInstaModalShow(true);
     }
   }
 
-  function onCloseInstagramConnect(){
+  function onCloseInstagramConnect() {
     setInstaModalShow(false);
     let form = new FormData();
     form.append("user_token", user.user_token);
     form.append("user_id", user.user_id);
     postFormData("user_profile", form)
-    .then((res) => {
-      console.log('Prifile data',res)
-      return res.json();
-      
-    })
-    .then((json) => {
-      console.log('Profile data',json);
-      setIsInstagramConnect(json.data.instagram_connected);
-
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+      .then((res) => {
+        console.log("Prifile data", res);
+        return res.json();
+      })
+      .then((json) => {
+        console.log("Profile data", json);
+        setIsInstagramConnect(json.data.instagram_connected);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   function addToCategoreis(item) {
@@ -595,8 +613,8 @@ const [covid_vaccinated,setCovid_vaccinated] = useState(tempProfile.covid_vaccin
           </View>
         </View>
 
-        <Loader  loading={loading}/>
-       
+        <Loader loading={loading} />
+
         {/* <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : null}
       keyboardVerticalOffset={Platform.OS === "ios" ? 10 : 40}      
@@ -1196,9 +1214,10 @@ const [covid_vaccinated,setCovid_vaccinated] = useState(tempProfile.covid_vaccin
                     flexWrap: "wrap",
                   }}
                 >
-                  {skills && skills.map((item, index) => {
-                    return renderSkill({ item, index });
-                  })}
+                  {skills &&
+                    skills.map((item, index) => {
+                      return renderSkill({ item, index });
+                    })}
                 </View>
 
                 <View
@@ -1787,21 +1806,17 @@ const [covid_vaccinated,setCovid_vaccinated] = useState(tempProfile.covid_vaccin
               <View style={{ height: 35 }}></View>
             </View>
           </View>
-          
         </View>
         {/* </ScrollView> */}
-
 
         <InstagramLoginPopup
           userId={user.user_id}
           visible={instaModalShow}
           onClose={() => {
-            onCloseInstagramConnect()
-            }}
+            onCloseInstagramConnect();
+          }}
+          isConnected={isInstagramConnect}
         />
-
-
-
       </KeyboardAwareScrollView>
 
       <KeyboardAccessoryNavigation

@@ -395,68 +395,6 @@ function SeekerHome({ navigation }) {
     }
   }
 
-  function distance(lat1, lon1, lat2, lon2, unit) {
-    console.log(lat1, lon1, lat2, lon2, unit);
-    if (lat1 == lat2 && lon1 == lon2) {
-      return 0;
-    } else {
-      var radlat1 = (Math.PI * lat1) / 180;
-      var radlat2 = (Math.PI * lat2) / 180;
-      var theta = lon1 - lon2;
-      var radtheta = (Math.PI * theta) / 180;
-      var dist =
-        Math.sin(radlat1) * Math.sin(radlat2) +
-        Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-      if (dist > 1) {
-        dist = 1;
-      }
-      dist = Math.acos(dist);
-      dist = (dist * 180) / Math.PI;
-      dist = dist * 60 * 1.1515;
-      if (unit == "K") {
-        dist = dist * 1.609344;
-      }
-      if (unit == "N") {
-        dist = dist * 0.8684;
-      }
-
-      return dist;
-    }
-  }
-
-  function distanceInKM(lat1, lon1, lat2, lon2) {
-    var p = 0.017453292519943295; // Math.PI / 180
-    var c = Math.cos;
-    var a =
-      0.5 -
-      c((lat2 - lat1) * p) / 2 +
-      (c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p))) / 2;
-    console.log(12742 * Math.asin(Math.sqrt(a)));
-    return 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
-  }
-
-  function haversine_distance(lat1, lon1, lat2, lon2) {
-    var R = 3958.8; // Radius of the Earth in miles
-    var rlat1 = lat1 * (Math.PI / 180); // Convert degrees to radians
-    var rlat2 = lat2 * (Math.PI / 180); // Convert degrees to radians
-    var difflat = rlat2 - rlat1; // Radian difference (latitudes)
-    var difflon = (lon2 - lon1) * (Math.PI / 180); // Radian difference (longitudes)
-
-    var d =
-      2 *
-      R *
-      Math.asin(
-        Math.sqrt(
-          Math.sin(difflat / 2) * Math.sin(difflat / 2) +
-            Math.cos(rlat1) *
-              Math.cos(rlat2) *
-              Math.sin(difflon / 2) *
-              Math.sin(difflon / 2)
-        )
-      );
-    return d;
-  }
-
   function refreshData() {
     setRefresh(true);
     loadDate();
@@ -473,6 +411,18 @@ function SeekerHome({ navigation }) {
       },
       { text: "Cancel", onPress: () => console.log("OK Pressed") },
     ]);
+  }
+
+  function goToCurrentLocation(){
+    map.animateToRegion(
+      {
+        latitude: region.latitude,
+        longitude: region.longitude,
+        latitudeDelta: 0.0522,
+        longitudeDelta: 0.0421,
+      },
+      500
+    );
   }
 
   return (
@@ -549,57 +499,6 @@ function SeekerHome({ navigation }) {
             />
           }
         >
-          {/* <View
-            style={{
-              // backgroundColor: '#4E35AE',
-              flex: 1,
-              flexDirection: "row",
-              alignItems: "center",
-              borderBottomWidth: 1,
-              borderBottomColor: "#715FCB",
-              paddingBottom: 10,
-              paddingTop: 15,
-            }}
-          >
-            <View style={{ width: "33.3%" }}>
-              <TouchableOpacity
-                onPress={() => navigation.navigate("HomeScreen")}
-              >
-                <Text style={{ paddingLeft: 10, color: "#fff", fontSize: 18 }}>
-                  Logout
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <View style={{ width: "33.3%" }}>
-              <Image
-                source={require("../assets/title_header.png")}
-                style={{ width: 120, height: 25 }}
-              />
-            </View>
-            <View style={{ width: "33.3%" }}>
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate("SeekerLinks", {
-                    screen: "SeekerEditProfile",
-                    params: {
-                      profile: profile,
-                    },
-                  })
-                }
-              >
-                <Text
-                  style={{
-                    paddingRight: 10,
-                    textAlign: "right",
-                    color: "#fff",
-                    fontSize: 18,
-                  }}
-                >
-                  Edit Profile
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View> */}
 
           <View style={{ flex: 1, alignItems: "center", padding: 20 }}>
             <Image
@@ -830,6 +729,7 @@ function SeekerHome({ navigation }) {
                 height: 500,
               }}
             >
+              
               <MapView
                 ref={(r) => (map = r)}
                 style={{ width: "99%", height: 500 }}
@@ -838,6 +738,7 @@ function SeekerHome({ navigation }) {
                 customMapStyle={MapStyle}
                 zoomEnabled={true}
               >
+                
                 <Marker
                   draggable={false}
                   key={"mkr.user_id"}
@@ -865,6 +766,11 @@ function SeekerHome({ navigation }) {
                         latitude: parseFloat(mkr.latitude),
                         longitude: parseFloat(mkr.longitude),
                       }}
+                      onPress={async() =>{
+                        await setSelectedBusiness(mkr.user_id);
+                        _scrollView.scrollTo({ x: idx * 125, y: 0, animated: true });
+                      }} 
+
                     >
                       <Image
                         source={mkrImage(mkr)}
@@ -874,6 +780,9 @@ function SeekerHome({ navigation }) {
                   );
                 })}
               </MapView>
+              <TouchableOpacity onPress={goToCurrentLocation} style={{position:'absolute',justifyContent:'center',alignItems:'center', height:50,width:50,borderRadius:50,backgroundColor:'#f2f2f2',right:20,bottom:130}}>
+                  <Image source={require('../assets/location.png')} style={{height:25,width:25}} />
+                  </TouchableOpacity>
             </View>
 
             <ScrollView

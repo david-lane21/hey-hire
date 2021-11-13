@@ -486,7 +486,7 @@ function SeekerJobDetail({ route, navigation }) {
                   >
                     {business.business_name}{" "}
                     {
-                      "is requesting that you connect your Instagram account to your profile to apply for this position.Please connect your Instagram"
+                      "is requesting that you connect your Instagram account to your profile to apply for this position."
                     }
                   </Text>
                   {!user.instagram_connected ? (

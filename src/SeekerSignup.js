@@ -132,12 +132,12 @@ function SeekerSignup({ navigation }) {
         const country = countries.find(
           item => item.code == addressObject[0].isoCountryCode
         );
-        setAddress(name)
+        // setAddress(name)
         setState(addressObject[0].region)
-        setCity(addressObject[0].city)
+        // setCity(addressObject[0].city)
         setCountry(country.name)
         setPhCode(country.dial_code)
-        setZipcode(addressObject[0].postalCode)
+        // setZipcode(addressObject[0].postalCode)
       }).catch((error) => {
         console.log('setAddressField error', error);
       })

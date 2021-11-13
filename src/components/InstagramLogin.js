@@ -18,9 +18,13 @@ import { Feather } from '@expo/vector-icons';
 import { WebView } from 'react-native-webview';
 
 
-export default function InstagramLoginPopup({ visible, userId, onClose }) {
+export default function InstagramLoginPopup({ visible, userId, onClose,isConnected }) {
     const id = userId * 33469;
-    const url = 'https://app.apployme.com/instagram/auth/' + id;
+    let url = 'https://app.apployme.com/instagram/auth/' + id;
+    if(isConnected){
+        url = 'https://app.apployme.com/instagram/disconnect/' +id;
+    }
+    console.log('url',url);
     return (
         <Modal
             animationType="fade"
