@@ -50,7 +50,7 @@ function SeekerJobDetail({ route, navigation }) {
           .then((json) => {
             console.log("Detail", json);
             setJob(
-              Object.assign(json.data, { applied_on: tempJob.applied_on })
+              Object.assign(json.data, { applied_on: tempJob.applied_on,viewed_on:tempJob.viewed_on })
             );
           })
           .catch((err) => {
@@ -127,7 +127,7 @@ function SeekerJobDetail({ route, navigation }) {
           Alert.alert("", json.msg);
         } else {
           setModal2(true);
-          const tempJob = Object.assign({}, job, { aplied: "1" });
+          const tempJob = Object.assign({}, job, { aplied: "1",applied_on: new Date() });
           setJob(tempJob);
         }
 
@@ -218,6 +218,40 @@ function SeekerJobDetail({ route, navigation }) {
     );
   }
 
+  function onNudge() {
+    console.log(job);
+    const appliedDate = moment(new Date(job.applied_on));
+    const currentDate = moment();
+
+    var dayDiff = currentDate.diff(appliedDate, "days");
+    if (dayDiff > 4) {
+      let form = new FormData();
+      form.append("user_token", user.user_token);
+      form.append("user_id", user.user_id);
+      form.append("job_id", job.id);
+
+      postFormData("nudge_job", form)
+        .then((res) => {
+          return res.json();
+        })
+        .then((json) => {
+          console.log(json);
+          if (json.status_code == 200) {
+            Alert.alert("", json.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      const days = 5-dayDiff;
+      Alert.alert(
+        "",
+        "You can only nudge the manager after 5 business days. Please try again in " + days + (days>1?" days.":" day.")
+      );
+    }
+  }
+
   function dateFormat(date) {
     if (date) {
       let d = date.split("-");
@@ -298,10 +332,20 @@ function SeekerJobDetail({ route, navigation }) {
         </View>
         <ScrollView style={{ marginBottom: 50 }}>
           <View style={{ flex: 1, alignItems: "center", padding: 20 }}>
+          <ImageBackground
+                    source={require("../assets/img_ring.png")}
+                    style={{
+                      width: 136,
+                      height: 136,
+                      paddingTop: 17,
+                      paddingLeft: 17,
+                    }}
+                  >
             <Image
               source={{ uri: business.avatar_image }}
               style={{ width: 100, height: 100, borderRadius: 50 }}
             />
+            </ImageBackground>
           </View>
 
           <View style={{ flex: 1, alignItems: "center", marginHorizontal: 20 }}>
@@ -333,6 +377,23 @@ function SeekerJobDetail({ route, navigation }) {
             </View>
           )}
 
+{job.viewed_on && (
+            <View
+              style={{
+                flex: 1,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text style={{ color: "#fff" }}>{strings.VIEWED_ON}: </Text>
+
+              <Text style={{ color: "#fff", fontSize: 14 }}>
+                {moment(job.viewed_on).format("MM/DD/YYYY")}
+              </Text>
+            </View>
+          )}
+
           <View
             style={{
               flex: 1,
@@ -354,6 +415,7 @@ function SeekerJobDetail({ route, navigation }) {
               </Text>
             </View>
           </View>
+          
 
           <View
             style={{
@@ -366,6 +428,7 @@ function SeekerJobDetail({ route, navigation }) {
           >
             <Text style={{ color: "#fff" }}>{business.business_detail}</Text>
           </View>
+          
 
           <View
             style={{
@@ -513,7 +576,6 @@ function SeekerJobDetail({ route, navigation }) {
                           }}
                           onPress={() => {
                             setInstaModalShow(true);
-                           
                           }}
                         >
                           <AntDesign
@@ -570,6 +632,34 @@ function SeekerJobDetail({ route, navigation }) {
                   width: "100%",
                 }}
               >
+                <TouchableOpacity
+                  style={{
+                    width: "100%",
+                    backgroundColor: "#ff0",
+                    paddingTop: 12,
+                    paddingBottom: 12,
+                    borderRadius: 50,
+                    marginBottom: 10,
+                    justifyContent: "center",
+                  }}
+                  onPress={() => onNudge()}
+                >
+                  <Image
+                    source={require("../assets/Bell.png")}
+                    style={{
+                      height: 25,
+                      width: 25,
+                      position: "absolute",
+                      left: 20,
+                    }}
+                  />
+                  <Text
+                    style={{ textAlign: "center", fontSize: 18, color: "#000" }}
+                  >
+                    {strings.SEND_NUDGE}
+                  </Text>
+                </TouchableOpacity>
+                <Text style={{ fontSize: 14, color: "#666",marginBottom:10,marginHorizontal:5,opacity:0.7 }}>{strings.NUDGE_DESCRIPTION}</Text>
                 <TouchableOpacity
                   style={{
                     width: "100%",

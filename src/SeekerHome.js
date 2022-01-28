@@ -10,7 +10,7 @@ import {
   RefreshControl,
   Linking,
   Alert,
-  Dimensions,
+  ImageBackground,
   PermissionsAndroid,
 } from "react-native";
 import { getUser, removeUser, setUser } from "./utils/utils.js";
@@ -501,16 +501,26 @@ function SeekerHome({ navigation }) {
         >
 
           <View style={{ flex: 1, alignItems: "center", padding: 20 }}>
+          <ImageBackground
+                    source={require("../assets/img_ring.png")}
+                    style={{
+                      width: 136,
+                      height: 136,
+                      paddingTop: 17,
+                      paddingLeft: 16,
+                    }}
+                  >
             <Image
               source={{ uri: profile.avatar_image, cache: "force-cache" }}
               style={{
-                width: 110,
-                height: 110,
+                width: 102,
+                height: 102,
                 borderRadius: 60,
                 borderWidth: 1,
                 borderColor: "#fff",
               }}
             />
+            </ImageBackground>
           </View>
 
           <View style={{ flex: 1, alignItems: "center" }}>
@@ -772,10 +782,26 @@ function SeekerHome({ navigation }) {
                       }} 
 
                     >
-                      <Image
+                      <ImageBackground
                         source={mkrImage(mkr)}
-                        style={{ width: 40, height: 40 }}
-                      />
+                        style={{ width: 45, height: 45,justifyContent:'center',alignItems:'center' }}
+                      >{mkr.avatar_image ? (
+                        <Image
+                          source={{ uri: mkr.avatar_image }}
+                          style={{
+                            width: 20,
+                            height: 20,
+                            borderRadius: 25,
+                          }}
+                        />
+                      ) : (
+                        <Image
+                          source={require("../assets/ApployMeLogo.png")}
+                          style={{ width: 20,
+                            height: 20,
+                            borderRadius: 25, }}
+                        />
+                      )}</ImageBackground>
                     </Marker>
                   );
                 })}

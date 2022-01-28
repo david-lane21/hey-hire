@@ -148,5 +148,8 @@
     "REQUIRED_CERTIFICATIONS":"Required certifications",
     "JOB_CATEGORIES":"Job Categories",
     "SELECT_JOB_CATEGORIES":"Select Job Categories",
-    "ARE_VACCINATED":"Are you fully vaccinated for COVID-19?"
+    "ARE_VACCINATED":"Are you fully vaccinated for COVID-19?",
+    "SEND_NUDGE":"Send Nudge",
+    "VIEWED_ON":"Viewed By Manager",
+    "NUDGE_DESCRIPTION":"Business managers can sometimes be very busy. Therefore you can easily remind them that you're still interested in the position. Please allow at least five davs before sending a nudge. Once you nudge the manager, they will be notified you're still interested."
 }

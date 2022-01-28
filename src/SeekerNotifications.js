@@ -100,7 +100,7 @@ function SeekerNotifications({navigation}){
         marginHorizontal:20
       }}>
         <View style={{flex:1}}>
-          <Image source={require('../assets/ApployMeLogo.png')} style={{width:40,height:40,borderRadius:20,marginRight:10}} />
+          <Image source={{uri:item.item.business_avatar}} style={{width:40,height:40,borderRadius:20,marginRight:10}} />
         </View>
         <View style={{flex:8,marginHorizontal:20}}>
         <Text style={{fontWeight:'bold',fontSize:16}}>{item.item.position_name}</Text>

@@ -21,6 +21,7 @@ function SeekerAppliedJobs({ navigation }) {
   const [appliedJobs, setAppliedJobs] = useState([]);
   const [filteredJobs, setFilteredJobs] = useState([]);
   const [likedJobs, setLikedJobs] = useState([]);
+  const [viewed_jobs, setViewed_jobs] = useState([]);
 
   const [user, setUser] = useState({});
   const [search, setSearch] = useState("");
@@ -76,13 +77,16 @@ function SeekerAppliedJobs({ navigation }) {
           } else {
             setMessage(null);
             setAppliedJobs(json.applied_jobs);
+            setViewed_jobs(json.viewed_jobs);
             if (json.applied_jobs.length > 0) {
               const likedJobs = [];
               json.liked_jobs.map((item) => {
-                const tempApplied  = json.applied_jobs.filter((item1) => item1.id==item.id );
-                 if(tempApplied.length==0){
-                   likedJobs.push(item);
-                 }
+                const tempApplied = json.applied_jobs.filter(
+                  (item1) => item1.id == item.id
+                );
+                if (tempApplied.length == 0) {
+                  likedJobs.push(item);
+                }
               });
 
               setLikedJobs(likedJobs);
@@ -147,6 +151,7 @@ function SeekerAppliedJobs({ navigation }) {
     // console.log(item)
     const isLiked = likedJobs.filter((item1) => item.id == item1.id);
     const isApplied = appliedJobs.filter((item1) => item.id == item1.id);
+    const isViewed = viewed_jobs.filter((item1) => item.id == item1.id);
 
     const distance = CommonUtils.distance(
       parseFloat(item.business.latitude),
@@ -154,15 +159,26 @@ function SeekerAppliedJobs({ navigation }) {
       "K"
     );
 
+    console.log("isViewed", isViewed, item.id);
+
     return (
       <TouchableOpacity
         key={item.id + "" + item.like + "" + item.aplied}
-        onPress={() =>
-          navigation.navigate("SeekerAppliedJobs0", {
-            screen: "SeekerJobDetail",
-            params: { job: isApplied.length>0?isApplied[0]: item },
-          })
-        }
+        onPress={() => {
+          if (isViewed.length > 0) {
+            let tempJob = isApplied.length > 0 ? isApplied[0] : item;
+            tempJob.viewed_on = isViewed[0].viewed_on;
+            navigation.navigate("SeekerAppliedJobs0", {
+              screen: "SeekerJobDetail",
+              params: { job: tempJob },
+            });
+          } else {
+            navigation.navigate("SeekerAppliedJobs0", {
+              screen: "SeekerJobDetail",
+              params: { job: isApplied.length > 0 ? isApplied[0] : item },
+            });
+          }
+        }}
       >
         <View
           style={{
@@ -199,7 +215,7 @@ function SeekerAppliedJobs({ navigation }) {
               }}
             />
           </View>
-          <View style={{ width: "70%", backgroundColor: "#F4F5FA" }}>
+          <View style={{ width: "65%", backgroundColor: "#F4F5FA" }}>
             <View style={{}}>
               <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <Text style={{ fontSize: 18, fontWeight: "700" }}>
@@ -211,6 +227,15 @@ function SeekerAppliedJobs({ navigation }) {
                     style={{ width: 60, height: 15, marginLeft: 15 }}
                   />
                 ) : null}
+                 {isViewed.length > 0 && (
+              <View style={{ width: 35 }}>
+                <Image
+                  source={require("../assets/ic-viewed.png")}
+                  style={{ width: 60, height: 15,marginLeft:10 }}
+                  resizeMode={"stretch"}
+                />
+              </View>
+            )}
               </View>
               <View style={{ flexDirection: "row" }}>
                 <Text
@@ -242,7 +267,14 @@ function SeekerAppliedJobs({ navigation }) {
               </Text>
             </View>
           </View>
-          <View style={{ width: "13%", alignItems: "flex-end" }}>
+          <View
+            style={{
+              width: "18%",
+              alignItems: "flex-end",
+              flexDirection: "row",
+              justifyContent: "flex-end",
+            }}
+          >
             {isLiked.length > 0 && item.like == 1 ? (
               <TouchableOpacity onPress={() => addWishlist(item)}>
                 <View style={{ width: 40 }}>
