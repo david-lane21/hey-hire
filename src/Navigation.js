@@ -8,10 +8,8 @@ import { getUser } from "./utils/utils.js";
 import HomeScreen from "./HomeScreen";
 import SeekerLogin from "./SeekerLogin";
 import SeekerForgotPassword from "./SeekerForgotPassword";
-import BusinessForgotPassword from "./BusinessForgotPassword";
 import SeekerSignup from "./SeekerSignup";
 import SeekerVerificationCode from "./SeekerVerificationCode";
-import BusinessSignup from "./BusinessSignup";
 import SeekerHome from "./SeekerHome";
 import SeekerScanQrCode from "./SeekerScanQrCode";
 import SeekerAppliedJobs from "./SeekerAppliedJobs";
@@ -32,7 +30,6 @@ const Stack = createStackNavigator();
 const Stack2 = createStackNavigator();
 const Stack3 = createStackNavigator();
 const Tab = createBottomTabNavigator();
-const BusinessHomeStack = createStackNavigator();
 const SeekerHomeStack = createStackNavigator();
 const AppNavigationStack = createStackNavigator();
 
@@ -74,58 +71,6 @@ export function Navigation(props) {
           }}
         />
 
-        <Stack.Screen
-          name="Business"
-          component={Business}
-          options={{
-            headerShown: false,
-            gestureEnabled: false
-
-          }}
-        />
-
-        <Stack.Screen
-          name="BusinessLinks"
-          component={BusinessLinks}
-          options={{
-            headerShown: false,
-            gestureEnabled: false
-
-          }}
-        />
-
-        <Stack.Screen
-          name="BusinessEditAccount"
-          component={BusinessEditAccount}
-          options={{
-            headerShown: true,
-            headerBackTitleVisible: false,
-            headerTitle: "Edit Account",
-            headerStyle: {
-              backgroundColor: "#4E35AE",
-            },
-            headerTintColor: "#fff",
-          }}
-        />
-
-        <Stack.Screen
-          name="BusinessPrinterOptions"
-          component={BusinessPrinterOptions}
-        />
-        <Stack.Screen
-          name="BusinessSeekerProfileMain"
-          component={BusinessSeekerProfile}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="BusinessVisitorDetail"
-          component={BusinessVisitorDetail}
-          options={{
-            headerShown: false,
-          }}
-        />
 
         <Stack.Screen
           name="HomeScreen"
@@ -141,13 +86,7 @@ export function Navigation(props) {
             headerShown: false,
           }}
         />
-        <Stack.Screen
-          name="BusinessLogin"
-          component={BusinessLogin}
-          options={{
-            headerShown: false,
-          }}
-        />
+        
         <Stack.Screen
           name="SeekerSignup"
           component={SeekerSignup}
@@ -168,19 +107,7 @@ export function Navigation(props) {
             headerShown: false,
           }}
         />
-        <Stack.Screen
-          name="BusinessSignup"
-          component={BusinessSignup}
-          options={{
-            headerShown: true,
-            headerBackTitleVisible: false,
-            headerTitle: "apployMe",
-            headerStyle: {
-              backgroundColor: "#4E35AE",
-            },
-            headerTintColor: "#fff",
-          }}
-        />
+        
         <Stack.Screen
           name="SeekerForgotPassword"
           component={SeekerForgotPassword}
@@ -194,19 +121,7 @@ export function Navigation(props) {
             headerTintColor: "#fff",
           }}
         />
-        <Stack.Screen
-          name="BusinessForgotPassword"
-          component={BusinessForgotPassword}
-          options={{
-            headerShown: true,
-            headerBackTitleVisible: false,
-            headerTitle: "Forgot Password",
-            headerStyle: {
-              backgroundColor: "#4E35AE",
-            },
-            headerTintColor: "#fff",
-          }}
-        />
+        
 
         <Stack.Screen name="TestLinks" component={TestLinks} />
       </Stack.Navigator>
@@ -240,62 +155,7 @@ export function AppNavigation({ navigation }) {
         }}
       />
 
-      <AppNavigationStack.Screen
-        name="Business"
-        component={Business}
-        options={{
-          headerShown: false,
-          gestureEnabled: false
-
-        }}
-      />
-
-      <AppNavigationStack.Screen
-        name="BusinessLinks"
-        component={BusinessLinks}
-        options={{
-          headerShown: false,
-          gestureEnabled: false
-
-        }}
-      />
-
-      <AppNavigationStack.Screen
-        name="BusinessEditAccount"
-        component={BusinessEditAccount}
-        options={{
-          headerShown: true,
-          headerBackTitleVisible: false,
-          headerTitle: "Edit Account",
-          headerStyle: {
-            backgroundColor: "#4E35AE",
-          },
-          headerTintColor: "#fff",
-          gestureEnabled: false
-
-        }}
-      />
-
-      <AppNavigationStack.Screen
-        name="BusinessPrinterOptions"
-        component={BusinessPrinterOptions}
-      />
-      <AppNavigationStack.Screen
-        name="BusinessSeekerProfileMain"
-        component={BusinessSeekerProfile}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <AppNavigationStack.Screen
-        name="BusinessVisitorDetail"
-        component={BusinessVisitorDetail}
-        options={{
-          headerShown: false,
-          gestureEnabled: false
-
-        }}
-      />
+      
     </AppNavigationStack.Navigator>
   );
 }
@@ -322,21 +182,7 @@ export function AuthNavigation({ navigation }) {
 
         }}
       />
-      <AuthNavigationStack.Screen
-        name="BusinessLogin"
-        component={BusinessLogin}
-        options={{
-          headerShown: true,
-          headerBackTitleVisible: false,
-          headerTitle: "apployMe",
-          headerStyle: {
-            backgroundColor: "#4E35AE",
-          },
-          headerTintColor: "#fff",
-          gestureEnabled: false
-
-        }}
-      />
+      
       <AuthNavigationStack.Screen
         name="SeekerSignup"
         component={SeekerSignup}
@@ -361,21 +207,7 @@ export function AuthNavigation({ navigation }) {
 
         }}
       />
-      <AuthNavigationStack.Screen
-        name="BusinessSignup"
-        component={BusinessSignup}
-        options={{
-          headerShown: true,
-          headerBackTitleVisible: false,
-          headerTitle: "apployMe",
-          headerStyle: {
-            backgroundColor: "#4E35AE",
-          },
-          headerTintColor: "#fff",
-          gestureEnabled: false
-
-        }}
-      />
+      
       <AuthNavigationStack.Screen
         name="SeekerForgotPassword"
         component={SeekerForgotPassword}
@@ -391,21 +223,7 @@ export function AuthNavigation({ navigation }) {
 
         }}
       />
-      <AuthNavigationStack.Screen
-        name="BusinessForgotPassword"
-        component={BusinessForgotPassword}
-        options={{
-          headerShown: true,
-          headerBackTitleVisible: false,
-          headerTitle: "Forgot Password",
-          headerStyle: {
-            backgroundColor: "#4E35AE",
-          },
-          headerTintColor: "#fff",
-          gestureEnabled: false
-
-        }}
-      />
+      
       <Stack2.Screen
         name="SeekerFinishRegistration"
         component={SeekerFinishRegistration}
