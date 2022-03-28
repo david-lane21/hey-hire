@@ -3,7 +3,7 @@ import {
   View,
   Text,
   Modal,
-  StyleSheet,
+  
   TextInput,
   SafeAreaView,
   Image,
@@ -31,6 +31,8 @@ import { AuthContext } from "./navigation/context";
 import DeviceInfo from 'react-native-device-info';
 import CommonUtils from './utils/CommonUtils';
 import GeolocationNew from '@react-native-community/geolocation';
+import {styles} from './style';
+import { sharedImages } from "../../../images.js";
 
 const isIphoneX = DeviceInfo.hasNotch();
 const window = Dimensions.get("window");
@@ -259,11 +261,11 @@ function SeekerLogin({ navigation }) {
   return (
 
     <LinearGradient style={styles.container} colors={["#4E35AE", "#775ED7"]} >
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={styles.container}>
         <View style={{ flexDirection: 'row', position: 'absolute', top: 0, left: 0, bottom: 0 }}>
           <Image
-            style={{ width: '100%', height: (window.height), borderBottomLeftRadius: 8, borderBottomRightRadius: 8, opacity: 1 }}
-            source={require('../assets/home-bg.png')}
+            style={styles.imageBackground}
+            source={sharedImages.image}
             resizeMode={'cover'}
           />
 
@@ -453,7 +455,7 @@ function SeekerLogin({ navigation }) {
 
               }}
             >
-              <Text style={{ color: '#fff', fontSize: 16, marginBottom: 5 }}>{strings.PASSWORD}</Text>
+              <Text style={styles.labelText}>{strings.PASSWORD}</Text>
               <View style={{ flexDirection: "row", }}>
                 <Image
                   source={require("../assets/ic_lock.png")}
