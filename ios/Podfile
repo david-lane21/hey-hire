@@ -32,7 +32,7 @@ target 'apployMe' do
   pod 'ReactCommon/jscallinvoker', :path => "#{rnPrefix}/ReactCommon"
   pod 'ReactCommon/turbomodule/core', :path => "#{rnPrefix}/ReactCommon"
   pod 'Yoga', :path => "#{rnPrefix}/ReactCommon/yoga"
-  pod 'DoubleConversion', :podspec => "#{rnPrefix}/third-party-podspecs/DoubleConversion.podspec"
+  # pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
   pod 'glog', :podspec => "#{rnPrefix}/third-party-podspecs/glog.podspec"
   pod 'Folly', :podspec => "#{rnPrefix}/third-party-podspecs/Folly.podspec"
 
@@ -55,7 +55,7 @@ target 'apployMe' do
     "_initializeModules:(NSArray<id<RCTBridgeModule>> *)modules", "_initializeModules:(NSArray<Class> *)modules")
     find_and_replace("../node_modules/react-native/ReactCommon/turbomodule/core/platform/ios/RCTTurboModuleManager.mm",
     "RCTBridgeModuleNameForClass(module))", "RCTBridgeModuleNameForClass(Class(module)))")
-  end
+  end 
 
   def find_and_replace(dir, findstr, replacestr)
     Dir[dir].each do |name|
