@@ -11,6 +11,12 @@ import { AuthContext } from "./src/navigation/context";
 import { getUser } from "./src/utils/utils.js";
 import messaging from '@react-native-firebase/messaging';
 import CommonUtils from './src/utils/CommonUtils';
+import {Provider} from 'react-redux';
+import store from './src/redux/store';
+import { PersistGate } from 'redux-persist/lib/integration/react';
+import { getPersistor } from '@rematch/persist';
+
+
 
 console.disableYellowBox = true;
 
@@ -124,23 +130,20 @@ export default function App() {
   }
 
   return (
-    <AuthContext.Provider value={authContext}>
-      <NavigationContainer
-        ref={(navigatorRef) => {
-          NavigationService.setTopLevelNavigator(navigatorRef);
-        }}
-      >
-        <RootStackScreen userToken={userToken} url={url} />
-      </NavigationContainer>
-    </AuthContext.Provider>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={getPersistor()}>
+        <AuthContext.Provider value={authContext}>
+          <NavigationContainer
+            ref={(navigatorRef) => {
+              NavigationService.setTopLevelNavigator(navigatorRef);
+            }}
+          >
+            <RootStackScreen userToken={userToken} url={url} />
+          </NavigationContainer>
+        </AuthContext.Provider>
+      </PersistGate>
+    </Provider>
   );
 
   // return <Navigation></Navigation>;
 }
-
-
-
-
-
-
-

@@ -57,6 +57,7 @@ target 'apployMe' do
     "RCTBridgeModuleNameForClass(module))", "RCTBridgeModuleNameForClass(Class(module)))")
   end 
 
+  
   def find_and_replace(dir, findstr, replacestr)
     Dir[dir].each do |name|
         text = File.read(name)
