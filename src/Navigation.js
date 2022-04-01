@@ -16,7 +16,7 @@ import SeekerAppliedJobs from "./SeekerAppliedJobs";
 import SeekerNotifications from "./SeekerNotifications";
 import SeekerEditProfile from "./SeekerEditProfile";
 import SeekerFinishRegistration from "./SeekerFinishRegistration";
-import SeekerJobDetail from "./SeekerJobDetail";
+import SeekerJobDetail from "../src/screens/dashboard/seeker-job-detail";
 import SeekerArchivedJobs from "./SeekerArchivedJobs";
 import SeekerAvailableJobs from "./SeekerAvailableJobs";
 import SeekerAddLang from "./SeekerAddLang";

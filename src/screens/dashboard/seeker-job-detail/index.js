@@ -10,17 +10,18 @@ import {
   ImageBackground,
   Linking,
 } from "react-native";
-import { getUser, setUser } from "./utils/utils.js";
-import { postFormData } from "./utils/network.js";
+import { getUser, setUser } from "../../../utils/utils";
+import { postFormData } from "../../../utils/network.js";
 import { LinearGradient } from "expo-linear-gradient";
-import ConfirmationAlert from "./components/ConfirmationAlert";
-import AlertPopup from "./components/AlertPopup";
-import { strings } from "./translation/config";
+import ConfirmationAlert from "../../../components/ConfirmationAlert";
+import AlertPopup from "../../../components/AlertPopup";
+import { strings } from "../../../translation/config";
 import { useIsFocused } from "@react-navigation/native";
 import moment from "moment";
-import InstagramLoginPopup from "./components/InstagramLogin.js";
+import InstagramLoginPopup from "../../../components/InstagramLogin.js";
 import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
 import { connect } from 'react-redux';
+import { sharedImages } from "../../../images";
 
 function SeekerJobDetail({ route, navigation }) {
   const isFocused = useIsFocused();
@@ -279,7 +280,7 @@ function SeekerJobDetail({ route, navigation }) {
           <View style={{ width: "33.3%", alignContent: "center" }}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Image
-                source={require("../assets/ic_back_w.png")}
+                source={sharedImages.back}
                 style={{
                   width: 28,
                   height: 25,
@@ -291,7 +292,7 @@ function SeekerJobDetail({ route, navigation }) {
           </View>
           <View style={{ width: "33.3%" }}>
             <Image
-              source={require("../assets/title_header.png")}
+              source={sharedImages.title_header}
               style={{ width: 120, height: 25 }}
             />
           </View>
@@ -306,7 +307,7 @@ function SeekerJobDetail({ route, navigation }) {
                   onPress={() => onCancelCV()}
                 >
                   <Image
-                    source={require("../assets/ic_checked_white.png")}
+                    source={require("../../../../assets/ic_checked_white.png")}
                     style={{ width: 20, height: 20 }}
                   />
                 </TouchableOpacity>
@@ -316,7 +317,7 @@ function SeekerJobDetail({ route, navigation }) {
                   onPress={() => addWishlist()}
                 >
                   <Image
-                    source={require("../assets/ic_heart_filled_w.png")}
+                    source={require("../../../../assets/ic_heart_filled_w.png")}
                     style={{ width: 25, height: 25 }}
                     resizeMode={"stretch"}
                   />
@@ -324,7 +325,7 @@ function SeekerJobDetail({ route, navigation }) {
               ) : null}
               <TouchableOpacity style={{ flex: 1 }}>
                 <Image
-                  source={require("../assets/ic_share_w.png")}
+                  source={require("../../../../assets/ic_share_w.png")}
                   style={{ width: 20, height: 20 }}
                 />
               </TouchableOpacity>
@@ -334,7 +335,7 @@ function SeekerJobDetail({ route, navigation }) {
         <ScrollView style={{ marginBottom: 50 }}>
           <View style={{ flex: 1, alignItems: "center", padding: 20 }}>
             <ImageBackground
-              source={require("../assets/img_ring.png")}
+              source={require("../../../../assets/img_ring.png")}
               style={{
                 width: 136,
                 height: 136,
@@ -408,7 +409,7 @@ function SeekerJobDetail({ route, navigation }) {
               style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
             >
               <Image
-                source={require("../assets/ic_location.png")}
+                source={require("../../../../assets/ic_location.png")}
                 style={{ width: 13, height: 13 }}
               />
               <Text style={{ color: "#fff", marginLeft: 5 }}>
@@ -457,7 +458,7 @@ function SeekerJobDetail({ route, navigation }) {
                 style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
               >
                 <Image
-                  source={require("../assets/ic_calender.png")}
+                  source={require("../../../../assets/ic_calender.png")}
                   style={{ width: 20, height: 20 }}
                 />
                 <Text
@@ -474,7 +475,7 @@ function SeekerJobDetail({ route, navigation }) {
                 style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
               >
                 <Image
-                  source={require("../assets/ic_category.png")}
+                  source={require("../../../../assets/ic_category.png")}
                   style={{ width: 15, height: 15 }}
                 />
                 <Text
@@ -491,7 +492,7 @@ function SeekerJobDetail({ route, navigation }) {
                 style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
               >
                 <Image
-                  source={require("../assets/ic_mind.png")}
+                  source={require("../../../../assets/ic_mind.png")}
                   style={{ width: 20, height: 20 }}
                 />
                 <Text
@@ -507,7 +508,7 @@ function SeekerJobDetail({ route, navigation }) {
                 style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
               >
                 <Image
-                  source={require("../assets/ic_certificate.png")}
+                  source={require("../../../../assets/ic_certificate.png")}
                   style={{ width: 20, height: 20 }}
                 />
                 <Text
@@ -531,7 +532,7 @@ function SeekerJobDetail({ route, navigation }) {
                     }}
                   >
                     <Image
-                      source={require("../assets/instagram-brands.png")}
+                      source={require("../../../../assets/instagram-brands.png")}
                       style={{ width: 20, height: 20, tintColor: "#4834A6" }}
                     />
                     <Text
@@ -561,7 +562,7 @@ function SeekerJobDetail({ route, navigation }) {
                         {"Please connect your Instagram"}
                       </Text>
                       <ImageBackground
-                        source={require("../assets/insta-connect-bg.png")}
+                        source={require("../../../../assets/insta-connect-bg.png")}
                         style={{
                           borderRadius: 40,
                         }}
@@ -616,7 +617,7 @@ function SeekerJobDetail({ route, navigation }) {
                         {"Your account is connected to Instagram"}
                       </Text>
                       <Image
-                        source={require("../assets/checkbox_checked.png")}
+                        source={require("../../../../assets/checkbox_checked.png")}
                         style={{ width: 20, height: 20 }}
                       />
                     </View>
@@ -646,7 +647,7 @@ function SeekerJobDetail({ route, navigation }) {
                   onPress={() => onNudge()}
                 >
                   <Image
-                    source={require("../assets/Bell.png")}
+                    source={require("../../../../assets/Bell.png")}
                     style={{
                       height: 25,
                       width: 25,
@@ -736,4 +737,12 @@ function SeekerJobDetail({ route, navigation }) {
   );
 }
 
-export default SeekerJobDetail;
+const mapStateToProps = ({}) => ({
+
+})
+
+const mapDispatchToProps = ({JobDetail: {nudgeJobPoster}}) => ({
+    nudgeJobPoster: () => nudgeJobPoster(),
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(SeekerJobDetail);
