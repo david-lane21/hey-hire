@@ -1,7 +1,7 @@
 import {createFilter} from 'redux-persist-transform-filter';
 
 const JobDetailFilter = createFilter('JobDetail', [
-    'jobs'
+    'nudgedJobs'
 ]);
 
 export const AllFilters = [JobDetailFilter];
