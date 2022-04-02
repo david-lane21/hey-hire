@@ -26,6 +26,7 @@
     "expo-image-picker": "~10.2.2",
     "expo-linear-gradient": "~9.2.0",
     "expo-location": "~12.1.2",
+    "expo-permissions": "~12.1.1",
     "expo-splash-screen": "~0.11.2",
     "expo-updates": "~0.8.2",
     "libphonenumber-js": "^1.9.7",

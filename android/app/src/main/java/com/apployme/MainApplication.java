@@ -1,5 +1,7 @@
 package com.apployme;
 
+import com.apployme.generated.BasePackageList;
+
 import android.app.Application;
 import android.content.Context;
 import android.net.Uri;

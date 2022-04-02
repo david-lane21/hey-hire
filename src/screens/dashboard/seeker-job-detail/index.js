@@ -113,6 +113,17 @@ function SeekerJobDetail({ route, navigation, nudgeJobPoster, nudgedJobs }) {
     }
 
     function onSendCV() {
+        const currentDate = moment();
+        const fiveDaysFromNow = moment().add(5, 'days')
+
+        const data = {
+            jobId: job.id,
+            jobPosition: job.position,
+            dayNudged: currentDate,
+            nextNudge: fiveDaysFromNow
+        };
+
+        nudgeJobPoster(data);
         let form = new FormData();
         form.append("user_token", user.user_token);
         form.append("user_id", user.user_id);
@@ -224,9 +235,6 @@ function SeekerJobDetail({ route, navigation, nudgeJobPoster, nudgedJobs }) {
         const appliedDate = moment(new Date(job.applied_on));
         const currentDate = moment();
         const fiveDaysFromNow = moment().add(5, 'days')
-
-        console.log(nudgedJobs, 'nudges');
-
 
         const data = {
             jobId: job.id,
