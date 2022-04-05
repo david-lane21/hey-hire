@@ -1,13 +1,13 @@
 export function API_URL(url){
   // return process.env.REACT_APP_API_URL + 'api/' + url
   // return 'http://localhost:4000/apiv1/' + url
-  return "https://api.apployme.com/apiv1/" + url
-      // return "https://stagapi.apployme.com/apiv1/" + url
+  // return "https://api.apployme.com/apiv1/" + url
+      return "https://stagapi.apployme.com/apiv1/" + url
 } 
 
 export function getBaseURL(url){
-  return "https://app.apployme.com/" + url
-    //  return "https://stagingapp.apployme.com/" + url
+  // return "https://app.apployme.com/" + url
+     return "https://stagingapp.apployme.com/" + url
 } 
 
 export async function getRequest(url){

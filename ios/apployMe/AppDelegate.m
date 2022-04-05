@@ -8,6 +8,7 @@
 #import <UMReactNativeAdapter/UMNativeModulesProxy.h>
 #import <UMReactNativeAdapter/UMModuleRegistryAdapter.h>
 #import <Firebase.h>
+#import <React/RCTLinkingManager.h>
 #import <UserNotifications/UserNotifications.h>
 #import <RNCPushNotificationIOS.h>
 
@@ -125,5 +126,21 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
 }
+
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url
+ options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
+{
+ return [RCTLinkingManager application:app openURL:url options:options];
+}
+
+// - (BOOL)application:(UIApplication *)application continueUserActivity:(nonnull NSUserActivity *)userActivity
+// restorationHandler:(nonnull void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler
+// {
+// return [RCTLinkingManager application:application
+// continueUserActivity:userActivity
+// restorationHandler:restorationHandler];
+// }
+
+
 
 @end

@@ -562,7 +562,7 @@ function SeekerLogin({ navigation }) {
               </View>
             </View>
 
-            <View
+            {/* <View
               style={{
                 flexDirection: "row",
                 justifyContent: "center",
@@ -595,7 +595,7 @@ function SeekerLogin({ navigation }) {
                   {strings.CLICK_HERE_TO_LOGIN}
                 </Text>
               </View>
-            </View>
+            </View> */}
           </View>
         </ScrollView>
       </SafeAreaView>
