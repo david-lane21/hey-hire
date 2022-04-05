@@ -3,6 +3,7 @@ import { View, Image } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import messaging from '@react-native-firebase/messaging';
 
 import { getUser } from "./utils/utils.js";
 import HomeScreen from "./HomeScreen";
@@ -36,6 +37,7 @@ const AppNavigationStack = createStackNavigator();
 const AuthNavigationStack = createStackNavigator();
 
 import NavigationService from "./utils/NavigationService";
+import PushNotificationIOS from "@react-native-community/push-notification-ios";
 // const currentUser = getUser()
 
 export function Navigation(props) {
@@ -46,6 +48,21 @@ export function Navigation(props) {
   // function handleOpenURL(event){
   //   console.log('Handle open url',props,event);
   // }
+
+  React.useEffect(() => {
+    const unsubscribe = messaging().onMessage(async (message) => {
+        console.log(message);
+        PushNotificationIOS.addNotificationRequest({
+          id: 'notificationWithSound',
+          title: message?.notification?.title,
+          body: message?.notification?.body,
+          sound: 'customSound.wav',
+          badge: 1
+        })
+    })
+
+    return unsubscribe;
+  }, []);
 
   return (
     <NavigationContainer

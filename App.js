@@ -108,6 +108,30 @@ export default function App() {
     // return unsubscribe;
   });
 
+  // Notification handlers
+  React.useEffect(async () => {
+    messaging().onNotificationOpenedApp(remoteMessage => {
+      console.log(remoteMessage);
+    });
+
+    messaging().getInitialNotification().then((remoteMessage) => {
+      if (remoteMessage) {
+        console.log(
+          'Notification caused app to open from quit state:',
+          remoteMessage.notification,
+        );
+      }
+    });
+
+    messaging().onMessage(remoteMessage => {
+      console.log(remoteMessage);
+    });
+
+    const token = await messaging().getToken();
+
+    console.log(token, 'token');
+  }, []);
+
   function handleOpenURL(url) {
     let businessId = url.split("/").filter(Boolean).pop();
     const calBusinessId = parseInt(businessId / 33469);
