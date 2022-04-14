@@ -29,6 +29,8 @@ import {
   postJSON,
   setInstagram,
   getRequest,
+  putJSON,
+  putFormData,
 } from "./utils/network.js";
 import RNPickerSelect from "react-native-picker-select";
 import { useIsFocused } from "@react-navigation/native";
@@ -40,6 +42,7 @@ import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import InstagramLoginPopup from "./components/InstagramLogin.js";
 import Loader from "./components/Loader";
+import { useSelector, useDispatch } from "react-redux";
 
 const isIphoneX = DeviceInfo.hasNotch();
 
@@ -48,6 +51,8 @@ function SeekerEditProfile({ navigation, route }) {
 
   const isFocused = useIsFocused();
   const tempProfile = route.params.profile;
+
+  console.log('tempPRofile',tempProfile)
 
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
@@ -107,13 +112,19 @@ function SeekerEditProfile({ navigation, route }) {
   const BIO_PLACEHOLDER = `Example: Greetings, my name is Benjamin, I am 20 years old. I am currently studying my degree at UT, TX.
   I am a hard working overachiever. And I know I will only benefit your business goals and accomplishments. I have past experience working in the kitchen, as my past job was at Mario’s Pizza downtown. I am easy going, and will bring only good and positive vibes in to your business, I would gladly appreciate it you consider my submission and set an interview this following week! Thanks for reading and hope to see you soon!`;
 
+  const dispatch = useDispatch()
+
+  const userData = useSelector(state => state.UserData)
+
   useEffect(() => {
     const tempProfile = route.params.profile;
-    let p = tempProfile.phone.split(" ");
-    let p1 = p[0].replace(/\+/g, "");
-    let p2 = p[1] + " " + p[2];
-    setPhCode(p1);
-    setPhone(p2);
+    // let p = tempProfile.phone.split(" ");
+    // let p1 = p[0].replace(/\+/g, "");
+    // let p2 = p[1] + " " + p[2];
+    // setPhCode(p1);
+    // setPhone(p2);
+    // setPhCode('+1')
+    // setPhone(tempProfile.phone)
     (async () => {
       if (Constants.platform.ios) {
         try {
@@ -151,25 +162,33 @@ function SeekerEditProfile({ navigation, route }) {
   }, []);
 
   function getJobCategories() {
+    console.log('goes in get job category ')
     let form = new FormData();
-
+    console.log('getJobCategories -> user', user);
+    console.log('getJobCategories -> userData', userData);
     form.append("user_token", user.user_token);
     form.append("user_id", user.user_id);
-    getRequest("get_categories")
+    getRequest("/job-seeker/business-category", userData.token)
       .then((res) => {
+        console.log('ressss while  getting jobs categories ', res)
         return res.json();
       })
       .then((json) => {
         console.log("res", json);
         const jsonCategories = json.data;
+        console.log('jsonCategories -> jsonCategories', jsonCategories);
+        console.log('tempProfile -> tempProfile', tempProfile);
         let tempBusinessCategories = tempProfile.preferred_business_categories;
-        tempBusinessCategories.map((item) => {
-          jsonCategories.map((businessCategory) => {
-            if (businessCategory.category_id == item) {
-              businessCategory.selected = true;
-            }
+        console.log('tempBusinessCategories -> tempBusinessCategories', tempBusinessCategories);
+        if (tempBusinessCategories) {
+          tempBusinessCategories.map((item) => {
+            jsonCategories.map((businessCategory) => {
+              if (businessCategory.category_id == item) {
+                businessCategory.selected = true;
+              }
+            });
           });
-        });
+        }
         console.log("JSON", jsonCategories);
         setCategoriesList(jsonCategories);
       });
@@ -295,10 +314,12 @@ function SeekerEditProfile({ navigation, route }) {
   function loadDate() {
     getUser().then((u) => {
       let u2 = JSON.parse(u);
-
+      console.log('getUser -> u', u);
+      console.log('getUser -> u2', u2);
       setUser1(u2);
       getToken().then((t) => setDeviceToken(t));
-      console.log(u2.user_token);
+      console.log('u2.user_token', u2);
+      console.log('u2.user_token', u2.user_token);
       getJobCategories();
     });
   }
@@ -320,6 +341,52 @@ function SeekerEditProfile({ navigation, route }) {
       });
   }
 
+  async function updateProfile() {
+    try {
+      const body = {
+        first_name: firstName,
+        last_name: lastName,
+        address: address,
+        zip_code: zipcode,
+        state : state,
+        city : city,
+        // email,
+        // bio,
+        country,
+        availability: availability,
+        // education: institution,
+        // education_level: eduLevel,
+        // certificate: certificate,
+        language: langs,
+        eligible: eligible || false,
+        sixteen: sixteen || false,
+        convictions: convictions || false,
+        covid_vaccinated: covid_vaccinated || false,
+        // skill: skills.toString(),
+        instagram_connected: isInstagramConnect,
+        preferred_business_categories:
+        categoriesList
+          .filter((item) => item.selected)
+          .map((item) => item.category_id)
+          .toString()
+    
+
+    }
+      console.log('body',body)
+      setLoading(true)
+      const res = await putJSON("/job-seeker/profile/1",body,userData.token)
+      console.log('res',res)
+      const json = await res.json()
+      console.log('json',json)
+      setLoading(false)
+      dispatch({type: 'UserData/setState',payload: {profile: json.data}})
+    } catch (error) {
+      setLoading(false)
+      Alert.alert('Error',error)
+      console.log('error while updating profile',error)
+    }
+  }
+
   async function handleUpdate() {
     let form = new FormData();
     form.append("first_name", firstName);
@@ -331,11 +398,11 @@ function SeekerEditProfile({ navigation, route }) {
     form.append("zip_code", zipcode);
     form.append("state", state);
     form.append("country", country);
-    form.append("phone", phCode + " " + phone);
-    form.append("user_type", "2");
-    form.append("user_token", user.user_token);
-    form.append("user_id", user.user_id);
-    form.append("device_tocken", deviceToken);
+    form.append("phone", phone);
+    // form.append("user_type", "2");
+    // form.append("user_token", user.user_token);
+    // form.append("user_id", user.user_id);
+    // form.append("device_tocken", deviceToken);
     if (image) {
       form.append("avatar_image", {
         uri: image,
@@ -353,7 +420,7 @@ function SeekerEditProfile({ navigation, route }) {
     form.append("sixteen", sixteen || false);
     form.append("convictions", convictions || false);
     form.append("covid_vaccinated", covid_vaccinated || false);
-    form.append("skill", skills.toString());
+    // form.append("skill", skills.toString());
     form.append("instagram_connected", isInstagramConnect);
     form.append(
       "preferred_business_categories",
@@ -364,12 +431,13 @@ function SeekerEditProfile({ navigation, route }) {
     );
     console.log(form);
     setLoading(true);
-    postFormData("update_user", form)
+    putFormData("update_user", form, userData.token)
       .then((res) => {
         console.log(res);
         if (res.status == 200) {
           return res.json();
         } else {
+          console.log('res',res)
           setLoading(false);
           Alert.alert("Error", "Profile image is too large.");
 
@@ -577,8 +645,9 @@ function SeekerEditProfile({ navigation, route }) {
   function addToCategoreis(item) {
     let listCategories = categoriesList;
     listCategories.map((i) => {
-      if (i.category_id == item.category_id) {
-        i.selected = !i.selected;
+      // if (i.category_id == item.category_id) {
+        if(i.id === item.id){
+         i.selected = !i.selected;
       }
       return i;
     });
@@ -1058,7 +1127,7 @@ function SeekerEditProfile({ navigation, route }) {
 
                     <FlatList
                       data={categoriesList}
-                      keyExtractor={(item) => item.category_id.toString()}
+                      keyExtractor={(item) => item.id.toString()}
                       renderItem={({ item, index, separators }) => (
                         <View
                           key={index}
@@ -1110,7 +1179,7 @@ function SeekerEditProfile({ navigation, route }) {
                                   color: "#222",
                                 }}
                               >
-                                {item.category_name}
+                                {item.name}
                               </Text>
                             </TouchableOpacity>
                           </View>
@@ -1853,7 +1922,7 @@ function SeekerEditProfile({ navigation, route }) {
             backgroundColor: "#5B42BB",
             padding: 15,
           }}
-          onPress={() => handleUpdate()}
+          onPress={() => updateProfile()}
         >
           <Text style={{ color: "#fff", textAlign: "center", fontSize: 18 }}>
             {strings.UPDATE_PROFILE}
