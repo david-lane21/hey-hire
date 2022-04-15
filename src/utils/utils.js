@@ -1,8 +1,10 @@
-import {AsyncStorage} from 'react-native';
+//import {AsyncStorage} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export async function getUser() {
   try {
     const user = await AsyncStorage.getItem('currentUser')
+    console.log('cuurent user in getuser ', user)
     if(user !== null) {
       return user
     }
@@ -13,6 +15,7 @@ export async function getUser() {
 }
 
 export async function setUser(user) {
+  console.log('current user in param whilee setting ', user)
   try {
     await AsyncStorage.setItem('currentUser', JSON.stringify(user))
   } catch(e) {

@@ -164,8 +164,6 @@ function SeekerEditProfile({ navigation, route }) {
   function getJobCategories() {
     console.log('goes in get job category ')
     let form = new FormData();
-    console.log('getJobCategories -> user', user);
-    console.log('getJobCategories -> userData', userData);
     form.append("user_token", user.user_token);
     form.append("user_id", user.user_id);
     getRequest("/job-seeker/business-category", userData.token)
@@ -174,22 +172,17 @@ function SeekerEditProfile({ navigation, route }) {
         return res.json();
       })
       .then((json) => {
-        console.log("res", json);
         const jsonCategories = json.data;
-        console.log('jsonCategories -> jsonCategories', jsonCategories);
-        console.log('tempProfile -> tempProfile', tempProfile);
-        let tempBusinessCategories = tempProfile.preferred_business_categories;
-        console.log('tempBusinessCategories -> tempBusinessCategories', tempBusinessCategories);
+        let tempBusinessCategories = tempProfile.preferred_business_categories ? tempProfile.preferred_business_categories.split(',') : null;
         if (tempBusinessCategories) {
           tempBusinessCategories.map((item) => {
             jsonCategories.map((businessCategory) => {
-              if (businessCategory.category_id == item) {
+              if (businessCategory.id == item) {
                 businessCategory.selected = true;
               }
             });
           });
         }
-        console.log("JSON", jsonCategories);
         setCategoriesList(jsonCategories);
       });
   }
@@ -367,7 +360,7 @@ function SeekerEditProfile({ navigation, route }) {
         preferred_business_categories:
         categoriesList
           .filter((item) => item.selected)
-          .map((item) => item.category_id)
+          .map((item) => item.id)
           .toString()
     
 
@@ -426,7 +419,7 @@ function SeekerEditProfile({ navigation, route }) {
       "preferred_business_categories",
       categoriesList
         .filter((item) => item.selected)
-        .map((item) => item.category_id)
+        .map((item) => item.id)
         .toString()
     );
     console.log(form);
@@ -445,11 +438,12 @@ function SeekerEditProfile({ navigation, route }) {
         }
       })
       .then((json) => {
-        console.log("update user", json);
+        console.log("update user overe there", json);
         if (json.status_code != "200") {
           setError(json.msg);
           setLoading(false);
         } else {
+          console.log('res for user in  to check null ', json)
           setUser1(json.data);
           update_cv(json.data.user_token);
           // let tempUserData = json.data;
@@ -645,7 +639,6 @@ function SeekerEditProfile({ navigation, route }) {
   function addToCategoreis(item) {
     let listCategories = categoriesList;
     listCategories.map((i) => {
-      // if (i.category_id == item.category_id) {
         if(i.id === item.id){
          i.selected = !i.selected;
       }
@@ -654,7 +647,7 @@ function SeekerEditProfile({ navigation, route }) {
     console.log(listCategories);
     setCategoriesList([...listCategories]);
   }
-
+  console.log('user -> user', user);
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
       <KeyboardAwareScrollView
@@ -699,7 +692,7 @@ function SeekerEditProfile({ navigation, route }) {
             <View style={{ width: 150, height: 150, alignSelf: "center" }}>
               {image == null ? (
                 <View>
-                  {user.avatar_image == "" ? (
+                  {tempProfile && tempProfile.avatar_image ? (
                     <Image
                       source={require("../assets/img_place.png")}
                       style={{
@@ -713,7 +706,7 @@ function SeekerEditProfile({ navigation, route }) {
                     <Image
                       source={{
                         uri:
-                          user.avatar_image +
+                          tempProfile.avatar_image +
                           "?random_number=" +
                           new Date().getTime(),
                       }}
@@ -1216,7 +1209,7 @@ function SeekerEditProfile({ navigation, route }) {
                   {categoriesList?.filter((item) => item.selected).length > 0
                     ? categoriesList
                         .filter((item) => item.selected)
-                        .map((item) => item.category_name)
+                        .map((item) => item.name)
                         .toString()
                     : strings.SELECT_JOB_CATEGORIES}
                 </Text>
@@ -1879,7 +1872,7 @@ function SeekerEditProfile({ navigation, route }) {
         {/* </ScrollView> */}
 
         <InstagramLoginPopup
-          userId={user.user_id}
+          userId={ user ? user.user_id : ''}
           visible={instaModalShow}
           onClose={() => {
             onCloseInstagramConnect();

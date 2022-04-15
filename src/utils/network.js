@@ -12,6 +12,7 @@ export function getBaseURL(url){
 } 
 
 export async function getRequest(url,token){
+  console.log(' tokeennnnnn ', token)
   let headers = {
     "Content-Type": "application/json", 
     "Access-Control-Allow-Origin": "*",
@@ -29,6 +30,7 @@ export async function getRequest(url,token){
     redirect: "follow",
     referrer: "no-referrer",  
   })
+  console.log(' response in network ', response);
   return response
 }
 

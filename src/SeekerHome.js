@@ -264,7 +264,10 @@ function SeekerHome({ navigation }) {
 
   async function getHiringLocations(){
     try {
-      const res = await getRequest(`/job-seeker/locations/list?lng=${longitude}&lat=${latitude}`,userData?.token)
+      // const res = await getRequest(`/job-seeker/locations/list?lng=${longitude}&lat=${latitude}`,userData?.token)
+      console.log('user data ', userData);
+      const res = await getRequest(`/job-seeker/locations/list?lng=0&lat=0`,userData?.token)
+      console.log('getHiringLocations -> res', res);
       const json = await res.json()
       if(json.data?.length > 0){
         let bizList = json.data.filter(
