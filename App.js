@@ -11,7 +11,7 @@ import { AuthContext } from "./src/navigation/context";
 import { getUser } from "./src/utils/utils.js";
 import messaging from '@react-native-firebase/messaging';
 import CommonUtils from './src/utils/CommonUtils';
-import {Provider} from 'react-redux';
+import {Provider, useSelector} from 'react-redux';
 import store from './src/redux/store';
 import { PersistGate } from 'redux-persist/lib/integration/react';
 import { getPersistor } from '@rematch/persist';
@@ -27,17 +27,32 @@ SplashScreen.preventAutoHideAsync()
   .catch(console.warn);
 
 const RootStack = createStackNavigator();
-const RootStackScreen = ({ userToken }) => (
-  <RootStack.Navigator headerMode="none">
-    {userToken ? (
+
+const temp = () => <View>
+  <Text>Hello</Text>
+</View>
+
+const RootStackScreen = () => {
+
+
+
+  const userData = useSelector(state => state.UserData)
+
+  console.log('userData',userData)
+
+  return <RootStack.Navigator headerMode="none">
+    {userData?.token ? (
       <RootStack.Screen
         name="App"
         component={AppNavigation}
         options={{
           animationEnabled: false,
         }}
+        // initialParams={{
+        //   screen: userToken.user_type == 2 ? "Seeker" : "Business",
+        // }}
         initialParams={{
-          screen: userToken.user_type == 2 ? "Seeker" : "Business",
+          screen: "Screen",
         }}
       />
     ) : (
@@ -50,12 +65,12 @@ const RootStackScreen = ({ userToken }) => (
       />
     )}
   </RootStack.Navigator>
-);
+}
 
 export default function App() {
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [userToken, setUserToken] = React.useState(null);
+  const [isLoading, setIsLoading] = React.useState(false);
   const [url, setURL] = React.useState(null);
+
 
   const authContext = React.useMemo(() => {
     return {
@@ -74,30 +89,35 @@ export default function App() {
     };
   }, []);
 
-  React.useEffect(() => {
-    // if(Platform.OS=="ios"){
-      CommonUtils.deviceTokenSet();
-  // }
+  
 
-  // I18nManager.allowRTL(true);
+  // React.useEffect(() => {
+  //   // if(Platform.OS=="ios"){
+  //     CommonUtils.deviceTokenSet();
+  // // }
 
-    getUser().then((u) => {
-      var userData = JSON.parse(u);
-      if (userData && userData.is_verified == 1) {
-        setUserToken(JSON.parse(u));
-      } else {
-        setUserToken(null);
-      }
-      setIsLoading(false);
-    });
-  }, []);
+  // // I18nManager.allowRTL(true);
+
+  //   getUser().then((u) => {
+  //     var userData = JSON.parse(u);
+  //     if (userData && userData.is_verified == 1) {
+  //       setUserToken(JSON.parse(u));
+  //     } else {
+  //       setUserToken(null);
+  //     }
+  //     setIsLoading(false);
+  //   });
+  // }, []);
 
   useEffect(() => {
    
 
     Linking.getInitialURL().then((url) => {
       if (url) handleOpenURL(url);
-    });
+    }).catch(err => {console.log('err',err)});
+
+    Linking.addEventListener('url',event => {handleOpenURL(event.url)})
+
     setTimeout(async () => {
       await SplashScreen.hideAsync();
       if (Constants.platform.ios) {
@@ -162,7 +182,7 @@ export default function App() {
               NavigationService.setTopLevelNavigator(navigatorRef);
             }}
           >
-            <RootStackScreen userToken={userToken} url={url} />
+            <RootStackScreen  url={url} />
           </NavigationContainer>
         </AuthContext.Provider>
       </PersistGate>

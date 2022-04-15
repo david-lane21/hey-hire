@@ -21,7 +21,7 @@ import {
 import * as ImagePicker from 'expo-image-picker'
 import Constants from 'expo-constants'
 import { countries } from './utils/consts.js'
-import { postFormData } from './utils/network.js'
+import { postFormData, postJSON, putJSON } from './utils/network.js'
 import * as Location from 'expo-location'
 import { setUser, setToken } from './utils/utils.js'
 import { KeyboardAccessoryNavigation, KeyboardAccessoryView } from 'react-native-keyboard-accessory'
@@ -35,7 +35,7 @@ import { getExampleNumber } from 'libphonenumber-js';
 // import CommonUtils from './utils/CommonUtils';
 import Loader from './components/Loader';
 const isIphoneX = DeviceInfo.hasNotch();
-function SeekerSignup({ navigation }) {
+function SeekerSignup({ navigation, route }) {
   const scrollViewRef = useRef();
 
   const [modalVisible, setModalVisible] = useState(false)
@@ -219,7 +219,49 @@ function SeekerSignup({ navigation }) {
     return result
   }
 
+  async function createAccount(){
+    if (validation() == true) {
+      if (
+        firstName &&
+        lastName &&
+        address &&
+        city &&
+        state &&
+        email 
+      ) {
+      try {
+        const body = {
+          first_name: firstName,
+          last_name: lastName,
+          address: address,
+          zip_code: zipcode,
+          state : state,
+          city : city,
+          email,
+          // country,
+      
+      }
+        const res = await postJSON("/job-seeker/profile",body,route.params.token)
+        // console.log('res',res)
+        const json = await res.json()
+        // console.log('json',json)
+        navigation.navigate('SeekerFinishRegistration',{token: route.params.token})
+
+      } catch (error) {
+        Alert.alert('Error',error)
+        console.log('error while updating profile',error)
+      }
+      }
+      else{
+        setError(strings.PLEASE_FILL_MISSING)
+      }
+    }
+  }
+
   function handleSignup() {
+
+    navigation.navigate('SeekerFinishRegistration')
+    return 
 
     if (validation() == true) {
       if (
@@ -228,10 +270,7 @@ function SeekerSignup({ navigation }) {
         address &&
         city &&
         state &&
-        phone &&
-        email &&
-        password &&
-        password2
+        email 
       ) {
         if (password == password2 && password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/)) {
           let token = deviceToken(128)
@@ -321,10 +360,10 @@ function SeekerSignup({ navigation }) {
   }
 
   function validation() {
-    if (!image) {
-      Alert.alert("Error...", "Please select profile picture before continuing!")
-      return false
-    }
+    // if (!image) {
+    //   Alert.alert("Error...", "Please select profile picture before continuing!")
+    //   return false
+    // }
 
     if (!firstName || isValidatePresence(firstName) == "") {
       Alert.alert("Error...", "Enter a valid First name before continuing!")
@@ -368,19 +407,19 @@ function SeekerSignup({ navigation }) {
       return false
     }
 
-    else if (!password || isValidatePresence(password) == "") {
-      Alert.alert("Error...", "Enter a valid password before continuing!")
-      return false
-    }
-    else if (!password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/)) {
-      Alert.alert("Error...", strings.PASSWORD_ERROR_2)
-      return false
-    }
+    // else if (!password || isValidatePresence(password) == "") {
+    //   Alert.alert("Error...", "Enter a valid password before continuing!")
+    //   return false
+    // }
+    // else if (!password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/)) {
+    //   Alert.alert("Error...", strings.PASSWORD_ERROR_2)
+    //   return false
+    // }
 
-    else if (password !== password2) {
-      Alert.alert("Error...", "Passwords don't match")
-      return false
-    }
+    // else if (password !== password2) {
+    //   Alert.alert("Error...", "Passwords don't match")
+    //   return false
+    // }
 
 
     else {
@@ -755,7 +794,7 @@ function SeekerSignup({ navigation }) {
             </SafeAreaView>
           </Modal> */}
 
-          <View style={{ flex: 1, flexDirection: 'row' }}>
+          {/* <View style={{ flex: 1, flexDirection: 'row' }}>
             <TouchableOpacity
               style={[styles.code]}
               onPress={() => setModalVisible(true)}
@@ -784,8 +823,8 @@ function SeekerSignup({ navigation }) {
                 handleRef(6, ref)
               }}
             />
-          </View>
-        </View>
+          </View> */}
+        </View> 
 
         <Text
           style={{ color: '#7364BF', paddingTop: 10, paddingBottom: 20 }}
@@ -816,7 +855,7 @@ function SeekerSignup({ navigation }) {
 
           />
         </View>
-
+{/* 
         <View style={styles.inputField}>
           <Image
             source={require('../assets/ic_password.png')}
@@ -859,7 +898,7 @@ function SeekerSignup({ navigation }) {
               handleRef(9, ref)
             }}
           />
-        </View>
+        </View> */}
 
         {error ? (
           <View style={{ flex: 1, padding: 20 }}>
@@ -876,7 +915,7 @@ function SeekerSignup({ navigation }) {
               padding: 15,
               borderRadius: 30
             }}
-            onPress={() => handleSignup()}
+            onPress={() => createAccount()}
           >
             <Text
               style={{ color: '#fff', textAlign: 'center', fontSize: 18 }}

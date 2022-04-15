@@ -22,7 +22,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import * as Location from "expo-location";
 import { countries } from "./utils/consts.js";
-import { postFormData, getBaseURL } from "./utils/network.js";
+import { postFormData, getBaseURL, postJSON } from "./utils/network.js";
 import { setUser, setToken } from "./utils/utils.js";
 import { KeyboardAccessoryNavigation } from "react-native-keyboard-accessory";
 import { useIsFocused } from "@react-navigation/native";
@@ -31,6 +31,8 @@ import { AuthContext } from "./navigation/context";
 import DeviceInfo from 'react-native-device-info';
 import CommonUtils from './utils/CommonUtils';
 import GeolocationNew from '@react-native-community/geolocation';
+import OTPInputView from "@twotalltotems/react-native-otp-input";
+import { useDispatch, useSelector } from "react-redux";
 
 const isIphoneX = DeviceInfo.hasNotch();
 const window = Dimensions.get("window");
@@ -47,11 +49,16 @@ function SeekerLogin({ navigation }) {
   const [inputs, setInputs] = useState([]);
   const [nextFocusDisabled, setNextFocusDisabled] = useState(false);
   const [previousFocusDisabled, setPreviousFocusDisabled] = useState(false);
+  const [otp,setOtp] = useState()
+  const [otpSent,setOtpSent] = useState(false)
   const { signIn } = React.useContext(AuthContext);
 
   const [value, setValue] = useState("");
   const [contentHeight, setContentHeight] = useState(0);
 
+  const dispatch = useDispatch()
+
+  const userData = useSelector(state => state.UserData)
 
   useEffect(() => {
 
@@ -156,6 +163,55 @@ function SeekerLogin({ navigation }) {
       .catch((err) => {
         console.log(err);
       });
+  }
+
+  async function getOtp() {
+
+    try {
+      const body = {
+        phone_number: phone
+      }
+      const res = await postJSON("/job-seeker/sms-login/initiate",body)
+      const json = await res.json()
+      console.log('getOtp -> json', json);
+      if(json.message == 'User found'){
+        setOtpSent(true)
+      }
+      else{
+        alert('Number not found')
+      }
+      console.log('get json',json)
+    } catch (error) {
+      console.log('error',error)
+    }
+ 
+  }
+
+  async function verifyOtp() {
+    try {
+      const body = {
+        phone_number: phone,
+        validation_code: otp
+      }
+      // setOtpSent(true)
+      const res = await postJSON("/job-seeker/sms-login/finalize",body)
+      const json = await res.json()
+      if(json.user && Object.keys(json.user).length > 0 && json.token){
+        // setUser(json.user);
+        // setToken(json.token);
+        // signIn(json.token);
+        dispatch({type: 'UserData/setState',payload: {profile: json.user, token: json.token}})
+      }
+      else{
+      navigation.navigate("SeekerSignup",{token: json.token})
+
+      }
+      // if(json.)
+
+    } catch (error) {
+      console.log('error',error)
+    }
+ 
   }
 
   function handleResend(tempUserData) {
@@ -414,7 +470,7 @@ function SeekerLogin({ navigation }) {
                 }}
               >
 
-                <TouchableOpacity
+                {/* <TouchableOpacity
                   style={styles.code}
                   onPress={() => setModalVisible(true)}
                 >
@@ -423,10 +479,10 @@ function SeekerLogin({ navigation }) {
                     style={{ width: 20, height: 20, marginRight: 5 }}
                   />
                   <Text style={{ color: "#fff" }}>+{phCode}</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
 
                 <TextInput
-                  style={styles.code2}
+                  style={[styles.code2,{width: '100%', marginLeft: 0}]}
                   onChangeText={(text) => setPhone(text)}
                   placeholder={strings.PHONE}
                   value={formatPhone(phone)}
@@ -445,8 +501,8 @@ function SeekerLogin({ navigation }) {
                 />
               </View>
             </View>
-
-            <View
+            
+            {/* <View
               style={{
                 marginHorizontal: "5%",
                 marginVertical: 10,
@@ -485,7 +541,31 @@ function SeekerLogin({ navigation }) {
                   }}
                 />
               </View>
+            </View> */}
+   {otpSent ?         <>
+
+
+<View
+              style={{
+                marginHorizontal: "5%",
+                marginVertical: 10,
+
+              }}
+            >
+              <Text style={{ color: '#fff', fontSize: 16, marginBottom: 5 }}>{strings.CODE}</Text>
+              <OTPInputView
+                style={{width: '100%', height: 50, alignSelf: 'center'}}
+                pinCount={6}
+                codeInputFieldStyle={styles.inputFieldStyle}
+                codeInputHighlightStyle={styles.inputHighlightStyle}
+                onCodeFilled = {(code) => {
+                  setOtp(code)
+                }}
+                placeholderTextColor={'#fff'}
+                selectionColor={'#fff'}
+            />
             </View>
+
 
             <View
               style={{
@@ -498,14 +578,29 @@ function SeekerLogin({ navigation }) {
 
               <TouchableOpacity style={[styles.button,
               { backgroundColor: "#fff", }]}
-                onPress={() => handleLogin()}>
+                onPress={() => verifyOtp()}>
 
-                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{strings.SIGN_IN}</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{strings.VERIFY_OTP}</Text>
               </TouchableOpacity>
             </View>
+      </> : <View
+              style={{
+                alignItems: "center",
+                marginHorizontal: "5%",
+                marginVertical: 5,
 
+              }}
+            >
 
-            <View
+              <TouchableOpacity style={[styles.button,
+              { backgroundColor: "#fff", }]}
+                onPress={() => getOtp()}>
+
+                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{strings.GET_OTP}</Text>
+              </TouchableOpacity>
+            </View>}
+
+            {/* <View
               style={{
                 flexDirection: "row",
                 justifyContent: "center",
@@ -534,15 +629,15 @@ function SeekerLogin({ navigation }) {
                   {strings.SIGN_UP}
                 </Text>
               </View>
-            </View>
+            </View> */}
 
 
 
-            <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: isIphoneX ? 25 : 15 }}>
+            {/* <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: isIphoneX ? 25 : 15 }}>
               <View style={{ borderBottomWidth: 0.5, borderBottomColor: '#fff' }}>
                 <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#fff', textAlign: 'center' }} onPress={gotoForgotPassword}>{strings.FORGOT_YOUR_PASSWORD}</Text>
               </View>
-            </View>
+            </View> */}
 
 
 
@@ -608,7 +703,7 @@ function SeekerLogin({ navigation }) {
         onDone={_onButtonClick}
         nextDisabled={nextFocusDisabled}
         previousDisabled={previousFocusDisabled}
-        avoidKeyboard={true}
+        // avoidKeyboard={true}
         style={Platform.OS == "android" ? { top: 0 } : { top: 0 }}
       />
     </LinearGradient>
@@ -675,5 +770,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#F1F2F9',
     marginBottom: 10,
     borderRadius: 10,
+  },
+  inputFieldStyle: {
+    width: (Dimensions.get('window').width * 0.9 - 45) / 6 ,
+    height: 50,
+    borderRadius: 5,
+    borderColor: '#fff',
+    borderWidth: 1
+  },
+  inputHighlightStyle: {
+    width: (Dimensions.get('window').width * 0.9 - 45) / 6 ,
+
+    height: 50,
+    borderRadius: 5,
+    borderColor: '#fff',
+    borderWidth: 1
   }
 });

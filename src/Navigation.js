@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Image } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -38,6 +38,8 @@ const AuthNavigationStack = createStackNavigator();
 
 import NavigationService from "./utils/NavigationService";
 import PushNotificationIOS from "@react-native-community/push-notification-ios";
+import { getRequest } from "./utils/network.js";
+import { useDispatch, useSelector } from "react-redux";
 // const currentUser = getUser()
 
 export function Navigation(props) {
@@ -150,6 +152,24 @@ export default Navigation;
 
 
 export function AppNavigation({ navigation }) {
+
+  const userData = useSelector(state => state.UserData)
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    getUserProfile()
+  },[])
+
+  const getUserProfile = async () => {
+    try {
+    const res = await getRequest("/job-seeker/profile/1",userData.token)
+      const json = await res.json()
+      dispatch({type: 'UserData/setState',payload: {profile: json.data}})
+    } catch (error) {
+      console.log('error while getting user profile',error)
+    }
+  }
+
   return (
     <AppNavigationStack.Navigator initialRouteName={'Seeker'}>
       <AppNavigationStack.Screen

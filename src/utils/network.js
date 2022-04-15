@@ -2,43 +2,52 @@ export function API_URL(url){
   // return process.env.REACT_APP_API_URL + 'api/' + url
   // return 'http://localhost:4000/apiv1/' + url
   // return "https://api.apployme.com/apiv1/" + url
-      return "https://stagapi.apployme.com/apiv1/" + url
+      // return "https://stagapi.apployme.com/apiv1/" + url
+      return "http://devapi.apployme.net/api/v1" + url
 } 
 
 export function getBaseURL(url){
-  // return "https://app.apployme.com/" + url
-     return "https://stagingapp.apployme.com/" + url
+  return "https://app.apployme.com/" + url
+    //  return "https://stagingapp.apployme.com/" + url
 } 
 
-export async function getRequest(url){
+export async function getRequest(url,token){
+  let headers = {
+    "Content-Type": "application/json", 
+    "Access-Control-Allow-Origin": "*",
+    // "Authorization": localStorage.token
+  }
+  if(token){
+    headers['Authorization'] = `Bearer ${token}`
+  }
   let response = await fetch(API_URL(url), {
     method: "GET", 
     mode: "cors", 
     cache: "no-cache",
     credentials: "same-origin",
-    headers: {
-      "Content-Type": "application/json", 
-      "Access-Control-Allow-Origin": "*",
-      // "Authorization": localStorage.token
-    },
+    headers,
     redirect: "follow",
     referrer: "no-referrer",  
   })
-
   return response
 }
 
-export async function getWithParamRequest(url,form){
+export async function getWithParamRequest(url,form,token){
+  let headers = {
+    // "Content-Type": "application/json", 
+    "Access-Control-Allow-Origin": "*",
+    // "Authorization": localStorage.token
+  }
+  if(token){
+    headers['Authorization'] = `Bearer ${token}`
+  }
+
   let response = await fetch(API_URL(url), {
     method: "GET", 
     mode: "cors", 
     cache: "no-cache",
     credentials: "same-origin",
-    headers: {
-      // "Content-Type": "application/json", 
-      "Access-Control-Allow-Origin": "*",
-      // "Authorization": localStorage.token
-    },
+    headers,
     redirect: "follow",
     referrer: "no-referrer",  
     body:form
@@ -84,17 +93,22 @@ export async function putFormData(url, form){
   return response
 }
 
-export async function postJSON(url, json){
+export async function postJSON(url, json, token){
+  let headers = {
+    "Content-Type": "application/json", 
+    "Access-Control-Allow-Origin": "*",
+    // "Authorization": localStorage.token
+  }
+  if(token){
+    headers['Authorization'] = `Bearer ${token}`
+  }
+
   let response = await fetch(API_URL(url), {
     method: "POST", 
     mode: "cors", 
     cache: "no-cache",
     credentials: "same-origin",
-    headers: {
-      "Content-Type": "application/json", 
-      "Access-Control-Allow-Origin": "*",
-      // "Authorization": localStorage.token
-    },
+    headers,
     redirect: "follow",
     referrer: "no-referrer",
     body: JSON.stringify(json)
@@ -103,17 +117,22 @@ export async function postJSON(url, json){
   return response
 }
 
-export async function putJSON(url, json){
+export async function putJSON(url, json, token){
+  let headers = {
+    "Content-Type": "application/json", 
+    "Access-Control-Allow-Origin": "*",
+    // "Authorization": localStorage.token
+  }
+  if(token){
+    headers['Authorization'] = `Bearer ${token}`
+  }
+  
   let response = await fetch(API_URL(url), {
     method: "PUT", 
     mode: "cors", 
     cache: "no-cache",
     credentials: "same-origin",
-    headers: {
-      "Content-Type": "application/json", 
-      "Access-Control-Allow-Origin": "*",
-      // "Authorization": localStorage.token
-    },
+    headers,
     redirect: "follow",
     referrer: "no-referrer",
     body: JSON.stringify(json)
@@ -123,16 +142,22 @@ export async function putJSON(url, json){
 }
 
 export async function deleteJSON(url){
+
+  let headers = {
+    "Content-Type": "application/json", 
+    "Access-Control-Allow-Origin": "*",
+    // "Authorization": localStorage.token
+  }
+  if(token){
+    headers['Authorization'] = `Bearer ${token}`
+  }
+
   let response = await fetch(API_URL(url), {
     method: "DELETE", 
     mode: "cors", 
     cache: "no-cache",
     credentials: "same-origin",
-    headers: {
-      "Content-Type": "application/json", 
-      "Access-Control-Allow-Origin": "*",
-      "Authorization": localStorage.token
-    },
+    headers,
     redirect: "follow",
     referrer: "no-referrer",
   })

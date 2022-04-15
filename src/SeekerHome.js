@@ -14,7 +14,7 @@ import {
   PermissionsAndroid,
 } from "react-native";
 import { getUser, removeUser, setUser } from "./utils/utils.js";
-import { postFormData } from "./utils/network.js";
+import { getRequest, postFormData } from "./utils/network.js";
 import { LinearGradient } from "expo-linear-gradient";
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import * as Location from "expo-location";
@@ -27,6 +27,8 @@ import NavigationService from "./utils/NavigationService";
 import { AuthContext } from "./navigation/context";
 import CommonUtils from "./utils/CommonUtils.js";
 import { Platform } from "react-native";
+import { useSelector, useDispatch } from "react-redux";
+import { UserData } from "./redux/models/User.js";
 
 function SeekerHome({ navigation }) {
   const isFocused = useIsFocused();
@@ -49,6 +51,16 @@ function SeekerHome({ navigation }) {
   const { signOut } = React.useContext(AuthContext);
   const [latitude, setLatitude] = useState(32.7767);
   const [longitude, setLongitude] = useState(-96.797);
+
+  const userData = useSelector(state => state.UserData)
+
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    if(userData?.profile){
+    setUser1(userData.profile)
+    }
+  },[userData])
 
   useEffect(() => {
     if (isFocused) {
@@ -164,7 +176,6 @@ function SeekerHome({ navigation }) {
           let loc = await Location.getLastKnownPositionAsync();
           setLatitude(loc.coords.latitude);
           setLongitude(loc.coords.longitude);
-          console.log(loc);
           map.animateToRegion(
             {
               latitude: loc.coords.latitude,
@@ -190,7 +201,6 @@ function SeekerHome({ navigation }) {
         } catch (error) {
           try {
             let loc = await Location.getCurrentPositionAsync();
-
             map.animateToRegion(
               {
                 latitude: loc.coords.latitude,
@@ -248,6 +258,43 @@ function SeekerHome({ navigation }) {
     };
   }, [isFocused]);
 
+  useEffect(() => {
+    getHiringLocations()
+  },[latitude,longitude])
+
+  async function getHiringLocations(){
+    try {
+      const res = await getRequest(`/job-seeker/locations/list?lng=${longitude}&lat=${latitude}`,userData?.token)
+      const json = await res.json()
+      if(json.data?.length > 0){
+        let bizList = json.data.filter(
+          (b) =>
+            parseFloat(b.address.lat) != NaN &&
+            parseFloat(b.address.lng) != NaN
+        );
+
+        bizList = bizList.map((b) => {
+          b.distance_in_km = CommonUtils.distance(
+            b.address.lat,
+            b.address.lng,
+            "K"
+          );
+          return b;
+        });
+
+        bizList = bizList.filter((item) => item.distance_in_km < 20);
+
+        bizList = bizList.sort(
+          (a, b) => a.distance_in_km - b.distance_in_km
+        );
+
+        setBusinesses(bizList);
+      }
+    } catch (error) {
+      console.log('error while getting businesses')
+    }
+  }
+
   function handleOpenURL(event) {
     let businessId = event.url.split("/").filter(Boolean).pop();
     const calBusinessId = parseInt(businessId / 33469);
@@ -266,6 +313,7 @@ function SeekerHome({ navigation }) {
   }
 
   async function loadDate() {
+    return 
     try {
       getUser().then((u) => {
         let u2 = JSON.parse(u);
@@ -352,9 +400,9 @@ function SeekerHome({ navigation }) {
         longitudeDelta: 0.0421,
       };
     } else {
-      let biz = businesses.find((b) => b.user_id == business);
-      let lat = parseFloat(biz.latitude);
-      let lng = parseFloat(biz.longitude);
+      let biz = businesses.find((b) => b.id == business);
+      let lat = parseFloat(biz.address.lat);
+      let lng = parseFloat(biz.address.lng);
       return {
         latitude: lat,
         longitude: lng,
@@ -374,12 +422,12 @@ function SeekerHome({ navigation }) {
   }
 
   async function selectBiz(biz, idx) {
-    if (this[`markerRef${biz.user_id}`]) {
-      this[`markerRef${biz.user_id}`].showCallout();
+    if (this[`markerRef${biz.id}`]) {
+      this[`markerRef${biz.id}`].showCallout();
     }
-    await setSelectedBusiness(biz.user_id);
+    await setSelectedBusiness(biz.id);
 
-    map.animateToRegion(currentLocation(biz.user_id), 500);
+    map.animateToRegion(currentLocation(biz.id), 500);
 
     _scrollView.scrollTo({ x: idx * 125, y: 0, animated: true });
   }
@@ -388,7 +436,7 @@ function SeekerHome({ navigation }) {
   const blackImg = require("../assets/ic_pin_black.png");
 
   function mkrImage(mkr) {
-    if (selectedBusiness === mkr.user_id) {
+    if (selectedBusiness === mkr.id) {
       return purpleImg;
     } else {
       return blackImg;
@@ -405,8 +453,9 @@ function SeekerHome({ navigation }) {
       {
         text: "Logout",
         onPress: () => {
-          removeUser();
-          signOut();
+          // removeUser();
+          // signOut();
+          dispatch({type:'UserData/setState',payload: {token: null, profile: {}}})
         },
       },
       { text: "Cancel", onPress: () => console.log("OK Pressed") },
@@ -464,11 +513,11 @@ function SeekerHome({ navigation }) {
           <View style={{ position: "absolute", right: 5 }}>
             <TouchableOpacity
               onPress={() => {
-                if (profile) {
+                if (userData?.profile) {
                   navigation.navigate("SeekerLinks", {
                     screen: "SeekerEditProfile",
                     params: {
-                      profile: profile,
+                      profile: userData.profile,
                     },
                   });
                 }
@@ -767,17 +816,17 @@ function SeekerHome({ navigation }) {
                   return (
                     <Marker
                       draggable={false}
-                      key={mkr.user_id}
-                      title={mkr.business_name}
+                      key={mkr.id}
+                      title={mkr.company.name}
                       ref={(r) => {
-                        this[`markerRef${mkr.user_id}`] = r;
+                        this[`markerRef${mkr.id}`] = r;
                       }}
                       coordinate={{
-                        latitude: parseFloat(mkr.latitude),
-                        longitude: parseFloat(mkr.longitude),
+                        latitude: parseFloat(mkr.address.lat),
+                        longitude: parseFloat(mkr.address.lng),
                       }}
                       onPress={async() =>{
-                        await setSelectedBusiness(mkr.user_id);
+                        await setSelectedBusiness(mkr.id);
                         _scrollView.scrollTo({ x: idx * 125, y: 0, animated: true });
                       }} 
 
@@ -818,13 +867,13 @@ function SeekerHome({ navigation }) {
               style={{ flex: 1, position: "absolute", bottom: 5 }}
             >
               {businesses.map((biz, idx) => {
-                if (selectedBusiness === biz.user_id) {
+                if (selectedBusiness === biz.id) {
                   return (
                     <TouchableHighlight
-                      key={biz.user_id}
+                      key={biz.id}
                       onPress={() =>
                         navigation.navigate("SeekerHomeAvailableJobs", {
-                          biz_id: biz.user_id,
+                          biz_id: biz.id,
                         })
                       }
                       style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.001)" }}
@@ -860,7 +909,7 @@ function SeekerHome({ navigation }) {
                 } else {
                   return (
                     <TouchableHighlight
-                      key={biz.user_id}
+                      key={biz.id}
                       onPress={() => selectBiz(biz, idx)}
                       style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.001)" }}
                       underlayColor="rgba(0,0,0,0.001)"
@@ -898,10 +947,10 @@ function SeekerHome({ navigation }) {
                           numberOfLines={1}
                           ellipsizeMode="tail"
                         >
-                          {biz.business_name}
+                          {biz.company.name}
                         </Text>
                         <Text style={{ flex: 1, fontSize: 10, color: "#444" }}>
-                          {biz.distance_in_km} {strings.MILES}
+                          {(parseFloat(biz.distance_in_km) * 0.621).toFixed(2)} {strings.MILES}
                         </Text>
                       </View>
                     </TouchableHighlight>
