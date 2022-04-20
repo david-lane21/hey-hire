@@ -96,11 +96,7 @@ function SeekerAvailableJobs({ route, navigation }) {
 
   function getHired(job) {
     let tempJob = job;
-    console.log('getHired -> profile', profile);
-    console.log('-> jobs', jobs);
-
     tempJob.business = profile;
-    console.log('getHired -> tempJob', tempJob);
     if (route.name == "SeekerHomeAvailableJobs") {
       navigation.navigate("SeekerHomeJobDetail", { job: tempJob });
     } else {
@@ -124,7 +120,6 @@ function SeekerAvailableJobs({ route, navigation }) {
 
     postFormData(url, form)
       .then((res) => {
-        console.log('addWishlist -> res', res);
         return res.json();
       })
       .then((json) => {
