@@ -11,11 +11,12 @@ import {
   Linking,
 } from "react-native";
 import { getUser, setUser } from "./utils/utils.js";
-import { postFormData } from "./utils/network.js";
+import { postFormData, getRequest, postJSON } from "./utils/network.js";
 import { LinearGradient } from "expo-linear-gradient";
 import ConfirmationAlert from "./components/ConfirmationAlert";
 import AlertPopup from "./components/AlertPopup";
 import { strings } from "./translation/config";
+import { useSelector } from "react-redux";
 import { useIsFocused } from "@react-navigation/native";
 import moment from "moment";
 import InstagramLoginPopup from "./components/InstagramLogin.js";
@@ -32,38 +33,36 @@ function SeekerJobDetail({ route, navigation }) {
   const [modal1, setModal1] = useState(false);
   const [modal2, setModal2] = useState(false);
   const [instaModalShow, setInstaModalShow] = useState(false);
+  const userData = useSelector(state => state.UserData)
 
   useEffect(() => {
     Linking.addEventListener("url", handleOpenURL);
-    if (isFocused) {
-      getUser().then((u) => {
-        let u2 = JSON.parse(u);
-        console.log("Local user", u2);
-        setUser1(u2);
-        let form = new FormData();
-        form.append("user_token", u2.user_token);
-        form.append("job_id", route.params.job.id);
-
-        postFormData("/job_detail", form)
-          .then((res) => {
-            return res.json();
-          })
-          .then((json) => {
-            console.log("Detail", json);
-            setJob(
-              Object.assign(json.data, { applied_on: tempJob.applied_on, viewed_on: tempJob.viewed_on })
-            );
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      });
-    }
-
+      loadData();
     return () => {
       Linking.removeEventListener("url", handleOpenURL);
     };
   }, [isFocused]);
+
+  function loadData() {
+    getUser().then((u) => {
+      let u2 = JSON.parse(u);
+      console.log("Local user", u2);
+      setUser1(u2);
+      getRequest(`/job-seeker/job-position/${route.params.job.id}`, userData.token)
+        .then((res) => {
+          return res.json();
+        })
+        .then((json) => {
+          console.log("Detail", json);
+          setJob(
+            Object.assign(json.data, { applied_on: tempJob.applied_on, viewed_on: tempJob.viewed_on })
+          );
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    });
+  }
 
   function handleOpenURL(event) {
     let businessId = event.url.split("/").filter(Boolean).pop();
@@ -111,32 +110,20 @@ function SeekerJobDetail({ route, navigation }) {
     });
   }
 
-  function onSendCV() {
-    let form = new FormData();
-    form.append("user_token", user.user_token);
-    form.append("user_id", user.user_id);
-    form.append("job_id", job.id);
-
-    postFormData("send_cv", form)
-      .then((res) => {
-        return res.json();
-      })
-      .then((json) => {
-        console.log("-----------");
-        console.log(json.status_code);
-        if (json.status_code != 200) {
-          Alert.alert("", json.msg);
-        } else {
-          setModal2(true);
-          const tempJob = Object.assign({}, job, { aplied: "1", applied_on: new Date() });
-          setJob(tempJob);
-        }
-
-        console.log("+++++++++++");
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  async function onSendCV() {
+    try {
+      const body = {
+        "job_id": job.id
+      }
+      console.log('body', body);
+      const res = await postJSON('/job-seeker/application/', body, userData.token);
+      const json = await res.json()
+      setModal2(true);
+      const tempJob = Object.assign({}, job, { aplied: "1", applied_on: new Date() });
+      setJob(tempJob);
+    } catch (error) {
+      console.log('error', error);
+    }
   }
 
   useEffect(() => {
@@ -188,30 +175,30 @@ function SeekerJobDetail({ route, navigation }) {
         {
           text: "OK",
           onPress: () => {
+            /*
             let form = new FormData();
             form.append("user_token", user.user_token);
             form.append("user_id", user.user_id);
             form.append("job_id", job.id);
             form.append("cv_id", job.cv_id);
+            */
+            getRequest(`/job-seeker/application/cancel/${job.id}`, userData.token)
+            .then((res) => {
+              return res.json();
+            })
+            .then((json) => {
+              console.log("-----------");
+              if (json.status_code == 200) {
+                Alert.alert("Successful", json.msg);
 
-            postFormData("cancel_cv", form)
-              .then((res) => {
-                return res.json();
-              })
-              .then((json) => {
-                console.log("-----------");
-                console.log(json.status_code);
-                if (json.status_code == 200) {
-                  Alert.alert("Successful", json.msg);
-
-                  navigation.goBack();
-                } else {
-                  Alert.alert("Error", json.msg);
-                }
-              })
-              .catch((err) => {
-                console.log(err);
-              });
+                navigation.goBack();
+              } else {
+                Alert.alert("Error", json.msg);
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+            });
           },
         },
       ],
@@ -300,7 +287,7 @@ function SeekerJobDetail({ route, navigation }) {
               style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
             >
               <View style={{ flex: 2 }}></View>
-              {job.aplied == "1" ? (
+              {job.aplied && job.aplied == "1" ? (
                 <TouchableOpacity
                   style={{ flex: 1 }}
                   onPress={() => onCancelCV()}
@@ -310,7 +297,7 @@ function SeekerJobDetail({ route, navigation }) {
                     style={{ width: 20, height: 20 }}
                   />
                 </TouchableOpacity>
-              ) : job.like == "1" ? (
+              ) : job.like && job.like == "1" ? (
                 <TouchableOpacity
                   style={{ flex: 1, alignItems: "center" }}
                   onPress={() => addWishlist()}
@@ -351,13 +338,13 @@ function SeekerJobDetail({ route, navigation }) {
 
           <View style={{ flex: 1, alignItems: "center", marginHorizontal: 20 }}>
             <Text style={{ color: "#fff", fontSize: 22, textAlign: "center" }}>
-              {business.business_name}
+              {business.name}
             </Text>
           </View>
 
           <View style={{ flex: 1, alignItems: "center" }}>
             <Text style={{ color: "#fff" }}>
-              {strings.CURRENTLY_VIEWING_POSTION}: {job.position}
+              {strings.CURRENTLY_VIEWING_POSTION}: {job.title}
             </Text>
           </View>
 
@@ -412,13 +399,13 @@ function SeekerJobDetail({ route, navigation }) {
                 style={{ width: 13, height: 13 }}
               />
               <Text style={{ color: "#fff", marginLeft: 5 }}>
-                {business.address}
+                {business.address.address}
               </Text>
             </View>
           </View>
 
 
-          <View
+          {business.business_detail && (<View
             style={{
               flex: 1,
               alignItems: "center",
@@ -428,7 +415,7 @@ function SeekerJobDetail({ route, navigation }) {
             }}
           >
             <Text style={{ color: "#fff" }}>{business.business_detail}</Text>
-          </View>
+          </View>)}
 
 
           <View
@@ -484,7 +471,7 @@ function SeekerJobDetail({ route, navigation }) {
                 </Text>
               </View>
               <Text style={{ marginBottom: 30, marginTop: 10, fontSize: 15 }}>
-                {job.position_desc}
+                {job.description}
               </Text>
 
               <View
@@ -548,7 +535,7 @@ function SeekerJobDetail({ route, navigation }) {
                   <Text
                     style={{ marginBottom: 30, marginTop: 10, fontSize: 15 }}
                   >
-                    {business.business_name}{" "}
+                    {business.name}{" "}
                     {
                       "is requesting that you connect your Instagram account to your profile to apply for this position."
                     }
@@ -624,7 +611,7 @@ function SeekerJobDetail({ route, navigation }) {
                 </View>
               )}
             </View>
-            {job.aplied == "1" ? (
+            {job.aplied && job.aplied == "1" ? (
               <View
                 style={{
                   flex: 1,
@@ -723,13 +710,13 @@ function SeekerJobDetail({ route, navigation }) {
             business={business}
             onClose={() => setModal2(false)}
           />
-          <InstagramLoginPopup
-            userId={user.user_id}
+          {/*<InstagramLoginPopup
+            userId={userData.profile.id}
             visible={instaModalShow}
             onClose={() => {
               onCloseInstagramConnect();
             }}
-          />
+          />*/}
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>

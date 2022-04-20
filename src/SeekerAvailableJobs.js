@@ -13,8 +13,9 @@ import {
   Dimensions,
   Platform
 } from "react-native";
+import { useSelector } from "react-redux";
 import { getUser } from "./utils/utils.js";
-import { postFormData } from "./utils/network.js";
+import { postFormData, getRequest } from "./utils/network.js";
 import { LinearGradient } from "expo-linear-gradient";
 import { useIsFocused } from "@react-navigation/native";
 const window = Dimensions.get("window");
@@ -30,6 +31,7 @@ function SeekerAvailableJobs({ route, navigation }) {
   const [error, setError] = useState(null);
   const [jobError, setJobError] = useState(null);
   const [refresh, setRefresh] = useState(false);
+  const userData = useSelector(state => state.UserData)
 
   useEffect(() => {
     // console.log(isFocused)   }
@@ -44,11 +46,7 @@ function SeekerAvailableJobs({ route, navigation }) {
       // console.log(u2)
       setUser(u2);
 
-      let form = new FormData();
-      form.append("user_token", u2.user_token);
-      form.append("user_id2", u2.user_id);
-      form.append("user_id", route.params.biz_id);
-      postFormData("get_business_detail", form)
+      getRequest(`/job-seeker/location/${route.params.biz_id}`, userData.token)
         .then((res) => {
           return res.json();
         })
@@ -62,21 +60,22 @@ function SeekerAvailableJobs({ route, navigation }) {
           if (json.data && typeof json.data == "object") {
             setProfile(json.data);
 
-            if (json.data.is_active == "1") {
-              if (json.data.job_count == 0) {
+            // if (json.data.is_active == "1") {
+              if (json.data.positions.length == 0) {
                 setJobError(
                   "This business is currently not hiring. But don't worry, there are many more businesses to work at on our network! Keep hunting!"
                 );
               } else {
-                setJobs(json.data.job);
+                setJobs(json.data.positions);
               }
-            } else if (json.data.is_active == "1" && json.data.job_count == 0) {
+            /*} else if (json.data.is_active == "1" && json.data.job_count == 0) {
               setError("We're sorry, this business is currently inactive.");
             } else if (is_active == 0 || job_count == 0) {
               setJobError(
                 "This business is currently not hiring. But don't worry, there are many more businesses to work at on our network! Keep hunting!"
               );
             }
+            */
           } else {
             setError("We're sorry, this business is currently inactive.");
           }
@@ -97,7 +96,11 @@ function SeekerAvailableJobs({ route, navigation }) {
 
   function getHired(job) {
     let tempJob = job;
+    console.log('getHired -> profile', profile);
+    console.log('-> jobs', jobs);
+
     tempJob.business = profile;
+    console.log('getHired -> tempJob', tempJob);
     if (route.name == "SeekerHomeAvailableJobs") {
       navigation.navigate("SeekerHomeJobDetail", { job: tempJob });
     } else {
@@ -110,17 +113,18 @@ function SeekerAvailableJobs({ route, navigation }) {
 
   function addWishlist(job) {
     let form = new FormData();
-    form.append("user_token", user.user_token);
-    form.append("user_id", user.user_id);
+    form.append("user_token", userData.token);
+    form.append("user_id", userData.profile.id);
     form.append("job_id", job.id);
 
-    let url = "add_like";
+    let url = "/add_like";
     if (job.like == 1) {
-      url = "remove_like";
+      url = "/remove_like";
     }
 
     postFormData(url, form)
       .then((res) => {
+        console.log('addWishlist -> res', res);
         return res.json();
       })
       .then((json) => {
@@ -247,11 +251,13 @@ function SeekerAvailableJobs({ route, navigation }) {
                     marginHorizontal: 20,
                   }}
                 >
-                  <Text
-                    style={{ color: "#fff", fontSize: 22, textAlign: "center" }}
-                  >
-                    {profile.business_name}
-                  </Text>
+                  {profile.company && (
+                    <Text
+                      style={{ color: "#fff", fontSize: 22, textAlign: "center" }}
+                    >
+                      {profile.company.name}
+                    </Text>
+                  )}
                 </View>
 
                 <View
@@ -271,9 +277,11 @@ function SeekerAvailableJobs({ route, navigation }) {
                       marginRight: 6,
                     }}
                   />
-                  <Text style={{ color: "#fff", marginTop: 10 }}>
-                    {profile.address}
-                  </Text>
+                  {profile.address && (
+                    <Text style={{ color: "#fff", marginTop: 10 }}>
+                      {profile.address.address}
+                    </Text>
+                  )}
                 </View>
 
                 {/* <View style={{ flex: 1, marginTop: 30 }}>
@@ -302,7 +310,7 @@ function SeekerAvailableJobs({ route, navigation }) {
                       fontSize: 13.5,
                     }}
                   >
-                    {profile.business_detail}
+                    {profile.website}
                   </Text>
                 </View>
               </LinearGradient>
@@ -382,7 +390,7 @@ function SeekerAvailableJobs({ route, navigation }) {
                                     fontWeight: Platform.OS === 'ios' ? '600' : 'bold'
                                   }}
                                 >
-                                  {j.position}
+                                  {j.title}
                                 </Text>
                                 <View
                                   style={{
@@ -399,14 +407,14 @@ function SeekerAvailableJobs({ route, navigation }) {
                                     }}
                                   />
                                   <Text style={{ fontSize: 12, color: "#999", }}>
-                                    {profile.address}
+                                    {profile.address.address}
                                   </Text>
                                 </View>
                             </TouchableOpacity>
 
-                            <TouchableOpacity onPress={() => addWishlist(j)} style={{position:'absolute', right:0}}>
+                            <TouchableOpacity /*onPress={() => addWishlist(j)} style={{position:'absolute', right:0}}*/>
                               <View style={{ width: 40 }}>
-                                {j.like != "0" ? (
+                                {j.like == "1" ? (
                                   <Image
                                     source={require("../assets/ic_heart_purple_header.png")}
                                     style={{ width: 30, height: 30 }}

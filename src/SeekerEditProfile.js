@@ -343,7 +343,7 @@ function SeekerEditProfile({ navigation, route }) {
         zip_code: zipcode,
         state : state,
         city : city,
-        // email,
+        email,
         // bio,
         country,
         availability: availability,

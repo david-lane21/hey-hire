@@ -266,8 +266,7 @@ function SeekerHome({ navigation }) {
     try {
       // const res = await getRequest(`/job-seeker/locations/list?lng=${longitude}&lat=${latitude}`,userData?.token)
       console.log('user data ', userData);
-      const res = await getRequest(`/job-seeker/locations/list?lng=0&lat=0`,userData?.token)
-      console.log('getHiringLocations -> res', res);
+      const res = await getRequest(`/job-seeker/location/list?lng=0&lat=0`,userData?.token)
       const json = await res.json()
       if(json.data?.length > 0){
         let bizList = json.data.filter(
@@ -290,7 +289,6 @@ function SeekerHome({ navigation }) {
         bizList = bizList.sort(
           (a, b) => a.distance_in_km - b.distance_in_km
         );
-
         setBusinesses(bizList);
       }
     } catch (error) {
