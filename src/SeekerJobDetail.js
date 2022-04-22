@@ -53,7 +53,7 @@ function SeekerJobDetail({ route, navigation }) {
           return res.json();
         })
         .then((json) => {
-          console.log("Detail", json);
+          console.log("Detail after updates in api ", json);
           setJob(
             Object.assign(json.data, { applied_on: tempJob.applied_on, viewed_on: tempJob.viewed_on })
           );
@@ -187,8 +187,9 @@ function SeekerJobDetail({ route, navigation }) {
               return res.json();
             })
             .then((json) => {
-              console.log("-----------");
-              if (json.status_code == 200) {
+              console.log("-----------", json);
+             // if (json.status_code === 200) {
+               if (json.data.status == "canceled") {
                 Alert.alert("Successful", json.msg);
 
                 navigation.goBack();
@@ -685,13 +686,13 @@ function SeekerJobDetail({ route, navigation }) {
                     paddingBottom: 12,
                     borderRadius: 50,
                   }}
-                  onPress={() => handlePostCV()}
+                  onPress={tempJob && tempJob.application !== null ? tempJob.application.status === "applied" ? () => onCancelCV() : () => handlePostCV() : () => handlePostCV()}
                   disabled={job.requires_instagram && !user.instagram_connected}
                 >
                   <Text
                     style={{ textAlign: "center", fontSize: 18, color: "#fff" }}
                   >
-                    {strings.SEND_APPLICATION}
+                    {tempJob && tempJob.application !== null ? tempJob.application.status === "applied" ? strings.CANCEL_APPLICATION : strings.SEND_APPLICATION  : strings.SEND_APPLICATION}
                   </Text>
                 </TouchableOpacity>
               </View>
