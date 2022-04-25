@@ -34,6 +34,7 @@ import examples from 'libphonenumber-js/examples.mobile.json'
 import { getExampleNumber } from 'libphonenumber-js';
 // import CommonUtils from './utils/CommonUtils';
 import Loader from './components/Loader';
+import { heightPercentageToDP } from 'react-native-responsive-screen'
 const isIphoneX = DeviceInfo.hasNotch();
 function SeekerSignup({ navigation, route }) {
   const scrollViewRef = useRef();
@@ -463,10 +464,10 @@ function SeekerSignup({ navigation, route }) {
       <KeyboardAwareScrollView style={[styles.container]} extraScrollHeight={Platform.OS === "ios" ? 50 : 0} extraHeight={Platform.OS === "ios" ? 140 : null} >
         <Loader loading={loading} />
 
-        <View style={{ flex: 1, alignItems: 'center', padding: 20 }}>
-          <View style={{ width: 140, height: 140, alignSelf: 'center' }}>
-            {image == null ? (
-              <Image
+        <View style={{ flex: 1, alignItems: 'center', padding: 20, marginBottom: heightPercentageToDP(5) }}>
+          {/* <View style={{ width: 140, height: 140, alignSelf: 'center' }}> */}
+            {/* {image == null ? ( */}
+              {/* <Image
                 source={require('../assets/img_place.png')}
                 style={{
                   height: 100,
@@ -474,8 +475,8 @@ function SeekerSignup({ navigation, route }) {
                   borderRadius: 50,
                   alignSelf: 'center'
                 }}
-              />
-            ) : (
+              /> */}
+            {/* ) : (
               <Image
                 source={{ uri: image }}
                 style={{
@@ -485,17 +486,18 @@ function SeekerSignup({ navigation, route }) {
                   alignSelf: 'center'
                 }}
               />
-            )}
-            <TouchableOpacity
+            )} */}
+            {/* <TouchableOpacity
               onPress={pickImage}
               style={{ position: 'absolute', top: 0, right: 0 }}
             >
+            
               <Image
                 source={require('../assets/ic_camera.png')}
                 style={{ width: 60, height: 60 }}
               />
-            </TouchableOpacity>
-          </View>
+            </TouchableOpacity> */}
+          {/* </View> */}
         </View>
 
         <View style={styles.inputField}>
@@ -504,7 +506,7 @@ function SeekerSignup({ navigation, route }) {
             style={{ height: 20, width: 20 }}
           />
           <TextInput
-            style={[{ paddingLeft: 10, width: '100%', color: '#000' }, Platform.OS === "ios" && { height: 30 }]}
+            style={[{ paddingLeft: 10, width: '100%', color: '#000', borderWidth: 0 }, Platform.OS === "ios" && { height: 30 }]}
             onChangeText={text => setFirstName(text)}
             placeholder={strings.FIRSTNAME}
             value={firstName}
@@ -826,11 +828,11 @@ function SeekerSignup({ navigation, route }) {
           </View> */}
         </View> 
 
-        <Text
+        {/* <Text
           style={{ color: '#7364BF', paddingTop: 10, paddingBottom: 20 }}
         >
           {strings.FOR_RECEIVING_INTERVIEW_CALLS}
-        </Text>
+        </Text> */}
 
         <View style={styles.inputField}>
           <Image
@@ -838,7 +840,7 @@ function SeekerSignup({ navigation, route }) {
             style={{ height: 20, width: 20 }}
           />
           <TextInput
-            style={[{ paddingLeft: 10, width: '100%', color: '#000' }, Platform.OS === "ios" && { height: 30 }]}
+            style={[{ paddingLeft: 10, width: '100%', color: '#000', }, Platform.OS === "ios" && { height: 30 }]}
             onChangeText={text => setEmail(text)}
             placeholder={strings.EMAIL}
             value={email}
@@ -913,7 +915,8 @@ function SeekerSignup({ navigation, route }) {
               alignContent: 'center',
               backgroundColor: '#5B42BB',
               padding: 15,
-              borderRadius: 30
+              borderRadius: 30,
+              marginTop: 20
             }}
             onPress={() => createAccount()}
           >
@@ -923,6 +926,7 @@ function SeekerSignup({ navigation, route }) {
               {strings.CREATE_ACCOUNT}
             </Text>
           </TouchableOpacity>
+          <Text style={styles.terms}>{strings.VIEW_TERMS_PRIVACY}</Text>
         </View>
         <View style={{ height: 50 }}></View>
       </KeyboardAwareScrollView>
@@ -960,7 +964,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignContent: 'center',
     borderColor: "#eee",
-    borderWidth: 1,
+    // borderWidth: 1,
     marginBottom: 15,
     borderRadius: 8,
     shadowColor: "#bbb",
@@ -973,6 +977,14 @@ const styles = StyleSheet.create({
     elevation: 4,
     alignItems: 'center',
     paddingVertical: 5
+
+  },
+  terms: {
+    marginTop: heightPercentageToDP(3),
+    color: '#A9A9A9',
+    textAlign: 'center',
+    textDecorationLine: 'underline'
+    //textDecorationStyle: 'under'
 
   },
   code: {

@@ -7,6 +7,7 @@ import messaging from '@react-native-firebase/messaging';
 
 import { getUser } from "./utils/utils.js";
 import HomeScreen from "./HomeScreen";
+import SeekerUserWizard from './SeekerUserWizard';
 import SeekerLogin from "./SeekerLogin";
 import SeekerForgotPassword from "./SeekerForgotPassword";
 import SeekerSignup from "./SeekerSignup";
@@ -26,6 +27,8 @@ import TestLinks from "./TestLinks";
 import SeekerEditPastPosition from "./SeekerEditPastPosition";
 import ForgotPassword from './ForgotPassword';
 import SeekerBusinessList from './SeekerBusinessList';
+import CustomHeader from "./components/CustomHeader.js";
+import CustomBack from "./components/CustomBack.js";
 
 const Stack = createStackNavigator();
 const Stack2 = createStackNavigator();
@@ -94,6 +97,13 @@ export function Navigation(props) {
         <Stack.Screen
           name="HomeScreen"
           component={HomeScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="SeekerUserWizard"
+          component={SeekerUserWizard}
           options={{
             headerShown: false,
           }}
@@ -211,6 +221,15 @@ export function AuthNavigation({ navigation }) {
           }}
         /> */}
       <AuthNavigationStack.Screen
+        name="SeekerUserWizard"
+        component={SeekerUserWizard}
+        options={{
+          headerShown: false,
+          gestureEnabled: false
+
+        }}
+      />
+      <AuthNavigationStack.Screen
         name="SeekerLogin"
         component={SeekerLogin}
         options={{
@@ -226,10 +245,11 @@ export function AuthNavigation({ navigation }) {
         options={{
           headerShown: true,
           headerBackTitleVisible: false,
-          headerTitle: "REGISTRATION",
+          headerTitle: () => (<CustomHeader title="REGISTRATION" />),
           headerStyle: {
             backgroundColor: "#fff",
           },
+          headerLeft: () => (<CustomBack navigation={navigation} />),
           headerTintColor: "#4E35AE",
           gestureEnabled: false
 
