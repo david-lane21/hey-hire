@@ -16,7 +16,8 @@ import {
   findNodeHandle,
   Alert,
   StatusBar,
-  Keyboard
+  Keyboard,
+  Linking
 } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 import Constants from 'expo-constants'
@@ -242,14 +243,16 @@ function SeekerSignup({ navigation, route }) {
           // country,
       
       }
-        const res = await postJSON("/job-seeker/profile",body,route.params.token)
-        // console.log('res',res)
+      console.log('body in signup page ', body);
+      console.log("route ", route)
+        const res = await postJSON("/job-seeker/profile",body,)
+        console.log('res in signup page ',res)
         const json = await res.json()
-        // console.log('json',json)
+        console.log('json data ',json)
         navigation.navigate('SeekerFinishRegistration',{token: route.params.token})
 
       } catch (error) {
-        Alert.alert('Error',error)
+        Alert.alert('Error Over Here ',error)
         console.log('error while updating profile',error)
       }
       }
@@ -395,10 +398,10 @@ function SeekerSignup({ navigation, route }) {
       return false
     }
 
-    else if (!phone || isValidatePresence(phone) == "") {
-      Alert.alert("Error...", "Enter a valid Phone Number before continuing!")
-      return false
-    }
+    // else if (!phone || isValidatePresence(phone) == "") {
+    //   Alert.alert("Error...", "Enter a valid Phone Number before continuing!")
+    //   return false
+    // }
     else if (!email || isValidatePresence(email) == "") {
       Alert.alert("Error...", "Enter a valid Email before continuing!")
       return false
@@ -455,6 +458,10 @@ function SeekerSignup({ navigation, route }) {
     let tempInputs = inputs
     tempInputs[index] = ref
     setInputs(inputs)
+  }
+
+  function gotoPrivacyPolicy() {
+    Linking.openURL('https://app.apployme.com/privacy_policy')
   }
 
 
@@ -568,7 +575,7 @@ function SeekerSignup({ navigation, route }) {
           />
         </View>
 
-        <View
+        {/*<View
           style={{
             flex: 1,
             // alignItems: 'center'
@@ -664,6 +671,27 @@ function SeekerSignup({ navigation, route }) {
               <Text style={{}}>{country}</Text>
             </TouchableOpacity>
           </View>
+        </View>*/}
+
+        <View style={styles.inputField}>
+          <Image
+            source={require('../assets/ic_country.png')}
+            style={{ height: 20, width: 20 }}
+          />
+          <TextInput
+            style={[{ paddingLeft: 10, width: '100%', color: '#000' }, Platform.OS === "ios" && { height: 30 }]}
+            onChangeText={text => setCity(text)}
+            placeholder={strings.CITY}
+            value={city}
+            textContentType='addressCity'
+            keyboardType={'default'}
+            onFocus={() => {
+              handleFocus(4)
+            }}
+            ref={ref => {
+              handleRef(4, ref)
+            }}
+          />
         </View>
 
         <View style={styles.inputField}>
@@ -684,27 +712,6 @@ function SeekerSignup({ navigation, route }) {
             }}
             ref={ref => {
               handleRef(3, ref)
-            }}
-          />
-        </View>
-
-        <View style={styles.inputField}>
-          <Image
-            source={require('../assets/ic_country.png')}
-            style={{ height: 20, width: 20 }}
-          />
-          <TextInput
-            style={[{ paddingLeft: 10, width: '100%', color: '#000' }, Platform.OS === "ios" && { height: 30 }]}
-            onChangeText={text => setCity(text)}
-            placeholder={strings.CITY}
-            value={city}
-            textContentType='addressCity'
-            keyboardType={'default'}
-            onFocus={() => {
-              handleFocus(4)
-            }}
-            ref={ref => {
-              handleRef(4, ref)
             }}
           />
         </View>
@@ -926,7 +933,7 @@ function SeekerSignup({ navigation, route }) {
               {strings.CREATE_ACCOUNT}
             </Text>
           </TouchableOpacity>
-          <Text style={styles.terms}>{strings.VIEW_TERMS_PRIVACY}</Text>
+          <Text style={styles.terms} onPress={gotoPrivacyPolicy}>{strings.VIEW_TERMS_PRIVACY}</Text>
         </View>
         <View style={{ height: 50 }}></View>
       </KeyboardAwareScrollView>

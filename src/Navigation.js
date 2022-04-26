@@ -233,8 +233,11 @@ export function AuthNavigation({ navigation }) {
         name="SeekerLogin"
         component={SeekerLogin}
         options={{
-          headerShown: false,
-          gestureEnabled: false
+          headerShown: true,
+          gestureEnabled: false,
+          headerTitle: "",
+          headerBackTitleVisible: false,
+          headerLeft: () => (<CustomBack navigation={navigation} />)
 
         }}
       />

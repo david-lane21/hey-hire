@@ -96,6 +96,7 @@
     "FINISH_REGISTRATION": "Finish registration",
     "REGISTRATION": "REGISTRATION",
     "PHONE_NUMBER": "Phone Number",
+    "MY_PHONE_NO": "My number is",
     "EDIT_PROFILE": "Edit Profile",
     "VIEW_AVAILABLE_POSTIONS": "View Available Positions",
     "MILES": "miles",
@@ -160,5 +161,7 @@
     "USER_WIZARD_TEXT_2":"Learn how we process vour data in our ",
     "TERMS":"Terms. ",
     "PRIVACY_AND_COOKIES":"Privacy Policy and Cookies Policy.",
-    "TROUBLE_SIGNING_IN": "Trouble Signing In?"
+    "TROUBLE_SIGNING_IN": "Trouble Signing In?",
+    "CONTINUE": "Continue",
+    "VERIFICATION_CODE_TEXT": "We will send a text with a verification code.  Message and data rates may apply.  Learn what happens when your number changes."
 }

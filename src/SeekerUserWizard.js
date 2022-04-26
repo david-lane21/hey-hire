@@ -1,19 +1,16 @@
-import React, { useState, useRef, useEffect } from "react";
+import React from "react";
 import {
-  View,
   Text,
   StyleSheet,
   Dimensions,
   ImageBackground,
-  TouchableOpacity
+  Linking
 } from "react-native";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import RoundButton from "./components/RoundButton";
 import { useIsFocused } from "@react-navigation/native";
 import { strings } from "./translation/config";
 import DeviceInfo from 'react-native-device-info';
-import CommonUtils from './utils/CommonUtils';
-import { useDispatch, useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const isIphoneX = DeviceInfo.hasNotch();
@@ -24,10 +21,12 @@ function SeekerUserWizard({ navigation }) {
 
   function termsOnPress() {
     // Navigate to terms Page
+    Linking.openURL('https://app.apployme.com/terms_of_service');
   }
 
   function policyOnPress() {
     // Navigate to Plicy and cookies Page
+    Linking.openURL('https://app.apployme.com/privacy_policy');
   }
 
   function signinTroubleOnPress() {
@@ -47,9 +46,9 @@ function SeekerUserWizard({ navigation }) {
       <SafeAreaView style={styles.container}>
         <Text style={[styles.termsText, { marginBottom: hp('4%')} ]}>
           {strings.USER_WIZARD_TEXT}
-          <Text style={styles.underlineText} onPress={() => termsOnPress()}>{strings.TERMS}</Text>
+          <Text style={styles.underlineText} onPress={termsOnPress}>{strings.TERMS}</Text>
           {strings.USER_WIZARD_TEXT_2}
-          <Text style={styles.underlineText} onPress={() => policyOnPress()}>{strings.PRIVACY_AND_COOKIES}</Text>
+          <Text style={styles.underlineText} onPress={policyOnPress}>{strings.PRIVACY_AND_COOKIES}</Text>
         </Text>
         <RoundButton backgroundColor='#FFFFFF' text={strings.CREATE_ACCOUNT} textColor="#594A9E" onPress={() => createAccount()} />
         <RoundButton backgroundColor='#F1B257' text={strings.SIGN_IN} textColor="#FFFFFF" onPress={() => signIn()} />

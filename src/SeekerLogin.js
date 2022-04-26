@@ -20,8 +20,10 @@ import {
   PermissionsAndroid
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import * as Location from "expo-location";
 import { countries } from "./utils/consts.js";
+import RoundButton from "./components/RoundButton";
 import { postFormData, getBaseURL, postJSON } from "./utils/network.js";
 import { setUser, setToken } from "./utils/utils.js";
 import { KeyboardAccessoryNavigation } from "react-native-keyboard-accessory";
@@ -44,7 +46,6 @@ function SeekerLogin({ navigation }) {
   const [loginBotton, setLoginButton] = useState(false);
   const [phCode, setPhCode] = useState("1");
   const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
   const [activeInputIndex, setActiveInputIndex] = useState(0);
   const [inputs, setInputs] = useState([]);
   const [nextFocusDisabled, setNextFocusDisabled] = useState(false);
@@ -103,12 +104,6 @@ function SeekerLogin({ navigation }) {
   function _onPress(item) {
     setModalVisible(false);
     setPhCode(item.dial_code);
-  }
-
-  function handlePassword(pass) {
-    if (pass.length > 0)
-      setLoginButton(true);
-    setPassword(pass);
   }
 
   function deviceToken(length) {
@@ -314,16 +309,16 @@ function SeekerLogin({ navigation }) {
 
   return (
 
-    <LinearGradient style={styles.container} colors={["#4E35AE", "#775ED7"]} >
+    <View style={styles.container}>
       <SafeAreaView style={{ flex: 1 }}>
-        <View style={{ flexDirection: 'row', position: 'absolute', top: 0, left: 0, bottom: 0 }}>
+        {/*<View style={{ flexDirection: 'row', position: 'absolute', top: 0, left: 0, bottom: 0 }}>
           <Image
             style={{ width: '100%', height: (window.height), borderBottomLeftRadius: 8, borderBottomRightRadius: 8, opacity: 1 }}
             source={require('../assets/home-bg.png')}
             resizeMode={'cover'}
           />
 
-        </View>
+        </View>*/}
 
         <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={true} scrollEnabled={contentHeight + 50 > window.height}
           onContentSizeChange={onContentSizeChange}
@@ -351,7 +346,7 @@ function SeekerLogin({ navigation }) {
               </TouchableOpacity>
             </View> */}
 
-            <View
+            {/*<View
               style={{
                 alignItems: "center",
                 marginHorizontal: "5%",
@@ -368,11 +363,11 @@ function SeekerLogin({ navigation }) {
                 }}
                 resizeMode={"stretch"}
               />
-            </View>
+            </View>*/}
 
-            <View style={{ alignItems: 'center', justifyContent: 'center', marginVertical: isIphoneX ? 10 : 5, marginTop: 10 }}>
+            {/*<View style={{ alignItems: 'center', justifyContent: 'center', marginVertical: isIphoneX ? 10 : 5, marginTop: 10 }}>
               <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#fff', textAlign: 'center' }}>{strings.SIGN_IN}</Text>
-            </View>
+            </View>*/}
 
 
 
@@ -460,38 +455,33 @@ function SeekerLogin({ navigation }) {
                 </SafeAreaView>
               </Modal>
 
-              <Text style={{ color: '#fff', fontSize: 16 }}>{strings.PHONE_NUMBER}</Text>
+              <Text style={{ color: '#000000', fontSize: hp('2.8%'), fontWeight: 'bold' }}>{strings.MY_PHONE_NO}</Text>
               <View
                 style={{
-                  // flex: 1,
                   flexDirection: "row",
                   marginTop: 5
 
                 }}
               >
 
-                {/* <TouchableOpacity
+                <TouchableOpacity
                   style={styles.code}
                   onPress={() => setModalVisible(true)}
                 >
-                  <Image
-                    source={require("../assets/ic_call-1.png")}
-                    style={{ width: 20, height: 20, marginRight: 5 }}
-                  />
-                  <Text style={{ color: "#fff" }}>+{phCode}</Text>
-                </TouchableOpacity> */}
+                  <Text style={{ color: "#000000", fontSize: hp('2%'), fontWeight: '600' }}>+{phCode}</Text>
+                </TouchableOpacity>
 
                 <TextInput
-                  style={[styles.code2,{width: '100%', marginLeft: 0}]}
+                  style={[styles.code2,{width: '85%', marginLeft: 5}]}
                   onChangeText={(text) => setPhone(text)}
                   placeholder={strings.PHONE}
                   value={formatPhone(phone)}
                   textContentType="telephoneNumber"
                   autoCompleteType={"tel"}
                   keyboardType={"phone-pad"}
-                  placeholderTextColor={'#fff'}
-                  cursorColor={'#fff'}
-                  selectionColor={'#fff'}
+                  placeholderTextColor={'#000000'}
+                  cursorColor={'#000000'}
+                  selectionColor={'#000000'}
                   onFocus={() => {
                     handleFocus(0);
                   }}
@@ -502,57 +492,17 @@ function SeekerLogin({ navigation }) {
               </View>
             </View>
             
-            {/* <View
-              style={{
-                marginHorizontal: "5%",
-                marginVertical: 10,
-
-              }}
-            >
-              <Text style={{ color: '#fff', fontSize: 16, marginBottom: 5 }}>{strings.PASSWORD}</Text>
-              <View style={{ flexDirection: "row", }}>
-                <Image
-                  source={require("../assets/ic_lock.png")}
-                  style={{
-                    width: 15,
-                    height: 15,
-                    position: "absolute",
-                    top: 15,
-                    left: 10,
-                  }}
-                />
-                <TextInput
-                  style={styles.code3}
-                  secureTextEntry={true}
-                  onChangeText={(text) => handlePassword(text)}
-                  placeholder={strings.PASSWORD}
-                  value={password}
-                  textContentType="none"
-                  autoCompleteType={"password"}
-                  placeholderTextColor={'#fff'}
-                  cursorColor={'#fff'}
-                  selectionColor={'#fff'}
-                  underlineColor={'#fff'}
-                  onFocus={() => {
-                    handleFocus(1);
-                  }}
-                  ref={(ref) => {
-                    handleRef(1, ref);
-                  }}
-                />
-              </View>
-            </View> */}
    {otpSent ?         <>
 
 
-<View
+            <View
               style={{
                 marginHorizontal: "5%",
                 marginVertical: 10,
 
               }}
             >
-              <Text style={{ color: '#fff', fontSize: 16, marginBottom: 5 }}>{strings.CODE}</Text>
+              <Text style={{ color: '#000000', fontSize: 16, marginBottom: 5 }}>{strings.CODE}</Text>
               <OTPInputView
                 style={{width: '100%', height: 50, alignSelf: 'center'}}
                 pinCount={6}
@@ -561,8 +511,8 @@ function SeekerLogin({ navigation }) {
                 onCodeFilled = {(code) => {
                   setOtp(code)
                 }}
-                placeholderTextColor={'#fff'}
-                selectionColor={'#fff'}
+                placeholderTextColor='#000000'
+                selectionColor='#000000'
             />
             </View>
 
@@ -575,13 +525,13 @@ function SeekerLogin({ navigation }) {
 
               }}
             >
-
-              <TouchableOpacity style={[styles.button,
+            < RoundButton backgroundColor='#594A9E' text={strings.VERIFY_OTP} textColor="#FFFFFF" onPress={() => verifyOtp()} />
+              {/*<TouchableOpacity style={[styles.button,
               { backgroundColor: "#fff", }]}
                 onPress={() => verifyOtp()}>
 
                 <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{strings.VERIFY_OTP}</Text>
-              </TouchableOpacity>
+              </TouchableOpacity>*/}
             </View>
       </> : <View
               style={{
@@ -591,13 +541,14 @@ function SeekerLogin({ navigation }) {
 
               }}
             >
-
-              <TouchableOpacity style={[styles.button,
+            <Text style={styles.verificationText}>{strings.VERIFICATION_CODE_TEXT}</Text>
+            <RoundButton backgroundColor='#594A9E' text={strings.CONTINUE} textColor="#FFFFFF" onPress={() => getOtp()} />
+              {/*<TouchableOpacity style={[styles.button,
               { backgroundColor: "#fff", }]}
                 onPress={() => getOtp()}>
 
                 <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{strings.GET_OTP}</Text>
-              </TouchableOpacity>
+              </TouchableOpacity>*/}
             </View>}
 
             {/* <View
@@ -642,7 +593,7 @@ function SeekerLogin({ navigation }) {
 
 
           </View>
-          <View >
+          {/*<View >
             <View style={{ alignItems: 'center', justifyContent: 'center', marginVertical: 10 }}>
               <View style={{ borderBottomWidth: 0.5, borderBottomColor: '#fff' }}>
                 <Text style={{ fontSize: 14, color: '#fff', textAlign: 'center' }} onPress={() => gotoTermService()} >{strings.TERM_OF_SERVICE}</Text>
@@ -657,7 +608,7 @@ function SeekerLogin({ navigation }) {
               </View>
             </View>
 
-            {/* <View
+            <View
               style={{
                 flexDirection: "row",
                 justifyContent: "center",
@@ -690,8 +641,8 @@ function SeekerLogin({ navigation }) {
                   {strings.CLICK_HERE_TO_LOGIN}
                 </Text>
               </View>
-            </View> */}
-          </View>
+            </View>
+          </View>*/}
         </ScrollView>
       </SafeAreaView>
 
@@ -706,7 +657,7 @@ function SeekerLogin({ navigation }) {
         // avoidKeyboard={true}
         style={Platform.OS == "android" ? { top: 0 } : { top: 0 }}
       />
-    </LinearGradient>
+    </View>
   );
 }
 
@@ -715,6 +666,7 @@ export default SeekerLogin;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#FFFFFF'
     // alignItems: "center",
   },
   header: {
@@ -723,24 +675,20 @@ const styles = StyleSheet.create({
   },
   code: {
     flexDirection: "row",
-    borderRadius: 5,
-    borderColor: "#fff",
-    borderWidth: 1,
-    // paddingTop: 10,
-    // paddingLeft: 10,
-    color: "#fff",
-    width: "20%",
+    borderBottomColor: "#000000",
+    borderBottomWidth: 2,
+    color: "#000000",
+    width: "15%",
     // height: 50,
     alignItems: 'center',
     justifyContent: 'center'
   },
   code2: {
     flexDirection: "row",
-    borderRadius: 5,
-    borderColor: "#fff",
-    borderWidth: 1,
+    borderBottomColor: "#000000",
+    borderBottomWidth: 2,
     padding: 10,
-    color: "#fff",
+    color: "#000000",
     width: "72%",
     height: 50,
     marginLeft: "5%",
@@ -775,15 +723,24 @@ const styles = StyleSheet.create({
     width: (Dimensions.get('window').width * 0.9 - 45) / 6 ,
     height: 50,
     borderRadius: 5,
-    borderColor: '#fff',
-    borderWidth: 1
+    borderColor: '#000000',
+    borderWidth: 1,
+    color: '#000000'
   },
   inputHighlightStyle: {
     width: (Dimensions.get('window').width * 0.9 - 45) / 6 ,
 
     height: 50,
     borderRadius: 5,
-    borderColor: '#fff',
+    borderColor: '#000000',
     borderWidth: 1
+  },
+  verificationText: {
+    fontSize: hp('1.2%'),
+    color: '#727272',
+    textAlign: 'center',
+    fontWeight: '600',
+    marginTop: hp('4%'),
+    marginBottom: hp('5%')
   }
 });
