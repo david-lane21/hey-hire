@@ -14,12 +14,14 @@ import {
   PermissionsAndroid,
 } from "react-native";
 import { getUser, removeUser, setUser } from "./utils/utils.js";
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import { getRequest, postFormData } from "./utils/network.js";
 import { LinearGradient } from "expo-linear-gradient";
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import { useIsFocused } from "@react-navigation/native";
 import GeolocationNew from "@react-native-community/geolocation";
+import { DrawerActions } from '@react-navigation/native';
 
 import Header from "./components/Header";
 import { strings } from "./translation/config";
@@ -422,6 +424,12 @@ function SeekerHome({ navigation }) {
     }
   }
 
+  function _onPressMenuBar () {
+   // navigation.openDrawer();
+   navigation.dispatch(DrawerActions.openDrawer());
+
+  }
+
   async function selectBiz(biz, idx) {
     if (this[`markerRef${biz.id}`]) {
       this[`markerRef${biz.id}`].showCallout();
@@ -492,26 +500,23 @@ function SeekerHome({ navigation }) {
         >
           <View style={{ flex: 1, alignItems: "center" }}>
             <Image
-              source={require("../assets/title_header.png")}
-              style={{ width: 120, height: 25 }}
+              source={require("../assets/heyHire_white.png")}
+              style={{ width: wp('25%'), height: hp('4%'), resizeMode: 'contain' }}
             />
           </View>
-          <View style={{ position: "absolute", left: 5 }}>
+          <View style={{ position: "absolute", left: 5, bottom: 5 }}>
             <TouchableOpacity
               onPress={() => {
-                _onLogout();
+                _onPressMenuBar()
+                // _onLogout();
               }}
               style={{ padding: 5 }}
             >
-              <Text
-                style={{ paddingHorizontal: 10, color: "#fff", fontSize: 18 }}
-              >
-                {strings.LOGOUT}
-              </Text>
+              <Image source={require("../assets/menubar.png")} style={{height: 20, width: 20, alignSelf: 'center'}}/>
             </TouchableOpacity>
           </View>
 
-          <View style={{ position: "absolute", right: 5 }}>
+          {/* <View style={{ position: "absolute", right: 5 }}>
             <TouchableOpacity
               onPress={() => {
                 if (userData?.profile) {
@@ -532,10 +537,10 @@ function SeekerHome({ navigation }) {
                   fontSize: 18,
                 }}
               >
-                {strings.EDIT_PROFILE}
+                
               </Text>
             </TouchableOpacity>
-          </View>
+          </View> */}
         </View>
         <ScrollView
           style={{ marginBottom: 50 }}
@@ -552,20 +557,22 @@ function SeekerHome({ navigation }) {
 
           <View style={{ flex: 1, alignItems: "center", padding: 20 }}>
           <ImageBackground
-                    source={require("../assets/img_ring.png")}
-                    style={{
-                      width: 136,
-                      height: 136,
-                      paddingTop: 17,
-                      paddingLeft: 16,
-                    }}
-                  >
+            source={require("../assets/dp_bg.png")}
+            style={{
+              width: wp('35%'),
+              height: wp('35%'),
+              justifyContent: 'center',
+              alignItems: 'center'
+              //paddingTop: 17,
+              //paddingLeft: 16,
+            }}
+          >
             <Image
               source={{ uri: profile.avatar_image, cache: "force-cache" }}
               style={{
-                width: 102,
-                height: 102,
-                borderRadius: 60,
+                width: wp('30%'),
+                height: wp('30%'),
+                borderRadius: wp('30%'),
                 borderWidth: 1,
                 borderColor: "#fff",
               }}

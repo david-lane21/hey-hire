@@ -24,7 +24,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent:'center',
     alignItems: 'center',
-    paddingTop: hp('2.5%')
   },
   text: {
     fontSize: hp('2.4%'),
@@ -32,7 +31,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     width: wp('20%'),
-    height: hp('5%'),
+    height: hp('3.5%'),
     resizeMode: 'contain'
   },
   titleText: {

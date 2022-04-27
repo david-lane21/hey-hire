@@ -1,8 +1,14 @@
 import React, { useEffect } from "react";
-import { View, Image } from "react-native";
+import { View, Image,useWindowDimensions, Alert } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import {
+  createDrawerNavigator,
+  DrawerContentScrollView,
+  DrawerItemList,
+  DrawerItem,
+} from '@react-navigation/drawer';
 import messaging from '@react-native-firebase/messaging';
 
 import { getUser } from "./utils/utils.js";
@@ -38,6 +44,7 @@ const SeekerHomeStack = createStackNavigator();
 const AppNavigationStack = createStackNavigator();
 
 const AuthNavigationStack = createStackNavigator();
+const Drawer = createDrawerNavigator();
 
 import NavigationService from "./utils/NavigationService";
 import PushNotificationIOS from "@react-native-community/push-notification-ios";
@@ -494,6 +501,59 @@ function SeekerAppliedJobs0({ navigation }) {
         }}
       />
     </Stack2.Navigator>
+  );
+}
+
+function _onLogout(dispatch) {
+  Alert.alert("ApployMe", `Are you sure you want to logout now?`, [
+    {
+      text: "Logout",
+      onPress: () => {
+        // removeUser();
+        // signOut();
+        dispatch({type:'UserData/setState',payload: {token: null, profile: {}}})
+      },
+    },
+    { text: "Cancel", onPress: () => console.log("OK Pressed") },
+  ]);
+}
+
+export function MyDrawer({navigation}) {
+  const userData = useSelector(state => state.UserData)
+  const dispatch = useDispatch();
+
+  const dimensions = useWindowDimensions();
+
+  return (
+    <Drawer.Navigator
+      drawerType={dimensions.width >= 768 ? 'permanent' : 'front'}
+      initialRouteName="Home" drawerContent={props => {
+        return (
+          <DrawerContentScrollView {...props}>
+            <DrawerItemList {...props} />
+            <DrawerItem label="Help" onPress={() => alert('Help')} />
+            <DrawerItem label="Logout" onPress={() => _onLogout(dispatch)} />
+          </DrawerContentScrollView>
+        )
+      }}
+    >
+      <Drawer.Screen
+        name="Home"
+        component={AppNavigation} 
+        options={{
+          headerShown: false,
+          gestureEnabled: false
+
+        }}/>
+      <Drawer.Screen 
+        name="Edit Profile"
+        component={SeekerEditProfile}
+        options={{
+          headerShown: false,
+        }}
+        initialParams={{ profile: userData.profile }}
+      />
+    </Drawer.Navigator>
   );
 }
   

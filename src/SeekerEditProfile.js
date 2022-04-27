@@ -19,6 +19,7 @@ import {
   Switch,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import * as ImagePicker from "expo-image-picker";
 import Constants from "expo-constants";
 import { educationLevels, countries, languages } from "./utils/consts.js";
@@ -660,16 +661,17 @@ function SeekerEditProfile({ navigation, route }) {
             paddingTop: 20,
           }}
         >
-          <View style={{ width: "25%", marginLeft: 15 }}>
-            <TouchableOpacity onPress={() => navigation.navigate("Seeker")}>
+          <View style={{ width: '10%', height: hp('3%'), zIndex: 9, marginLeft: 15 }}>
+            <TouchableOpacity style={{flex: 1, justifyContent: 'center', alignItems: 'center'}} onPress={() => navigation.navigate("Seeker")}>
               <Image
                 source={require("../assets/ic_back.png")}
-                style={{ width: 28, height: 22 }}
+                style={{ width: wp('5%'), height: hp('2%') }}
               />
             </TouchableOpacity>
           </View>
-          <View style={{ width: "65%" }}>
-            <Text style={{ color: "#4834A6", fontSize: 18 }}>
+          <View style={{ width: "90%", justifyContent: 'center', alignItems: 'center', marginLeft: -35 }}>
+            <Image style={{width: wp('25%'), height: hp('5%'), resizeMode: 'contain'}} source={require('../assets/headerImage.png')} />
+            <Text style={{ color: "#4834A6", fontSize: hp('2.1%'), fontWeight: '600' }}>
               {strings.EDIT_YOUR_PROFILE}
             </Text>
           </View>
@@ -884,6 +886,27 @@ function SeekerEditProfile({ navigation, route }) {
             />
           </View>
 
+          <View style={styles.inputField}>
+            <Image
+              source={require("../assets/ic_mail.png")}
+              style={{ height: 20, width: 20 }}
+            />
+            <TextInput
+              style={{ paddingLeft: 10, width: "100%", color: "#000" }}
+              onChangeText={(text) => setEmail(text)}
+              placeholder={strings.EMAIL}
+              value={email}
+              type="email"
+              textContentType="emailAddress"
+              onFocus={() => {
+                handleFocus(6);
+              }}
+              ref={(ref) => {
+                handleRef(6, ref);
+              }}
+            />
+          </View>
+
           <View style={{ flex: 1 }}>
             <Modal
               animationType="slide"
@@ -964,7 +987,7 @@ function SeekerEditProfile({ navigation, route }) {
                 disabled
               >
                 <Image
-                  source={require("../assets/ic_phone.png")}
+                  source={require("../assets/ic_call.png")}
                   style={{ width: 20, height: 20, marginRight: 5 }}
                 />
                 <Text style={{}}>+{phCode}</Text>
@@ -982,32 +1005,11 @@ function SeekerEditProfile({ navigation, route }) {
             </View>
           </View>
 
-          <View style={{ flex: 1, marginLeft: 10 }}>
+          {/*<View style={{ flex: 1, marginLeft: 10 }}>
             <Text style={{ color: "#6E5FBD" }}>
               {strings.FOR_RECEIVING_INTERVIEW_CALLS}
             </Text>
-          </View>
-
-          <View style={styles.inputField}>
-            <Image
-              source={require("../assets/ic_mail.png")}
-              style={{ height: 20, width: 20 }}
-            />
-            <TextInput
-              style={{ paddingLeft: 10, width: "100%", color: "#000" }}
-              onChangeText={(text) => setEmail(text)}
-              placeholder={strings.EMAIL}
-              value={email}
-              type="email"
-              textContentType="emailAddress"
-              onFocus={() => {
-                handleFocus(6);
-              }}
-              ref={(ref) => {
-                handleRef(6, ref);
-              }}
-            />
-          </View>
+          </View>*/}
 
           <View style={{ flex: 1 }}>
             <View style={{ flex: 1, padding: 10, paddingHorizontal: 20 }}>
@@ -1021,8 +1023,8 @@ function SeekerEditProfile({ navigation, route }) {
                 }}
               >
                 <Image
-                  source={require("../assets/icon_note.png")}
-                  style={{ width: 12, height: 12 }}
+                  source={require("../assets/ic_star.png")}
+                  style={{ width: 15, height: 15 }}
                 />
                 <Text style={{ paddingLeft: 10, fontSize: 18 }}>
                   {strings.BIO}
@@ -1034,6 +1036,7 @@ function SeekerEditProfile({ navigation, route }) {
                   borderColor: "#eee",
                   padding: 5,
                   marginBottom: 15,
+                  paddingLeft: 35,
 
                   // marginRight: 10,
                   borderWidth: 1,
@@ -1183,16 +1186,29 @@ function SeekerEditProfile({ navigation, route }) {
                 </View>
               </SafeAreaView>
             </Modal>
-
-            <Text
+            <View
               style={{
-                fontSize: 18,
-                paddingLeft: 20,
+                flex: 1,
+                flexDirection: "row",
+                alignItems: "center",
                 marginBottom: 5,
+                marginLeft: 20
               }}
             >
-              {strings.JOB_CATEGORIES}
-            </Text>
+              <Image
+                source={require("../assets/ic_star.png")}
+                style={{ width: 15, height: 15 }}
+              />
+              <Text
+                style={{
+                  fontSize: 18,
+                  paddingLeft: 10,
+                  marginBottom: 5,
+                }}
+              >
+                {strings.JOB_CATEGORIES}
+              </Text>
+            </View>
             <TouchableOpacity
               style={[styles.code]}
               onPress={() => setModalVisible3(true)}
@@ -1215,14 +1231,14 @@ function SeekerEditProfile({ navigation, route }) {
                 </Text>
               </TouchableOpacity>
             </TouchableOpacity>
-            <View style={[{ marginHorizontal: 20 }]}>
+            {/*<View style={[{ marginHorizontal: 20 }]}>
               <Text style={{ fontSize: 12 }}>
                 Please select the business categories that most closely match
                 the job you're looking to apply to. When a business posts a new
                 job, we'll be able to notify you. You may choose as many
                 categories as you like!
               </Text>
-            </View>
+            </View>*/}
           </View>
 
           <View style={{ flex: 1 }}>
@@ -1237,7 +1253,7 @@ function SeekerEditProfile({ navigation, route }) {
               >
                 <Image
                   source={require("../assets/ic_star.png")}
-                  style={{ width: 12, height: 12 }}
+                  style={{ width: 15, height: 15 }}
                 />
                 <Text style={{ paddingLeft: 10, fontSize: 18 }}>
                   {strings.SKILLS}
@@ -1309,15 +1325,21 @@ function SeekerEditProfile({ navigation, route }) {
 
           <View style={{ flex: 1 }}>
             <View>
-              <Text
-                style={{
-                  fontSize: 18,
-                  paddingLeft: 20,
-                  marginBottom: 5,
-                }}
-              >
-                {strings.LEVEL_OF_EDUCATION}
-              </Text>
+              <View style={{flexDirection: 'row', alignItems: 'center', marginLeft: 20}}>
+                <Image
+                  source={require("../assets/ic_star.png")}
+                  style={{ width: 15, height: 15 }}
+                />
+                <Text
+                  style={{
+                    fontSize: 18,
+                    paddingLeft: 10,
+                    marginBottom: 5,
+                  }}
+                >
+                  {strings.LEVEL_OF_EDUCATION}
+                </Text>
+              </View>
               <View style={styles.code3}>
                 <Image
                   source={require("../assets/ic_educate.png")}
@@ -1339,15 +1361,21 @@ function SeekerEditProfile({ navigation, route }) {
           </View>
 
           <View style={{ flex: 1 }}>
-            <Text
-              style={{
-                fontSize: 18,
-                paddingLeft: 20,
-                marginBottom: 5,
-              }}
-            >
-              {strings.NAME_OF_INSTITUTION}
-            </Text>
+            <View style={{flexDirection: 'row', alignItems: 'center', marginLeft: 20}}>
+              <Image
+                source={require("../assets/ic_star.png")}
+                style={{ width: 15, height: 15 }}
+              />
+              <Text
+                style={{
+                  fontSize: 18,
+                  paddingLeft: 10,
+                  marginBottom: 5,
+                }}
+              >
+                {strings.NAME_OF_INSTITUTION}
+              </Text>
+            </View>
             <View style={styles.inputField}>
               <Image
                 source={require("../assets/ic_educate.png")}
@@ -1370,15 +1398,21 @@ function SeekerEditProfile({ navigation, route }) {
           </View>
 
           <View style={{ flex: 1 }}>
-            <Text
-              style={{
-                fontSize: 18,
-                paddingLeft: 20,
-                marginBottom: 5,
-              }}
-            >
-              {strings.CERTIFICATION} {strings.OPTIONAL}
-            </Text>
+            <View style={{flexDirection: 'row', alignItems: 'center', marginLeft: 20}}>
+              <Image
+                source={require("../assets/ic_star.png")}
+                style={{ width: 15, height: 15 }}
+              />
+              <Text
+                style={{
+                  fontSize: 18,
+                  paddingLeft: 10,
+                  marginBottom: 5,
+                }}
+              >
+                {strings.CERTIFICATION} {strings.OPTIONAL}
+              </Text>
+            </View>
             <View style={styles.inputField}>
               <Image
                 source={require("../assets/ic_certificate.png")}
@@ -1553,15 +1587,21 @@ function SeekerEditProfile({ navigation, route }) {
               </SafeAreaView>
             </Modal>
 
-            <Text
-              style={{
-                fontSize: 18,
-                paddingLeft: 20,
-                marginBottom: 5,
-              }}
-            >
-              {strings.LANGUAGE}
-            </Text>
+            <View style={{flexDirection: 'row', alignItems: 'center', marginLeft: 20}}>
+              <Image
+                source={require("../assets/ic_star.png")}
+                style={{ width: 15, height: 15 }}
+              />
+              <Text
+                style={{
+                  fontSize: 18,
+                  paddingLeft: 10,
+                  marginBottom: 5,
+                }}
+              >
+                {strings.LANGUAGE}
+              </Text>
+            </View>
             <TouchableOpacity
               style={styles.code}
               onPress={() => setModalVisible2(true)}
@@ -1580,15 +1620,21 @@ function SeekerEditProfile({ navigation, route }) {
 
           <View style={{ flex: 1 }}>
             <View>
-              <Text
-                style={{
-                  fontSize: 18,
-                  paddingLeft: 20,
-                  marginBottom: 5,
-                }}
-              >
-                {strings.AVAILABILITY}
-              </Text>
+              <View style={{flexDirection: 'row', alignItems: 'center', marginLeft: 20}}>
+                <Image
+                  source={require("../assets/ic_star.png")}
+                  style={{ width: 15, height: 15 }}
+                />
+                <Text
+                  style={{
+                    fontSize: 18,
+                    paddingLeft: 10,
+                    marginBottom: 5,
+                  }}
+                >
+                  {strings.AVAILABILITY}
+                </Text>
+              </View>
               <View style={styles.code3}>
                 <Image
                   source={require("../assets/ic_educate.png")}
@@ -1740,7 +1786,7 @@ function SeekerEditProfile({ navigation, route }) {
               }}
             >
               <Image
-                source={require("../assets/ic_past_positions.png")}
+                source={require("../assets/ic_business.png")}
                 style={{ width: 20, height: 20, marginRight: 5 }}
               />
               <Text style={{ fontSize: 18 }}>
@@ -1911,6 +1957,7 @@ function SeekerEditProfile({ navigation, route }) {
         <TouchableOpacity
           style={{
             flex: 1,
+            marginHorizontal: 10,
             alignContent: "center",
             backgroundColor: "#5B42BB",
             padding: 15,

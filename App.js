@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Platform, Linking, View, Text ,Alert,I18nManager} from "react-native";
-import Navigation, { AppNavigation, AuthNavigation } from "./src/Navigation";
+import Navigation, { AppNavigation, AuthNavigation, MyDrawer } from "./src/Navigation";
 import PushNotificationIOS from "@react-native-community/push-notification-ios";
 import Constants from "expo-constants";
 import * as SplashScreen from "expo-splash-screen";
@@ -44,7 +44,7 @@ const RootStackScreen = () => {
     {userData?.token ? (
       <RootStack.Screen
         name="App"
-        component={AppNavigation}
+        component={MyDrawer}
         options={{
           animationEnabled: false,
         }}
