@@ -27,6 +27,7 @@ function SeekerAppliedJobs({ navigation }) {
   const [search, setSearch] = useState("");
   const [message, setMessage] = useState(null);
   const [refresh, setRefresh] = useState(false);
+  const [isFavourite, setFavourite] = useState(false);
 
   function searchJobs(txt) {
     setSearch(txt);
@@ -54,7 +55,7 @@ function SeekerAppliedJobs({ navigation }) {
 
     getUser().then((u) => {
       let u2 = JSON.parse(u);
-      // console.log(u2)
+      console.log("u2",u2)
       setUser(u2);
 
       let form = new FormData();
@@ -67,7 +68,7 @@ function SeekerAppliedJobs({ navigation }) {
         })
         .then((json) => {
           // console.log('+++++++++++++++++++')
-          console.log(json);
+          console.log("responseeeeeeeee ", json);
           // console.log([...json.data,...json.liked_jobs])
           // console.log('+++++++++++++++++++')
           if (json.msg == "No Job Available!") {
@@ -145,6 +146,10 @@ function SeekerAppliedJobs({ navigation }) {
       .catch((err) => {
         console.log(err);
       });
+  }
+
+  function onPressHeart() {
+    setFavourite(!isFavourite)
   }
 
   const list = filteredJobs.map((item) => {
@@ -312,16 +317,29 @@ function SeekerAppliedJobs({ navigation }) {
             paddingBottom: 10,
             backgroundColor: "#4E35AE",
             paddingTop: 20,
+            justifyContent: 'space-between',
           }}
         >
-          <View
-            style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-          >
-            <Image
-              source={require("../assets/title_header.png")}
-              style={{ width: 120, height: 25 }}
+          <TouchableOpacity>
+          <Image
+              source={isFavourite ? require("../assets/tick-icon-dull.png") :  require("../assets/tick-icon.png")}
+              style={{ alignSelf: 'flex-start', height:20, width: 40 }}
+              resizeMode="contain"
             />
-          </View>
+          </TouchableOpacity>
+            <Image
+              source={require("../assets/heyhireFullWhite.png")}
+              resizeMode="contain"
+              style={{ width: 100, height: 25 }}
+            />
+            <TouchableOpacity onPress={onPressHeart}>
+          
+             <Image
+              source={isFavourite ? require("../assets/filled-heart-white-icon.png") : require("../assets/heart-icon-with-border.png")}
+              style={{ alignSelf: 'flex-end', height:20, width: 40 }}
+              resizeMode="contain"
+            />
+            </TouchableOpacity>
         </View>
 
         <ScrollView

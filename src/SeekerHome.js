@@ -267,7 +267,8 @@ function SeekerHome({ navigation }) {
   async function getHiringLocations(){
     try {
       // const res = await getRequest(`/job-seeker/locations/list?lng=${longitude}&lat=${latitude}`,userData?.token)
-      console.log('user data ', userData);
+      console.log('user data yessssssssss', userData);
+      setUser(userData.profile)
       const res = await getRequest(`/job-seeker/location/list?lng=0&lat=0`,userData?.token)
       const json = await res.json()
       if(json.data?.length > 0){
@@ -319,6 +320,8 @@ function SeekerHome({ navigation }) {
     return 
     try {
       getUser().then((u) => {
+
+        console.log('uuuuuu in home ', u)
         let u2 = JSON.parse(u);
         setUser1(u2);
 
@@ -504,7 +507,7 @@ function SeekerHome({ navigation }) {
               style={{ width: wp('25%'), height: hp('4%'), resizeMode: 'contain' }}
             />
           </View>
-          <View style={{ position: "absolute", left: 5, bottom: 5 }}>
+          <View style={{ position: "absolute", left: 5, bottom: 6}}>
             <TouchableOpacity
               onPress={() => {
                 _onPressMenuBar()

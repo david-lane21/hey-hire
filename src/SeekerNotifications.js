@@ -17,6 +17,8 @@ import {getUser} from './utils/utils.js';
 import { useIsFocused } from "@react-navigation/native";
 import {strings} from './translation/config';
 import moment from 'moment';
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import { backgroundColor } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
 function SeekerNotifications({navigation}){
   const isFocused = useIsFocused();
 
@@ -133,24 +135,34 @@ function SeekerNotifications({navigation}){
   //   colors={["#4E35AE", "#775ED7"]}
   // >
             <SafeAreaView style={{backgroundColor:'#4E35AE'}}>
+        <View
+          style={{
+            alignItems: "center",
+            justifyContent: 'center',
+            alignContent: 'center',
+            backgroundColor: '#fff',
+          }}
+    >
 
-      <View style={{
-        flexDirection: 'row', 
-        alignItems: 'center', 
-        borderBottomWidth: 1, 
-        borderBottomColor: '#6652C2', 
-        paddingBottom: 10,
-        backgroundColor: '#4E35AE',
-        paddingTop:20
-        }}>
-          <View style={{width: '35%'}}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Text style={{paddingLeft: 10}}></Text>
-            </TouchableOpacity>
-          </View>
-          <View style={{width: '65%'}}>
-            <Text style={{ color: '#fff', fontSize: 18}}>{strings.NOTIFICATIONS}</Text>
-          </View>
+          <Image
+            resizeMode="contain"
+            source={require("../assets/headerImage.png")}
+            style={{ width: 100, alignSelf: "center", }}
+          />
+        <Text
+          style={{
+            color: "#4834A6",
+            fontSize: 18,
+            fontWeight: "600",
+            textAlign: "center",
+            position: "absolute",
+            top: "75%",
+            left: "35%",
+            textTransform: 'uppercase'
+          }}
+        >
+          {strings.NOTIFICATIONS}
+        </Text>
         </View>
 
     <ScrollView style={{ backgroundColor: '#fff'}} refreshControl={

@@ -19,7 +19,10 @@ import {
   Switch,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 import * as ImagePicker from "expo-image-picker";
 import Constants from "expo-constants";
 import { educationLevels, countries, languages } from "./utils/consts.js";
@@ -53,7 +56,7 @@ function SeekerEditProfile({ navigation, route }) {
   const isFocused = useIsFocused();
   const tempProfile = route.params.profile;
 
-  console.log('tempPRofile',tempProfile)
+  console.log("tempPRofile", tempProfile);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
@@ -113,9 +116,9 @@ function SeekerEditProfile({ navigation, route }) {
   const BIO_PLACEHOLDER = `Example: Greetings, my name is Benjamin, I am 20 years old. I am currently studying my degree at UT, TX.
   I am a hard working overachiever. And I know I will only benefit your business goals and accomplishments. I have past experience working in the kitchen, as my past job was at Mario’s Pizza downtown. I am easy going, and will bring only good and positive vibes in to your business, I would gladly appreciate it you consider my submission and set an interview this following week! Thanks for reading and hope to see you soon!`;
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
-  const userData = useSelector(state => state.UserData)
+  const userData = useSelector((state) => state.UserData);
 
   useEffect(() => {
     const tempProfile = route.params.profile;
@@ -163,18 +166,20 @@ function SeekerEditProfile({ navigation, route }) {
   }, []);
 
   function getJobCategories() {
-    console.log('goes in get job category ')
+    console.log("goes in get job category ");
     let form = new FormData();
     form.append("user_token", user.user_token);
     form.append("user_id", user.user_id);
     getRequest("/job-seeker/business-category", userData.token)
       .then((res) => {
-        console.log('ressss while  getting jobs categories ', res)
+        console.log("ressss while  getting jobs categories ", res);
         return res.json();
       })
       .then((json) => {
         const jsonCategories = json.data;
-        let tempBusinessCategories = tempProfile.preferred_business_categories ? tempProfile.preferred_business_categories.split(',') : null;
+        let tempBusinessCategories = tempProfile.preferred_business_categories
+          ? tempProfile.preferred_business_categories.split(",")
+          : null;
         if (tempBusinessCategories) {
           tempBusinessCategories.map((item) => {
             jsonCategories.map((businessCategory) => {
@@ -308,12 +313,12 @@ function SeekerEditProfile({ navigation, route }) {
   function loadDate() {
     getUser().then((u) => {
       let u2 = JSON.parse(u);
-      console.log('getUser -> u', u);
-      console.log('getUser -> u2', u2);
+      console.log("getUser -> u", u);
+      console.log("getUser -> u2", u2);
       setUser1(u2);
       getToken().then((t) => setDeviceToken(t));
-      console.log('u2.user_token', u2);
-      console.log('u2.user_token', u2.user_token);
+      console.log("u2.user_token", u2);
+      console.log("u2.user_token", u2.user_token);
       getJobCategories();
     });
   }
@@ -342,8 +347,8 @@ function SeekerEditProfile({ navigation, route }) {
         last_name: lastName,
         address: address,
         zip_code: zipcode,
-        state : state,
-        city : city,
+        state: state,
+        city: city,
         email,
         // bio,
         country,
@@ -358,26 +363,23 @@ function SeekerEditProfile({ navigation, route }) {
         covid_vaccinated: covid_vaccinated || false,
         // skill: skills.toString(),
         instagram_connected: isInstagramConnect,
-        preferred_business_categories:
-        categoriesList
+        preferred_business_categories: categoriesList
           .filter((item) => item.selected)
           .map((item) => item.id)
-          .toString()
-    
-
-    }
-      console.log('body',body)
-      setLoading(true)
-      const res = await putJSON("/job-seeker/profile/1",body,userData.token)
-      console.log('res',res)
-      const json = await res.json()
-      console.log('json',json)
-      setLoading(false)
-      dispatch({type: 'UserData/setState',payload: {profile: json.data}})
+          .toString(),
+      };
+      console.log("body", body);
+      setLoading(true);
+      const res = await putJSON("/job-seeker/profile/1", body, userData.token);
+      console.log("res", res);
+      const json = await res.json();
+      console.log("json", json);
+      setLoading(false);
+      dispatch({ type: "UserData/setState", payload: { profile: json.data } });
     } catch (error) {
-      setLoading(false)
-      Alert.alert('Error',error)
-      console.log('error while updating profile',error)
+      setLoading(false);
+      Alert.alert("Error", error);
+      console.log("error while updating profile", error);
     }
   }
 
@@ -431,7 +433,7 @@ function SeekerEditProfile({ navigation, route }) {
         if (res.status == 200) {
           return res.json();
         } else {
-          console.log('res',res)
+          console.log("res", res);
           setLoading(false);
           Alert.alert("Error", "Profile image is too large.");
 
@@ -444,7 +446,7 @@ function SeekerEditProfile({ navigation, route }) {
           setError(json.msg);
           setLoading(false);
         } else {
-          console.log('res for user in  to check null ', json)
+          console.log("res for user in  to check null ", json);
           setUser1(json.data);
           update_cv(json.data.user_token);
           // let tempUserData = json.data;
@@ -596,26 +598,28 @@ function SeekerEditProfile({ navigation, route }) {
 
   function handleInstaConnect() {
     if (isInstagramConnect) {
-      Alert.alert(
-        "",
-        "Are you sure you want to disconnect from instagram?",
-        [
-          {
-            text: "Cancel",
-            onPress: () => {},
-            style: "cancel",
+      Alert.alert("", "Are you sure you want to disconnect from instagram?", [
+        {
+          text: "Cancel",
+          onPress: () => {},
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: () => {
+            setInstaModalShow(true);
           },
-          {
-            text: "OK",
-            onPress: () => {
-              setInstaModalShow(true);
-            },
-          },
-        ]
-      );
+        },
+      ]);
     } else {
       setInstaModalShow(true);
     }
+  }
+
+  function onPressAddPast() {
+    navigation.navigate("SeekerAddPastPosition", {
+      onGoBack: refreshPosition,
+    });
   }
 
   function onCloseInstagramConnect() {
@@ -640,15 +644,15 @@ function SeekerEditProfile({ navigation, route }) {
   function addToCategoreis(item) {
     let listCategories = categoriesList;
     listCategories.map((i) => {
-        if(i.id === item.id){
-         i.selected = !i.selected;
+      if (i.id === item.id) {
+        i.selected = !i.selected;
       }
       return i;
     });
     console.log(listCategories);
     setCategoriesList([...listCategories]);
   }
-  console.log('user -> user', user);
+  console.log("user -> user", user);
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
       <KeyboardAwareScrollView
@@ -657,25 +661,43 @@ function SeekerEditProfile({ navigation, route }) {
         <View
           style={{
             flexDirection: "row",
+            flex: 1,
+            justifyContent: "flex-start",
             alignItems: "center",
-            paddingTop: 20,
+            //alignItems: 'center'
+            // paddingTop: 20,
           }}
         >
-          <View style={{ width: '10%', height: hp('3%'), zIndex: 9, marginLeft: 15 }}>
-            <TouchableOpacity style={{flex: 1, justifyContent: 'center', alignItems: 'center'}} onPress={() => navigation.navigate("Seeker")}>
-              <Image
-                source={require("../assets/ic_back.png")}
-                style={{ width: wp('5%'), height: hp('2%') }}
-              />
-            </TouchableOpacity>
-          </View>
-          <View style={{ width: "90%", justifyContent: 'center', alignItems: 'center', marginLeft: -35 }}>
-            <Image style={{width: wp('25%'), height: hp('5%'), resizeMode: 'contain'}} source={require('../assets/headerImage.png')} />
-            <Text style={{ color: "#4834A6", fontSize: hp('2.1%'), fontWeight: '600' }}>
-              {strings.EDIT_YOUR_PROFILE}
-            </Text>
-          </View>
+          <TouchableOpacity
+            style={{ marginLeft: 10 }}
+            onPress={() => navigation.navigate("Seeker")}
+          >
+            <Image
+              source={require("../assets/ic_back.png")}
+              // style={{ width: wp('5%'), height: hp('2%') }}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+
+          <Image
+            resizeMode="contain"
+            source={require("../assets/headerImage.png")}
+            style={{ width: 100, alignSelf: "center", marginLeft: "33%" }}
+          />
         </View>
+        <Text
+          style={{
+            color: "#4834A6",
+            fontSize: hp("2.1%"),
+            fontWeight: "600",
+            textAlign: "center",
+            position: "absolute",
+            top: "2.5%",
+            left: "33%",
+          }}
+        >
+          {strings.EDIT_YOUR_PROFILE}
+        </Text>
 
         <Loader loading={loading} />
 
@@ -691,7 +713,7 @@ function SeekerEditProfile({ navigation, route }) {
           > */}
         <View style={{ flex: 1, width: "100%" }}>
           <View style={{ flex: 1, alignItems: "center", padding: 20 }}>
-            <View style={{ width: 150, height: 150, alignSelf: "center" }}>
+            <View style={{ width: 150, height: 100, alignSelf: "center" }}>
               {image == null ? (
                 <View>
                   {tempProfile && tempProfile.avatar_image ? (
@@ -1192,7 +1214,7 @@ function SeekerEditProfile({ navigation, route }) {
                 flexDirection: "row",
                 alignItems: "center",
                 marginBottom: 5,
-                marginLeft: 20
+                marginLeft: 20,
               }}
             >
               <Image
@@ -1325,7 +1347,13 @@ function SeekerEditProfile({ navigation, route }) {
 
           <View style={{ flex: 1 }}>
             <View>
-              <View style={{flexDirection: 'row', alignItems: 'center', marginLeft: 20}}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginLeft: 20,
+                }}
+              >
                 <Image
                   source={require("../assets/ic_star.png")}
                   style={{ width: 15, height: 15 }}
@@ -1361,7 +1389,13 @@ function SeekerEditProfile({ navigation, route }) {
           </View>
 
           <View style={{ flex: 1 }}>
-            <View style={{flexDirection: 'row', alignItems: 'center', marginLeft: 20}}>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginLeft: 20,
+              }}
+            >
               <Image
                 source={require("../assets/ic_star.png")}
                 style={{ width: 15, height: 15 }}
@@ -1398,7 +1432,13 @@ function SeekerEditProfile({ navigation, route }) {
           </View>
 
           <View style={{ flex: 1 }}>
-            <View style={{flexDirection: 'row', alignItems: 'center', marginLeft: 20}}>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginLeft: 20,
+              }}
+            >
               <Image
                 source={require("../assets/ic_star.png")}
                 style={{ width: 15, height: 15 }}
@@ -1410,7 +1450,8 @@ function SeekerEditProfile({ navigation, route }) {
                   marginBottom: 5,
                 }}
               >
-                {strings.CERTIFICATION} {strings.OPTIONAL}
+                {strings.CERTIFICATIONS}
+                {/* {strings.OPTIONAL} */}
               </Text>
             </View>
             <View style={styles.inputField}>
@@ -1587,7 +1628,13 @@ function SeekerEditProfile({ navigation, route }) {
               </SafeAreaView>
             </Modal>
 
-            <View style={{flexDirection: 'row', alignItems: 'center', marginLeft: 20}}>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginLeft: 20,
+              }}
+            >
               <Image
                 source={require("../assets/ic_star.png")}
                 style={{ width: 15, height: 15 }}
@@ -1599,7 +1646,7 @@ function SeekerEditProfile({ navigation, route }) {
                   marginBottom: 5,
                 }}
               >
-                {strings.LANGUAGE}
+                {strings.SPOKEN_LANGUAGE}
               </Text>
             </View>
             <TouchableOpacity
@@ -1620,7 +1667,13 @@ function SeekerEditProfile({ navigation, route }) {
 
           <View style={{ flex: 1 }}>
             <View>
-              <View style={{flexDirection: 'row', alignItems: 'center', marginLeft: 20}}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginLeft: 20,
+                }}
+              >
                 <Image
                   source={require("../assets/ic_star.png")}
                   style={{ width: 15, height: 15 }}
@@ -1838,11 +1891,7 @@ function SeekerEditProfile({ navigation, route }) {
                   marginTop: 20,
                   marginBottom: 50,
                 }}
-                onPress={() =>
-                  navigation.navigate("SeekerAddPastPosition", {
-                    onGoBack: refreshPosition,
-                  })
-                }
+                onPress={() => onPressAddPast()}
               >
                 <Text style={{ color: "#4E35AE", fontSize: 16 }}>
                   + {strings.ADD_PAST_POSTION}
@@ -1918,7 +1967,7 @@ function SeekerEditProfile({ navigation, route }) {
         {/* </ScrollView> */}
 
         <InstagramLoginPopup
-          userId={ user ? user.user_id : ''}
+          userId={user ? user.user_id : ""}
           visible={instaModalShow}
           onClose={() => {
             onCloseInstagramConnect();

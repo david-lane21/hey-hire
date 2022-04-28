@@ -13,6 +13,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { useIsFocused } from "@react-navigation/native";
 import {strings} from './translation/config';
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import DeviceInfo from 'react-native-device-info';
 const isIphoneX = DeviceInfo.hasNotch();
 
@@ -67,29 +68,38 @@ function SeekerScanQrCode({ navigation }) {
         left: 0,
         right: 0,
         top: isIphoneX? 50:20,
-        bottom: 0}}
+        bottom: 40}}
       />
       <ImageBackground
-        source={require("../assets/img_scan.png")}
-        style={{  width: window.width,height:window.height,backgroundColor:'transparent '  }}
+        source={require("../assets/overlay_QR.png")}
+        style={{  width: window.width,height:window.height,backgroundColor:'transparent ',  }}
       >
+         <Image
+          source={require("../assets/WhiteCrossIcon.png")}
+          style={{ width: wp('10%'), height: hp('2%'), resizeMode: 'contain', marginTop: hp('4'), alignSelf: 'flex-end', marginRight: '1%'}}
+        />
         <View style={{ flex: 1, alignItems: "center",backgroundColor:'transparent'}}>
-          <View style={{ flex: 1, position: "absolute", top: "20%" }}>
-            <Text style={{ color: "#fff", fontSize: 24 }}>{strings.APPLOYME}</Text>
-          </View>
+        <Image
+          source={require("../assets/heyhireFullWhite.png")}
+          style={{ width: wp('25%'), height: hp('4%'), resizeMode: 'contain', marginTop: hp('8%') }}
+        />
+          {/* <View style={{ flex: 1, position: "absolute", top: "10%" }}>
+            <Text style={{ color: "#fff", fontSize: 24, fontWeight: "900", }}>{strings.HEYHIRE}</Text>
+          </View> */}
           <View
             style={{
               flex: 1,
               position: "absolute",
-              bottom: "17%",
+              // top: hp('2%'),
+              bottom: "23%",
               alignItems: "center",
             }}
           >
             <Text style={{ color: "#fff", fontSize: 22 }}>
-              {strings.SACN_BUSINESS}
+              {strings.FIT_CODE}
             </Text>
-            <Text style={{ color: "#fff", fontSize: 22 }}>
-              {strings.APPLOYME_QR_CODE}
+            <Text style={{ color: "#FFFFFF", fontSize: 18 }}>
+              {strings.FRAME_ABOVE}
             </Text>
           </View>
         </View>

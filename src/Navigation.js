@@ -553,6 +553,14 @@ export function MyDrawer({navigation}) {
         }}
         initialParams={{ profile: userData.profile }}
       />
+      {/* <Drawer.Screen
+      //  name="SeekerAddPastPosition"
+      name=""
+        component={SeekerAddPastPosition}
+        options={{
+          headerShown: false,
+        }}
+        /> */}
     </Drawer.Navigator>
   );
 }
