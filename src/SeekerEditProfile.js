@@ -82,7 +82,7 @@ function SeekerEditProfile({ navigation, route }) {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState(tempProfile.email);
   const [bio, setBio] = useState(tempProfile.note);
-  const [skills, setSkills] = useState(tempProfile.skill.split(',') || []);
+  const [skills, setSkills] = useState(tempProfile.skill ? tempProfile.skill.split(',') : []);
   const [eduLevel, setEduLevel] = useState(tempProfile.education_level);
   const [langs, setlangs] = useState(tempProfile.language || "");
   const [eligible, setEligible] = useState(tempProfile.eligible);
