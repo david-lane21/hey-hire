@@ -668,9 +668,10 @@ function SeekerHome({ navigation }) {
                 paddingLeft: 30,
                 paddingTop: 10,
                 paddingRight: 10,
+                lineHeight: 30
               }}
             >
-              {user.bio}
+              {user.note}
             </Text>
           </View>
 
@@ -693,7 +694,7 @@ function SeekerHome({ navigation }) {
               }}
             >
               <Image
-                source={require("../assets/ic_past_positions_white.png")}
+                source={require("../assets/ic_position_white.png")}
                 style={{ width: 14, height: 12, marginLeft: 8 }}
               />
               <Text style={{ color: "#fff", fontSize: 18, marginLeft: 8 }}>

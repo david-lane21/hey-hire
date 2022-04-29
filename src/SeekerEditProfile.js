@@ -19,6 +19,7 @@ import {
   Switch,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Tags from "react-native-tags";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -80,8 +81,8 @@ function SeekerEditProfile({ navigation, route }) {
   const [phCode, setPhCode] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState(tempProfile.email);
-  const [bio, setBio] = useState(tempProfile.bio);
-  const [skills, setSkills] = useState(tempProfile.skill);
+  const [bio, setBio] = useState(tempProfile.note);
+  const [skills, setSkills] = useState(tempProfile.skill.split(',') || []);
   const [eduLevel, setEduLevel] = useState(tempProfile.education_level);
   const [langs, setlangs] = useState(tempProfile.language || "");
   const [eligible, setEligible] = useState(tempProfile.eligible);
@@ -111,6 +112,7 @@ function SeekerEditProfile({ navigation, route }) {
 
   const [skill, setSkill] = useState("");
   const [categoriesList, setCategoriesList] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
   const [categories, setCategories] = useState([]);
 
   const BIO_PLACEHOLDER = `Example: Greetings, my name is Benjamin, I am 20 years old. I am currently studying my degree at UT, TX.
@@ -189,6 +191,8 @@ function SeekerEditProfile({ navigation, route }) {
             });
           });
         }
+        const _selectedCategories = jsonCategories.filter(item => item.selected);
+        setSelectedCategories(_selectedCategories);    
         setCategoriesList(jsonCategories);
       });
   }
@@ -350,7 +354,7 @@ function SeekerEditProfile({ navigation, route }) {
         state: state,
         city: city,
         email,
-        // bio,
+        note: bio,
         country,
         availability: availability,
         // education: institution,
@@ -361,14 +365,14 @@ function SeekerEditProfile({ navigation, route }) {
         sixteen: sixteen || false,
         convictions: convictions || false,
         covid_vaccinated: covid_vaccinated || false,
-        // skill: skills.toString(),
+        skill: skills.toString(),
         instagram_connected: isInstagramConnect,
         preferred_business_categories: categoriesList
           .filter((item) => item.selected)
           .map((item) => item.id)
           .toString(),
       };
-      console.log("body", body);
+      console.log("updateProfile -> body", body);
       setLoading(true);
       const res = await putJSON("/job-seeker/profile/1", body, userData.token);
       console.log("res", res);
@@ -649,10 +653,131 @@ function SeekerEditProfile({ navigation, route }) {
       }
       return i;
     });
-    console.log(listCategories);
+    const _selectedCategories = listCategories.filter(item => item.selected);
+    setSelectedCategories(_selectedCategories);
     setCategoriesList([...listCategories]);
   }
-  console.log("user -> user", user);
+
+  const categoriesModal = () => {
+    return(
+      <Modal
+      animationType="slide"
+      transparent={false}
+      visible={modalVisible3}
+      onRequestClose={() => {
+        // Alert.alert('Modal has been closed.');
+      }}
+    >
+      <SafeAreaView>
+        <View style={{ marginTop: 22, height: "89%" }}>
+          <View>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                paddingBottom: 20,
+                paddingTop: 20,
+              }}
+            >
+              <View style={{ width: "20%", marginLeft: 15 }}>
+                <TouchableOpacity
+                  onPress={() => setModalVisible3(false)}
+                >
+                  <Image
+                    source={require("../assets/ic_back.png")}
+                    style={{ width: 28, height: 22 }}
+                  />
+                </TouchableOpacity>
+              </View>
+              <View style={{ width: "60%" }}>
+                <Text
+                  style={{
+                    color: "#4834A6",
+                    fontSize: 18,
+                    textAlign: "center",
+                  }}
+                >
+                  {strings.JOB_CATEGORIES}
+                </Text>
+              </View>
+              <View style={{ width: "20%" }}>
+                <TouchableOpacity
+                  onPress={() => setModalVisible3(false)}
+                >
+                  <Text style={{ color: "#4834A6", fontSize: 18 }}>
+                    {strings.DONE}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <FlatList
+              data={categoriesList}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={({ item, index, separators }) => (
+                <View
+                  key={index}
+                  onPress={() => _onPress3(item)}
+                  onShowUnderlay={separators.highlight}
+                  onHideUnderlay={separators.unhighlight}
+                >
+                  <View style={{ backgroundColor: "white" }}>
+                    <TouchableOpacity
+                      style={{
+                        flex: 1,
+                        flexDirection: "row",
+                        alignItems: "center",
+                        padding: 10,
+                        borderBottomWidth: 1,
+                        borderBottomColor: "#eee",
+                      }}
+                      onPress={() => addToCategoreis(item)}
+                    >
+                      {item.selected ? (
+                        <View>
+                          <Image
+                            source={require("../assets/ic_selected.png")}
+                            style={{
+                              width: 17,
+                              height: 17,
+                              marginRight: 10,
+                              marginLeft: 20,
+                            }}
+                          />
+                        </View>
+                      ) : (
+                        <View>
+                          <Image
+                            source={require("../assets/ic_add_blue.png")}
+                            style={{
+                              width: 17,
+                              height: 17,
+                              marginRight: 10,
+                              marginLeft: 20,
+                            }}
+                          />
+                        </View>
+                      )}
+
+                      <Text
+                        style={{
+                          fontSize: 20,
+                          color: "#222",
+                        }}
+                      >
+                        {item.name}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              )}
+            />
+          </View>
+        </View>
+      </SafeAreaView>
+    </Modal>
+    );
+  }
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
       <KeyboardAwareScrollView
@@ -1091,130 +1216,15 @@ function SeekerEditProfile({ navigation, route }) {
             </View>
           </View>
 
-          <View style={{ flex: 1 }}>
-            <Modal
-              animationType="slide"
-              transparent={false}
-              visible={modalVisible3}
-              onRequestClose={() => {
-                // Alert.alert('Modal has been closed.');
-              }}
-            >
-              <SafeAreaView>
-                <View style={{ marginTop: 22, height: "89%" }}>
-                  <View>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        paddingBottom: 20,
-                        paddingTop: 20,
-                      }}
-                    >
-                      <View style={{ width: "20%", marginLeft: 15 }}>
-                        <TouchableOpacity
-                          onPress={() => setModalVisible3(false)}
-                        >
-                          <Image
-                            source={require("../assets/ic_back.png")}
-                            style={{ width: 28, height: 22 }}
-                          />
-                        </TouchableOpacity>
-                      </View>
-                      <View style={{ width: "60%" }}>
-                        <Text
-                          style={{
-                            color: "#4834A6",
-                            fontSize: 18,
-                            textAlign: "center",
-                          }}
-                        >
-                          {strings.JOB_CATEGORIES}
-                        </Text>
-                      </View>
-                      <View style={{ width: "20%" }}>
-                        <TouchableOpacity
-                          onPress={() => setModalVisible3(false)}
-                        >
-                          <Text style={{ color: "#4834A6", fontSize: 18 }}>
-                            {strings.DONE}
-                          </Text>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-
-                    <FlatList
-                      data={categoriesList}
-                      keyExtractor={(item) => item.id.toString()}
-                      renderItem={({ item, index, separators }) => (
-                        <View
-                          key={index}
-                          onPress={() => _onPress3(item)}
-                          onShowUnderlay={separators.highlight}
-                          onHideUnderlay={separators.unhighlight}
-                        >
-                          <View style={{ backgroundColor: "white" }}>
-                            <TouchableOpacity
-                              style={{
-                                flex: 1,
-                                flexDirection: "row",
-                                alignItems: "center",
-                                padding: 10,
-                                borderBottomWidth: 1,
-                                borderBottomColor: "#eee",
-                              }}
-                              onPress={() => addToCategoreis(item)}
-                            >
-                              {item.selected ? (
-                                <View>
-                                  <Image
-                                    source={require("../assets/ic_selected.png")}
-                                    style={{
-                                      width: 17,
-                                      height: 17,
-                                      marginRight: 10,
-                                      marginLeft: 20,
-                                    }}
-                                  />
-                                </View>
-                              ) : (
-                                <View>
-                                  <Image
-                                    source={require("../assets/ic_add_blue.png")}
-                                    style={{
-                                      width: 17,
-                                      height: 17,
-                                      marginRight: 10,
-                                      marginLeft: 20,
-                                    }}
-                                  />
-                                </View>
-                              )}
-
-                              <Text
-                                style={{
-                                  fontSize: 20,
-                                  color: "#222",
-                                }}
-                              >
-                                {item.name}
-                              </Text>
-                            </TouchableOpacity>
-                          </View>
-                        </View>
-                      )}
-                    />
-                  </View>
-                </View>
-              </SafeAreaView>
-            </Modal>
+          <TouchableOpacity style={[styles.categoriesContainer, styles.shadowContainer]} onPress={() => setModalVisible3(true)}>
+            {categoriesModal()}
             <View
               style={{
                 flex: 1,
                 flexDirection: "row",
                 alignItems: "center",
                 marginBottom: 5,
-                marginLeft: 20,
+                paddingLeft: 10,
               }}
             >
               <Image
@@ -1225,43 +1235,38 @@ function SeekerEditProfile({ navigation, route }) {
                 style={{
                   fontSize: 18,
                   paddingLeft: 10,
-                  marginBottom: 5,
+                  marginVertical: 5,
                 }}
               >
                 {strings.JOB_CATEGORIES}
               </Text>
-            </View>
-            <TouchableOpacity
-              style={[styles.code]}
-              onPress={() => setModalVisible3(true)}
-            >
-              <TouchableOpacity
-                style={{ flexDirection: "row" }}
-                onPress={() => setModalVisible3(true)}
-              >
+              <TouchableOpacity style={{ width: 15, height: 15, position: 'absolute', right: 10 }}>
                 <Image
-                  source={require("../assets/ic_file_number.png")}
-                  style={{ width: 17, height: 17, marginRight: 5 }}
+                  source={require("../assets/circle_info.png")}
+                  style={{ width: 15, height: 15 }}
                 />
-                <Text style={{ width: "95%", color: "#000" }}>
-                  {categoriesList?.filter((item) => item.selected).length > 0
-                    ? categoriesList
-                        .filter((item) => item.selected)
-                        .map((item) => item.name)
-                        .toString()
-                    : strings.SELECT_JOB_CATEGORIES}
-                </Text>
               </TouchableOpacity>
-            </TouchableOpacity>
-            {/*<View style={[{ marginHorizontal: 20 }]}>
-              <Text style={{ fontSize: 12 }}>
-                Please select the business categories that most closely match
-                the job you're looking to apply to. When a business posts a new
-                job, we'll be able to notify you. You may choose as many
-                categories as you like!
-              </Text>
-            </View>*/}
-          </View>
+            </View>
+            <FlatList
+              data={selectedCategories}
+              columnWrapperStyle={{ flexWrap: 'wrap', flex: 1, marginTop: 5 }}
+              renderItem={({item}) => (
+                <View
+                  style={styles.categoriesListContainer}>
+                    <Text style={{color: '#F3F4FA', fontSize: 12}}>{item.name}</Text>
+                    <TouchableOpacity
+                      style={{marginLeft: 10}}
+                      onPress={() => addToCategoreis(item)}
+                    >
+                      <Text style={{color: '#F3F4FA'}}>x</Text>
+                    </TouchableOpacity>
+                </View>
+              )}
+              //Setting the number of column
+              numColumns={4}
+              keyExtractor={(item, index) => index}
+            />
+          </TouchableOpacity>
 
           <View style={{ flex: 1 }}>
             <View style={{ flex: 1, padding: 20 }}>
@@ -1281,7 +1286,32 @@ function SeekerEditProfile({ navigation, route }) {
                   {strings.SKILLS}
                 </Text>
               </View>
-              <View
+              <Tags
+                // initialText="Enter Skills with comma seperator"
+                textInputProps={{
+                  placeholder: strings.ENTER_SKILL,
+                  placeholderTextColor: 'black'
+                }}
+                inputContainerStyle={[{borderRadius: 5, borderWidth: 0.3, borderColor: 'grey', backgroundColor: 'white'}, styles.shadowContainer]}
+                inputStyle={{color: 'grey'}}
+                initialTags={skills}
+                onChangeTags={tags => setSkills(tags)}
+                onTagPress={(index, tagLabel, event, deleted) =>
+                  console.log(index, tagLabel, event, deleted ? "deleted" : "not deleted")
+                }
+                containerStyle={{ justifyContent: "center" }}
+                renderTag={({ tag, index, onPress, deleteTagOnPress, readonly }) => (
+                  <TouchableOpacity style={styles.skilsListContainer} key={`${tag}-${index}`} onPress={onPress}>
+                    <Text style={{color: '#F3F4FA', fontSize: 12}}>{tag}</Text>
+                    <View
+                      style={{marginLeft: 10}}
+                    >
+                      <Text style={{color: '#F3F4FA'}}>x</Text>
+                    </View>
+                  </TouchableOpacity>
+                )}
+              />
+              {/*<View
                 style={{
                   flex: 1,
                   alignItems: "flex-start",
@@ -1302,11 +1332,11 @@ function SeekerEditProfile({ navigation, route }) {
                   elevation: 4,
                 }}
               >
-                {/* <FlatList
+                <FlatList
                     data={skills}
                     keyExtractor={(item) => item}
                     renderItem={renderSkill}
-                  /> */}
+                  />
                 <View
                   style={{
                     flex: 1,
@@ -1341,7 +1371,7 @@ function SeekerEditProfile({ navigation, route }) {
                     onChangeText={(text) => onChangeSkill(text)}
                   />
                 </View>
-              </View>
+              </View>*/}
             </View>
           </View>
 
@@ -1706,125 +1736,98 @@ function SeekerEditProfile({ navigation, route }) {
               </View>
             </View>
           </View>
-
-          <View style={{ flex: 1 }}>
-            <TouchableOpacity
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                paddingLeft: 20,
-                paddingTop: 15,
-                paddingBottom: 15,
-                alignItems: "center",
-              }}
-              onPress={() => toggleEligible()}
-            >
-              {eligible ? (
-                <Image
-                  source={require("../assets/checkbox_checked.png")}
-                  style={{ width: 25, height: 25, marginRight: 5 }}
-                />
-              ) : (
-                <Image
-                  source={require("../assets/checkbox_blank.png")}
-                  style={{ width: 25, height: 25, marginRight: 5 }}
-                />
-              )}
-              <Text style={{ paddingLeft: 5, color: "#3482FF" }}>
-                {strings.ARE_YOU_ELEGIBLE}
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={{ flex: 1 }}>
-            <TouchableOpacity
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                paddingLeft: 20,
-                paddingTop: 15,
-                paddingBottom: 15,
-                alignItems: "center",
-              }}
-              onPress={() => toggleSixteen()}
-            >
-              {sixteen ? (
-                <Image
-                  source={require("../assets/checkbox_checked.png")}
-                  style={{ width: 25, height: 25, marginRight: 5 }}
-                />
-              ) : (
-                <Image
-                  source={require("../assets/checkbox_blank.png")}
-                  style={{ width: 25, height: 25, marginRight: 5 }}
-                />
-              )}
-              <Text style={{ paddingLeft: 5, color: "#3482FF" }}>
-                {strings.ARE_YOU_AT_LEAST}
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={{ flex: 1 }}>
-            <TouchableOpacity
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                paddingLeft: 20,
-                paddingTop: 15,
-                paddingBottom: 15,
-                alignItems: "center",
-              }}
-              onPress={() => toggleConvictions()}
-            >
-              {convictions ? (
-                <Image
-                  source={require("../assets/checkbox_checked.png")}
-                  style={{ width: 25, height: 25, marginRight: 5 }}
-                />
-              ) : (
-                <Image
-                  source={require("../assets/checkbox_blank.png")}
-                  style={{ width: 25, height: 25, marginRight: 5 }}
-                />
-              )}
-              <View style={{ flex: 1 }}>
+          <View style={[styles.checkBoxesContainer, styles.shadowContainer]}>
+            <View style={{ flex: 1 }}>
+              <TouchableOpacity
+                style={styles.checkBoxContainer}
+                onPress={() => toggleEligible()}
+              >
+                {eligible ? (
+                  <Image
+                    source={require("../assets/checkbox_checked.png")}
+                    style={{ width: 25, height: 25, marginRight: 5 }}
+                  />
+                ) : (
+                  <Image
+                    source={require("../assets/checkbox_blank.png")}
+                    style={{ width: 25, height: 25, marginRight: 5 }}
+                  />
+                )}
                 <Text style={{ paddingLeft: 5, color: "#3482FF" }}>
-                  {strings.HAVE_YOU_EVER_BEEN_CONVICTED}
+                  {strings.ARE_YOU_ELEGIBLE}
                 </Text>
-              </View>
-            </TouchableOpacity>
-          </View>
+              </TouchableOpacity>
+            </View>
 
-          <View style={{ flex: 1 }}>
-            <TouchableOpacity
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                paddingLeft: 20,
-                paddingTop: 15,
-                paddingBottom: 15,
-                alignItems: "center",
-              }}
-              onPress={() => toggleVaccinated()}
-            >
-              {covid_vaccinated ? (
-                <Image
-                  source={require("../assets/checkbox_checked.png")}
-                  style={{ width: 25, height: 25, marginRight: 5 }}
-                />
-              ) : (
-                <Image
-                  source={require("../assets/checkbox_blank.png")}
-                  style={{ width: 25, height: 25, marginRight: 5 }}
-                />
-              )}
-              <View style={{ flex: 1 }}>
+            <View style={{ flex: 1 }}>
+              <TouchableOpacity
+                style={styles.checkBoxContainer}
+                onPress={() => toggleSixteen()}
+              >
+                {sixteen ? (
+                  <Image
+                    source={require("../assets/checkbox_checked.png")}
+                    style={{ width: 25, height: 25, marginRight: 5 }}
+                  />
+                ) : (
+                  <Image
+                    source={require("../assets/checkbox_blank.png")}
+                    style={{ width: 25, height: 25, marginRight: 5 }}
+                  />
+                )}
                 <Text style={{ paddingLeft: 5, color: "#3482FF" }}>
-                  {strings.ARE_VACCINATED} {strings.OPTIONAL}
+                  {strings.ARE_YOU_AT_LEAST}
                 </Text>
-              </View>
-            </TouchableOpacity>
+              </TouchableOpacity>
+            </View>
+
+            <View style={{ flex: 1 }}>
+              <TouchableOpacity
+                style={styles.checkBoxContainer}
+                onPress={() => toggleConvictions()}
+              >
+                {convictions ? (
+                  <Image
+                    source={require("../assets/checkbox_checked.png")}
+                    style={{ width: 25, height: 25, marginRight: 5 }}
+                  />
+                ) : (
+                  <Image
+                    source={require("../assets/checkbox_blank.png")}
+                    style={{ width: 25, height: 25, marginRight: 5 }}
+                  />
+                )}
+                <View style={{ flex: 1 }}>
+                  <Text style={{ paddingLeft: 5, color: "#3482FF" }}>
+                    {strings.HAVE_YOU_EVER_BEEN_CONVICTED}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+
+            <View style={{ flex: 1 }}>
+              <TouchableOpacity
+                style={styles.checkBoxContainer}
+                onPress={() => toggleVaccinated()}
+              >
+                {covid_vaccinated ? (
+                  <Image
+                    source={require("../assets/checkbox_checked.png")}
+                    style={{ width: 25, height: 25, marginRight: 5 }}
+                  />
+                ) : (
+                  <Image
+                    source={require("../assets/checkbox_blank.png")}
+                    style={{ width: 25, height: 25, marginRight: 5 }}
+                  />
+                )}
+                <View style={{ flex: 1 }}>
+                  <Text style={{ paddingLeft: 5, color: "#3482FF" }}>
+                    {strings.ARE_VACCINATED} {strings.OPTIONAL}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
           </View>
 
           <View style={{ flex: 1, marginBottom: 30 }}>
@@ -2114,6 +2117,66 @@ const styles = StyleSheet.create({
     // alignItems: 'center',
     // width: '25%',
   },
+  shadowContainer: {
+    shadowColor: "#000000",
+    shadowOffset: {
+      width: 3,
+      height: 3,
+    },
+    shadowOpacity: 0.23,
+    shadowRadius: 2.62,
+    elevation: 4,
+  },
+  categoriesContainer: {
+    flex: 1,
+    marginHorizontal: 10,
+    paddingVertical: 10,
+    borderRadius: 5,
+    borderWidth: 0.2,
+    borderColor: '#bbb',
+    justifyContent: 'center',
+    backgroundColor: 'white'
+  },
+  skilsListContainer: {
+    flex: 0,
+    flexDirection: 'row',
+    margin: 5,
+    paddingLeft: 20,
+    paddingRight: 10,
+    backgroundColor: '#4E35AE',
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 25
+  },
+  categoriesListContainer: {
+    flex: 0,
+    flexDirection: 'row',
+    margin: 5,
+    paddingLeft: 20,
+    paddingRight: 10,
+    backgroundColor: '#4E35AE',
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 25
+  },
+  checkBoxesContainer: {
+    flex: 1,
+    backgroundColor: 'white',
+    borderRadius: 5,
+    marginHorizontal: 10,
+    borderWidth: 0.2,
+    borderColor: 'grey',
+    paddingHorizontal: 10,
+    overflow: 'visible'
+  },
+  checkBoxContainer: {
+    flex: 1,
+    flexDirection: "row",
+    paddingVertical: 15,
+    alignItems: "center",
+  }
 });
 
 const pickerSelectStyles = StyleSheet.create({
