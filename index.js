@@ -7,7 +7,8 @@
 
  import App from './App';
  import {expo} from './app.json';
-
+ import 'react-native-gesture-handler';
+ 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
     console.log('Message handled in the background: ' + remoteMessage);
 });

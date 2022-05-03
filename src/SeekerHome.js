@@ -566,8 +566,6 @@ function SeekerHome({ navigation }) {
               height: wp('35%'),
               justifyContent: 'center',
               alignItems: 'center'
-              //paddingTop: 17,
-              //paddingLeft: 16,
             }}
           >
             <Image
@@ -576,8 +574,6 @@ function SeekerHome({ navigation }) {
                 width: wp('30%'),
                 height: wp('30%'),
                 borderRadius: wp('30%'),
-                borderWidth: 1,
-                borderColor: "#fff",
               }}
             />
             </ImageBackground>

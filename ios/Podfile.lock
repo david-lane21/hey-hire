@@ -440,8 +440,8 @@ PODS:
     - React-jsi (= 0.63.4)
   - ReactNativeDarkMode (0.2.2):
     - React
-  - ReactNativeLocalization (2.1.6):
-    - React
+  - ReactNativeLocalization (2.3.1):
+    - React-Core
   - RNCAsyncStorage (1.15.17):
     - React-Core
   - RNCClipboard (1.5.1):
@@ -452,9 +452,9 @@ PODS:
     - React-Core
   - RNDateTimePicker (3.5.2):
     - React-Core
-  - RNDeviceInfo (7.3.1):
+  - RNDeviceInfo (7.4.0):
     - React-Core
-  - RNFBAnalytics (14.7.0):
+  - RNFBAnalytics (14.9.1):
     - Firebase/Analytics (= 8.14.0)
     - React-Core
     - RNFBApp
@@ -465,47 +465,20 @@ PODS:
     - Firebase/Messaging (= 8.14.0)
     - React-Core
     - RNFBApp
-  - RNFS (2.16.6):
-    - React
+  - RNFS (2.19.0):
+    - React-Core
   - RNGestureHandler (1.10.3):
     - React-Core
   - RNImageToPdf (1.2.0):
     - React
-  - RNLocalize (2.0.1):
+  - RNLocalize (2.2.1):
     - React-Core
-  - RNReanimated (2.2.4):
-    - DoubleConversion
-    - FBLazyVector
-    - FBReactNativeSpec
-    - Folly
-    - glog
-    - RCTRequired
-    - RCTTypeSafety
-    - React
-    - React-callinvoker
+  - RNReanimated (1.13.3):
     - React-Core
-    - React-Core/DevSupport
-    - React-Core/RCTWebSocket
-    - React-CoreModules
-    - React-cxxreact
-    - React-jsi
-    - React-jsiexecutor
-    - React-jsinspector
-    - React-RCTActionSheet
-    - React-RCTAnimation
-    - React-RCTBlob
-    - React-RCTImage
-    - React-RCTLinking
-    - React-RCTNetwork
-    - React-RCTSettings
-    - React-RCTText
-    - React-RCTVibration
-    - ReactCommon/turbomodule/core
-    - Yoga
   - RNScreens (3.4.0):
     - React-Core
     - React-RCTImage
-  - RNShare (4.1.0):
+  - RNShare (4.1.2):
     - React-Core
   - RNSVG (12.1.1):
     - React
@@ -834,23 +807,23 @@ SPEC CHECKSUMS:
   React-RCTVibration: ae4f914cfe8de7d4de95ae1ea6cc8f6315d73d9d
   ReactCommon: 73d79c7039f473b76db6ff7c6b159c478acbbb3b
   ReactNativeDarkMode: 0178ffca3b10f6a7c9f49d6f9810232b328fa949
-  ReactNativeLocalization: dbb269b27d8a84bb22b9c2cdec38ba780b51dd72
+  ReactNativeLocalization: 076497d7ca70341c751cd3b3e7c86187332a182d
   RNCAsyncStorage: 6bd5a7ba3dde1c3facba418aa273f449bdc5437a
   RNCClipboard: 41d8d918092ae8e676f18adada19104fa3e68495
   RNCMaskedView: 5a8ec07677aa885546a0d98da336457e2bea557f
   RNCPushNotificationIOS: 87b8d16d3ede4532745e05b03c42cff33a36cc45
   RNDateTimePicker: 7658208086d86d09e1627b5c34ba0cf237c60140
-  RNDeviceInfo: 6ecb1d1c87d20e4c62354be0348de23362824dcd
-  RNFBAnalytics: 776634be8c549e920df68c67907506805efcb6ae
+  RNDeviceInfo: 9538a884f862fe4aa0d7cead9f34e292d41ba8f6
+  RNFBAnalytics: 24813566ae967634d74a4a6a8e42c0ccd54e41fe
   RNFBApp: 097a31d372b3db15b41c7a1a5c429433b0609e12
   RNFBMessaging: 06a7a73883f3f43da61507dbfcf4db2245c22869
-  RNFS: 2bd9eb49dc82fa9676382f0585b992c424cd59df
+  RNFS: fc610f78fdf8bfc89a9e5cc2f898519f4dba1002
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNImageToPdf: 43fd91d019b3ee8ae6aba7f2d8c40ca4a55088ff
-  RNLocalize: 41026b7c14878f1a1b381bc79f668f1fbf841adb
-  RNReanimated: e5040efc7c90da0b190a6525fcfc7e1e75973b21
+  RNLocalize: cbcb55d0e19c78086ea4eea20e03fe8000bbbced
+  RNReanimated: 514a11da3a2bcc6c3dfd9de32b38e2b9bf101926
   RNScreens: 21b73c94c9117e1110a79ee0ee80c93ccefed8ce
-  RNShare: 106a76243ac90f43ddb9028dcb78ade406b8adff
+  RNShare: d22507fa5e80c72f236b5622556cf831de5b1e93
   RNSVG: 551acb6562324b1d52a4e0758f7ca0ec234e278f
   UMAppLoader: 21af63390e55c82e037fb9752d93114a80ecf16e
   UMCore: ce3a4faa010239063b8343895b29a6d97b01069d

@@ -168,5 +168,7 @@
     "PRIVACY_AND_COOKIES":"Privacy Policy and Cookies Policy.",
     "TROUBLE_SIGNING_IN": "Trouble Signing In?",
     "CONTINUE": "Continue",
-    "VERIFICATION_CODE_TEXT": "We will send a text with a verification code.  Message and data rates may apply.  Learn what happens when your number changes."
+    "VERIFICATION_CODE_TEXT": "We will send a text with a verification code.  Message and data rates may apply.  Learn what happens when your number changes.",
+    "CATEGORIES_INFO_MESSAGE": "Choose Categories from categories list to best match your desired job",
+    "CERTIFICATE_INFO_MESSAGE": "Add Your Certifications by name to get a better match for a job according to your expertise"
 }

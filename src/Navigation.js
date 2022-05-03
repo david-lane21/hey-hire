@@ -11,6 +11,7 @@ import {
 } from '@react-navigation/drawer';
 import messaging from '@react-native-firebase/messaging';
 
+import { strings } from "./translation/config";
 import { getUser } from "./utils/utils.js";
 import HomeScreen from "./HomeScreen";
 import SeekerUserWizard from './SeekerUserWizard';
@@ -417,7 +418,15 @@ function SeekerLinks({ navigation }) {
         name="SeekerEditProfile"
         component={SeekerEditProfile}
         options={{
-          headerShown: false,
+          headerShown: true,
+          headerBackTitleVisible: false,
+          headerTitle: () => (<CustomHeader title="REGISTRATION" />),
+          headerStyle: {
+            backgroundColor: "#fff",
+          },
+          headerLeft: () => (<CustomBack navigation={navigation} />),
+          headerTintColor: "#4E35AE",
+          gestureEnabled: false
         }}
       />
       <Stack2.Screen
@@ -549,7 +558,15 @@ export function MyDrawer({navigation}) {
         name="Edit Profile"
         component={SeekerEditProfile}
         options={{
-          headerShown: false,
+          headerShown: true,
+          headerBackTitleVisible: false,
+          headerTitle: () => (<CustomHeader title={strings.EDIT_YOUR_PROFILE} />),
+          headerStyle: {
+            backgroundColor: "#fff",
+          },
+          headerLeft: () => (<CustomBack navigation={navigation} />),
+          headerTintColor: "#4E35AE",
+          gestureEnabled: false
         }}
         initialParams={{ profile: userData.profile }}
       />

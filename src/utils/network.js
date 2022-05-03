@@ -3,7 +3,9 @@ export function API_URL(url){
   // return 'http://localhost:4000/apiv1/' + url
   // return "https://api.apployme.com/apiv1/" + url
       // return "https://stagapi.apployme.com/apiv1/" + url
-      return "http://devapi.apployme.net/api/v1" + url
+      // return "https://devapi.heyhire.com/api/v1" + url  // Production server
+      return "https://devapi.heyhire.net/api/v1" + url  // Staging server
+      // return "http://devapi.apployme.net/api/v1" + url
 } 
 
 export function getBaseURL(url){

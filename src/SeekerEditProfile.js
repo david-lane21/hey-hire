@@ -19,6 +19,7 @@ import {
   Switch,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import AwesomeAlert from 'react-native-awesome-alerts';
 import Tags from "react-native-tags";
 import {
   widthPercentageToDP as wp,
@@ -60,6 +61,8 @@ function SeekerEditProfile({ navigation, route }) {
   console.log("tempPRofile", tempProfile);
 
   const [modalVisible, setModalVisible] = useState(false);
+  const [showAwsomeAlert, setShowAwsomeAlert] = useState(false);
+  const [awsomeAlertMessage, setAwsomeAlertMessage] = useState('');
   const [modalVisible2, setModalVisible2] = useState(false);
   const [modalVisible3, setModalVisible3] = useState(false);
   const [error, setError] = useState("");
@@ -779,50 +782,28 @@ function SeekerEditProfile({ navigation, route }) {
     );
   }
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+    <View style={{ flex: 1, backgroundColor: "#fff" }}>
       <KeyboardAwareScrollView
         extraScrollHeight={Platform.OS === "ios" ? -60 : 0}
       >
+
         <View
           style={{
-            flexDirection: "row",
             flex: 1,
-            justifyContent: "flex-start",
+            justifyContent: "center",
             alignItems: "center",
-            //alignItems: 'center'
-            // paddingTop: 20,
           }}
         >
-          <TouchableOpacity
-            style={{ marginLeft: 10 }}
-            onPress={() => navigation.navigate("Seeker")}
+          <Text
+            style={{
+              color: "#4834A6",
+              fontSize: hp("2.1%"),
+              fontWeight: "600",
+            }}
           >
-            <Image
-              source={require("../assets/ic_back.png")}
-              // style={{ width: wp('5%'), height: hp('2%') }}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
-
-          <Image
-            resizeMode="contain"
-            source={require("../assets/headerImage.png")}
-            style={{ width: 100, alignSelf: "center", marginLeft: "33%" }}
-          />
+            {strings.EDIT_YOUR_PROFILE}
+          </Text>
         </View>
-        <Text
-          style={{
-            color: "#4834A6",
-            fontSize: hp("2.1%"),
-            fontWeight: "600",
-            textAlign: "center",
-            position: "absolute",
-            top: "2.5%",
-            left: "33%",
-          }}
-        >
-          {strings.EDIT_YOUR_PROFILE}
-        </Text>
 
         <Loader loading={loading} />
 
@@ -1240,7 +1221,13 @@ function SeekerEditProfile({ navigation, route }) {
               >
                 {strings.JOB_CATEGORIES}
               </Text>
-              <TouchableOpacity style={{ width: 15, height: 15, position: 'absolute', right: 10 }}>
+              <TouchableOpacity
+              onPress={() => {
+                setAwsomeAlertMessage(strings.CATEGORIES_INFO_MESSAGE);
+                setShowAwsomeAlert(true);
+                }}
+                style={{ width: 15, height: 15, position: 'absolute', right: 10 }}
+              >
                 <Image
                   source={require("../assets/circle_info.png")}
                   style={{ width: 15, height: 15 }}
@@ -1483,6 +1470,17 @@ function SeekerEditProfile({ navigation, route }) {
                 {strings.CERTIFICATIONS}
                 {/* {strings.OPTIONAL} */}
               </Text>
+              <TouchableOpacity onPress={() => {
+                setAwsomeAlertMessage(strings.CERTIFICATE_INFO_MESSAGE);
+                setShowAwsomeAlert(true);
+                }}
+                style={{ width: 15, height: 15, position: 'absolute', right: 20 }}
+              >
+                <Image
+                  source={require("../assets/circle_info.png")}
+                  style={{ width: 15, height: 15 }}
+                />
+              </TouchableOpacity>
             </View>
             <View style={styles.inputField}>
               <Image
@@ -2021,7 +2019,28 @@ function SeekerEditProfile({ navigation, route }) {
           </Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+      <AwesomeAlert
+          show={showAwsomeAlert}
+          showProgress={false}
+          title="Information"
+          message={awsomeAlertMessage}
+          closeOnTouchOutside={true}
+          closeOnHardwareBackPress={false}
+          showCancelButton={false}
+          showConfirmButton={true}
+          cancelText="No, cancel"
+          confirmText="Ok"
+          confirmButtonColor="#594A9E"
+          messageStyle={{textAlign: 'center'}}
+          confirmButtonStyle={{width: wp('20%'), justifyContent:'center', alignItems: 'center'}}
+          onCancelPressed={() => {
+            setShowAwsomeAlert(false)
+          }}
+          onConfirmPressed={() => {
+            setShowAwsomeAlert(false)
+          }}
+        />
+    </View>
   );
 }
 

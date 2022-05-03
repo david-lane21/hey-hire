@@ -18,7 +18,11 @@ import {
   StatusBar,
   Keyboard,
   Linking
-} from 'react-native'
+} from 'react-native';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 import * as ImagePicker from 'expo-image-picker'
 import Constants from 'expo-constants'
 import { countries } from './utils/consts.js'
@@ -469,6 +473,24 @@ function SeekerSignup({ navigation, route }) {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <KeyboardAwareScrollView style={[styles.container]} extraScrollHeight={Platform.OS === "ios" ? 50 : 0} extraHeight={Platform.OS === "ios" ? 140 : null} >
+      <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Text
+            style={{
+              color: "#4834A6",
+              fontSize: hp("2.1%"),
+              fontWeight: "600",
+            }}
+          >
+            {strings.REGISTRATION}
+          </Text>
+        </View>
+
         <Loader loading={loading} />
 
         <View style={{ flex: 1, alignItems: 'center', padding: 20, marginBottom: heightPercentageToDP(5) }}>
