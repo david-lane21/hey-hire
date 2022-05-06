@@ -225,7 +225,7 @@ function SeekerSignup({ navigation, route }) {
     return result
   }
 
-  async function createAccount(){
+  createAccount = async () => {
     if (validation() == true) {
       if (
         firstName &&
@@ -233,7 +233,8 @@ function SeekerSignup({ navigation, route }) {
         address &&
         city &&
         state &&
-        email 
+        email &&
+        phone
       ) {
       try {
         const body = {
@@ -241,23 +242,24 @@ function SeekerSignup({ navigation, route }) {
           last_name: lastName,
           address: address,
           zip_code: zipcode,
-          state : state,
-          city : city,
-          email,
+          state: state,
+          city: city,
+          email: email,
+          phone: phone
           // country,
       
       }
-      console.log('body in signup page ', body);
-      console.log("route ", route)
-        const res = await postJSON("/job-seeker/profile",body,)
+        console.log('body in signup page ', body);
+        console.log("route ", route)
+        const res = await postJSON("/job-seeker/profile",body)
         console.log('res in signup page ',res)
         const json = await res.json()
         console.log('json data ',json)
-        navigation.navigate('SeekerFinishRegistration',{token: route.params.token})
+        // navigation.navigate('SeekerFinishRegistration',{token: route.params.token})
 
       } catch (error) {
         Alert.alert('Error Over Here ',error)
-        console.log('error while updating profile',error)
+        console.log('error while creating profile',error)
       }
       }
       else{
@@ -402,10 +404,10 @@ function SeekerSignup({ navigation, route }) {
       return false
     }
 
-    // else if (!phone || isValidatePresence(phone) == "") {
-    //   Alert.alert("Error...", "Enter a valid Phone Number before continuing!")
-    //   return false
-    // }
+    else if (!phone || isValidatePresence(phone) == "") {
+      Alert.alert("Error...", "Enter a valid Phone Number before continuing!")
+      return false
+    }
     else if (!email || isValidatePresence(email) == "") {
       Alert.alert("Error...", "Enter a valid Email before continuing!")
       return false
@@ -825,20 +827,13 @@ function SeekerSignup({ navigation, route }) {
             </SafeAreaView>
           </Modal> */}
 
-          {/* <View style={{ flex: 1, flexDirection: 'row' }}>
-            <TouchableOpacity
-              style={[styles.code]}
-              onPress={() => setModalVisible(true)}
-            >
-              <Image
-                source={require('../assets/ic_phone.png')}
-                style={{ width: 20, height: 20, marginRight: 5, }}
-              />
-              <Text style={{}}>+{phCode}</Text>
-            </TouchableOpacity>
-
+          <View style={styles.inputField}>
+            <Image
+              source={require('../assets/ic_call.png')}
+              style={{ height: 20, width: 20 }}
+            />
             <TextInput
-              style={styles.code2}
+              style={[{ paddingLeft: 10, width: '100%', color: '#000' }, Platform.OS === "ios" && { height: 30 }]}
               onChangeText={text => setPhone(text)}
               placeholder={strings.PHONE}
               value={formatPhone(phone)}
@@ -854,7 +849,7 @@ function SeekerSignup({ navigation, route }) {
                 handleRef(6, ref)
               }}
             />
-          </View> */}
+          </View>
         </View> 
 
         {/* <Text
