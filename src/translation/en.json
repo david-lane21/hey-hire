@@ -169,6 +169,6 @@
     "TROUBLE_SIGNING_IN": "Trouble Signing In?",
     "CONTINUE": "Continue",
     "VERIFICATION_CODE_TEXT": "We will send a text with a verification code.  Message and data rates may apply.  Learn what happens when your number changes.",
-    "CATEGORIES_INFO_MESSAGE": "Choose Categories from categories list to best match your desired job",
+    "CATEGORIES_INFO_MESSAGE": "Please select the business categories that most closely match the job you’re looking to apply to. When a business posts a new job, we’ll be able to notify you. You may choose as many categories as vou like!",
     "CERTIFICATE_INFO_MESSAGE": "Add Your Certifications by name to get a better match for a job according to your expertise"
 }

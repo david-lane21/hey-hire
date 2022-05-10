@@ -1,15 +1,14 @@
 import React, { useEffect } from "react";
-import { View, Image,useWindowDimensions, Alert } from "react-native";
+import { View, Image } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import {
-  createDrawerNavigator,
-  DrawerContentScrollView,
-  DrawerItemList,
-  DrawerItem,
-} from '@react-navigation/drawer';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import messaging from '@react-native-firebase/messaging';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 import { strings } from "./translation/config";
 import { getUser } from "./utils/utils.js";
@@ -36,6 +35,7 @@ import ForgotPassword from './ForgotPassword';
 import SeekerBusinessList from './SeekerBusinessList';
 import CustomHeader from "./components/CustomHeader.js";
 import CustomBack from "./components/CustomBack.js";
+import CustomDrawer from "./components/CustomDrawer";
 
 const Stack = createStackNavigator();
 const Stack2 = createStackNavigator();
@@ -296,9 +296,15 @@ export function AuthNavigation({ navigation }) {
         name="SeekerFinishRegistration"
         component={SeekerFinishRegistration}
         options={{
-          headerShown: false,
+          headerShown: true,
+          headerBackTitleVisible: false,
+          headerTitle: () => (<CustomHeader title="REGISTRATION" />),
+          headerStyle: {
+            backgroundColor: "#fff",
+          },
+          headerLeft: () => (<CustomBack navigation={navigation} />),
+          headerTintColor: "#4E35AE",
           gestureEnabled: false
-
         }}
       />
       <Stack2.Screen
@@ -433,7 +439,15 @@ function SeekerLinks({ navigation }) {
         name="SeekerFinishRegistration"
         component={SeekerFinishRegistration}
         options={{
-          headerShown: false,
+          headerShown: true,
+          headerBackTitleVisible: false,
+          headerTitle: () => (<CustomHeader title="REGISTRATION" />),
+          headerStyle: {
+            backgroundColor: "#fff",
+          },
+          headerLeft: () => (<CustomBack navigation={navigation} />),
+          headerTintColor: "#4E35AE",
+          gestureEnabled: false
         }}
       />
       <Stack2.Screen
@@ -513,38 +527,16 @@ function SeekerAppliedJobs0({ navigation }) {
   );
 }
 
-function _onLogout(dispatch) {
-  Alert.alert("ApployMe", `Are you sure you want to logout now?`, [
-    {
-      text: "Logout",
-      onPress: () => {
-        // removeUser();
-        // signOut();
-        dispatch({type:'UserData/setState',payload: {token: null, profile: {}}})
-      },
-    },
-    { text: "Cancel", onPress: () => console.log("OK Pressed") },
-  ]);
-}
-
 export function MyDrawer({navigation}) {
   const userData = useSelector(state => state.UserData)
-  const dispatch = useDispatch();
-
-  const dimensions = useWindowDimensions();
 
   return (
     <Drawer.Navigator
-      drawerType={dimensions.width >= 768 ? 'permanent' : 'front'}
-      initialRouteName="Home" drawerContent={props => {
-        return (
-          <DrawerContentScrollView {...props}>
-            <DrawerItemList {...props} />
-            <DrawerItem label="Help" onPress={() => alert('Help')} />
-            <DrawerItem label="Logout" onPress={() => _onLogout(dispatch)} />
-          </DrawerContentScrollView>
-        )
-      }}
+      drawerType={'front'}
+      initialRouteName="Home"
+      hideStatusBar={true}
+      drawerStyle={{flex: 1, width: '100%', height: hp('100%'), backgroundColor: 'transparent'}}
+      drawerContent={(props) => <CustomDrawer {...props} />}
     >
       <Drawer.Screen
         name="Home"

@@ -6,16 +6,9 @@ import {
   Image,
   StyleSheet,
   SafeAreaView,
-  ScrollView,
-  FlatList,
-  Modal,
   TouchableOpacity,
-  TouchableHighlight,
   Platform,
-  KeyboardAvoidingView,
-  findNodeHandle,
   Alert,
-  StatusBar,
   Keyboard,
   Linking
 } from 'react-native';
@@ -24,7 +17,6 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import * as ImagePicker from 'expo-image-picker'
-import Constants from 'expo-constants'
 import { countries } from './utils/consts.js'
 import { postFormData, postJSON, putJSON } from './utils/network.js'
 import * as Location from 'expo-location'
@@ -246,17 +238,16 @@ function SeekerSignup({ navigation, route }) {
           city: city,
           email: email,
           phone: phone
-          // country,
-      
       }
         console.log('body in signup page ', body);
         console.log("route ", route)
-        const res = await postJSON("/job-seeker/profile",body)
+        const res = await postJSON("/job-seeker/profile", body)
         console.log('res in signup page ',res)
-        const json = await res.json()
+        const json = await res.json();
         console.log('json data ',json)
-        // navigation.navigate('SeekerFinishRegistration',{token: route.params.token})
-
+        if (res.status == 200) {
+          navigation.navigate('SeekerFinishRegistration',{token: defaultToken})
+        }
       } catch (error) {
         Alert.alert('Error Over Here ',error)
         console.log('error while creating profile',error)
@@ -495,41 +486,7 @@ function SeekerSignup({ navigation, route }) {
 
         <Loader loading={loading} />
 
-        <View style={{ flex: 1, alignItems: 'center', padding: 20, marginBottom: heightPercentageToDP(5) }}>
-          {/* <View style={{ width: 140, height: 140, alignSelf: 'center' }}> */}
-            {/* {image == null ? ( */}
-              {/* <Image
-                source={require('../assets/img_place.png')}
-                style={{
-                  height: 100,
-                  width: 100,
-                  borderRadius: 50,
-                  alignSelf: 'center'
-                }}
-              /> */}
-            {/* ) : (
-              <Image
-                source={{ uri: image }}
-                style={{
-                  width: 100,
-                  height: 100,
-                  borderRadius: 50,
-                  alignSelf: 'center'
-                }}
-              />
-            )} */}
-            {/* <TouchableOpacity
-              onPress={pickImage}
-              style={{ position: 'absolute', top: 0, right: 0 }}
-            >
-            
-              <Image
-                source={require('../assets/ic_camera.png')}
-                style={{ width: 60, height: 60 }}
-              />
-            </TouchableOpacity> */}
-          {/* </View> */}
-        </View>
+        <View style={{ flex: 1, alignItems: 'center', padding: 20, marginBottom: heightPercentageToDP(5) }} />
 
         <View style={styles.inputField}>
           <Image
@@ -598,104 +555,6 @@ function SeekerSignup({ navigation, route }) {
             }}
           />
         </View>
-
-        {/*<View
-          style={{
-            flex: 1,
-            // alignItems: 'center'
-          }}
-        >
-          <Modal
-            animationType='slide'
-            transparent={false}
-            visible={modalVisible}
-            onRequestClose={() => {
-              // Alert.alert('Modal has been closed.');
-              setModalVisible(false)
-            }}
-          >
-            <SafeAreaView>
-              <View style={{ marginTop: 22 }}>
-                <View
-                  style={{
-                    justifyContent: "flex-end",
-                    alignItems: 'flex-end',
-                  }}
-                >
-
-                  <View style={{ marginRight: 20, paddingVertical: 5 }}>
-                    <TouchableOpacity
-                      onPress={() => setModalVisible(false)}
-                    >
-                      <Text style={{ color: "#4834A6", fontSize: 18 }}>
-                        {strings.DONE}
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-                <View>
-                  <FlatList
-                    // ItemSeparatorComponent={<Separator />}
-
-                    data={countries}
-                    keyExtractor={item => item.code}
-                    renderItem={({ item, index, separators }) => (
-                      <TouchableHighlight
-                        key={index}
-                        onPress={() => _onPress2(item)}
-                        onShowUnderlay={separators.highlight}
-                        onHideUnderlay={separators.unhighlight}
-                      >
-                        <View style={{ backgroundColor: 'white' }}>
-                          <View
-                            style={{
-                              flex: 1,
-                              flexDirection: 'row',
-                              justifyContent: 'space-between',
-                              padding: 10,
-                              borderBottomWidth: 1,
-                              borderBottomColor: '#eee'
-                            }}
-                          >
-                            <Text
-                              style={{
-                                fontSize: 20,
-                                color: '#222'
-                              }}
-                            >
-                              {item.name}
-                            </Text>
-                            <Text
-                              style={{
-                                fontSize: 20,
-                                color: '#666'
-                              }}
-                            >
-                              +{item.dial_code}
-                            </Text>
-                          </View>
-                        </View>
-                      </TouchableHighlight>
-                    )}
-                  />
-                </View>
-              </View>
-            </SafeAreaView>
-          </Modal>
-
-          <View style={{ flex: 1, flexDirection: "row" }}>
-            <TouchableOpacity
-              style={[styles.inputField, { padding: 0, paddingTop: 10, paddingLeft: 10 }]}
-              onPress={() => setModalVisible(true)}
-            >
-              <Image
-                source={require('../assets/ic_country.png')}
-                style={{ width: 20, height: 20, marginRight: 5 }}
-              />
-              <Text style={{}}>{country}</Text>
-            </TouchableOpacity>
-          </View>
-        </View>*/}
 
         <View style={styles.inputField}>
           <Image
@@ -768,65 +627,6 @@ function SeekerSignup({ navigation, route }) {
             alignItems: 'center'
           }}
         >
-          {/* <Modal
-            animationType='slide'
-            transparent={false}
-            visible={modalVisible}
-            onRequestClose={() => {
-              // Alert.alert('Modal has been closed.');
-            }}
-          >
-            <SafeAreaView>
-              <View style={{ marginTop: 22 }}>
-                <View>
-                  <FlatList
-                    // ItemSeparatorComponent={<Separator />}
-                    data={countries}
-                    keyExtractor={item => item.code}
-                    renderItem={({ item, index, separators }) => (
-                      <TouchableHighlight
-                        key={index}
-                        onPress={() => _onPress(item)}
-                        onShowUnderlay={separators.highlight}
-                        onHideUnderlay={separators.unhighlight}
-                      >
-                        <View style={{ backgroundColor: 'white' }}>
-                          <View
-                            style={{
-                              flex: 1,
-                              flexDirection: 'row',
-                              justifyContent: 'space-between',
-                              padding: 10,
-                              borderBottomWidth: 1,
-                              borderBottomColor: '#eee'
-                            }}
-                          >
-                            <Text
-                              style={{
-                                fontSize: 20,
-                                color: '#222'
-                              }}
-                            >
-                              {item.name}
-                            </Text>
-                            <Text
-                              style={{
-                                fontSize: 20,
-                                color: '#666'
-                              }}
-                            >
-                              +{item.dial_code}
-                            </Text>
-                          </View>
-                        </View>
-                      </TouchableHighlight>
-                    )}
-                  />
-                </View>
-              </View>
-            </SafeAreaView>
-          </Modal> */}
-
           <View style={styles.inputField}>
             <Image
               source={require('../assets/ic_call.png')}
@@ -881,50 +681,6 @@ function SeekerSignup({ navigation, route }) {
 
           />
         </View>
-{/* 
-        <View style={styles.inputField}>
-          <Image
-            source={require('../assets/ic_password.png')}
-            style={{ height: 20, width: 20 }}
-          />
-          <TextInput
-            style={[{ paddingLeft: 10, width: '100%', color: '#000' }, Platform.OS === "ios" && { height: 30 }]}
-            onChangeText={text => setPassword(text)}
-            placeholder={strings.ENTER_PASSWORD}
-            value={password}
-            secureTextEntry={true}
-            textContentType={'newPassword'}
-            autoCompleteType={'password'}
-            onFocus={() => {
-              handleFocus(8)
-            }}
-            ref={ref => {
-              handleRef(8, ref)
-            }}
-          />
-        </View>
-
-        <View style={styles.inputField}>
-          <Image
-            source={require('../assets/ic_password.png')}
-            style={{ height: 20, width: 20 }}
-          />
-          <TextInput
-            style={[{ paddingLeft: 10, width: '100%', color: '#000' }, Platform.OS === "ios" && { height: 30 }]}
-            onChangeText={text => setPassword2(text)}
-            placeholder={strings.CONFIRM_PASSWORD}
-            value={password2}
-            secureTextEntry={true}
-            textContentType={'newPassword'}
-            autoCompleteType={'password'}
-            onFocus={() => {
-              handleFocus(9)
-            }}
-            ref={ref => {
-              handleRef(9, ref)
-            }}
-          />
-        </View> */}
 
         {error ? (
           <View style={{ flex: 1, padding: 20 }}>
@@ -963,8 +719,6 @@ function SeekerSignup({ navigation, route }) {
         avoidKeyboard={Platform.OS == 'android'}
         style={Platform.OS == "android" ? { top: 0 } : { top: isIphoneX ? keyboardHeight > 301 ? -310 : -270 : keyboardHeight > 216 ? -260 : -230 }}
       />
-      {/* </KeyboardAvoidingView> */}
-
     </SafeAreaView>
   )
 }
