@@ -18,18 +18,15 @@ import {
 } from "react-native-responsive-screen";
 import * as ImagePicker from 'expo-image-picker'
 import { countries } from './utils/consts.js'
-import { postFormData, postJSON, putJSON } from './utils/network.js'
+import { postJSON } from './utils/network.js'
 import * as Location from 'expo-location'
-import { setUser, setToken } from './utils/utils.js'
 import { KeyboardAccessoryNavigation, KeyboardAccessoryView } from 'react-native-keyboard-accessory'
 import { strings } from './translation/config'
-import { AuthContext } from './navigation/context'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import DeviceInfo from 'react-native-device-info';
 import parsePhoneNumber from 'libphonenumber-js'
 import examples from 'libphonenumber-js/examples.mobile.json'
 import { getExampleNumber } from 'libphonenumber-js';
-// import CommonUtils from './utils/CommonUtils';
 import Loader from './components/Loader';
 import { heightPercentageToDP } from 'react-native-responsive-screen'
 const isIphoneX = DeviceInfo.hasNotch();
@@ -39,7 +36,6 @@ function SeekerSignup({ navigation, route }) {
   const [modalVisible, setModalVisible] = useState(false)
   const [location, setLocation] = useState(null)
   const [error, setError] = useState('')
-  const [image, setImage] = useState(null)
 
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
@@ -51,14 +47,11 @@ function SeekerSignup({ navigation, route }) {
   const [phCode, setPhCode] = useState('1')
   const [phone, setPhone] = useState('')
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [password2, setPassword2] = useState('')
   const [activeInputIndex, setActiveInputIndex] = useState(0)
   const [inputs, setInputs] = useState([])
   const [nextFocusDisabled, setNextFocusDisabled] = useState(false)
   const [previousFocusDisabled, setPreviousFocusDisabled] = useState(false)
 
-  const [currentScroll, setCurrentScroll] = useState(null);
   const [phoneMaxLength, setPhoneMaxLength] = useState(20);
   const [phCountryCode, setPhCountryCode] = useState("US");
   const [keyboardHeight, setKeyboardHeight] = useState(301);
@@ -143,22 +136,6 @@ function SeekerSignup({ navigation, route }) {
 
   }
 
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: false,
-      aspect: [4, 3],
-      quality: 1
-    })
-
-    // console.log(result);
-
-    if (!result.cancelled) {
-      setImage(result.uri)
-    }
-    // console.log(image)
-  }
-
   function formatPhone(str) {
     // let cleaned = str.replace(/\D/g, '')
     // let match = cleaned.match(/^(\d{3})(\d{3})(\d+)$/)
@@ -239,14 +216,14 @@ function SeekerSignup({ navigation, route }) {
           email: email,
           phone: phone
       }
-        console.log('body in signup page ', body);
-        console.log("route ", route)
         const res = await postJSON("/job-seeker/profile", body)
-        console.log('res in signup page ',res)
         const json = await res.json();
-        console.log('json data ',json)
-        if (res.status == 200) {
-          navigation.navigate('SeekerFinishRegistration',{token: defaultToken})
+        if (json.token) {
+          navigation.navigate('SeekerFinishRegistration',{token: json.token, user: json.user});
+        } else if (json.errors && json.errors.email) {
+          setError(json.errors.email[0]);
+        } else if (json.message) {
+          setError('The Phone number is already been registered use another Phone number.');
         }
       } catch (error) {
         Alert.alert('Error Over Here ',error)
@@ -259,101 +236,6 @@ function SeekerSignup({ navigation, route }) {
     }
   }
 
-  function handleSignup() {
-
-    navigation.navigate('SeekerFinishRegistration')
-    return 
-
-    if (validation() == true) {
-      if (
-        firstName &&
-        lastName &&
-        address &&
-        city &&
-        state &&
-        email 
-      ) {
-        if (password == password2 && password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/)) {
-          let token = deviceToken(128)
-          // let token = CommonUtils.deviceToken;
-          let form = new FormData()
-          form.append('first_name', firstName)
-          form.append('last_name', lastName)
-          form.append('address', address)
-          form.append('email', email)
-          form.append('city', city)
-          form.append('state', state)
-          form.append('country', country)
-          form.append('phone', phCode + ' ' + formatPhone(phone))
-          form.append('user_type', '2')
-          form.append('password', password)
-          form.append('device_tocken', token)
-          if (image) {
-            form.append('avatar_image', {
-              uri: image,
-              name: 'avatar.jpg',
-              type: 'image/jpeg'
-            })
-          }
-
-          form.append('zip_code', zipcode)
-          console.log(form);
-          setLoading(true);
-
-          postFormData('user_register', form)
-            .then(res => {
-              if(res.status==200){
-                return res.json();
-              }else{
-                setLoading(false);
-          Alert.alert('Error','Profile image is too large.')
-
-          return res.text()
-              }
-            })
-            .then(json => {
-              console.log('Registration', json)
-              if (json.status_code == '200') {
-                setError('')
-                setUser(json.data)
-                setToken(token);
-                setLoading(false);
-
-                navigation.navigate('SeekerVerificationCode', {
-                  number: phCode + ' ' + phone,
-                  email: email,
-                  otp: json.otp,
-                  userId: json.data.user_id
-                })
-              } else {
-                if (json.msg) {
-                  setError(json.msg)
-                } else {
-                  setError(json)
-                }
-              }
-            })
-            .catch(err => {
-              console.log(err)
-            });
-            
-        } else {
-          if (!password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/)) {
-            Alert.alert("Error", strings.PASSWORD_ERROR_2);
-          } else {
-            Alert.alert("Error", strings.PASSWORD_ERROR);
-          }
-        }
-      } else {
-        if (password !== password2) {
-          setError(strings.PASSWORD_ERROR)
-        } else {
-          setError(strings.PLEASE_FILL_MISSING)
-        }
-      }
-    }
-  }
-
   function isValidatePresence(string) {
 
     return string.trim();
@@ -361,11 +243,6 @@ function SeekerSignup({ navigation, route }) {
   }
 
   function validation() {
-    // if (!image) {
-    //   Alert.alert("Error...", "Please select profile picture before continuing!")
-    //   return false
-    // }
-
     if (!firstName || isValidatePresence(firstName) == "") {
       Alert.alert("Error...", "Enter a valid First name before continuing!")
       return false
@@ -407,29 +284,10 @@ function SeekerSignup({ navigation, route }) {
       Alert.alert("Error...", "Enter a valid email before continuing!")
       return false
     }
-
-    // else if (!password || isValidatePresence(password) == "") {
-    //   Alert.alert("Error...", "Enter a valid password before continuing!")
-    //   return false
-    // }
-    // else if (!password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/)) {
-    //   Alert.alert("Error...", strings.PASSWORD_ERROR_2)
-    //   return false
-    // }
-
-    // else if (password !== password2) {
-    //   Alert.alert("Error...", "Passwords don't match")
-    //   return false
-    // }
-
-
     else {
       return true
     }
   }
-
-
-
 
   // function onSelectCountry(country){
   //   setCountry(country);
@@ -460,8 +318,6 @@ function SeekerSignup({ navigation, route }) {
   function gotoPrivacyPolicy() {
     Linking.openURL('https://app.apployme.com/privacy_policy')
   }
-
-
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -651,12 +507,6 @@ function SeekerSignup({ navigation, route }) {
             />
           </View>
         </View> 
-
-        {/* <Text
-          style={{ color: '#7364BF', paddingTop: 10, paddingBottom: 20 }}
-        >
-          {strings.FOR_RECEIVING_INTERVIEW_CALLS}
-        </Text> */}
 
         <View style={styles.inputField}>
           <Image

@@ -30,7 +30,6 @@ import { AuthContext } from "./navigation/context";
 import CommonUtils from "./utils/CommonUtils.js";
 import { Platform } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
-import { UserData } from "./redux/models/User.js";
 
 function SeekerHome({ navigation }) {
   const isFocused = useIsFocused();
@@ -266,9 +265,7 @@ function SeekerHome({ navigation }) {
 
   async function getHiringLocations(){
     try {
-      // const res = await getRequest(`/job-seeker/locations/list?lng=${longitude}&lat=${latitude}`,userData?.token)
-      console.log('user data yessssssssss', userData);
-      setUser(userData.profile)
+      setUser(userData)
       const res = await getRequest(`/job-seeker/location/list?lng=0&lat=0`,userData?.token)
       const json = await res.json()
       if(json.data?.length > 0){

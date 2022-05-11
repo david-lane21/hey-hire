@@ -22,18 +22,17 @@ import { useDispatch } from "react-redux";
 import * as ImagePicker from "expo-image-picker";
 import Constants from "expo-constants";
 import { educationLevels, countries, languages } from "./utils/consts.js";
-import { getUser, setUser, getToken } from "./utils/utils.js";
-import { postFormData, getRequest } from "./utils/network.js";
+import { getUser, setUser,removeUser } from "./utils/utils.js";
+import { getRequest, putJSON } from "./utils/network.js";
 import RNPickerSelect from "react-native-picker-select";
 import { useIsFocused } from "@react-navigation/native";
 import { KeyboardAccessoryNavigation } from "react-native-keyboard-accessory";
 import { strings } from "./translation/config";
-import { AuthContext } from "./navigation/context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import DeviceInfo from "react-native-device-info";
 import { Alert } from "react-native";
 const isIphoneX = DeviceInfo.hasNotch();
-function SeekerFinishRegistration({ navigation }) {
+function SeekerFinishRegistration({ navigation, route }) {
   const scrollViewRef = useRef();
 
   const isFocused = useIsFocused();
@@ -46,21 +45,9 @@ function SeekerFinishRegistration({ navigation }) {
   const [search, setSearch] = useState("");
   const [filteredLangs, setFilteredLangs] = useState(languages);
 
-  const [user, setUser1] = useState({});
-  const [deviceToken, setDeviceToken] = useState("");
-  const [profile, setProfile] = useState({});
   const [image, setImage] = useState(null);
 
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [address, setAddress] = useState("");
   const [country, setCountry] = useState("US");
-  const [state, setState] = useState("");
-  const [city, setCity] = useState("");
-  const [zipcode, setZipcode] = useState("");
-  const [phCode, setPhCode] = useState("1");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
   const [bio, setBio] = useState("");
   const [skills, setSkills] = useState([]);
   const [eduLevel, setEduLevel] = useState("");
@@ -85,9 +72,6 @@ function SeekerFinishRegistration({ navigation }) {
   const [categoriesList, setCategoriesList] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const dispatch = useDispatch();
-  const [currentScroll, setCurrentScroll] = useState(null);
-
-  const { signIn } = React.useContext(AuthContext);
 
   const BIO_PLACEHOLDER = `Example: Greetings, my name is Benjamin, I am 20 years old. I am currently studying my degree at UT, TX.
   I am a hard working overachiever. And I know I will only benefit your business goals and accomplishments. I have past experience working in the kitchen, as my past job was at Mario’s Pizza downtown. I am easy going, and will bring only good and positive vibes in to your business, I would gladly appreciate it you consider my submission and set an interview this following week! Thanks for reading and hope to see you soon!`;
@@ -106,31 +90,13 @@ function SeekerFinishRegistration({ navigation }) {
   }, []);
 
   function getJobCategories() {
-    console.log("goes in get job category ");
-    let form = new FormData();
-    form.append("user_token", user.user_token);
-    form.append("user_id", user.user_id);
-    getRequest("/job-seeker/business-category", userData.token)
+    getRequest("/job-seeker/business-category", route.params.token)
       .then((res) => {
         console.log("ressss while  getting jobs categories ", res);
         return res.json();
       })
       .then((json) => {
         const jsonCategories = json.data;
-        let tempBusinessCategories = tempProfile.preferred_business_categories
-          ? tempProfile.preferred_business_categories.split(",")
-          : null;
-        if (tempBusinessCategories) {
-          tempBusinessCategories.map((item) => {
-            jsonCategories.map((businessCategory) => {
-              if (businessCategory.id == item) {
-                businessCategory.selected = true;
-              }
-            });
-          });
-        }
-        const _selectedCategories = jsonCategories.filter(item => item.selected);
-        setSelectedCategories(_selectedCategories);    
         setCategoriesList(jsonCategories);
       });
   }
@@ -236,219 +202,70 @@ function SeekerFinishRegistration({ navigation }) {
     setModalVisible2(false);
   }
 
-  useEffect(() => {
-    loadAllData();
-  }, []);
-
-  useEffect(() => {
-    // console.log(isFocused)
-    if (isFocused) {
-      loadData();
-    }
-  }, [isFocused]);
-
-  function loadAllData() {
-    getUser().then((u) => {
-      let u2 = JSON.parse(u);
-      // console.log(u2)
-      setUser1(u2);
-      getToken().then((t) => setDeviceToken(t));
-      let form = new FormData();
-      form.append("user_token", u2.user_token);
-      form.append("user_id", u2.user_id);
-
-      postFormData("user_profile", form)
-        .then((res) => {
-          // console.log('step 1')
-          return res.json();
-        })
-        .then((json) => {
-          // console.log('step 2')
-          console.log(json.data);
-          setProfile(json.data);
-          let p = json.data.phone.split(" ");
-          let p1 = p[0].replace(/\+/g, "");
-          let p2 = p[1] + " " + p[2];
-          setFirstName(json.data.first_name);
-          setLastName(json.data.last_name);
-          setAddress(json.data.address);
-          setCountry(json.data.country);
-          setState(json.data.state);
-          setCity(json.data.city);
-          setZipcode(json.data.zip_code);
-          setPhCode(p1);
-          setPhone(p2);
-          setEmail(json.data.email);
-          setBio(json.data.bio);
-          setSkills(json.data.skill);
-          setEduLevel(json.data.education_level);
-          setInstitution(json.data.education);
-          setCertificate(json.data.certificate);
-          setImage(json.data.avatar_image);
-          if (json.data.language) {
-            setlangs(json.data.language);
-          } else {
-            setlangs("");
-          }
-
-          setAvailability(json.data.availability);
-          setEligible(json.data.eligible);
-          setSixteen(json.data.sixteen);
-          setConvictions(json.data.convictions);
-          setPositions(json.data.position);
-          setCovid_vaccinated(json.data.covid_vaccinated)
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    });
-  }
-
-  function loadData() {
-    getUser().then((u) => {
-      let u2 = JSON.parse(u);
-      // console.log(u2)
-      setUser1(u2);
-      getToken().then((t) => setDeviceToken(t));
-      let form = new FormData();
-      form.append("user_token", u2.user_token);
-      form.append("user_id", u2.user_id);
-
-      postFormData("user_profile", form)
-        .then((res) => {
-          return res.json();
-        })
-        .then((json) => {
-          console.log(json.data);
-
-          setPositions(json.data.position);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    });
-  }
-
   async function handleUpdate() {
-    try {
-      const body = {
-        //first_name: firstName,
-        //last_name: lastName,
-        //address: address,
-        //zip_code: zipcode,
-        //state: state,
-        //city: city,
-        //email,
-        note: bio,
-        country,
-        availability: availability,
-        education: institution,
-        education_level: eduLevel,
-        certificate: certificate,
-        language: langs,
-        eligible: eligible || false,
-        sixteen: sixteen || false,
-        convictions: convictions || false,
-        covid_vaccinated: covid_vaccinated || false,
-        skill: skills.toString(),
-        //instagram_connected: isInstagramConnect,
-        preferred_business_categories: categoriesList
-          .filter((item) => item.selected)
-          .map((item) => item.id)
-          .toString(),
-      };
-      console.log("updateProfile -> body", body);
-      setLoading(true);
-      //const res = await putJSON("/job-seeker/profile/1", body, userData.token);
-      //console.log("res", res);
-      //const json = await res.json();
-      //console.log("json", json);
-      setLoading(false);
-      dispatch({ type: "UserData/setState", payload: { profile: json.data } });
-    } catch (error) {
-      setLoading(false);
-      Alert.alert("Error", JSON.stringify(error));
-      console.log("error while updating profile", JSON.stringify(error));
-    }
-  }
-/*
-  function handleUpdate() {
-    console.log(validation())
-    if (validation() == true) {
-      if (bio) {
-        let form = new FormData();
-        form.append("first_name", firstName);
-        form.append("last_name", lastName);
-        form.append("address", address);
-        form.append("email", email);
-        form.append("city", city);
-        form.append("bio", bio);
-        form.append("zip_code", zipcode);
-        form.append("state", state);
-        form.append("country", country);
-        form.append("phone", phCode + " " + phone);
-        form.append("user_type", "2");
-        form.append("user_token", user.user_token);
-        form.append("user_id", user.user_id);
-        form.append("device_tocken", deviceToken);
-        if (image) {
-          form.append("avatar_image", {
-            uri: image,
-            name: "avatar.jpg",
-            type: "image/jpeg",
-          });
-        }
-
-        form.append("availability", availability);
-        form.append("education", institution);
-        form.append("education_level", eduLevel);
-        form.append("certificate", certificate);
-        form.append("language", langs);
-        form.append("eligible", eligible || false);
-        form.append("sixteen", sixteen || false);
-        form.append("convictions", convictions || false);
-        form.append("covid_vaccinated",covid_vaccinated || false);
-        form.append("skill", skills.toString());
-        form.append(
-          "preferred_business_categories",
-          categoriesList
+    if (validation() === true) {
+      try {
+        const body = {
+          note: bio,
+          country,
+          availability: availability,
+          education: institution,
+          education_level: eduLevel,
+          certificate: certificate,
+          language: langs,
+          eligible: eligible || false,
+          sixteen: sixteen || false,
+          convictions: convictions || false,
+          covid_vaccinated: covid_vaccinated || false,
+          skill: skills.toString(),
+          preferred_business_categories: categoriesList
             .filter((item) => item.selected)
-            .map((item) => item.category_id)
-            .toString()
-        );
+            .map((item) => item.id)
+            .toString(),
+        };
         setLoading(true);
-
-        postFormData("update_user", form)
-          .then((res) => {
-            return res.json();
-          })
-          .then((json) => {
-            console.log(json);
-            setLoading(false);
-
-            if (json.status_code != "200") {
-              setError(json.msg);
-            } else {
-              setUser(json.data);
-              // navigation.goBack()
-              signIn(json.data);
-
-              // navigation.navigate("Seeker");
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      } else {
-        Alert.alert('Error...', 'Please fill bio about you before continuing!')
+        const res = await putJSON(`/job-seeker/profile/${route.params.user.id}`, body, route.params.token);
+        const json = await res.json();
+        setLoading(false);
+        const _user = {
+          token: route.params.token,
+          profile: json.data,
+        }
+        getUser().then((u) => {
+          let u2 = JSON.parse(u);
+          if(u2) {
+            removeUser().then((_u) => {
+              setUser(_user);
+            })
+          } else {
+            setUser(_user);
+          }
+        });
+        dispatch({type: 'UserData/setState',payload: {profile: json.data, token: route.params.token}});
+      } catch (error) {
+        setLoading(false);
+        Alert.alert("Error", JSON.stringify(error));
+        console.log("error while updating profile", JSON.stringify(error));
       }
+    } else{
+      setError(strings.PLEASE_FILL_MISSING)
     }
   }
-*/
+
   function validation() {
+
+    // if (!image) {
+    //   Alert.alert("Error...", "Please select profile picture before continuing!")
+    //   return false
+    // }
 
     if (!bio) {
       Alert.alert("Error...", "Please enter Bio")
+      return false
+    }
+
+    if (bio && bio.length < 200) {
+      Alert.alert("Error...", "Please enter atleast 200 characters in your Bio")
       return false
     }
 
@@ -468,8 +285,18 @@ function SeekerFinishRegistration({ navigation }) {
       return false
     }
 
+    else if (!institution) {
+      Alert.alert("Error...", "Please enter Institution name where you studied")
+      return false
+    }
+
     else if (!availability) {
       Alert.alert("Error...", "Please select availability.")
+      return false
+    }
+
+    else if (!sixteen) {
+      Alert.alert("Error...", "You should be atleast 16 years old")
       return false
     }
 
@@ -482,14 +309,6 @@ function SeekerFinishRegistration({ navigation }) {
     setActiveInputIndex(index);
     setNextFocusDisabled(index === inputs.length - 1);
     setPreviousFocusDisabled(index === 0);
-    // const inputHandle = findNodeHandle(inputs[index]);
-    // var scrollResponder = scrollViewRef.current.getScrollResponder();
-
-    // scrollResponder.scrollResponderScrollNativeHandleToKeyboard(
-    //   inputHandle, // The TextInput node handle
-    //   480, // The scroll view's bottom "contentInset" (default 0)
-    //   true // Prevent negative scrolling
-    // );
   }
 
   function handleFocusNext() {
@@ -508,34 +327,6 @@ function SeekerFinishRegistration({ navigation }) {
       setTimeout(() => {
         setMultiline(true);
       }, 1000);
-    }
-  }
-
-  function addSkill() {
-    let tempSkills = skills;
-    if (skill && skill.trim() != "") {
-      tempSkills.push(skill);
-      setSkills(tempSkills);
-      setSkill("");
-    }
-  }
-
-  function deleteSkil(index) {
-    let tempSkills = skills;
-    skills.splice(index, 1);
-    setSkills((oldArray) => [...tempSkills]);
-  }
-
-  function onChangeSkill(text) {
-    console.log(text.indexOf(","));
-    let commaIndex = text.indexOf(",");
-    if (commaIndex > 0) {
-      let tempSkills = skills;
-      tempSkills.push(text.substring(0, commaIndex));
-      setSkills(tempSkills);
-      setSkill("");
-    } else {
-      setSkill(text);
     }
   }
 

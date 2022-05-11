@@ -82,7 +82,7 @@ function SeekerEditProfile({ navigation, route }) {
   const [city, setCity] = useState(tempProfile.city);
   const [zipcode, setZipcode] = useState(tempProfile.zip_code);
   const [phCode, setPhCode] = useState("");
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState(tempProfile.phone);
   const [email, setEmail] = useState(tempProfile.email);
   const [bio, setBio] = useState(tempProfile.note);
   const [skills, setSkills] = useState(tempProfile.skill ? tempProfile.skill.split(',') : []);
@@ -377,7 +377,7 @@ function SeekerEditProfile({ navigation, route }) {
       };
       console.log("updateProfile -> body", body);
       setLoading(true);
-      const res = await putJSON("/job-seeker/profile/1", body, userData.token);
+      const res = await putJSON(`/job-seeker/profile/${userData.profile.id}`, body, userData.token);
       console.log("res", res);
       const json = await res.json();
       console.log("json", json);

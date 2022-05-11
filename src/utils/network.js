@@ -99,14 +99,14 @@ export async function putFormData(url, form){
 
 export async function postJSON(url, json, token){
   let headers = {
-    "Content-Type": "application/json", 
+    "Content-Type": "application/json",
     "Access-Control-Allow-Origin": "*",
+    "Accept": "application/json"
     // "Authorization": localStorage.token
   }
   if(token){
     headers['Authorization'] = `Bearer ${token}`
   }
-
   let response = await fetch(API_URL(url), {
     method: "POST", 
     mode: "cors", 
@@ -141,7 +141,6 @@ export async function putJSON(url, json, token){
     referrer: "no-referrer",
     body: JSON.stringify(json)
   })
-
   return response
 }
 

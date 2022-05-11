@@ -180,7 +180,7 @@ export function AppNavigation({ navigation }) {
 
   const getUserProfile = async () => {
     try {
-    const res = await getRequest("/job-seeker/profile/1",userData.token)
+    const res = await getRequest(`/job-seeker/profile/${userData.profile.id}`,userData.token)
       const json = await res.json()
       dispatch({type: 'UserData/setState',payload: {profile: json.data}})
     } catch (error) {
