@@ -219,7 +219,7 @@ function SeekerSignup({ navigation, route }) {
         const res = await postJSON("/job-seeker/profile", body)
         const json = await res.json();
         if (json.token) {
-          navigation.navigate('SeekerFinishRegistration',{token: json.token, user: json.user});
+          navigation.navigate('SeekerFinishRegistration',{token: json.token, user: json.user, profile: body});
         } else if (json.errors && json.errors.email) {
           setError(json.errors.email[0]);
         } else if (json.message) {

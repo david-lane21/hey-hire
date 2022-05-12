@@ -206,6 +206,10 @@ function SeekerFinishRegistration({ navigation, route }) {
     if (validation() === true) {
       try {
         const body = {
+          address: route.params.profile.address,
+          zip_code: route.params.profile.zip_code,
+          state: route.params.profile.state,
+          city: route.params.profile.city,
           note: bio,
           country,
           availability: availability,
@@ -223,6 +227,7 @@ function SeekerFinishRegistration({ navigation, route }) {
             .map((item) => item.id)
             .toString(),
         };
+        console.log('body', body);
         setLoading(true);
         const res = await putJSON(`/job-seeker/profile/${route.params.user.id}`, body, route.params.token);
         const json = await res.json();

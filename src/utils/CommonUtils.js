@@ -64,12 +64,11 @@ class CommonUtil {
     getUser().then((u) => {
       let u2 = JSON.parse(u);
 
-  console.log(u2)
 
     let form = new FormData();
     
-    form.append("user_token", u2.user_token);
-    form.append("user_id", u2.user_id);
+    form.append("user_token", u2.token);
+    form.append("user_id", u2.profile.id);
     form.append("latitude",latitude);
     form.append("longitude",longitude);
     console.log(form,this.long,this.lat)
@@ -81,7 +80,7 @@ class CommonUtil {
       console.log('Update user location',json)
     })
     .catch((err) => {
-      console.log('Update user location Error',err);
+      console.log('Update user location Error', JSON.stringify(err));
     });
   });
   }

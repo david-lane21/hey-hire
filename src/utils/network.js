@@ -144,7 +144,7 @@ export async function putJSON(url, json, token){
   return response
 }
 
-export async function deleteJSON(url){
+export async function deleteJSON(url, token){
 
   let headers = {
     "Content-Type": "application/json", 

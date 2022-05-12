@@ -13,14 +13,19 @@ import {
   Dimensions,
   Platform
 } from "react-native";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 import { useSelector } from "react-redux";
 import { getUser } from "./utils/utils.js";
-import { postFormData, getRequest } from "./utils/network.js";
+import { postFormData, getRequest, postJSON, deleteJSON } from "./utils/network.js";
 import { LinearGradient } from "expo-linear-gradient";
 import { useIsFocused } from "@react-navigation/native";
 const window = Dimensions.get("window");
 import Header from "./components/Header";
 import { strings } from "./translation/config";
+import { FlatList } from "react-native-gesture-handler";
 
 function SeekerAvailableJobs({ route, navigation }) {
   // const [bizId, setBizId] = useState(route.params.biz_id)
@@ -28,62 +33,90 @@ function SeekerAvailableJobs({ route, navigation }) {
   const [user, setUser] = useState({});
   const [profile, setProfile] = useState({});
   const [jobs, setJobs] = useState([]);
+  const [allJobsList, setAllJobsList] = useState([]);
+  const [toggleJobsList, setToggleJobsList] = useState(false);
   const [error, setError] = useState(null);
   const [jobError, setJobError] = useState(null);
   const [refresh, setRefresh] = useState(false);
   const userData = useSelector(state => state.UserData)
+  const [favoriteJobs, setFavoriteJobs] = useState([]);
 
   useEffect(() => {
-    // console.log(isFocused)   }
     loadDate();
-  }, [isFocused]);
+  }, []);
+
+  useEffect(() => {
+    setJobsList()
+  }, [favoriteJobs])
 
   function loadDate() {
     console.log(route.params.biz_id);
     setRefresh(true);
-    getUser().then((u) => {
+    getUser().then(async (u) => {
       let u2 = JSON.parse(u);
-      // console.log(u2)
+      console.log('loadDate -> u2', u2)
       setUser(u2);
-
-      getRequest(`/job-seeker/location/${route.params.biz_id}`, userData.token)
-        .then((res) => {
-          return res.json();
-        })
-        .then((json) => {
-          setRefresh(false);
-
-          console.log("-----------");
-          console.log(json.data);
-          console.log("+++++++++++");
-
-          if (json.data && typeof json.data == "object") {
-            setProfile(json.data);
-
-            // if (json.data.is_active == "1") {
-              if (json.data.positions.length == 0) {
-                setJobError(
-                  "This business is currently not hiring. But don't worry, there are many more businesses to work at on our network! Keep hunting!"
-                );
-              } else {
-                setJobs(json.data.positions);
-              }
-            /*} else if (json.data.is_active == "1" && json.data.job_count == 0) {
-              setError("We're sorry, this business is currently inactive.");
-            } else if (is_active == 0 || job_count == 0) {
-              setJobError(
-                "This business is currently not hiring. But don't worry, there are many more businesses to work at on our network! Keep hunting!"
-              );
-            }
-            */
-          } else {
-            setError("We're sorry, this business is currently inactive.");
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      await loadJobs();
     });
+  }
+
+  function loadJobs() {
+    getRequest(`/job-seeker/location/${route.params.biz_id}`, userData.token)
+    .then((res) => {
+      return res.json();
+    })
+    .then(async (json) => {
+      setRefresh(false);
+      if (json.data && typeof json.data == "object") {
+        setProfile(json.data);
+          if (json.data.positions.length == 0) {
+            setJobError(
+              "This business is currently not hiring. But don't worry, there are many more businesses to work at on our network! Keep hunting!"
+            );
+          } else {
+            await setJobs(json.data.positions);
+            await loadFavoriteJobs();
+          }
+      } else {
+        setError("We're sorry, this business is currently inactive.");
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }
+
+  function loadFavoriteJobs() {
+    getRequest(`/job-seeker/favorite/`, userData.token)
+    .then((res) => {
+      return res.json();
+    })
+    .then((json) => {
+      setRefresh(false);
+      console.log('loadFavoriteJobs -> json', json);
+      if (json.data && typeof json.data == "object") {
+        setFavoriteJobs(json.data);
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }
+
+  function setJobsList() {
+    console.log('loadFavoriteJobs -> is and object -> json', favoriteJobs);
+    let findJob = jobs.map((item) => {
+      favoriteJobs.map((job) => {
+        if (item.id == job.job_id) {
+          if(!item.like) {
+            item.like = 1;
+          }
+        }  
+      })
+      return item;
+    });
+    console.log('loadFavoriteJobs -> findJob', findJob);
+    setJobs((jobs) => [...findJob]);
   }
 
   function isApplied(job) {
@@ -92,6 +125,18 @@ function SeekerAvailableJobs({ route, navigation }) {
       return true;
     }
     return false;
+  }
+
+  function setCurrentJobsList() {
+    let favoriteJobs = jobs.filter(item => item.like);
+    if(!toggleJobsList) {
+      setToggleJobsList(true);
+      setAllJobsList(jobs);
+      setJobs(favoriteJobs);
+    } else {
+      setToggleJobsList(false);
+      setJobs(allJobsList);      
+    }
   }
 
   function getHired(job) {
@@ -108,24 +153,21 @@ function SeekerAvailableJobs({ route, navigation }) {
   }
 
   function addWishlist(job) {
-    let form = new FormData();
-    form.append("user_token", userData.token);
-    form.append("user_id", userData.profile.id);
-    form.append("job_id", job.id);
-
-    let url = "/add_like";
-    if (job.like == 1) {
-      url = "/remove_like";
-    }
-
-    postFormData(url, form)
+    console.log('addWishlist -> job', job);
+    if (!job.like) {
+      const body = {
+        job_id: job.id
+      }
+      // const res = await postJSON("/job-seeker/favorite", body, userData.token);
+      postJSON("/job-seeker/favorite", body, userData.token)
       .then((res) => {
+        console.log('addWishlist -> like -> res', res);
         return res.json();
       })
       .then((json) => {
-        // console.log('-----------')
-        console.log(url, json);
-        if (json.status_code == 200) {
+        console.log('addWishlist -> like -> json', json);
+        if (json.data && json.data.job_id) {
+          console.log('addWishlist -> like ->  if json_id', json);
           let findJob = jobs.map((item) => {
             if (item.id == job.id) {
               if (job.like == 1) {
@@ -136,15 +178,120 @@ function SeekerAvailableJobs({ route, navigation }) {
             }
             return item;
           });
+          console.log('addWishlist -> findJob', findJob);
           setJobs((jobs) => [...findJob]);
         }
-        // Alert.alert("", json.msg);
-        // console.log('+++++++++++')
       })
       .catch((err) => {
         console.log(err);
       });
+    } else {
+      deleteJSON(`/job-seeker/favorite/${job.id}`, userData.token)
+      .then((res) => {
+        console.log('addWishlist -> like -> res', res);
+        return res.json();
+      })
+      .then((json) => {
+        console.log('delete -> json', json);
+          let findJob = jobs.map((item) => {
+            if (item.id == job.id) {
+              if (job.like == 1) {
+                item.like = 0;
+              }
+            }
+            return item;
+          });
+          setJobs((jobs) => [...findJob]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    }
   }
+
+  const renderItem = ({ item }) => (
+    <View
+      style={{
+        padding: 15,
+        borderWidth: 1,
+        borderColor: "#eee",
+        borderRadius: 12,
+        marginBottom: 5,
+      }}
+    >
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          // justifyContent:'space-between'
+        }}
+      >
+        <View style={{  }}>
+          <Image
+            source={{ uri: profile.avatar_image }}
+            style={{
+              width: 40,
+              height: 40,
+              borderWidth: 1,
+              borderColor: "#ccc",
+              borderRadius: 50,
+            }}
+          />
+        </View>
+        <TouchableOpacity
+          onPress={() => getHired(item)}
+          style={{ marginRight:80,marginLeft:10 }}
+        >
+            <Text
+              style={{
+                fontSize: 18,
+                color: "#222",
+                marginBottom: 5,
+                fontWeight: Platform.OS === 'ios' ? '600' : 'bold'
+              }}
+            >
+              {item.title}
+            </Text>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <Image
+                source={require("../assets/ic_location.png")}
+                style={{
+                  width: 13,
+                  height: 13,
+                  marginRight: 5,
+                }}
+              />
+              <Text style={{ fontSize: 12, color: "#999", }}>
+                {profile.address.address}
+              </Text>
+            </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => addWishlist(item)} style={{position:'absolute', right:0}}>
+          <View style={{ width: 40 }}>
+            {item.like == "1" ? (
+              <Image
+                source={require("../assets/ic_heart_purple_header.png")}
+                style={{ width: 30, height: 30 }}
+                resizeMode={"stretch"}
+              />
+            ) : (
+              <Image
+                source={require("../assets/ic_heart_gray_header.png")}
+                style={{ width: 30, height: 30 }}
+                resizeMode={"stretch"}
+              />
+            )}
+          </View>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
 
   return (
     <LinearGradient style={{ flex: 1 }} colors={["#4E35AE", "#775ED7"]}>
@@ -164,14 +311,14 @@ function SeekerAvailableJobs({ route, navigation }) {
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Image
                 source={require("../assets/ic_back_w.png")}
-                style={{ width: 28, height: 25, marginLeft: 10 }}
+                style={{ width: 20, height: 20, marginLeft: 10, resizeMode: 'contain' }}
               />
             </TouchableOpacity>
           </View>
           <View style={{ width: "33.3%" }}>
             <Image
-              source={require("../assets/title_header.png")}
-              style={{ width: 120, height: 25 }}
+              source={require("../assets/heyhireFullWhite.png")}
+              style={{ width: 120, height: 25, resizeMode: 'contain' }}
             />
           </View>
           <View
@@ -183,11 +330,18 @@ function SeekerAvailableJobs({ route, navigation }) {
           >
             <TouchableOpacity
               onPress={() =>
+                setCurrentJobsList()
+                /*
                 navigation.navigate("SeekerLinks", {
                   screen: "SeekerEditProfile",
-                })
+                })*/
               }
-            ></TouchableOpacity>
+            >
+              <Image
+                source={toggleJobsList ? require("../assets/ic_heart_filled_w.png") : require("../assets/ic_heart_blank.png")}
+                style={{ width: 28, height: 25, marginLeft: 15, resizeMode: 'contain' }}
+              />
+            </TouchableOpacity>
           </View>
         </View>
         <ScrollView
@@ -224,7 +378,7 @@ function SeekerAvailableJobs({ route, navigation }) {
               >
                 <View style={{ flex: 1, alignItems: "center", padding: 20 }}>
                   <ImageBackground
-                    source={require("../assets/img_ring.png")}
+                    source={require("../assets/buisness_image_container.png")}
                     style={{
                       width: 136,
                       height: 136,
@@ -248,7 +402,7 @@ function SeekerAvailableJobs({ route, navigation }) {
                 >
                   {profile.company && (
                     <Text
-                      style={{ color: "#fff", fontSize: 22, textAlign: "center" }}
+                      style={{ color: "#fff", fontSize: 22, textAlign: "center", fontWeight: 'bold' }}
                     >
                       {profile.company.name}
                     </Text>
@@ -264,16 +418,16 @@ function SeekerAvailableJobs({ route, navigation }) {
                   }}
                 >
                   <Image
-                    source={require("../assets/ic_location.png")}
+                    source={require("../assets/location_white.png")}
                     style={{
-                      width: 15,
-                      height: 15,
+                      width: 12,
+                      height: 12,
                       marginTop: 10,
-                      marginRight: 6,
+                      resizeMode: 'contain'
                     }}
                   />
                   {profile.address && (
-                    <Text style={{ color: "#fff", marginTop: 10 }}>
+                    <Text style={{ color: "#fff", marginTop: 10, fontSize: 13, fontWeight: '600' }}>
                       {profile.address.address}
                     </Text>
                   )}
@@ -291,10 +445,10 @@ function SeekerAvailableJobs({ route, navigation }) {
                 <View
                   style={{
                     flex: 1,
-                    flexDirection: "row",
                     alignItems: "center",
                     justifyContent: "center",
-                    padding: 30,
+                    paddingBottom: hp('7%'),
+                    paddingTop: hp('10%')
                   }}
                 >
                   <Text
@@ -303,6 +457,7 @@ function SeekerAvailableJobs({ route, navigation }) {
                       textAlign: "center",
                       textAlign: "left",
                       fontSize: 13.5,
+                      fontWeight: '600'
                     }}
                   >
                     {profile.website}
@@ -331,103 +486,23 @@ function SeekerAvailableJobs({ route, navigation }) {
                   }}
                 >
                   <View style={{ maxWidth: "100%" }}>
-                    <Text style={{ fontSize: 22, paddingBottom: 5 }}>
-                      Currently hiring for:
+                    <Text style={{ fontSize: 22, paddingBottom: 5, fontWeight: 'bold', color: '#3D3B4E' }}>
+                      {strings.CURRENTLY_HIRING_FOR}
                     </Text>
                     <Text
-                      style={{ fontSize: 12, color: "#888", marginBottom: 30 }}
+                      style={{ fontSize: 12, color: "#BC74A9", marginBottom: 30 }}
                     >
                       {strings.TAP_JOB_TO_APPLY}
                     </Text>
                   </View>
 
                   <View style={{ flex: 1 }}>
-                    {jobs.map((j) => {
-                      return (
-                        <View
-                          key={j.id}
-                          style={{
-                            padding: 15,
-                            borderWidth: 1,
-                            borderColor: "#eee",
-                            borderRadius: 12,
-                            marginBottom: 5,
-                          }}
-                        >
-                          <View
-                            style={{
-                              flexDirection: "row",
-                              alignItems: "center",
-                              // justifyContent:'space-between'
-                            }}
-                          >
-                            <View style={{  }}>
-                              <Image
-                                source={{ uri: profile.avatar_image }}
-                                style={{
-                                  width: 40,
-                                  height: 40,
-                                  borderWidth: 1,
-                                  borderColor: "#ccc",
-                                  borderRadius: 50,
-                                }}
-                              />
-                            </View>
-                            <TouchableOpacity
-                              onPress={() => getHired(j)}
-                              style={{ marginRight:80,marginLeft:10 }}
-                            >
-                                <Text
-                                  style={{
-                                    fontSize: 18,
-                                    color: "#222",
-                                    marginBottom: 5,
-                                    fontWeight: Platform.OS === 'ios' ? '600' : 'bold'
-                                  }}
-                                >
-                                  {j.title}
-                                </Text>
-                                <View
-                                  style={{
-                                    flexDirection: "row",
-                                    alignItems: "center",
-                                  }}
-                                >
-                                  <Image
-                                    source={require("../assets/ic_location.png")}
-                                    style={{
-                                      width: 13,
-                                      height: 13,
-                                      marginRight: 5,
-                                    }}
-                                  />
-                                  <Text style={{ fontSize: 12, color: "#999", }}>
-                                    {profile.address.address}
-                                  </Text>
-                                </View>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity /*onPress={() => addWishlist(j)} style={{position:'absolute', right:0}}*/>
-                              <View style={{ width: 40 }}>
-                                {j.like == "1" ? (
-                                  <Image
-                                    source={require("../assets/ic_heart_purple_header.png")}
-                                    style={{ width: 30, height: 30 }}
-                                    resizeMode={"stretch"}
-                                  />
-                                ) : (
-                                  <Image
-                                    source={require("../assets/ic_heart_gray_header.png")}
-                                    style={{ width: 30, height: 30 }}
-                                    resizeMode={"stretch"}
-                                  />
-                                )}
-                              </View>
-                            </TouchableOpacity>
-                          </View>
-                        </View>
-                      );
-                    })}
+                    <FlatList
+                      data={jobs}
+                      renderItem={renderItem}
+                      keyExtractor={item => item.id}
+                      extraData={favoriteJobs}
+                    />
                   </View>
                 </View>
               )}
