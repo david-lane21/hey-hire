@@ -73,7 +73,7 @@ export default function AlertPopup({ visible,business, job, onClose }) {
               >
                 <Text
                   style={[
-                    { textAlign: "center", color: "rgba(255,255,255,0.8)" },
+                    { textAlign: "center", color: "#fff", fontWeight: 'bold' },
                   ]}
                 >
                   {strings.CONGRATULATIONS}
@@ -83,19 +83,20 @@ export default function AlertPopup({ visible,business, job, onClose }) {
                   style={[
                     {
                       textAlign: "center",
-                      color: "rgba(255,255,255,0.8)",
-                      marginTop: 10,
+                      color: "#fff",
+                      marginTop: 20,
                     },
                   ]}
                 >
-                  {strings.YOUR_APPLICATION_HAS_BEEN_SEND} {business.business_name}
+                  {strings.YOUR_APPLICATION_HAS_BEEN_SEND} <Text style={{fontWeight: 'bold'}}>{business.company.name}</Text>
                 </Text>
                 <Text
                   style={[
                     {
                       textAlign: "center",
-                      color: "rgba(255,255,255,0.8)",
-                      marginTop: 10,
+                      color: "#fff",
+                      marginTop: 30,
+                      paddingHorizontal: 20
                     },
                   ]}
                 >

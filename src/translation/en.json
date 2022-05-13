@@ -2,8 +2,8 @@
     "APPLOYME": "apployMe",
     "ABOUT_COMPANY": "About company",
     "START_DATE": "Start Date",
-    "POSITION_DESCRIPTION": "Position description",
-    "REQUIRED_EXPERIENCE": "Required experience",
+    "POSITION_DESCRIPTION": "Position Description",
+    "REQUIRED_EXPERIENCE": "Required Experience",
     "CLOSED_JOBS": "Closed jobs",
     "PROPRIETER": "Proprieter",
     "UPDATE_PROFILE": "Update Resume",
@@ -124,7 +124,7 @@
     "VERIFICATION_CODE": "Verification Code",
     "SUBMIT": "Submit",
     "CONGRATULATIONS": "Congratulations!",
-    "YOUR_APPLICATION_HAS_BEEN_SEND": "Your application has been sent to",
+    "YOUR_APPLICATION_HAS_BEEN_SEND": "Your Resume has been sent to",
     "THANKS": "Thanks",
     "WE_ARE_KEEPING": "We are keeping fingers crossed for you!",
     "YOU_ARE_ABOUT_TO": "You are about to apply for the",
@@ -155,7 +155,7 @@
     "CANCEL_APPLICATION":"Cancel Application",
     "CONNECT_YOUR_INSTAGRAM":"Connect your Instagram",
     "INSTRAGRAM_CONNECTED":"Instagram Connected",
-    "REQUIRED_CERTIFICATIONS":"Required certifications",
+    "REQUIRED_CERTIFICATIONS":"Required Certifications",
     "JOB_CATEGORIES":"Job Categories",
     "SELECT_JOB_CATEGORIES":"Select Job Categories",
     "ARE_VACCINATED":"Are you fully vaccinated for COVID-19?",
@@ -170,5 +170,6 @@
     "CONTINUE": "Continue",
     "VERIFICATION_CODE_TEXT": "We will send a text with a verification code.  Message and data rates may apply.  Learn what happens when your number changes.",
     "CATEGORIES_INFO_MESSAGE": "Please select the business categories that most closely match the job you’re looking to apply to. When a business posts a new job, we’ll be able to notify you. You may choose as many categories as vou like!",
-    "CERTIFICATE_INFO_MESSAGE": "Add Your Certifications by name to get a better match for a job according to your expertise"
+    "CERTIFICATE_INFO_MESSAGE": "Add Your Certifications by name to get a better match for a job according to your expertise",
+    "CONFIRM_DECISION": "Confirm your decision."
 }

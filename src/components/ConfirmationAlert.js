@@ -15,6 +15,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import {strings} from '../translation/config';
 
 export default function ConfirmationAlert({ visible,business, job,onClose,onSendCV }) {
+  console.log('ConfirmationAlert -> job', job);
+  console.log('ConfirmationAlert -> business', business);
   return (
     <Modal
       animationType="fade"
@@ -70,20 +72,26 @@ export default function ConfirmationAlert({ visible,business, job,onClose,onSend
                   marginHorizontal:20
                 }}
               >
-                <Text style={[{ textAlign: "center", color: "rgba(255,255,255,0.7)" }]}>
-                  {strings.YOU_ARE_ABOUT_TO} <Text style={{textDecorationLine:'underline',color:'#fff'}}>{job.position}</Text> {strings.POSTION_AT} <Text  style={{textDecorationLine:'underline',color:'#fff'}}>{business.business_name}</Text>
+                <Text style={[{ textAlign: "center", color: "#fff" }]}>
+                  {strings.YOU_ARE_ABOUT_TO} <Text style={{fontWeight: 'bold' ,color:'#fff'}}>{job.title}</Text> {strings.POSTION_AT} <Text  style={{fontWeight: 'bold', color:'#fff'}}>{business.company.name}</Text>
                 </Text>
+              </View>
+              <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 20}}>
+                <Text style={{textAlign: "center", color: "#fff", fontWeight: 'bold'}}>{strings.CONFIRM_DECISION}</Text>
               </View>
               <View style={{ marginVertical: 20, alignItems: "center",marginTop:30 }}>
                 <TouchableOpacity
                   style={[
                     {
+                      flexDirection: 'row',
                       width: "90%",
                       borderRadius: 30,
                       backgroundColor: "#fff",
                       borderWidth: 0.5,
                       paddingVertical: 10,
                       marginVertical: 5,
+                      justifyContent: 'center',
+                      alignItems: 'center'
                     },
                   ]}
                   onPress={() => {
@@ -101,8 +109,12 @@ export default function ConfirmationAlert({ visible,business, job,onClose,onSend
                       },
                     ]}
                   >
-                    {strings.SEND_CV}
+                    {strings.SEND_APPLICATION}
                   </Text>
+                  <Image
+                    source={require("../../assets/ic_checked.png")}
+                    style={{ width: 15, height: 15, resizeMode: 'contain', position: 'absolute', right: 10 }}
+                  />
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[

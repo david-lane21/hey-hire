@@ -42,11 +42,13 @@ function SeekerJobDetail({ route, navigation }) {
       Linking.removeEventListener("url", handleOpenURL);
     };
   }, [isFocused]);
-
+  console.log('job', job);
+  console.log('route.params.job', route.params.job);
   function loadData() {
     getUser().then((u) => {
       let u2 = JSON.parse(u);
       console.log("Local user", u2);
+      console.log('route.params.job.id', route.params.job);
       setUser1(u2);
       getRequest(`/job-seeker/job-position/${route.params.job.id}`, userData.token)
         .then((res) => {
@@ -55,7 +57,7 @@ function SeekerJobDetail({ route, navigation }) {
         .then((json) => {
           console.log("Detail after updates in api ", json);
           setJob(
-            Object.assign(json.data, { applied_on: tempJob.applied_on, viewed_on: tempJob.viewed_on })
+            Object.assign(json.data, { like: tempJob.like ? tempJob.like : 0 })
           );
         })
         .catch((err) => {
@@ -119,7 +121,9 @@ function SeekerJobDetail({ route, navigation }) {
       const res = await postJSON('/job-seeker/application/', body, userData.token);
       const json = await res.json()
       setModal2(true);
-      const tempJob = Object.assign({}, job, { aplied: "1", applied_on: new Date() });
+      const tempJob = Object.assign({}, job, { application: {status: "applied", applied_at: new Date()} });
+      console.log('onSendCV -> tempJob', tempJob);
+      console.log('onSendCV -> json', json);
       setJob(tempJob);
     } catch (error) {
       console.log('error', error);
@@ -129,7 +133,7 @@ function SeekerJobDetail({ route, navigation }) {
   useEffect(() => {
     setJob(job);
   }, [job]);
-
+/*
   function addWishlist() {
     let form = new FormData();
     form.append("user_token", user.user_token);
@@ -161,7 +165,7 @@ function SeekerJobDetail({ route, navigation }) {
         console.log(err);
       });
   }
-
+*/
   function onCancelCV() {
     Alert.alert(
       "Confirm",
@@ -175,19 +179,12 @@ function SeekerJobDetail({ route, navigation }) {
         {
           text: "OK",
           onPress: () => {
-            /*
-            let form = new FormData();
-            form.append("user_token", user.user_token);
-            form.append("user_id", user.user_id);
-            form.append("job_id", job.id);
-            form.append("cv_id", job.cv_id);
-            */
             getRequest(`/job-seeker/application/cancel/${job.id}`, userData.token)
             .then((res) => {
               return res.json();
             })
             .then((json) => {
-              console.log("-----------", json);
+              console.log("onCancelCV -> json", json);
              // if (json.status_code === 200) {
                if (json.data.status == "canceled") {
                 Alert.alert("Successful", json.msg);
@@ -209,15 +206,15 @@ function SeekerJobDetail({ route, navigation }) {
 
   function onNudge() {
     console.log(job);
-    const appliedDate = moment(new Date(job.applied_on));
+    const appliedDate = moment(new Date(job.application.applied_at));
     const currentDate = moment();
 
     var dayDiff = currentDate.diff(appliedDate, "days");
     if (dayDiff > 4) {
-      let form = new FormData();
-      form.append("user_token", user.user_token);
-      form.append("user_id", user.user_id);
-      form.append("job_id", job.id);
+      //let form = new FormData();
+      //form.append("user_token", user.user_token);
+      //form.append("user_id", user.user_id);
+      //form.append("job_id", job.id);
 
       postFormData("nudge_job", form)
         .then((res) => {
@@ -240,6 +237,8 @@ function SeekerJobDetail({ route, navigation }) {
       );
     }
   }
+
+  console.log('user', user);
 
   function dateFormat(date) {
     if (date) {
@@ -264,23 +263,18 @@ function SeekerJobDetail({ route, navigation }) {
             paddingTop: 15,
           }}
         >
-          <View style={{ width: "33.3%", alignContent: "center" }}>
+          <View style={{ width: "33.3%" }}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Image
                 source={require("../assets/ic_back_w.png")}
-                style={{
-                  width: 28,
-                  height: 25,
-                  marginTop: 10,
-                  marginLeft: 10,
-                }}
+                style={{ width: 20, height: 20, marginLeft: 10, resizeMode: 'contain' }}
               />
             </TouchableOpacity>
           </View>
           <View style={{ width: "33.3%" }}>
             <Image
-              source={require("../assets/title_header.png")}
-              style={{ width: 120, height: 25 }}
+              source={require("../assets/heyhireFullWhite.png")}
+              style={{ width: 120, height: 25, resizeMode: 'contain' }}
             />
           </View>
           <View style={{ width: "33.3%" }}>
@@ -288,33 +282,35 @@ function SeekerJobDetail({ route, navigation }) {
               style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
             >
               <View style={{ flex: 2 }}></View>
-              {job.aplied && job.aplied == "1" ? (
-                <TouchableOpacity
-                  style={{ flex: 1 }}
-                  onPress={() => onCancelCV()}
-                >
-                  <Image
-                    source={require("../assets/ic_checked_white.png")}
-                    style={{ width: 20, height: 20 }}
-                  />
-                </TouchableOpacity>
-              ) : job.like && job.like == "1" ? (
-                <TouchableOpacity
-                  style={{ flex: 1, alignItems: "center" }}
-                  onPress={() => addWishlist()}
-                >
-                  <Image
-                    source={require("../assets/ic_heart_filled_w.png")}
-                    style={{ width: 25, height: 25 }}
-                    resizeMode={"stretch"}
-                  />
-                </TouchableOpacity>
-              ) : null}
               <TouchableOpacity style={{ flex: 1 }}>
                 <Image
                   source={require("../assets/ic_share_w.png")}
                   style={{ width: 20, height: 20 }}
                 />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  route.params.callBack(route.params.job);
+                  if (job.like && job.like == 1) {
+                    setJob(
+                      Object.assign({}, job, {like: 0})
+                    );
+                  } else {
+                    setJob(
+                      Object.assign({}, job, {like: 1})
+                    );
+                  }
+                  console.log('_tempJob', job);
+                }}
+              >
+                {job.like & job.like == 1 ? (<Image
+                  source={require("../assets/ic_heart_filled_w.png")}
+                  style={{ width: 28, height: 25, marginRight: 5, resizeMode: 'contain' }}
+                />) : (
+                <Image
+                  source={require("../assets/ic_heart_blank.png")}
+                  style={{ width: 28, height: 25, marginRight: 5, resizeMode: 'contain' }}
+                />)}
               </TouchableOpacity>
             </View>
           </View>
@@ -322,7 +318,7 @@ function SeekerJobDetail({ route, navigation }) {
         <ScrollView style={{ marginBottom: 50 }}>
           <View style={{ flex: 1, alignItems: "center", padding: 20 }}>
             <ImageBackground
-              source={require("../assets/img_ring.png")}
+              source={require("../assets/buisness_image_container.png")}
               style={{
                 width: 136,
                 height: 136,
@@ -337,48 +333,63 @@ function SeekerJobDetail({ route, navigation }) {
             </ImageBackground>
           </View>
 
-          <View style={{ flex: 1, alignItems: "center", marginHorizontal: 20 }}>
-            <Text style={{ color: "#fff", fontSize: 22, textAlign: "center" }}>
-              {business.name}
+          <View style={{ flex: 1, alignItems: "center", marginHorizontal: 20, marginBottom: 10 }}>
+            <Text style={{ color: "#fff", fontSize: 22, textAlign: "center", fontWeight: 'bold' }}>
+              {job.title}
             </Text>
           </View>
 
-          <View style={{ flex: 1, alignItems: "center" }}>
-            <Text style={{ color: "#fff" }}>
-              {strings.CURRENTLY_VIEWING_POSTION}: {job.title}
+          <View style={{ flex: 1, flexDirection: 'row', alignItems: "center", justifyContent: 'center', marginHorizontal: 20, marginVertical: 2 }}>
+            <Image
+              source={require('../assets/ic_calendar_w.png')}
+              style={{ width: 9, height: 9, resizeMode: 'contain' }}
+            />
+            <Text style={{ color: "#fff", marginLeft: 5, fontSize: 11 }}>
+              {strings.START_DATE}:
+            </Text>
+            <Text style={{ color: "#fff", marginLeft: 5, fontSize: 11 }}>
+              {moment(job.start_date).format("MM/DD/YYYY")}
             </Text>
           </View>
 
-          {job.applied_on && (
+          <View style={{ flex: 1, alignItems: "center", marginVertical: 2 }}>
+            <Text style={{ color: "#fff", fontSize: 11, fontWeight: 'bold' }}>
+              {business.company.name}
+            </Text>
+          </View>
+
+          {job.application && (
             <View
               style={{
                 flex: 1,
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "center",
+                marginVertical: 2
               }}
             >
-              <Text style={{ color: "#fff" }}>{strings.APPLIED_ON}: </Text>
+              <Text style={{ color: "#fff", fontSize: 11 }}>{strings.APPLIED_ON}: </Text>
 
-              <Text style={{ color: "#fff", fontSize: 14 }}>
-                {moment(job.applied_on).format("MM/DD/YYYY")}
+              <Text style={{ color: "#fff", fontSize: 11 }}>
+                {moment(job.application.applied_at).format("MM/DD/YYYY")}
               </Text>
             </View>
           )}
 
-          {job.viewed_on && (
+          {job.application && job.application.viewed_at && (
             <View
               style={{
                 flex: 1,
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "center",
+                marginVertical: 2
               }}
             >
               <Text style={{ color: "#fff" }}>{strings.VIEWED_ON}: </Text>
 
               <Text style={{ color: "#fff", fontSize: 14 }}>
-                {moment(job.viewed_on).format("MM/DD/YYYY")}
+                {moment(job.application.viewed_at).format("MM/DD/YYYY")}
               </Text>
             </View>
           )}
@@ -390,32 +401,32 @@ function SeekerJobDetail({ route, navigation }) {
               paddingBottom: 20,
               borderBottomWidth: 1,
               borderBottomColor: "#715FCB",
+              marginVertical: 2
             }}
           >
             <View
               style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
             >
               <Image
-                source={require("../assets/ic_location.png")}
-                style={{ width: 13, height: 13 }}
+                source={require("../assets/location_white.png")}
+                style={{ width: 12, height: 12, resizeMode: 'contain' }}
               />
-              <Text style={{ color: "#fff", marginLeft: 5 }}>
+              <Text style={{ color: "#fff", marginLeft: 5, fontSize: 11 }}>
                 {business.address.address}
               </Text>
             </View>
           </View>
 
 
-          {business.business_detail && (<View
+          {business.website && (<View
             style={{
               flex: 1,
-              alignItems: "center",
               padding: 20,
               borderBottomWidth: 1,
               borderBottomColor: "#715FCB",
             }}
           >
-            <Text style={{ color: "#fff" }}>{business.business_detail}</Text>
+            <Text style={{ color: "#fff", fontSize: 11, fontWeight: 'bold', textAlign: 'left' }}>{business.website}</Text>
           </View>)}
 
 
@@ -433,7 +444,7 @@ function SeekerJobDetail({ route, navigation }) {
             <View
               style={{
                 width: "100%",
-                padding: 20,
+                padding: 10,
                 backgroundColor: "#fff",
                 minHeight: 300,
                 borderRadius: 10,
@@ -445,33 +456,16 @@ function SeekerJobDetail({ route, navigation }) {
                 style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
               >
                 <Image
-                  source={require("../assets/ic_calender.png")}
-                  style={{ width: 20, height: 20 }}
+                  source={require("../assets/ic_category_yellow.png")}
+                  style={{ width: 15, height: 15, resizeMode: 'contain' }}
                 />
                 <Text
-                  style={{ fontSize: 20, marginLeft: 5, fontWeight: "600" }}
-                >
-                  {strings.START_DATE}
-                </Text>
-              </View>
-              <Text style={{ marginBottom: 30, marginTop: 10, fontSize: 15 }}>
-                {dateFormat(job.start_date)}
-              </Text>
-
-              <View
-                style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
-              >
-                <Image
-                  source={require("../assets/ic_category.png")}
-                  style={{ width: 15, height: 15 }}
-                />
-                <Text
-                  style={{ fontSize: 20, marginLeft: 10, fontWeight: "600" }}
+                  style={{ fontSize: 14, marginLeft: 10, fontWeight: "bold", color: '#594A9E' }}
                 >
                   {strings.POSITION_DESCRIPTION}
                 </Text>
               </View>
-              <Text style={{ marginBottom: 30, marginTop: 10, fontSize: 15 }}>
+              <Text style={{ marginBottom: 30, marginTop: 2, fontSize: 13, color: '#3D3B4E' }}>
                 {job.description}
               </Text>
 
@@ -479,28 +473,28 @@ function SeekerJobDetail({ route, navigation }) {
                 style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
               >
                 <Image
-                  source={require("../assets/ic_mind.png")}
-                  style={{ width: 20, height: 20 }}
+                  source={require("../assets/ic_mind_yellow.png")}
+                  style={{ width: 15, height: 15, resizeMode: 'contain' }}
                 />
                 <Text
-                  style={{ fontSize: 20, marginLeft: 10, fontWeight: "600" }}
+                  style={{ fontSize: 14, marginLeft: 10, fontWeight: "bold", color: '#594A9E' }}
                 >
                   {strings.REQUIRED_EXPERIENCE}
                 </Text>
               </View>
-              <Text style={{ marginBottom: 30, marginTop: 10, fontSize: 15 }}>
+              <Text style={{ marginBottom: 30, marginTop: 2, fontSize: 13, color: '#3D3B4E' }}>
                 {job.experience}
               </Text>
               <View
                 style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
               >
                 <Image
-                  source={require("../assets/ic_certificate.png")}
-                  style={{ width: 20, height: 20 }}
+                  source={require("../assets/ic_certificate_yellow.png")}
+                  style={{ width: 15, height: 15, resizeMode: 'contain' }}
                 />
                 <Text
-                  style={{ fontSize: 20, marginLeft: 10, fontWeight: "600" }}
-                >
+                  style={{ fontSize: 14, marginLeft: 10, fontWeight: "bold", color: '#594A9E' }}
+                  >
                   {strings.REQUIRED_CERTIFICATIONS}
                 </Text>
               </View>
@@ -509,7 +503,7 @@ function SeekerJobDetail({ route, navigation }) {
                   ? job.required_certifications.map((item) => item + "\n")
                   : ""}
               </Text>
-              {job.requires_instagram && (
+              {job.instagram_required ? (
                 <View>
                   <View
                     style={{
@@ -518,15 +512,16 @@ function SeekerJobDetail({ route, navigation }) {
                       alignItems: "center",
                     }}
                   >
-                    <Image
+                    {/*<Image
                       source={require("../assets/instagram-brands.png")}
                       style={{ width: 20, height: 20, tintColor: "#4834A6" }}
-                    />
+                  />*/}
                     <Text
                       style={{
-                        fontSize: 20,
-                        marginLeft: 10,
-                        fontWeight: "600",
+                        fontSize: 14,
+                        // marginLeft: 10,
+                        fontWeight: "bold",
+                        color: '#594A9E'
                       }}
                     >
                       {"Instagram required"}
@@ -534,17 +529,17 @@ function SeekerJobDetail({ route, navigation }) {
                   </View>
 
                   <Text
-                    style={{ marginBottom: 30, marginTop: 10, fontSize: 15 }}
+                    style={{ marginBottom: 30, marginTop: 10, fontSize: 13, color: '#3D3B4E' }}
                   >
                     {business.name}{" "}
                     {
                       "is requesting that you connect your Instagram account to your profile to apply for this position."
                     }
                   </Text>
-                  {!user.instagram_connected ? (
+                  {user && user.profile && !user.profile.instagram_connected ? (
                     <View>
                       <Text
-                        style={{ marginBottom: 20, marginTop: 5, fontSize: 15 }}
+                        style={{ marginBottom: 20, marginTop: 5, fontSize: 13, color: '#3D3B4E' }}
                       >
                         {"Please connect your Instagram"}
                       </Text>
@@ -610,9 +605,9 @@ function SeekerJobDetail({ route, navigation }) {
                     </View>
                   )}
                 </View>
-              )}
+              ) : null}
             </View>
-            {job.aplied && job.aplied == "1" ? (
+            {job.application && job.application.status == "applied" ? (
               <View
                 style={{
                   flex: 1,
@@ -679,7 +674,7 @@ function SeekerJobDetail({ route, navigation }) {
                   style={{
                     width: "100%",
                     backgroundColor:
-                      job.requires_instagram && !user.instagram_connected
+                      job.instagram_required && !user.profile.instagram_connected
                         ? "#a8a4a6"
                         : "#4834A6",
                     paddingTop: 12,
@@ -687,7 +682,7 @@ function SeekerJobDetail({ route, navigation }) {
                     borderRadius: 50,
                   }}
                   onPress={tempJob && tempJob.application !== null ? tempJob.application.status === "applied" ? () => onCancelCV() : () => handlePostCV() : () => handlePostCV()}
-                  disabled={job.requires_instagram && !user.instagram_connected}
+                  disabled={job.instagram_required && !user.profile.instagram_connected}
                 >
                   <Text
                     style={{ textAlign: "center", fontSize: 18, color: "#fff" }}
