@@ -8,12 +8,14 @@ import {
   Platform,
   TouchableOpacity,
   ScrollView,
-  ActivityIndicator
+  ActivityIndicator,
+  Alert
 } from "react-native";
+import { useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { getUser, getToken, setUser } from "./utils/utils.js";
-import { postFormData } from "./utils/network.js";
+import { getUser, getToken } from "./utils/utils.js";
+import { postJSON } from "./utils/network.js";
 import { KeyboardAccessoryNavigation } from "react-native-keyboard-accessory";
 import {strings} from './translation/config';
 
@@ -34,6 +36,7 @@ function SeekerAddPastPosition({ route,navigation }) {
   const [nextFocusDisabled, setNextFocusDisabled] = useState(false);
   const [previousFocusDisabled, setPreviousFocusDisabled] = useState(false);
   const [loading, setLoading] = useState(false);
+  const userData = useSelector(state => state.UserData)
 
   function hideFrom(i) {
     if (i) setFrom(i);
@@ -61,46 +64,64 @@ function SeekerAddPastPosition({ route,navigation }) {
   }, []);
 
   const handleUpdate = () => {
-    if(position && from && company && city){
-
-    let form = new FormData();
-    form.append("post_list[0][category]", position);
-    form.append("post_list[0][from_date]", formatDate(from));
-    form.append("post_list[0][to_date]", formatDate(to));
-    form.append("post_list[0][company_name]", company);
-    form.append("post_list[0][city_name]", city);
-
-    form.append("user_type", "2");
-    // form.append('user_token', user.user_token)
-    form.append("user_id", user.user_id);
-    form.append("device_tocken", deviceToken);
+    if(validation() == true){
+    const body = {
+      position : position,
+      employer : company,
+      location : city,
+      start_date : formatDate(from),
+      end_date : formatDate(to)
+    };
+    const token = route.params.token ? route.params.token : userData.token;
       setLoading(true);
-    postFormData("update_user", form)
+      postJSON("/job-seeker/past-position", body, token)
       .then((res) => {
         return res.json();
       })
       .then((json) => {
-        console.log(json)
-        if (json.status_code != "200") {
-          setError(json.msg);
+        if (!json.data || !json.data.id) {
+          setError(json.message);
         } else {
-          setUser(json.data);
-          // navigation.navigate("SeekerEditProfile", {
-          //   profile: json.data,
-          // });
+          let tempPositions = route.params.positions;
+          tempPositions.push(json.data);
           if(route.params && route.params.onGoBack){
-            route.params.onGoBack(json.data.position);
+            route.params.onGoBack(tempPositions);
           }
           setLoading(false);
-
-           navigation.goBack();
+          navigation.goBack();
         }
       })
       .catch((err) => {
+        setLoading(false);
         console.log(err);
       });
     }
   };
+
+  function validation() {
+    if (!position || isValidatePresence(position) == "") {
+      Alert.alert("Error...", "Enter a valid Position before continuing!")
+      return false
+    }
+    else if (!company || isValidatePresence(company) == "") {
+      Alert.alert("Error...", "Enter a valid Company name before continuing!")
+      return false
+    }
+    else if (!city || isValidatePresence(city) == "") {
+      Alert.alert("Error...", "Enter a valid Location before continuing!")
+      return false
+    }
+    else if(from >= new Date) {
+      Alert.alert("Error...", "Start date Must be less then current date")
+      return false
+    } else {
+      return true
+    }
+  }
+
+  function isValidatePresence(string) {
+    return string.trim();
+  }
 
   function handleFocus(index) {
     setActiveInputIndex(index);

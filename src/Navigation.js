@@ -40,6 +40,7 @@ import CustomDrawer from "./components/CustomDrawer";
 const Stack = createStackNavigator();
 const Stack2 = createStackNavigator();
 const Stack3 = createStackNavigator();
+const EditProfileStack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const SeekerHomeStack = createStackNavigator();
 const AppNavigationStack = createStackNavigator();
@@ -184,7 +185,7 @@ export function AppNavigation({ navigation }) {
       const json = await res.json()
       dispatch({type: 'UserData/setState',payload: {profile: json.data}})
     } catch (error) {
-      console.log('error while getting user profile',error)
+      console.log('error while getting user profile',JSON.stringify(error))
     }
   }
 
@@ -215,6 +216,46 @@ export function AppNavigation({ navigation }) {
   );
 }
 
+export function EditProfileNavigation({ navigation }) {
+  const userData = useSelector(state => state.UserData)
+
+  return (
+    <EditProfileStack.Navigator initialRouteName={'Edit Profile'}>
+      <EditProfileStack.Screen
+        name="SeekerEditProfile"
+        component={SeekerEditProfile}
+        options={{
+          headerShown: true,
+          headerBackTitleVisible: false,
+          headerTitle: () => (<CustomHeader title={strings.EDIT_YOUR_PROFILE} />),
+          headerStyle: {
+            backgroundColor: "#fff",
+          },
+          headerLeft: () => (<CustomBack navigation={navigation} />),
+          headerTintColor: "#4E35AE",
+          gestureEnabled: false
+        }}
+        initialParams={{ profile: userData.profile }}
+      />
+
+      <EditProfileStack.Screen
+        name="SeekerAddPastPosition"
+        component={SeekerAddPastPosition}
+        options={{
+          headerShown: false,
+        }}
+      />
+
+      <EditProfileStack.Screen
+        name="SeekerEditPastPosition"
+        component={SeekerEditPastPosition}
+        options={{
+          headerShown: false,
+        }}
+      />
+    </EditProfileStack.Navigator>
+  );
+}
 
 export function AuthNavigation({ navigation }) {
   return (
@@ -314,6 +355,15 @@ export function AuthNavigation({ navigation }) {
           headerShown: false,
         }}
       />
+
+      <Stack2.Screen
+        name="SeekerEditPastPosition"
+        component={SeekerEditPastPosition}
+        options={{
+          headerShown: false,
+        }}
+      />
+
 
       <Stack.Screen
         name="ForgotPassword"
@@ -548,19 +598,12 @@ export function MyDrawer({navigation}) {
         }}/>
       <Drawer.Screen 
         name="Edit Profile"
-        component={SeekerEditProfile}
+        component={EditProfileNavigation}
         options={{
-          headerShown: true,
-          headerBackTitleVisible: false,
-          headerTitle: () => (<CustomHeader title={strings.EDIT_YOUR_PROFILE} />),
-          headerStyle: {
-            backgroundColor: "#fff",
-          },
-          headerLeft: () => (<CustomBack navigation={navigation} />),
-          headerTintColor: "#4E35AE",
+          headerShown: false,
           gestureEnabled: false
+
         }}
-        initialParams={{ profile: userData.profile }}
       />
       {/* <Drawer.Screen
       //  name="SeekerAddPastPosition"

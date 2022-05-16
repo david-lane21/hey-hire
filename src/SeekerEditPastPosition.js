@@ -9,30 +9,29 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
+import { useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { getUser, getToken, setUser } from "./utils/utils.js";
-import { postFormData } from "./utils/network.js";
+import { putJSON, deleteJSON } from "./utils/network.js";
 import { KeyboardAccessoryNavigation } from "react-native-keyboard-accessory";
 import {strings} from './translation/config';
 
 function SeekerEditPastPosition({ route, navigation }) {
   console.log(route);
-  const [user, setUser1] = useState({});
-  const [deviceToken, setDeviceToken] = useState("");
   const [error, setError] = useState("");
 
-  const [position, setPosition] = useState(route.params.position.category);
-  const [company, setCompany] = useState(route.params.position.company_name);
-  const [city, setCity] = useState(route.params.position.city_name);
-  const [from, setFrom] = useState(new Date(route.params.position.from_date));
+  const [position, setPosition] = useState(route.params.position.position);
+  const [company, setCompany] = useState(route.params.position.employer);
+  const [city, setCity] = useState(route.params.position.location);
+  const [from, setFrom] = useState(new Date(route.params.position.start_date));
   const [showFrom, setShowFrom] = useState(false);
-  const [to, setTo] = useState(new Date(route.params.position.to_date));
+  const [to, setTo] = useState(new Date(route.params.position.end_date));
   const [showTo, setShowTo] = useState(false);
   const [activeInputIndex, setActiveInputIndex] = useState(0);
   const [inputs, setInputs] = useState([]);
   const [nextFocusDisabled, setNextFocusDisabled] = useState(false);
   const [previousFocusDisabled, setPreviousFocusDisabled] = useState(false);
+  const userData = useSelector((state) => state.UserData);
 
   function hideFrom(i) {
     if (i) setFrom(i);
@@ -50,59 +49,81 @@ function SeekerEditPastPosition({ route, navigation }) {
     ).slice(-2)}`;
   }
 
-  useEffect(() => {
-    getUser().then((u) => {
-      let u2 = JSON.parse(u);
-      setUser1(u2);
-      getToken().then((t) => setDeviceToken(t));
-    });
-  }, []);
-
   const handleUpdate = () => {
-    if (position && from && company && city) {
-      let tempPastPositions = route.params.positions;
-      tempPastPositions.map((item) => {
-        if (item.post_id == route.params.position.post_id) {
-          item.category = position;
-          item.company_name = company;
-          item.city_name = city;
-          item.from_date = formatDate(from);
-          item.to_date = formatDate(to);
-        }
-      });
-
-      if (route.params && route.params.onGoBack) {
-        route.params.onGoBack(tempPastPositions);
-      }
-      navigation.goBack();
-    }
-  };
-
-  function handleDelete() {
-    let form = new FormData();
-
-    form.append("user_token", user.user_token);
-    form.append("user_id", user.user_id);
-    form.append("post_id", route.params.position.post_id);
-
-    postFormData("/delete_cv", form)
+    if(validation() == true){
+    const body = {
+      position : position,
+      employer : company,
+      location : city,
+      start_date : formatDate(from),
+      end_date : formatDate(to)
+    };
+    const token = route.params.token ? route.params.token : userData.token;
+      putJSON(`/job-seeker/past-position/${route.params.position.id}`, body, token)
       .then((res) => {
         return res.json();
       })
       .then((json) => {
-        console.log(json);
-        if (json.status_code != "200") {
-          setError(json.msg);
+        if (!json.data || !json.data.id) {
+          setError(json.message);
         } else {
-          //setUser(json.data);
-          let tempPostions = route.params.positions;
-          tempPostions = tempPostions.filter(
-            (item) => item.post_id != route.params.position.post_id
-          );
-          route.params.onGoBack(tempPostions);
-
+          if(route.params && route.params.onGoBack){
+            let tempPositions = route.params.positions.map(obj => {
+              if (obj.id == json.data.id) {
+                return json.data;
+              } else {
+                return obj;
+              }
+            })
+            route.params.onGoBack(tempPositions);
+          }
           navigation.goBack();
         }
+      })
+      .catch((err) => {
+        console.log('Update Past Position error', JSON.stringify(err));
+      });
+    }
+  };
+
+  function validation() {
+    if (!position || isValidatePresence(position) == "") {
+      Alert.alert("Error...", "Enter a valid Position before continuing!")
+      return false
+    }
+    else if (!company || isValidatePresence(company) == "") {
+      Alert.alert("Error...", "Enter a valid Company name before continuing!")
+      return false
+    }
+    else if (!city || isValidatePresence(city) == "") {
+      Alert.alert("Error...", "Enter a valid Location before continuing!")
+      return false
+    }
+    else if(from >= new Date) {
+      Alert.alert("Error...", "Start date Must be less then current date")
+      return false
+    } else {
+      return true
+    }
+  }
+
+  function isValidatePresence(string) {
+    return string.trim();
+  }
+
+  function handleDelete() {
+    const token = route.params.token ? route.params.token : userData.token;
+    deleteJSON(`/job-seeker/past-position/${route.params.position.id}`, token)
+      .then((res) => {
+        return res.json();
+      })
+      .then((json) => {
+          let tempPostions = route.params.positions;
+          tempPostions = tempPostions.filter(
+            (item) => item.id != route.params.position.id
+          );
+          route.params.onGoBack(tempPostions);
+          navigation.goBack();
       })
       .catch((err) => {
         console.log(err);

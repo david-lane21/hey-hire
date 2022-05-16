@@ -418,7 +418,7 @@ function SeekerHome({ navigation }) {
   function dateFormat(date) {
     if (date) {
       let d = date.split("-");
-      return `${d[1]}/${d[2]}/${d[0]}`;
+      return `${d[1]}/${d[0]}`;
     } else {
       return "";
     }
@@ -695,8 +695,8 @@ function SeekerHome({ navigation }) {
               </Text>
             </View>
 
-            {positions &&
-              positions.map((position) => {
+            {user.past_positions && user.past_positions.length > 0 &&
+              user.past_positions.map((position) => {
                 return (
                   <View
                     style={{
@@ -722,16 +722,16 @@ function SeekerHome({ navigation }) {
                           paddingBottom: 3,
                         }}
                       >
-                        {dateFormat(position.from_date)} -{" "}
+                        {dateFormat(position.start_date)} -{" "}
                       </Text>
                       <Text
                         style={{
                           color: "#fff",
-                          fontSize: 13,
+                          fontSize: 14,
                           paddingBottom: 3,
                         }}
                       >
-                        {dateFormat(position.to_date)}
+                        {dateFormat(position.end_date)}
                       </Text>
                     </View>
                     <View
@@ -748,27 +748,30 @@ function SeekerHome({ navigation }) {
                           color: "#fff",
                           fontSize: 13,
                           paddingBottom: 3,
+                          fontWeight: '600'
                         }}
                       >
-                        {position.category} -{" "}
+                        {position.position} -{" "}
                       </Text>
                       <Text
                         style={{
                           color: "#fff",
                           fontSize: 13,
                           paddingBottom: 3,
+                          fontWeight: '600'
                         }}
                       >
-                        {position.company_name} -{" "}
+                        {position.employer} -{" "}
                       </Text>
                       <Text
                         style={{
                           color: "#fff",
                           fontSize: 13,
                           paddingBottom: 3,
+                          fontWeight: '200'
                         }}
                       >
-                        {position.city_name}
+                        {position.location}
                       </Text>
                     </View>
                     <View

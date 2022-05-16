@@ -95,7 +95,7 @@ function SeekerEditProfile({ navigation, route }) {
   const [certificate, setCertificate] = useState(tempProfile.certificate);
   const [convictions, setConvictions] = useState(tempProfile.convictions);
   const [availability, setAvailability] = useState(tempProfile.availability);
-  const [positions, setPositions] = useState(tempProfile.position || []);
+  const [positions, setPositions] = useState(tempProfile.past_positions || []);
   const [isInstagramConnect, setIsInstagramConnect] = useState(
     tempProfile.instagram_connected || false
   );
@@ -216,7 +216,7 @@ function SeekerEditProfile({ navigation, route }) {
   function dateFormat(date) {
     if (date) {
       let d = date.split("-");
-      return `${d[1]}/${d[2]}/${d[0]}`;
+      return `${d[1]}/${d[0]}`;
     } else {
       return "";
     }
@@ -527,80 +527,10 @@ function SeekerEditProfile({ navigation, route }) {
     setInputs(inputs);
   }
 
-  function addSkill() {
-    let tempSkills = skills;
-    if (skill && skill.trim() != "") {
-      tempSkills.push(skill);
-      setSkills(tempSkills);
-      setSkill("");
+  function refreshPosition(positions) {
+    if(positions) {
+      setPositions(positions)
     }
-  }
-
-  function deleteSkil(index) {
-    let tempSkills = skills;
-    skills.splice(index, 1);
-    setSkills((oldArray) => [...tempSkills]);
-  }
-
-  function refreshPosition(position) {
-    if (position) {
-      setPositions(position);
-    }
-  }
-
-  function onChangeSkill(text) {
-    console.log(text.indexOf(","));
-    let commaIndex = text.indexOf(",");
-    if (commaIndex > 0) {
-      let tempSkills = skills;
-      tempSkills.push(text.substring(0, commaIndex));
-      setSkills(tempSkills);
-      setSkill("");
-    } else {
-      setSkill(text);
-    }
-  }
-
-  function renderSkill(item) {
-    return (
-      <View
-        key={item.index.toString()}
-        style={{
-          borderWidth: 1,
-          borderColor: "#3482FF",
-          flexDirection: "row",
-          alignItems: "center",
-          paddingHorizontal: 2,
-          borderRadius: 4,
-          margin: 5,
-        }}
-      >
-        <Text
-          style={{
-            color: "#3482FF",
-            // borderWidth: 1,
-            // borderColor: "#3482FF",
-            padding: 3,
-            borderRadius: 3,
-            marginBottom: 3,
-            marginLeft: 3,
-          }}
-        >
-          {item.item}
-        </Text>
-        <TouchableOpacity
-          onPress={() => {
-            deleteSkil(item.index);
-          }}
-        >
-          <Image
-            source={require("../assets/ic_close_black.png")}
-            style={{ height: 15, width: 15 }}
-            resizeMode={"stretch"}
-          />
-        </TouchableOpacity>
-      </View>
-    );
   }
 
   function handleInstaConnect() {
@@ -625,6 +555,7 @@ function SeekerEditProfile({ navigation, route }) {
 
   function onPressAddPast() {
     navigation.navigate("SeekerAddPastPosition", {
+      positions: positions,
       onGoBack: refreshPosition,
     });
   }
@@ -1860,7 +1791,7 @@ function SeekerEditProfile({ navigation, route }) {
                     }}
                   >
                     <TouchableOpacity
-                      style={{ width: "10%", paddingRight: 20 }}
+                      style={{ width: "10%", paddingRight: 20, marginTop: 5 }}
                       onPress={() =>
                         navigation.navigate("SeekerEditPastPosition", {
                           position: p,
@@ -1871,15 +1802,18 @@ function SeekerEditProfile({ navigation, route }) {
                     >
                       <Image
                         source={require("../assets/ic_edit.png")}
-                        style={{ width: 20, height: 20, marginRight: 5 }}
+                        style={{ width: 16, height: 16, marginRight: 5, resizeMode: 'contain' }}
                       />
                     </TouchableOpacity>
                     <View style={{ width: "90%" }}>
-                      <Text style={{ color: "#999", fontSize: 12 }}>
-                        {dateFormat(p.from_date)} - {dateFormat(p.to_date)}
+                      <Text style={{ color: "#B1B4C7", fontSize: 14 }}>
+                        {dateFormat(p.start_date)} - {dateFormat(p.end_date)}
                       </Text>
-                      <Text style={{ fontSize: 14, width: "90%" }}>
-                        {p.category}, {p.company_name}, {p.city_name}{" "}
+                      <Text style={{ fontSize: 14, width: "70%", fontWeight: '600' }}>
+                        {p.position}, {p.employer}  <Text style={{fontWeight: '200'}}>{p.location}{" "}</Text>
+                      </Text>
+                      <Text>
+                        
                       </Text>
                     </View>
                   </View>
@@ -1894,7 +1828,7 @@ function SeekerEditProfile({ navigation, route }) {
                 }}
                 onPress={() => onPressAddPast()}
               >
-                <Text style={{ color: "#4E35AE", fontSize: 16 }}>
+                <Text style={{ color: "#4E35AE", fontSize: 16, fontWeight: 'bold' }}>
                   + {strings.ADD_PAST_POSTION}
                 </Text>
               </TouchableOpacity>

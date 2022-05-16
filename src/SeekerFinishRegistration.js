@@ -348,6 +348,20 @@ function SeekerFinishRegistration({ navigation, route }) {
     setCategoriesList([...listCategories]);
   }
 
+  function onPressAddPast() {
+    navigation.navigate("SeekerAddPastPosition", {
+      positions: positions,
+      onGoBack: refreshPosition,
+      token: route.params.token
+    });
+  }
+
+  function refreshPosition(positions) {
+    if(positions) {
+      setPositions(positions)
+    }
+  }
+
   const categoriesModal = () => {
     return(
       <Modal
@@ -1199,47 +1213,60 @@ function SeekerFinishRegistration({ navigation, route }) {
             </Text>
           </View>
           <View style={{ flex: 1 }}>
-            {positions.map((p) => {
-              return (
-                <View
-                  key={p.post_id}
-                  style={{
-                    flex: 1,
-                    flexDirection: "row",
-                    paddingLeft: 20,
-                    paddingBottom: 20,
-                  }}
-                >
-                  <View style={{ width: "10%", paddingRight: 20 }}>
-                    <Image
-                      source={require("../assets/ic_edit.png")}
-                      style={{ width: 20, height: 20, marginRight: 5 }}
-                    />
+          {positions.map((p, index) => {
+                return (
+                  <View
+                    key={p.post_id}
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      paddingLeft: 20,
+                      paddingBottom: 20,
+                    }}
+                  >
+                    <TouchableOpacity
+                      style={{ width: "10%", paddingRight: 20, marginTop: 5 }}
+                      onPress={() =>
+                        navigation.navigate("SeekerEditPastPosition", {
+                          position: p,
+                          onGoBack: refreshPosition,
+                          positions: positions,
+                          token: route.params.token
+                        })
+                      }
+                    >
+                      <Image
+                        source={require("../assets/ic_edit.png")}
+                        style={{ width: 16, height: 16, marginRight: 5, resizeMode: 'contain' }}
+                      />
+                    </TouchableOpacity>
+                    <View style={{ width: "90%" }}>
+                      <Text style={{ color: "#B1B4C7", fontSize: 14 }}>
+                        {dateFormat(p.start_date)} - {dateFormat(p.end_date)}
+                      </Text>
+                      <Text style={{ fontSize: 14, width: "70%", fontWeight: '600' }}>
+                        {p.position}, {p.employer}  <Text style={{fontWeight: '200'}}>{p.location}{" "}</Text>
+                      </Text>
+                      <Text>
+                        
+                      </Text>
+                    </View>
                   </View>
-                  <View style={{ width: "90%" }}>
-                    <Text style={{ color: "#999", fontSize: 12 }}>
-                      {dateFormat(p.from_date)} - {dateFormat(p.to_date)}
-                    </Text>
-                    <Text style={{ fontSize: 14, width: "90%" }}>
-                      {p.category}, {p.company_name}, {p.city_name}{" "}
-                    </Text>
-                  </View>
-                </View>
-              );
-            })}
+                );
+              })}
 
-            <TouchableOpacity
-              style={{
-                alignSelf: "center",
-                marginTop: 20,
-                marginBottom: 160,
-              }}
-              onPress={() => navigation.navigate("SeekerAddPastPosition")}
-            >
-              <Text style={{ color: "#4E35AE", fontSize: 16 }}>
-                + {strings.ADD_PAST_POSTION}
-              </Text>
-            </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  alignSelf: "center",
+                  marginTop: 20,
+                  marginBottom: 50,
+                }}
+                onPress={() => onPressAddPast()}
+              >
+                <Text style={{ color: "#4E35AE", fontSize: 16, fontWeight: 'bold' }}>
+                  + {strings.ADD_PAST_POSTION}
+                </Text>
+              </TouchableOpacity>
           </View>
         </View>
         <View style={{ height: 20 }}></View>
