@@ -27,9 +27,9 @@ function SeekerAddPastPosition({ route,navigation }) {
   const [position, setPosition] = useState("");
   const [company, setCompany] = useState("");
   const [city, setCity] = useState("");
-  const [from, setFrom] = useState(new Date());
+  const [from, setFrom] = useState(null);
   const [showFrom, setShowFrom] = useState(false);
-  const [to, setTo] = useState(new Date());
+  const [to, setTo] = useState(null);
   const [showTo, setShowTo] = useState(false);
   const [activeInputIndex, setActiveInputIndex] = useState(0);
   const [inputs, setInputs] = useState([]);
@@ -72,6 +72,7 @@ function SeekerAddPastPosition({ route,navigation }) {
       start_date : formatDate(from),
       end_date : formatDate(to)
     };
+    console.log('handleUpdate -> body', body);
     const token = route.params.token ? route.params.token : userData.token;
       setLoading(true);
       postJSON("/job-seeker/past-position", body, token)
@@ -277,7 +278,11 @@ function SeekerAddPastPosition({ route,navigation }) {
                   style={{ width: 20, height: 20 }}
                 />
                
-                  <Text style={{ paddingLeft:10,width: 120 }}>{formatDate(from)}</Text>
+                  {from ? (
+                    <Text style={{ paddingLeft:10,width: 120 }}>{formatDate(from)}</Text>
+                  ) : (
+                    <Text style={{ paddingLeft:10,width: 120, color: "#B1B4C7" }}>From Date</Text>
+                  )}
               </View>
               </TouchableOpacity>
 
@@ -292,7 +297,11 @@ function SeekerAddPastPosition({ route,navigation }) {
                   style={{ width: 20, height: 20 }}
                 />
                 
-                  <Text style={{ paddingLeft:10, width: 120 }}>{formatDate(to)}</Text>
+                  {to ? (
+                    <Text style={{ paddingLeft:10, width: 120 }}>{formatDate(to)}</Text>
+                  ) : (
+                    <Text style={{ paddingLeft:10, width: 120, color: "#B1B4C7" }}>To Date</Text>
+                  )}
                 
               </View>
               </TouchableOpacity>

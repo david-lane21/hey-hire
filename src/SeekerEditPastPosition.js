@@ -10,6 +10,7 @@ import {
   ScrollView,
 } from "react-native";
 import { useSelector } from "react-redux";
+import moment from "moment";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { putJSON, deleteJSON } from "./utils/network.js";
@@ -23,9 +24,9 @@ function SeekerEditPastPosition({ route, navigation }) {
   const [position, setPosition] = useState(route.params.position.position);
   const [company, setCompany] = useState(route.params.position.employer);
   const [city, setCity] = useState(route.params.position.location);
-  const [from, setFrom] = useState(new Date(route.params.position.start_date));
+  const [from, setFrom] = useState(route.params.position.start_date);
   const [showFrom, setShowFrom] = useState(false);
-  const [to, setTo] = useState(new Date(route.params.position.end_date));
+  const [to, setTo] = useState(route.params.position.end_date);
   const [showTo, setShowTo] = useState(false);
   const [activeInputIndex, setActiveInputIndex] = useState(0);
   const [inputs, setInputs] = useState([]);
@@ -43,20 +44,14 @@ function SeekerEditPastPosition({ route, navigation }) {
     setShowTo(false);
   }
 
-  function formatDate(d) {
-    return `${d.getFullYear()}-${("0" + (d.getMonth() + 1)).slice(-2)}-${(
-      "0" + d.getDate()
-    ).slice(-2)}`;
-  }
-
   const handleUpdate = () => {
     if(validation() == true){
     const body = {
       position : position,
       employer : company,
       location : city,
-      start_date : formatDate(from),
-      end_date : formatDate(to)
+      start_date : moment.utc(from).format('YYYY-MM-DD'),
+      end_date : moment.utc(to).format('YYYY-MM-DD')
     };
     const token = route.params.token ? route.params.token : userData.token;
       putJSON(`/job-seeker/past-position/${route.params.position.id}`, body, token)
@@ -267,7 +262,7 @@ function SeekerEditPastPosition({ route, navigation }) {
                   style={{ width: 20, height: 20 }}
                 />
                
-                  <Text style={{ paddingLeft:10,width: 120 }}>{formatDate(from)}</Text>
+                  <Text style={{ paddingLeft:10,width: 120 }}>{moment.utc(from).format('MM-DD-YYYY')}</Text>
               </View>
               </TouchableOpacity>
 
@@ -282,7 +277,7 @@ function SeekerEditPastPosition({ route, navigation }) {
                   style={{ width: 20, height: 20 }}
                 />
                 
-                  <Text style={{ paddingLeft:10, width: 120 }}>{formatDate(to)}</Text>
+                  <Text style={{ paddingLeft:10, width: 120 }}>{moment.utc(to).format('MM-DD-YYYY')}</Text>
                 
               </View>
               </TouchableOpacity>
