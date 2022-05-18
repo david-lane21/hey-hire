@@ -24,6 +24,7 @@ import { useIsFocused } from "@react-navigation/native";
 const window = Dimensions.get("window");
 import Header from "./components/Header";
 import { strings } from "./translation/config";
+import CommonUtils from "./utils/CommonUtils";
 
 function SeekerAvailableJobs({ route, navigation }) {
   // const [bizId, setBizId] = useState(route.params.biz_id)
@@ -201,123 +202,97 @@ function SeekerAvailableJobs({ route, navigation }) {
     }
   }
 
-  const renderItem = ({ item }) => (
-    <View
-      style={{
-        paddingVertical: 15,
-        borderWidth: 1,
-        borderColor: "#eee",
-        borderRadius: 12,
-        marginBottom: 5,
-        flex: 1
-      }}
-    >
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          flex: 1,
-          // justifyContent:'space-between'
-        }}
-      >
-        <View style={{ flex: 0.15 }}>
-          <Image
-            source={{ uri: profile.avatar_image }}
-            style={{
-              width: wp('11%'),
-              height: wp('11%'),
-              borderWidth: 1,
-              borderColor: "#ccc",
-              borderRadius: wp('11%'),
-            }}
-          />
-        </View>
-        <View style={{flex: 0.8 }}>
-          <TouchableOpacity
-            onPress={() => getHired(item)}
-            style={{ marginRight:0,marginLeft:0 }}
-          >
-            <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-              <Text
-                style={{
-                  fontSize: 18,
-                  color: "#222",
-                  marginBottom: 5,
-                  fontWeight: Platform.OS === 'ios' ? '600' : 'bold'
-                }}
-              >
-                {item.title}
-              </Text>
-              <View style={{flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-start'}}>
-              {item.application && item.application.applied_at ?
-                <View style={{ width: wp('10%'), justifyContent: 'center', alignItems: 'center', marginLeft: 10, marginRight: 10}}>
-                  <Image
-                    source={require("../assets/ic_applied.png")}
-                    style={{
-                      width: wp('13%'),
-                      height: hp('5%'),
-                      marginHorizontal: 5,
-                      resizeMode: 'contain'
-                    }}
-                  />
-                </View>
-              : null}
-              {item.application && item.application.viewed_at ?
-                <View style={{ width: wp('10%'), justifyContent: 'center', alignItems: 'center', marginLeft: 10, marginRight: 10}}>
-                  <Image
-                    source={require("../assets/ic-viewed.png")}
-                    style={{
-                      width: wp('13%'),
-                      height: hp('5%'),
-                      marginHorizontal: 5,
-                      resizeMode: 'contain'
-                    }}
-                  />
-                </View>
-              : null}
-              </View>
-            </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "flex-start",
-                }}
-              >
-                <Image
-                  source={require("../assets/ic_location.png")}
-                  style={{
-                    width: 13,
-                    height: 13,
-                    marginRight: 5,
-                  }}
-                />
-                <Text style={{ fontSize: 12, color: "#999", }}>
-                  {profile.address.address}
-                </Text>
-              </View>
-          </TouchableOpacity>
-        </View>
-        <View style={{flex: 0.1, marginHorizontal: 5}}>
-          <TouchableOpacity onPress={() => addWishlist(item)}>
-            <View style={{ width: 40 }}>
-              {item.like == "1" ? (
-                <Image
-                  source={require("../assets/ic_heart_purple_header.png")}
-                  style={{ width: wp('8%'), height: wp('8%'), resizeMode: 'contain' }}
-                />
-              ) : (
-                <Image
-                  source={require("../assets/ic_heart_gray_header.png")}
-                  style={{ width: wp('8%'), height: wp('8%'), resizeMode: 'contain' }}
-                />
-              )}
-            </View>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </View>
-  );
+  renderItem = ({item}) => {
+    const distance = CommonUtils.distance(
+      parseFloat(profile.address.lat),
+      parseFloat(profile.address.lng),
+      "K"
+    );
 
+    return(
+        <View
+          key={item.id}
+          style={{
+            padding: wp('5%'),
+            borderWidth: 1,
+            borderColor: "#eee",
+            borderRadius: 12,
+            marginBottom: 5,
+          }}
+        >
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              // justifyContent:'space-between'
+            }}
+          >
+            <View style={{  }}>
+              <Image
+                source={{ uri: profile.avatar_image }}
+                style={{
+                  width: wp('11%'),
+                  height: wp('11%'),
+                  borderWidth: 1,
+                  borderColor: "#ccc",
+                  borderRadius: wp('11%'),
+                }}
+              />
+            </View>
+            <TouchableOpacity
+              onPress={() => getHired(item)}
+              style={{ marginRight:wp('10%'),marginLeft:wp('3%') }}
+            >
+                <Text
+                  style={{
+                    fontSize: 18,
+                    color: "#222",
+                    marginBottom: 5,
+                    fontWeight: Platform.OS === 'ios' ? '600' : 'bold'
+                  }}
+                >
+                  {item.title}
+                </Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  {/*<Image
+                    source={require("../assets/ic_location.png")}
+                    style={{
+                      width: 13,
+                      height: 13,
+                      marginRight: 5,
+                    }}
+                  />*/}
+                  <Text style={{ fontSize: 12, color: "#999", fontWeight: 'bold' }}>
+                    {profile.company.name}, <Text style={{fontWeight: '400'}}>{distance} {strings.MILES_AWAY}</Text>
+                  </Text>
+                </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => addWishlist(item)} style={{position:'absolute', right:0}}>
+              <View style={{ width: 40 }}>
+                {item.like == "1" ? (
+                  <Image
+                    source={require("../assets/ic_filled_heart_icon.png")}
+                    style={{ width: wp('8%'), height: wp('8%'), resizeMode: 'contain' }}
+                  />
+                ) : (
+                  <Image
+                    source={require("../assets/ic_heart_gray_header.png")}
+                    style={{ width: wp('8%'), height: wp('8%'), resizeMode: 'contain' }}
+                  />
+                )}
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
+  );
+                }
+                  console.log('jobs', jobs);
   return (
     <LinearGradient style={{ flex: 1 }} colors={["#4E35AE", "#775ED7"]}>
       <SafeAreaView>

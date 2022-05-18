@@ -9,8 +9,8 @@ class CommonUtil {
   }
 
   deviceToken;
-  lat = 0;//32.7767;
-  long = 0;//-96.797;
+  lat = 30.26627100;//32.7767;
+  long = -97.75640900;//-96.797;
 
   deviceTokenSet = async () => {
     if (Platform.OS === "ios") {
@@ -26,8 +26,8 @@ class CommonUtil {
   };
 
   setLocation(lat, long) {
-    this.lat = 0;//lat;
-    this.long = 0;//long;
+    this.lat = 30.26627100;//lat;
+    this.long = -97.75640900;//long;
   }
 
   distance(lat2, lon2, unit) {

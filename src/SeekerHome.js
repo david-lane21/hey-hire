@@ -37,8 +37,8 @@ function SeekerHome({ navigation }) {
   const [profile, setProfile] = useState({});
   const [positions, setPositions] = useState([]);
   const [location, setLocation] = useState({
-    latitude: 32.7767,
-    longitude: -96.797,
+    latitude: 30.26627100,//32.7767,
+    longitude: -97.75640900,//-96.797,
   });
   const [businesses, setBusinesses] = useState([]);
   const [selectedBusiness, setSelectedBusiness] = useState("");
@@ -266,7 +266,7 @@ function SeekerHome({ navigation }) {
   async function getHiringLocations(){
     try {
       setUser(userData)
-      const res = await getRequest(`/job-seeker/location/list?lng=0&lat=0`,userData?.token)
+      const res = await getRequest(`/job-seeker/location/list?lng=-97.75640900&lat=30.26627100`,userData?.token)
       const json = await res.json()
       if(json.data?.length > 0){
         let bizList = json.data.filter(
@@ -290,6 +290,7 @@ function SeekerHome({ navigation }) {
           (a, b) => a.distance_in_km - b.distance_in_km
         );
         setBusinesses(bizList);
+        dispatch({type: 'BuisnessDeails/setState',payload: {buisness: bizList}})
       }
     } catch (error) {
       console.log('error while getting businesses')
