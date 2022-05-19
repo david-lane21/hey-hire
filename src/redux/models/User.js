@@ -2,7 +2,8 @@ import { reducerActions as reducers } from "./reducers";
 
 const initialState = {
     profile: {},
-    token: null
+    token: null,
+    profileImage: null
 }
 
 export const UserData = {

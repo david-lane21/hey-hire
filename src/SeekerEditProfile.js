@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -7,16 +7,12 @@ import {
   FlatList,
   Text,
   TextInput,
-  ScrollView,
   TouchableOpacity,
   TouchableHighlight,
   Platform,
-  ActivityIndicator,
-  KeyboardAvoidingView,
   Alert,
   PermissionsAndroid,
   ImageBackground,
-  Switch,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AwesomeAlert from 'react-native-awesome-alerts';
@@ -28,10 +24,9 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import Constants from "expo-constants";
 import { educationLevels, countries, languages } from "./utils/consts.js";
-import { getUser, setUser, getToken } from "./utils/utils.js";
+import { getUser, setUser } from "./utils/utils.js";
 import {
   postFormData,
-  getWithParamRequest,
   postJSON,
   setInstagram,
   getRequest,
@@ -45,7 +40,6 @@ import { strings } from "./translation/config";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import DeviceInfo from "react-native-device-info";
 import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
 import InstagramLoginPopup from "./components/InstagramLogin.js";
 import Loader from "./components/Loader";
 import { useSelector, useDispatch } from "react-redux";
@@ -53,12 +47,12 @@ import { useSelector, useDispatch } from "react-redux";
 const isIphoneX = DeviceInfo.hasNotch();
 
 function SeekerEditProfile({ navigation, route }) {
-  const scrollViewRef = useRef();
 
   const isFocused = useIsFocused();
-  const tempProfile = route.params.profile;
+  const dispatch = useDispatch();
 
-  console.log("tempPRofile", tempProfile);
+  const userData = useSelector((state) => state.UserData);
+  const tempProfile = route.params.profile;
 
   const [modalVisible, setModalVisible] = useState(false);
   const [showAwsomeAlert, setShowAwsomeAlert] = useState(false);
@@ -70,9 +64,7 @@ function SeekerEditProfile({ navigation, route }) {
   const [filteredLangs, setFilteredLangs] = useState(languages);
 
   const [user, setUser1] = useState({});
-  const [deviceToken, setDeviceToken] = useState("");
-  const [profile, setProfile] = useState(tempProfile);
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState(userData.profileImage);
 
   const [firstName, setFirstName] = useState(tempProfile.first_name);
   const [lastName, setLastName] = useState(tempProfile.last_name);
@@ -113,27 +105,13 @@ function SeekerEditProfile({ navigation, route }) {
 
   const [loading, setLoading] = useState(false);
 
-  const [skill, setSkill] = useState("");
   const [categoriesList, setCategoriesList] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
-  const [categories, setCategories] = useState([]);
 
   const BIO_PLACEHOLDER = `Example: Greetings, my name is Benjamin, I am 20 years old. I am currently studying my degree at UT, TX.
   I am a hard working overachiever. And I know I will only benefit your business goals and accomplishments. I have past experience working in the kitchen, as my past job was at Mario’s Pizza downtown. I am easy going, and will bring only good and positive vibes in to your business, I would gladly appreciate it you consider my submission and set an interview this following week! Thanks for reading and hope to see you soon!`;
 
-  const dispatch = useDispatch();
-
-  const userData = useSelector((state) => state.UserData);
-
   useEffect(() => {
-    const tempProfile = route.params.profile;
-    // let p = tempProfile.phone.split(" ");
-    // let p1 = p[0].replace(/\+/g, "");
-    // let p2 = p[1] + " " + p[2];
-    // setPhCode(p1);
-    // setPhone(p2);
-    // setPhCode('+1')
-    // setPhone(tempProfile.phone)
     (async () => {
       if (Constants.platform.ios) {
         try {
@@ -171,10 +149,6 @@ function SeekerEditProfile({ navigation, route }) {
   }, []);
 
   function getJobCategories() {
-    console.log("goes in get job category ");
-    let form = new FormData();
-    form.append("user_token", user.user_token);
-    form.append("user_id", user.user_id);
     getRequest("/job-seeker/business-category", userData.token)
       .then((res) => {
         console.log("ressss while  getting jobs categories ", res);
@@ -203,15 +177,36 @@ function SeekerEditProfile({ navigation, route }) {
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      base64: true,
       allowsEditing: false,
       aspect: [4, 3],
-      quality: 1,
+      quality: 0.1,
     });
 
     if (!result.cancelled) {
       setImage(result.uri);
+      uploadImage(result.base64);
     }
   };
+
+  function uploadImage(image) {
+    const body = {
+      image: "data:image/png;base64," + image
+    };
+    setLoading(true);
+    postJSON('/job-seeker/photo', body, userData.token)
+    .then((response) => {
+      return response.json();
+    })
+    .then((json1) => {
+      dispatch({type: 'UserData/setState',payload: {profileImage: json1.data.thumb_url}});
+      setLoading(false);
+    })
+    .catch((err1) => {
+      setLoading(false);
+      console.log("Update Profile Image error", JSON.stringify(err1));
+    });
+  }
 
   function dateFormat(date) {
     if (date) {
@@ -320,12 +315,7 @@ function SeekerEditProfile({ navigation, route }) {
   function loadDate() {
     getUser().then((u) => {
       let u2 = JSON.parse(u);
-      console.log("getUser -> u", u);
-      console.log("getUser -> u2", u2);
       setUser1(u2);
-      getToken().then((t) => setDeviceToken(t));
-      console.log("u2.user_token", u2);
-      console.log("u2.user_token", u2.user_token);
       getJobCategories();
     });
   }
@@ -712,6 +702,7 @@ function SeekerEditProfile({ navigation, route }) {
     </Modal>
     );
   }
+  console.log('image', image);
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
       <KeyboardAwareScrollView
@@ -738,22 +729,12 @@ function SeekerEditProfile({ navigation, route }) {
 
         <Loader loading={loading} />
 
-        {/* <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : null}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 10 : 40}      
-      > */}
-        {/* <ScrollView
-          keyboardShouldPersistTaps="always"
-            showsVerticalScrollIndicator={false}
-            style={{ marginBottom: 40 }}   
-            ref={scrollViewRef}
-          > */}
         <View style={{ flex: 1, width: "100%" }}>
           <View style={{ flex: 1, alignItems: "center", padding: 20 }}>
             <View style={{ width: 150, height: 100, alignSelf: "center" }}>
               {image == null ? (
                 <View>
-                  {tempProfile && tempProfile.avatar_image ? (
+                  {!image ? (
                     <Image
                       source={require("../assets/img_place.png")}
                       style={{
@@ -766,10 +747,7 @@ function SeekerEditProfile({ navigation, route }) {
                   ) : (
                     <Image
                       source={{
-                        uri:
-                          tempProfile.avatar_image +
-                          "?random_number=" +
-                          new Date().getTime(),
+                        uri: image
                       }}
                       style={{
                         width: 100,

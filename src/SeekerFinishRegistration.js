@@ -23,7 +23,7 @@ import * as ImagePicker from "expo-image-picker";
 import Constants from "expo-constants";
 import { educationLevels, countries, languages } from "./utils/consts.js";
 import { getUser, setUser,removeUser } from "./utils/utils.js";
-import { getRequest, putJSON } from "./utils/network.js";
+import { getRequest, putJSON, postJSON } from "./utils/network.js";
 import RNPickerSelect from "react-native-picker-select";
 import { useIsFocused } from "@react-navigation/native";
 import { KeyboardAccessoryNavigation } from "react-native-keyboard-accessory";
@@ -104,15 +104,36 @@ function SeekerFinishRegistration({ navigation, route }) {
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      base64: true,
       allowsEditing: false,
       aspect: [4, 3],
-      quality: 1,
+      quality: 0.1,
     });
 
     if (!result.cancelled) {
       setImage(result.uri);
+      uploadImage(result.base64);
     }
   };
+
+  function uploadImage(image) {
+    const body = {
+      image: "data:image/png;base64," + image
+    };
+    setLoading(true);
+    postJSON('/job-seeker/photo', body, route.params.token)
+    .then((response) => {
+      return response.json();
+    })
+    .then((json1) => {
+      console.log('json1', json1);
+      setLoading(false);
+    })
+    .catch((err1) => {
+      setLoading(false);
+      console.log("Update Profile Image error", JSON.stringify(err1));
+    });
+  }
 
   function dateFormat(date) {
     if (date) {
@@ -246,7 +267,7 @@ function SeekerFinishRegistration({ navigation, route }) {
             setUser(_user);
           }
         });
-        dispatch({type: 'UserData/setState',payload: {profile: json.data, token: route.params.token}});
+        dispatch({type: 'UserData/setState',payload: {profile: json.data, token: route.params.token, profileImage: image}});
       } catch (error) {
         setLoading(false);
         Alert.alert("Error", JSON.stringify(error));
@@ -540,9 +561,7 @@ function SeekerFinishRegistration({ navigation, route }) {
               />
             ) : (
               <Image
-                source={{
-                  uri: image + "?random_number=" + new Date().getTime(),
-                }}
+                source={{ uri: image }}
                 style={{
                   width: 100,
                   height: 100,

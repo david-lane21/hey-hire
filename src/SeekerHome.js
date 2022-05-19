@@ -253,6 +253,7 @@ function SeekerHome({ navigation }) {
         }
       }
     })();
+    getProfileImage();
 
     return () => {
       Linking.removeEventListener("url", handleOpenURL);
@@ -262,6 +263,19 @@ function SeekerHome({ navigation }) {
   useEffect(() => {
     getHiringLocations()
   },[latitude,longitude])
+
+  function getProfileImage() {
+    getRequest("/job-seeker/photo", userData.token)
+    .then((res) => {
+      return res.json();
+    })
+    .then((json) => {
+      setImage(json.data.thumb_url);
+      dispatch({type: 'UserData/setState',payload: {profileImage: json.data.thumb_url}});
+    }).catch((error) => {
+      console.log('Get Profile Image error', JSON.stringify(error));
+    });
+  }
 
   async function getHiringLocations(){
     try {
@@ -567,7 +581,7 @@ function SeekerHome({ navigation }) {
             }}
           >
             <Image
-              source={{ uri: profile.avatar_image, cache: "force-cache" }}
+              source={{ uri: userData.profileImage }}
               style={{
                 width: wp('30%'),
                 height: wp('30%'),
