@@ -15,8 +15,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import {strings} from '../translation/config';
 
 export default function ConfirmationAlert({ visible,business, job,onClose,onSendCV }) {
-  console.log('ConfirmationAlert -> job', job);
-  console.log('ConfirmationAlert -> business', business);
   return (
     <Modal
       animationType="fade"

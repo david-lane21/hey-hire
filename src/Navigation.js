@@ -225,15 +225,9 @@ export function EditProfileNavigation({ navigation }) {
         name="SeekerEditProfile"
         component={SeekerEditProfile}
         options={{
-          headerShown: true,
+          headerShown: false,
           headerBackTitleVisible: false,
-          headerTitle: () => (<CustomHeader title={strings.EDIT_YOUR_PROFILE} />),
-          headerStyle: {
-            backgroundColor: "#fff",
-          },
-          headerLeft: () => (<CustomBack navigation={navigation} />),
-          headerTintColor: "#4E35AE",
-          gestureEnabled: false
+          //gestureEnabled: false
         }}
         initialParams={{ profile: userData.profile }}
       />

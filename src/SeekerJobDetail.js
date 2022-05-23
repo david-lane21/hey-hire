@@ -8,6 +8,7 @@ import {
   ScrollView,
   Alert,
   ImageBackground,
+  RefreshControl,
   Linking,
 } from "react-native";
 import { getUser, setUser } from "./utils/utils.js";
@@ -32,6 +33,7 @@ function SeekerJobDetail({ route, navigation }) {
   const [job, setJob] = useState(tempJob);
   const [modal1, setModal1] = useState(false);
   const [modal2, setModal2] = useState(false);
+  const [refresh, setRefresh] = useState(false);
   const [instaModalShow, setInstaModalShow] = useState(false);
   const userData = useSelector(state => state.UserData)
 
@@ -42,13 +44,11 @@ function SeekerJobDetail({ route, navigation }) {
       Linking.removeEventListener("url", handleOpenURL);
     };
   }, [isFocused]);
-  console.log('job', job);
-  console.log('route.params.job', route.params.job);
+
   function loadData() {
+    setRefresh(true);
     getUser().then((u) => {
       let u2 = JSON.parse(u);
-      console.log("Local user", u2);
-      console.log('route.params.job.id', route.params.job);
       setUser1(u2);
       getRequest(`/job-seeker/job-position/${route.params.job.id}`, userData.token)
         .then((res) => {
@@ -59,8 +59,10 @@ function SeekerJobDetail({ route, navigation }) {
           setJob(
             Object.assign(json.data, { like: tempJob.like ? tempJob.like : 0 })
           );
+          setRefresh(false);
         })
         .catch((err) => {
+          setRefresh(false);
           console.log(err);
         });
     });
@@ -117,14 +119,12 @@ function SeekerJobDetail({ route, navigation }) {
       const body = {
         "job_id": job.id
       }
-      console.log('body', body);
       const res = await postJSON('/job-seeker/application/', body, userData.token);
       const json = await res.json()
       setModal2(true);
       const tempJob = Object.assign({}, job, { application: {status: "applied", applied_at: new Date()} });
-      console.log('onSendCV -> tempJob', tempJob);
-      console.log('onSendCV -> json', json);
       setJob(tempJob);
+      route.params.callBack(route.params.job);
     } catch (error) {
       console.log('error', error);
     }
@@ -133,39 +133,7 @@ function SeekerJobDetail({ route, navigation }) {
   useEffect(() => {
     setJob(job);
   }, [job]);
-/*
-  function addWishlist() {
-    let form = new FormData();
-    form.append("user_token", user.user_token);
-    form.append("user_id", user.user_id);
-    form.append("job_id", job.id);
 
-    let url = "add_like";
-    if (job.like == "1") {
-      url = "remove_like";
-    }
-
-    postFormData(url, form)
-      .then((res) => {
-        return res.json();
-      })
-      .then((json) => {
-        console.log(job.like, url, json);
-        if (json.status_code == 200) {
-          const tempJob = Object.assign({}, job, {});
-          if (tempJob.like == "1") {
-            tempJob.like = 0;
-          } else {
-            tempJob.like = "1";
-          }
-          setJob((job) => tempJob);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-*/
   function onCancelCV() {
     Alert.alert(
       "Confirm",
@@ -238,17 +206,6 @@ function SeekerJobDetail({ route, navigation }) {
     }
   }
 
-  console.log('user', user);
-
-  function dateFormat(date) {
-    if (date) {
-      let d = date.split("-");
-      return `${d[1]}/${d[2]}/${d[0]}`;
-    } else {
-      return "";
-    }
-  }
-
   return (
     <LinearGradient style={{ flex: 1 }} colors={["#4E35AE", "#775ED7"]}>
       <SafeAreaView>
@@ -288,34 +245,48 @@ function SeekerJobDetail({ route, navigation }) {
                   style={{ width: 20, height: 20 }}
                 />
               </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  route.params.callBack(route.params.job);
-                  if (job.like && job.like == 1) {
-                    setJob(
-                      Object.assign({}, job, {like: 0})
-                    );
-                  } else {
-                    setJob(
-                      Object.assign({}, job, {like: 1})
-                    );
-                  }
-                  console.log('_tempJob', job);
-                }}
-              >
-                {job.like & job.like == 1 ? (<Image
-                  source={require("../assets/ic_heart_filled_w.png")}
-                  style={{ width: 28, height: 25, marginRight: 5, resizeMode: 'contain' }}
-                />) : (
-                <Image
-                  source={require("../assets/ic_heart_blank.png")}
-                  style={{ width: 28, height: 25, marginRight: 5, resizeMode: 'contain' }}
-                />)}
-              </TouchableOpacity>
+              {!job.application ? (
+                <TouchableOpacity
+                  onPress={() => {
+                    route.params.callBack(route.params.job);
+                    if (job.like && job.like == 1) {
+                      setJob(
+                        Object.assign({}, job, {like: 0})
+                      );
+                    } else {
+                      setJob(
+                        Object.assign({}, job, {like: 1})
+                      );
+                    }
+                    console.log('_tempJob', job);
+                  }}
+                >
+                  {job.like & job.like == 1 ? (<Image
+                    source={require("../assets/ic_heart_filled_w.png")}
+                    style={{ width: 28, height: 25, marginRight: 5, resizeMode: 'contain' }}
+                  />) : (
+                  <Image
+                    source={require("../assets/ic_heart_blank.png")}
+                    style={{ width: 28, height: 25, marginRight: 5, resizeMode: 'contain' }}
+                  />)}
+                </TouchableOpacity>
+              ) : null}
             </View>
           </View>
         </View>
-        <ScrollView style={{ marginBottom: 50 }}>
+        <ScrollView
+          horizontal={false}
+          style={{ marginBottom: 50 }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refresh}
+              onRefresh={() => {
+                loadData();
+              }}
+              tintColor={"#fff"}
+            />
+          }
+        >
           <View style={{ flex: 1, alignItems: "center", padding: 20 }}>
             <ImageBackground
               source={require("../assets/buisness_image_container.png")}

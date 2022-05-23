@@ -13,8 +13,10 @@ import {
   Alert,
   PermissionsAndroid,
   ImageBackground,
+  StatusBar,
+  SafeAreaView
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { StackActions } from '@react-navigation/native';
 import AwesomeAlert from 'react-native-awesome-alerts';
 import Tags from "react-native-tags";
 import {
@@ -350,9 +352,9 @@ function SeekerEditProfile({ navigation, route }) {
         note: bio,
         country,
         availability: availability,
-        // education: institution,
-        // education_level: eduLevel,
-        // certificate: certificate,
+        education: institution,
+        education_level: eduLevel,
+        certificate: certificate,
         language: langs,
         eligible: eligible || false,
         sixteen: sixteen || false,
@@ -365,14 +367,13 @@ function SeekerEditProfile({ navigation, route }) {
           .map((item) => item.id)
           .toString(),
       };
-      console.log("updateProfile -> body", body);
       setLoading(true);
       const res = await putJSON(`/job-seeker/profile/${userData.profile.id}`, body, userData.token);
-      console.log("res", res);
       const json = await res.json();
-      console.log("json", json);
       setLoading(false);
       dispatch({ type: "UserData/setState", payload: { profile: json.data } });
+      // await navigation.dispatch(StackActions.replace('SeekerHome'));
+      navigation.goBack();
     } catch (error) {
       setLoading(false);
       Alert.alert("Error", error);
@@ -380,87 +381,60 @@ function SeekerEditProfile({ navigation, route }) {
     }
   }
 
-  async function handleUpdate() {
-    let form = new FormData();
-    form.append("first_name", firstName);
-    form.append("last_name", lastName);
-    form.append("address", address);
-    form.append("email", email);
-    form.append("city", city);
-    form.append("bio", bio);
-    form.append("zip_code", zipcode);
-    form.append("state", state);
-    form.append("country", country);
-    form.append("phone", phone);
-    // form.append("user_type", "2");
-    // form.append("user_token", user.user_token);
-    // form.append("user_id", user.user_id);
-    // form.append("device_tocken", deviceToken);
-    if (image) {
-      form.append("avatar_image", {
-        uri: image,
-        name: "avatar.jpg",
-        type: "image/jpeg",
-      });
-    }
 
-    form.append("availability", availability);
-    form.append("education", institution);
-    form.append("education_level", eduLevel);
-    form.append("certificate", certificate);
-    form.append("language", langs);
-    form.append("eligible", eligible || false);
-    form.append("sixteen", sixteen || false);
-    form.append("convictions", convictions || false);
-    form.append("covid_vaccinated", covid_vaccinated || false);
-    // form.append("skill", skills.toString());
-    form.append("instagram_connected", isInstagramConnect);
-    form.append(
-      "preferred_business_categories",
-      categoriesList
-        .filter((item) => item.selected)
-        .map((item) => item.id)
-        .toString()
-    );
-    console.log(form);
-    setLoading(true);
-    putFormData("update_user", form, userData.token)
-      .then((res) => {
-        console.log(res);
-        if (res.status == 200) {
-          return res.json();
-        } else {
-          console.log("res", res);
-          setLoading(false);
-          Alert.alert("Error", "Profile image is too large.");
-
-          return res.text();
-        }
-      })
-      .then((json) => {
-        console.log("update user overe there", json);
-        if (json.status_code != "200") {
-          setError(json.msg);
-          setLoading(false);
-        } else {
-          console.log("res for user in  to check null ", json);
-          setUser1(json.data);
-          update_cv(json.data.user_token);
-          // let tempUserData = json.data;
-          // tempUserData.avatar_image =
-          //   tempUserData.avatar_image +
-          //   "?random_number=" +
-          //   new Date().getTime();
-          var tempUserData = json.data;
-          tempUserData.instagram_connected = isInstagramConnect;
-          setUser(tempUserData);
-          // // navigation.goBack()
-          // navigation.navigate("Seeker");
-        }
-      })
-      .catch((err) => {
-        console.log(err, err.message);
-      });
+  async function navigateBack() {
+    const tempUser = userData.profile;
+    if (
+        tempUser.first_name !== firstName ||
+        tempUser.last_name !== lastName ||
+        tempUser.address !== address ||
+        tempUser.zip_code !== zipcode ||
+        tempUser.state !== state ||
+        tempUser.city !== city ||
+        tempUser.phone !== phone ||
+        tempUser.email !== email ||
+        tempUser.note !== bio ||
+        tempUser.country !== country ||
+        tempUser.availability !== availability ||
+        tempUser.education !== institution ||
+        tempUser.education_level !== eduLevel ||
+        tempUser.certificate !== certificate ||
+        tempUser.language !== langs ||
+        tempUser.eligible !== eligible ||
+        tempUser.sixteen !== sixteen ||
+        tempUser.convictions !== convictions ||
+        tempUser.covid_vaccinated !== covid_vaccinated ||
+        skills.toString() !== "" && tempUser.skill !== skills.toString() ||
+        tempUser.preferred_business_categories !== categoriesList.filter((item) => item.selected).map((item) => item.id).toString()
+      ) {
+        Alert.alert("", "You have some unsaved changes. Do you want to update changes", [
+          {
+            text: "Cancel",
+            onPress: async () => {
+              //await navigation.dispatch(StackActions.replace('SeekerHome'), {
+              //  screenOptions: {
+              //    animationEnabled: false
+              //  }
+              //});
+              navigation.goBack();
+            },
+            style: "cancel",
+          },
+          {
+            text: "Update",
+            onPress: () => {
+              updateProfile();
+            },
+          },
+        ]);
+      } else {
+        //await navigation.dispatch(StackActions.replace('SeekerHome'), {
+        //  screenOptions: {
+        //    animationEnabled: false
+        //  }
+       // });
+        navigation.goBack();
+      }
   }
 
   function update_cv(userToken) {
@@ -702,9 +676,47 @@ function SeekerEditProfile({ navigation, route }) {
     </Modal>
     );
   }
-  console.log('image', image);
+
   return (
-    <View style={{ flex: 1, backgroundColor: "#fff" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+      <StatusBar barStyle="dark-content" />
+
+      <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            borderBottomWidth: 1,
+            borderBottomColor: "#715FCB",
+            paddingBottom: 10,
+            paddingTop: 20,
+          }}
+        >
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Image
+              source={require("../assets/headerImage.png")}
+              style={{ width: wp('25%'), height: hp('4%'), resizeMode: 'contain' }}
+            />
+          </View>
+          <View style={{ position: "absolute", left: 5, bottom: 6 }}>
+            <TouchableOpacity
+              onPress={async () => {
+                navigateBack();
+                //await navigation.dispatch(StackActions.replace('SeekerHome'));
+                //navigation.goBack();
+                //navigation.replace("Seeker", {
+                //  screen: "SeekerHome",
+                //});
+    
+              }}
+              style={{ padding: 5 }}>
+              <Image
+                source={require("../assets/ic_back.png")}
+                style={{ width: 20, height: 20, resizeMode: 'contain', alignSelf: 'center' }}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+
       <KeyboardAwareScrollView
         extraScrollHeight={Platform.OS === "ios" ? -60 : 0}
       >
@@ -1952,7 +1964,7 @@ function SeekerEditProfile({ navigation, route }) {
             setShowAwsomeAlert(false)
           }}
         />
-    </View>
+    </SafeAreaView>
   );
 }
 

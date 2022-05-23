@@ -45,7 +45,7 @@ function SeekerSignup({ navigation, route }) {
   const [city, setCity] = useState('')
   const [zipcode, setZipcode] = useState('')
   const [phCode, setPhCode] = useState('1')
-  const [phone, setPhone] = useState('')
+  const [phone, setPhone] = useState(route.params.contact)
   const [email, setEmail] = useState('')
   const [activeInputIndex, setActiveInputIndex] = useState(0)
   const [inputs, setInputs] = useState([])
@@ -490,6 +490,7 @@ function SeekerSignup({ navigation, route }) {
             />
             <TextInput
               style={[{ paddingLeft: 10, width: '100%', color: '#000' }, Platform.OS === "ios" && { height: 30 }]}
+              editable={false}
               onChangeText={text => setPhone(text)}
               placeholder={strings.PHONE}
               value={formatPhone(phone)}

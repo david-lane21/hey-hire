@@ -12,6 +12,7 @@ import {
   Alert,
   ImageBackground,
   PermissionsAndroid,
+  StatusBar
 } from "react-native";
 import { getUser, removeUser, setUser } from "./utils/utils.js";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
@@ -64,6 +65,7 @@ function SeekerHome({ navigation }) {
   },[userData])
 
   useEffect(() => {
+    console.log('isFocused', isFocused);
     if (isFocused) {
       setTimeout(() => {
         loadDate();
@@ -329,71 +331,29 @@ function SeekerHome({ navigation }) {
   }
 
   async function loadDate() {
-    return 
-    try {
-      getUser().then((u) => {
-
-        console.log('uuuuuu in home ', u)
-        let u2 = JSON.parse(u);
-        setUser1(u2);
-
-        let form = new FormData();
-        form.append("user_token", u2.user_token);
-        form.append("user_id", u2.user_id);
-
-        postFormData("user_profile", form)
-          .then((res) => {
-            console.log("Prifile data", res);
-            return res.json();
-          })
-          .then((json) => {
-            console.log("Prifile data", json);
-            var tempUpdateUser = Object.assign(u2, {
-              instagram_connected: json.data.instagram_connected,
+    if(!refresh) {
+      try {
+        getUser().then((u) => {
+          let u2 = JSON.parse(u);
+          getRequest(`/job-seeker/profile/${userData.profile.id}`, userData.token)
+            .then((res) => {
+              console.log("Prifile data", res);
+              return res.json();
+            })
+            .then(async (json) => {
+              console.log("Prifile data", json);
+              await dispatch({type: 'UserData/setState',payload: {profile: json.data}});
+              getProfileImage();
+              getHiringLocations();
+              setRefresh(false);
+            })
+            .catch((err) => {
+              console.log(err);
             });
-            console.log("Update user", tempUpdateUser);
-            setUser(tempUpdateUser);
-
-            json.data.avatar_image =
-              json.data.avatar_image + "?random_number=" + new Date().getTime();
-            setProfile(json.data);
-            sortPositions(json.data);
-            postFormData("get_all_business", form)
-              .then((json2) => {
-                return json2.json();
-              })
-              .then((json2) => {
-                let bizList = json2.data.filter(
-                  (b) =>
-                    parseFloat(b.latitude) &&
-                    parseFloat(b.longitude) &&
-                    b.is_active == 1
-                );
-                bizList = bizList.map((b) => {
-                  b.distance_in_km = CommonUtils.distance(
-                    b.latitude,
-                    b.longitude,
-                    "K"
-                  );
-                  return b;
-                });
-                bizList = bizList.filter((item) => item.distance_in_km < 20);
-
-                bizList = bizList.sort(
-                  (a, b) => a.distance_in_km - b.distance_in_km
-                );
-                console.log("Business list", bizList);
-
-                setBusinesses(bizList);
-                setRefresh(false);
-              });
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      });
-    } catch (error) {
-      console.log("Load data error", error);
+        });
+      } catch (error) {
+        console.log("Load data error", error);
+      }
     }
   }
 
@@ -500,6 +460,7 @@ function SeekerHome({ navigation }) {
 
   return (
     <LinearGradient style={{ flex: 1 }} colors={["#4E35AE", "#775ED7"]}>
+      <StatusBar barStyle="light-content" />
       <SafeAreaView>
         <View
           style={{
@@ -523,40 +484,14 @@ function SeekerHome({ navigation }) {
             <TouchableOpacity
               onPress={() => {
                 _onPressMenuBar()
-                // _onLogout();
               }}
               style={{ padding: 5 }}
             >
               <Image source={require("../assets/menubar.png")} style={{height: 20, width: 20, alignSelf: 'center'}}/>
             </TouchableOpacity>
           </View>
-
-          {/* <View style={{ position: "absolute", right: 5 }}>
-            <TouchableOpacity
-              onPress={() => {
-                if (userData?.profile) {
-                  navigation.navigate("SeekerLinks", {
-                    screen: "SeekerEditProfile",
-                    params: {
-                      profile: userData.profile,
-                    },
-                  });
-                }
-              }}
-            >
-              <Text
-                style={{
-                  paddingRight: 10,
-                  textAlign: "right",
-                  color: "#fff",
-                  fontSize: 18,
-                }}
-              >
-                
-              </Text>
-            </TouchableOpacity>
-          </View> */}
         </View>
+
         <ScrollView
           style={{ marginBottom: 50 }}
           refreshControl={
@@ -601,8 +536,7 @@ function SeekerHome({ navigation }) {
             style={{
               flex: 1,
               flexDirection: "row",
-              alignItems: "center",
-              alignSelf: "center",
+              justifyContent: "center",
               marginTop: 5,
             }}
           >
@@ -610,7 +544,7 @@ function SeekerHome({ navigation }) {
               source={require("../assets/ic_graduation.png")}
               style={{ width: 15, height: 15 }}
             />
-            <Text style={{ color: "#fff", marginLeft: 5 }}>
+            <Text style={{ color: "#fff" }}>
               {user.education}
             </Text>
           </View>
@@ -676,7 +610,7 @@ function SeekerHome({ navigation }) {
                 paddingLeft: 30,
                 paddingTop: 10,
                 paddingRight: 10,
-                lineHeight: 30
+                lineHeight: 17
               }}
             >
               {user.note}
@@ -719,7 +653,7 @@ function SeekerHome({ navigation }) {
                       paddingLeft: 30,
                       paddingTop: 15,
                       paddingBottom: 5,
-                      width: "90%",
+                      width: "100%",
                     }}
                     key={position.post_id}
                   >

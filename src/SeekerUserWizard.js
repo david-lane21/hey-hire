@@ -34,7 +34,7 @@ function SeekerUserWizard({ navigation }) {
   }
 
   function createAccount() {
-    navigation.navigate("SeekerSignup");
+    navigation.navigate("SeekerLogin");
   }
 
   function signIn() {

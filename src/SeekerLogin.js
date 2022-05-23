@@ -171,9 +171,22 @@ function SeekerLogin({ navigation }) {
       console.log('getOtp -> json', json);
       if(json.message == 'User found'){
         setOtpSent(true)
-      }
-      else{
-        alert('Number not found')
+      } else {
+        Alert.alert("", "Number not Found. Do you want to Register?", [
+          {
+            text: "Cancel",
+            onPress: async () => {},
+            style: "cancel",
+          },
+          {
+            text: "Register",
+            onPress: () => {
+              navigation.navigate("SeekerSignup", {
+                contact: phone
+              });
+            },
+          },
+        ]);
       }
       console.log('get json',json)
     } catch (error) {
