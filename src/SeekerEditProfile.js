@@ -685,8 +685,8 @@ function SeekerEditProfile({ navigation, route }) {
           style={{
             flexDirection: "row",
             alignItems: "center",
-            borderBottomWidth: 1,
-            borderBottomColor: "#715FCB",
+            borderBottomWidth: 0.15,
+            borderBottomColor: "#fff",
             paddingBottom: 10,
             paddingTop: 20,
           }}
