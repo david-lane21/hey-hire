@@ -11,6 +11,10 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSelector } from "react-redux";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 import { postJSON, getRequest, deleteJSON } from "./utils/network.js";
 import { getUser } from "./utils/utils.js";
@@ -231,10 +235,10 @@ function SeekerAppliedJobs({ navigation }) {
             <Image
               source={{ uri: item.job.business.avatar_image }}
               style={{
-                width: 40,
-                height: 40,
+                width: wp('10%'),
+                height: wp('10%'),
                 backgroundColor: "#444",
-                borderRadius: 40,
+                borderRadius: wp('10%'),
                 borderWidth: 1,
                 borderColor: "#888",
               }}
@@ -249,15 +253,14 @@ function SeekerAppliedJobs({ navigation }) {
                 {item.status == "applied" ? (
                   <Image
                     source={require("../assets/ic_applied.png")}
-                    style={{ width: 60, height: 15, marginLeft: 15, borderRadius: 4 }}
+                    style={{ width: wp('16%'), height: hp('1.8%'), marginLeft: 5, borderRadius: 4 }}
                   />
                 ) : null}
                 {isViewed.length > 0 && (
                   <View style={{ width: 35 }}>
                     <Image
                       source={require("../assets/ic-viewed.png")}
-                      style={{ width: 60, height: 15,marginLeft:10, borderRadius: 4 }}
-                      resizeMode={"stretch"}
+                      style={{ width: wp('16%'), height: hp('1.8%'), marginLeft: 5, borderRadius: 4 }}
                     />
                   </View>
                 )}
@@ -270,7 +273,8 @@ function SeekerAppliedJobs({ navigation }) {
                     fontWeight: "600",
                     textAlignVertical: "center",
                   }}
-                  numberOfLines={2}
+                  numberOfLines={1}
+                  ellipsizeMode="middle"
                 >
                   {item.job.business.name}{" "}
                   <Text
@@ -287,7 +291,7 @@ function SeekerAppliedJobs({ navigation }) {
                 </Text>
               </View>
 
-              <Text style={{ fontSize: 12, color: "#888", marginTop: 2.5 }}>
+              <Text style={{ fontSize: 12, color: "#888", marginTop: 2.5 }} numberOfLines={1} ellipsizeMode="tail">
                 {item.job.business.address.address}
               </Text>
             </View>

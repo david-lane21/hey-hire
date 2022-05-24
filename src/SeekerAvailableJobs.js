@@ -241,10 +241,10 @@ function SeekerAvailableJobs({ route, navigation }) {
             <Image
               source={{ uri: profile.avatar_image }}
               style={{
-                width: 40,
-                height: 40,
+                width: wp('10%'),
+                height: wp('10%'),
                 backgroundColor: "#444",
-                borderRadius: 40,
+                borderRadius: wp('10%'),
                 borderWidth: 1,
                 borderColor: "#888",
               }}
@@ -253,21 +253,24 @@ function SeekerAvailableJobs({ route, navigation }) {
           <View style={{ width: "65%", backgroundColor: "#F4F5FA" }}>
             <View style={{}}>
               <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Text style={{ fontSize: 18, fontWeight: "bold", color: '#3D3B4E' }}>
+                <Text
+                  //ellipsizeMode='tail'
+                  //numberOfLines={1}
+                  style={{ fontSize: 18, fontWeight: "bold", color: '#3D3B4E'/*, width: item.application ? wp('31%') : wp('50%')*/ }}
+                >
                   {item.title}
                 </Text>
                 {item.application && item.application.applied_at ? (
                   <Image
                     source={require("../assets/ic_applied.png")}
-                    style={{ width: 60, height: 15, marginLeft: 15, borderRadius: 4 }}
+                    style={{ width: wp('16%'), height: hp('1.8%'), marginLeft: 5, borderRadius: 4 }}
                   />
                 ) : null}
                 {item.application && item.application.viewed_at ? (
                   <View style={{ width: 35 }}>
                     <Image
                       source={require("../assets/ic-viewed.png")}
-                      style={{ width: 60, height: 15,marginLeft:10, borderRadius: 4 }}
-                      resizeMode={"stretch"}
+                      style={{ width: wp('16%'), height: hp('1.8%'), marginLeft:5, borderRadius: 4 }}
                     />
                   </View>
                 ) : null}
@@ -280,7 +283,8 @@ function SeekerAvailableJobs({ route, navigation }) {
                     fontWeight: "600",
                     textAlignVertical: "center",
                   }}
-                  numberOfLines={2}
+                  numberOfLines={1}
+                  ellipsizeMode='middle'
                 >
                   {profile.company.name}{" "}
                   <Text

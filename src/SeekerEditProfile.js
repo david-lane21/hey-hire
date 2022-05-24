@@ -409,13 +409,9 @@ function SeekerEditProfile({ navigation, route }) {
       ) {
         Alert.alert("", "You have some unsaved changes. Do you want to update changes", [
           {
-            text: "Cancel",
+            text: "Don't Save",
             onPress: async () => {
-              //await navigation.dispatch(StackActions.replace('SeekerHome'), {
-              //  screenOptions: {
-              //    animationEnabled: false
-              //  }
-              //});
+              restoreState();
               navigation.goBack();
             },
             style: "cancel",
@@ -428,47 +424,30 @@ function SeekerEditProfile({ navigation, route }) {
           },
         ]);
       } else {
-        //await navigation.dispatch(StackActions.replace('SeekerHome'), {
-        //  screenOptions: {
-        //    animationEnabled: false
-        //  }
-       // });
         navigation.goBack();
       }
   }
 
-  function update_cv(userToken) {
-    let form2 = {
-      user_token: userToken,
-      education_level: eduLevel,
-      sixteen: sixteen ? "1" : "0",
-      skill: skills.length == 0 ? "[]" : skills.toString(),
-      user_id: user.user_id,
-      eligible: eligible ? "1" : "0",
-      bio: bio,
-      certificate: certificate,
-      language: langs,
-      education: institution,
-      convictions: convictions ? "1" : "0",
-      post_list: positions,
-      availability: availability,
-    };
-
-    postJSON("update_cv", form2)
-      .then((response) => {
-        console.log(response);
-        return response.json();
-      })
-      .then((json1) => {
-        console.log("Update CV", json1);
-        // setUser(json1.data);
-        // navigation.goBack()
-        navigation.navigate("Seeker");
-        setLoading(false);
-      })
-      .catch((err1) => {
-        console.log("Update CV Error", err1, err1.message);
-      });
+  function restoreState() {
+    setFirstName(tempProfile.first_name);
+    setLastName(tempProfile.last_name);
+    setAddress(tempProfile.address);
+    setCountry(tempProfile.country);
+    setState(tempProfile.state);
+    setCity(tempProfile.city);
+    setZipcode(tempProfile.zip_code);
+    setPhone(tempProfile.phone);
+    setEmail(tempProfile.email);
+    setBio(tempProfile.note);
+    setSkills(tempProfile.skill ? tempProfile.skill.split(',') : []);
+    setEduLevel(tempProfile.education_level);
+    setlangs(tempProfile.language || "");
+    setEligible(tempProfile.eligible);
+    setSixteen(tempProfile.sixteen);
+    setInstitution(tempProfile.education);
+    setCertificate(tempProfile.certificate);
+    setConvictions(tempProfile.convictions);
+    setAvailability(tempProfile.availability);  
   }
 
   function handleFocus(index) {

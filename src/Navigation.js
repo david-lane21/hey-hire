@@ -599,14 +599,6 @@ export function MyDrawer({navigation}) {
 
         }}
       />
-      {/* <Drawer.Screen
-      //  name="SeekerAddPastPosition"
-      name=""
-        component={SeekerAddPastPosition}
-        options={{
-          headerShown: false,
-        }}
-        /> */}
     </Drawer.Navigator>
   );
 }

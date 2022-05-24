@@ -10,7 +10,12 @@ import {
   ImageBackground,
   RefreshControl,
   Linking,
+  StyleSheet
 } from "react-native";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 import { getUser, setUser } from "./utils/utils.js";
 import { postFormData, getRequest, postJSON } from "./utils/network.js";
 import { LinearGradient } from "expo-linear-gradient";
@@ -428,15 +433,13 @@ function SeekerJobDetail({ route, navigation }) {
               >
                 <Image
                   source={require("../assets/ic_category_yellow.png")}
-                  style={{ width: 15, height: 15, resizeMode: 'contain' }}
+                  style={styles.headingIcon}
                 />
-                <Text
-                  style={{ fontSize: 14, marginLeft: 10, fontWeight: "bold", color: '#594A9E' }}
-                >
+                <Text style={styles.headingText}>
                   {strings.POSITION_DESCRIPTION}
                 </Text>
               </View>
-              <Text style={{ marginBottom: 30, marginTop: 2, fontSize: 13, color: '#3D3B4E' }}>
+              <Text style={styles.subText}>
                 {job.description}
               </Text>
 
@@ -445,15 +448,13 @@ function SeekerJobDetail({ route, navigation }) {
               >
                 <Image
                   source={require("../assets/ic_mind_yellow.png")}
-                  style={{ width: 15, height: 15, resizeMode: 'contain' }}
+                  style={styles.headingIcon}
                 />
-                <Text
-                  style={{ fontSize: 14, marginLeft: 10, fontWeight: "bold", color: '#594A9E' }}
-                >
+                <Text style={styles.headingText}>
                   {strings.REQUIRED_EXPERIENCE}
                 </Text>
               </View>
-              <Text style={{ marginBottom: 30, marginTop: 2, fontSize: 13, color: '#3D3B4E' }}>
+              <Text style={styles.subText}>
                 {job.experience}
               </Text>
               <View
@@ -461,15 +462,13 @@ function SeekerJobDetail({ route, navigation }) {
               >
                 <Image
                   source={require("../assets/ic_certificate_yellow.png")}
-                  style={{ width: 15, height: 15, resizeMode: 'contain' }}
+                  style={styles.headingIcon}
                 />
-                <Text
-                  style={{ fontSize: 14, marginLeft: 10, fontWeight: "bold", color: '#594A9E' }}
-                  >
+                <Text style={styles.headingText}>
                   {strings.REQUIRED_CERTIFICATIONS}
                 </Text>
               </View>
-              <Text style={{ marginBottom: 30, marginTop: 10, fontSize: 15 }}>
+              <Text style={styles.subText}>
                 {job.required_certifications
                   ? job.required_certifications.map((item) => item + "\n")
                   : ""}
@@ -691,3 +690,24 @@ function SeekerJobDetail({ route, navigation }) {
 }
 
 export default SeekerJobDetail;
+
+const styles = StyleSheet.create({
+  headingIcon: {
+    width: hp('2%'),
+    height: hp('2%'),
+    resizeMode: 'contain'
+  },
+  headingText: {
+    fontSize: hp('2.6%'),
+    marginLeft: 10,
+    fontWeight: "bold",
+    color: '#594A9E'
+  },
+  subText: {
+    marginBottom: hp('2.5%'),
+    marginTop: 2,
+    fontSize: hp('1.8%'),
+    color: '#3D3B4E',
+    fontWeight: '600'
+  }
+});

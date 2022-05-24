@@ -460,7 +460,7 @@ function SeekerHome({ navigation }) {
 
   return (
     <LinearGradient style={{ flex: 1 }} colors={["#4E35AE", "#775ED7"]}>
-      <StatusBar barStyle="light-content" />
+      {/*<StatusBar barStyle="light-content" />*/}
       <SafeAreaView>
         <View
           style={{
