@@ -51,7 +51,8 @@ function SeekerLogin({ navigation }) {
   const [nextFocusDisabled, setNextFocusDisabled] = useState(false);
   const [previousFocusDisabled, setPreviousFocusDisabled] = useState(false);
   const [otp,setOtp] = useState()
-  const [otpSent,setOtpSent] = useState(false)
+  const [otpSent,setOtpSent] = useState(false);
+  const [registrationOptSent, setRegistrationOptSent] = useState(false);
   const { signIn } = React.useContext(AuthContext);
 
   const [value, setValue] = useState("");
@@ -161,61 +162,63 @@ function SeekerLogin({ navigation }) {
   }
 
   async function getOtp() {
-
     try {
+      const tempNumber = phone.replace("(", "").replace(")", "").replace(" ", "").replace("-", "");
       const body = {
-        phone_number: phone
+        phone_number: tempNumber
       }
       const res = await postJSON("/job-seeker/sms-login/initiate",body)
       const json = await res.json()
-      console.log('getOtp -> json', json);
       if(json.message == 'User found'){
         setOtpSent(true)
       } else {
-        Alert.alert("", "Number not Found. Do you want to Register?", [
-          {
-            text: "Cancel",
-            onPress: async () => {},
-            style: "cancel",
-          },
-          {
-            text: "Register",
-            onPress: () => {
-              navigation.navigate("SeekerSignup", {
-                contact: phone
-              });
-            },
-          },
-        ]);
+        const _body = {
+          phone_number: tempNumber
+        };
+        const response = await postJSON("/job-seeker/sms-registration/send-code", _body);
+        const _json = await response.json();
+        if ( _json.message == "Registration Code Sent" ) {
+          setRegistrationOptSent(true);
+          setOtpSent(true);
+        }
       }
-      console.log('get json',json)
     } catch (error) {
-      console.log('error',error)
-    }
- 
+      console.log('error', JSON.stringify(error))
+    } 
   }
 
   async function verifyOtp() {
     try {
+      const tempNumber = phone.replace("(", "").replace(")", "").replace(" ", "").replace("-", "");
       const body = {
-        phone_number: phone,
+        phone_number: tempNumber,
         validation_code: otp
       }
-      // setOtpSent(true)
-      const res = await postJSON("/job-seeker/sms-login/finalize",body)
-      const json = await res.json()
-      if(json.user && Object.keys(json.user).length > 0 && json.token){
-        // setUser(json.user);
-        // setToken(json.token);
-        // signIn(json.token);
-        dispatch({type: 'UserData/setState',payload: {profile: json.user, token: json.token}})
+      if(registrationOptSent) {
+        const res = await postJSON("/job-seeker/sms-registration/verify-code",body)
+        const json = await res.json()
+        if(json.message == "Registration Code Validated") {
+          navigation.navigate("SeekerSignup", {
+            contact: tempNumber
+          });
+        }
+        else{
+          setRegistrationOptSent(false);
+          setOtpSent(false);
+        }
+      } else {
+        const res = await postJSON("/job-seeker/sms-login/finalize",body)
+        const json = await res.json()
+        if(json.user && Object.keys(json.user).length > 0 && json.token){
+          // setUser(json.user);
+          // setToken(json.token);
+          // signIn(json.token);
+          dispatch({type: 'UserData/setState',payload: {profile: json.user, token: json.token}})
+        }
+        else{
+        navigation.navigate("SeekerSignup",{token: json.token})
+        }
       }
-      else{
-      navigation.navigate("SeekerSignup",{token: json.token})
-
-      }
-      // if(json.)
-
     } catch (error) {
       console.log('error',error)
     }
@@ -340,53 +343,8 @@ function SeekerLogin({ navigation }) {
 
           <View style={{ height: window.height - (isIphoneX ? 200 : 135), justifyContent: 'center' }}>
 
-            {/* <View
-              style={{
-                alignItems: "flex-start",
-                marginHorizontal: "5%",
-              }}
-            >
-              <TouchableOpacity onPress={() => navigation.goBack()}>
-                <Image
-                  source={require("../assets/ic_back_w.png")}
-                  style={{
-                    width: 40,
-                    height: 30,
-                    marginTop: 20,
-
-                  }}
-                />
-              </TouchableOpacity>
-            </View> */}
-
-            {/*<View
-              style={{
-                alignItems: "center",
-                marginHorizontal: "5%",
-                marginBottom: window.height * (isIphoneX ? 0.05 : 0.02)
-              }}
-            >
-              <Image
-                source={require("../assets/home-logo.png")}
-                style={{
-                  width: 120,
-                  height: 120,
-                  marginTop: 0,
-                  opacity: 1,
-                }}
-                resizeMode={"stretch"}
-              />
-            </View>*/}
-
-            {/*<View style={{ alignItems: 'center', justifyContent: 'center', marginVertical: isIphoneX ? 10 : 5, marginTop: 10 }}>
-              <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#fff', textAlign: 'center' }}>{strings.SIGN_IN}</Text>
-            </View>*/}
-
-
-
             <View
               style={{
-                // alignItems: "center",
                 marginHorizontal: "5%",
                 marginBottom: 5
               }}
@@ -396,7 +354,6 @@ function SeekerLogin({ navigation }) {
                 transparent={false}
                 visible={modalVisible}
                 onRequestClose={() => {
-                  // Alert.alert('Modal has been closed.');
                   setModalVisible(false)
                 }}
               >
@@ -421,7 +378,6 @@ function SeekerLogin({ navigation }) {
                     </View>
                     <View>
                       <FlatList
-                        // ItemSeparatorComponent={<Separator />}
                         data={countries}
                         keyExtractor={(item) => item.code}
                         renderItem={({ item, index, separators }) => (
@@ -486,7 +442,10 @@ function SeekerLogin({ navigation }) {
 
                 <TextInput
                   style={[styles.code2,{width: '85%', marginLeft: 5}]}
-                  onChangeText={(text) => setPhone(text)}
+                  onChangeText={(text) => {
+                    setOtpSent(false);
+                    setPhone(text);
+                  }}
                   placeholder={strings.PHONE}
                   value={formatPhone(phone)}
                   textContentType="telephoneNumber"
@@ -505,157 +464,53 @@ function SeekerLogin({ navigation }) {
               </View>
             </View>
             
-   {otpSent ?         <>
-
-
-            <View
-              style={{
-                marginHorizontal: "5%",
-                marginVertical: 10,
-
-              }}
-            >
-              <Text style={{ color: '#000000', fontSize: 16, marginBottom: 5 }}>{strings.CODE}</Text>
-              <OTPInputView
-                style={{width: '100%', height: 50, alignSelf: 'center'}}
-                pinCount={6}
-                codeInputFieldStyle={styles.inputFieldStyle}
-                codeInputHighlightStyle={styles.inputHighlightStyle}
-                onCodeFilled = {(code) => {
-                  setOtp(code)
-                }}
-                placeholderTextColor='#000000'
-                selectionColor='#000000'
-            />
-            </View>
-
-
-            <View
-              style={{
-                alignItems: "center",
-                marginHorizontal: "5%",
-                marginVertical: 5,
-
-              }}
-            >
-            < RoundButton backgroundColor='#594A9E' text={strings.VERIFY_OTP} textColor="#FFFFFF" onPress={() => verifyOtp()} />
-              {/*<TouchableOpacity style={[styles.button,
-              { backgroundColor: "#fff", }]}
-                onPress={() => verifyOtp()}>
-
-                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{strings.VERIFY_OTP}</Text>
-              </TouchableOpacity>*/}
-            </View>
-      </> : <View
-              style={{
-                alignItems: "center",
-                marginHorizontal: "5%",
-                marginVertical: 5,
-
-              }}
-            >
-            <Text style={styles.verificationText}>{strings.VERIFICATION_CODE_TEXT}</Text>
-            <RoundButton backgroundColor='#594A9E' text={strings.CONTINUE} textColor="#FFFFFF" onPress={() => getOtp()} />
-              {/*<TouchableOpacity style={[styles.button,
-              { backgroundColor: "#fff", }]}
-                onPress={() => getOtp()}>
-
-                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{strings.GET_OTP}</Text>
-              </TouchableOpacity>*/}
-            </View>}
-
-            {/* <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "center",
-                marginVertical: 5
-              }}
-            >
-              <Text
+          {otpSent ? 
+            <>
+              <View
                 style={{
-                  color: "#fff",
-                  fontSize: 16,
+                  marginHorizontal: "5%",
+                  marginVertical: 10,
+
                 }}
               >
-                {strings.DONT_ACCOUNT}
-              </Text>
-              <View style={{ borderBottomWidth: 0.5, borderBottomColor: '#fff' }}>
-
-                <Text
-                  style={{
-                    marginLeft: 6,
-                    color: "#fff",
-                    fontSize: 16,
-                    fontWeight: 'bold'
+                <Text style={{ color: '#000000', fontSize: 16, marginBottom: 5 }}>{strings.CODE}</Text>
+                <OTPInputView
+                  style={{width: '100%', height: 50, alignSelf: 'center'}}
+                  pinCount={6}
+                  codeInputFieldStyle={styles.inputFieldStyle}
+                  codeInputHighlightStyle={styles.inputHighlightStyle}
+                  onCodeFilled = {(code) => {
+                    setOtp(code)
                   }}
-                  onPress={() => navigation.navigate("SeekerSignup")}
-                >
-                  {strings.SIGN_UP}
-                </Text>
+                  placeholderTextColor='#000000'
+                  selectionColor='#000000'
+              />
               </View>
-            </View> */}
 
 
+              <View
+                style={{
+                  alignItems: "center",
+                  marginHorizontal: "5%",
+                  marginVertical: 5,
 
-            {/* <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: isIphoneX ? 25 : 15 }}>
-              <View style={{ borderBottomWidth: 0.5, borderBottomColor: '#fff' }}>
-                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#fff', textAlign: 'center' }} onPress={gotoForgotPassword}>{strings.FORGOT_YOUR_PASSWORD}</Text>
+                }}
+              >
+              < RoundButton backgroundColor='#594A9E' text={strings.VERIFY_OTP} textColor="#FFFFFF" onPress={() => verifyOtp()} />
               </View>
-            </View> */}
-
-
-
+            </> :
+            <View
+              style={{
+                alignItems: "center",
+                marginHorizontal: "5%",
+                marginVertical: 5,
+              }}
+            >
+              <Text style={styles.verificationText}>{strings.VERIFICATION_CODE_TEXT}</Text>
+              <RoundButton backgroundColor='#594A9E' text={strings.CONTINUE} textColor="#FFFFFF" onPress={() => getOtp()} />
+            </View>
+          }
           </View>
-          {/*<View >
-            <View style={{ alignItems: 'center', justifyContent: 'center', marginVertical: 10 }}>
-              <View style={{ borderBottomWidth: 0.5, borderBottomColor: '#fff' }}>
-                <Text style={{ fontSize: 14, color: '#fff', textAlign: 'center' }} onPress={() => gotoTermService()} >{strings.TERM_OF_SERVICE}</Text>
-
-              </View>
-            </View>
-
-            <View style={{ alignItems: 'center', justifyContent: 'center', }}>
-              <View style={{ borderBottomWidth: 0.5, borderBottomColor: '#fff' }}>
-                <Text style={{ fontSize: 14, color: '#fff', textAlign: 'center' }} onPress={() => gotoPrivacyPolicy()} >{strings.PRIVACY_POLICY}</Text>
-
-              </View>
-            </View>
-
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "center",
-                marginTop: 10,
-                bottom: 0,
-                borderTopWidth: 0.5,
-                borderTopColor: '#fff',
-                paddingTop: 10,
-              }}
-            >
-              <Text
-                style={{
-                  color: "#fff",
-                  fontSize: 16,
-                }}
-              >
-                {strings.BUSINESS_OWNER}
-              </Text>
-              <View style={{ borderBottomWidth: 0.5, borderBottomColor: '#fff' }}>
-                <Text
-                  style={{
-                    marginLeft: 6,
-                    color: "#fff",
-
-                    fontSize: 16,
-                    fontWeight: 'bold'
-                  }}
-                  onPress={() => navigation.navigate("BusinessLogin")}
-                >
-                  {strings.CLICK_HERE_TO_LOGIN}
-                </Text>
-              </View>
-            </View>
-          </View>*/}
         </ScrollView>
       </SafeAreaView>
 

@@ -677,6 +677,15 @@ function SeekerFinishRegistration({ navigation, route }) {
               />
             </TouchableOpacity>
           </View>
+          <Text
+              style={{
+                fontSize: 13,
+                paddingLeft: 20,
+                marginVertical: 5,
+              }}
+          >
+            Tap to select categories
+          </Text>
           <FlatList
             data={selectedCategories}
             columnWrapperStyle={{ flexWrap: 'wrap', flex: 1, marginTop: 5 }}
@@ -715,6 +724,17 @@ function SeekerFinishRegistration({ navigation, route }) {
               />
               <Text style={{ paddingLeft: 10, fontSize: 18 }}>
                 {strings.SKILLS}
+              </Text>
+            </View>
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                marginBottom: 5,
+              }}
+            >
+              <Text style={{ paddingLeft: 10, fontSize: 13 }}>
+                Enter Skill and Press SPACE to add to list.
               </Text>
             </View>
             <Tags
@@ -1278,7 +1298,7 @@ function SeekerFinishRegistration({ navigation, route }) {
                 style={{
                   alignSelf: "center",
                   marginTop: 20,
-                  marginBottom: 50,
+                  marginBottom: hp('10%'),
                 }}
                 onPress={() => onPressAddPast()}
               >
@@ -1301,7 +1321,7 @@ function SeekerFinishRegistration({ navigation, route }) {
         style={
           Platform.OS == "android"
             ? { top: 0, position: "absolute", zIndex: 9999 }
-            : { top: isIphoneX ? 20 : 0 }
+            : { top: isIphoneX ? 0 : 0 }
         }
       />
       {/* </KeyboardAvoidingView> */}
@@ -1315,7 +1335,7 @@ function SeekerFinishRegistration({ navigation, route }) {
         }}
       >
         {error ? (
-          <Text style={{ color: "red", padding: 20, backgroundColor: "#fff" }}>
+          <Text style={{ color: "red", paddingHorizontal: 20, paddingBottom: 20, backgroundColor: "#fff" }}>
             {error}
           </Text>
         ) : null}

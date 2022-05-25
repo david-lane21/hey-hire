@@ -51,7 +51,7 @@ function SeekerSignup({ navigation, route }) {
   const [inputs, setInputs] = useState([])
   const [nextFocusDisabled, setNextFocusDisabled] = useState(false)
   const [previousFocusDisabled, setPreviousFocusDisabled] = useState(false)
-
+  
   const [phoneMaxLength, setPhoneMaxLength] = useState(20);
   const [phCountryCode, setPhCountryCode] = useState("US");
   const [keyboardHeight, setKeyboardHeight] = useState(301);
@@ -214,7 +214,7 @@ function SeekerSignup({ navigation, route }) {
           state: state,
           city: city,
           email: email,
-          phone: phone
+          phone: route.params.contact
       }
         const res = await postJSON("/job-seeker/profile", body)
         const json = await res.json();

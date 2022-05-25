@@ -1134,6 +1134,15 @@ function SeekerEditProfile({ navigation, route }) {
                 />
               </TouchableOpacity>
             </View>
+            <Text
+              style={{
+                fontSize: 13,
+                paddingLeft: 20,
+                marginVertical: 5,
+              }}
+            >
+              Tap to select categories
+            </Text>
             <FlatList
               data={selectedCategories}
               columnWrapperStyle={{ flexWrap: 'wrap', flex: 1, marginTop: 5 }}
@@ -1171,6 +1180,17 @@ function SeekerEditProfile({ navigation, route }) {
                 />
                 <Text style={{ paddingLeft: 10, fontSize: 18 }}>
                   {strings.SKILLS}
+                </Text>
+              </View>
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  marginBottom: 5,
+                }}
+              >
+                <Text style={{ paddingLeft: 10, fontSize: 13 }}>
+                  Enter Skill and Press SPACE to add to list.
                 </Text>
               </View>
               <Tags

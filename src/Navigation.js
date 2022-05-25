@@ -337,7 +337,7 @@ export function AuthNavigation({ navigation }) {
           headerStyle: {
             backgroundColor: "#fff",
           },
-          headerLeft: () => (<CustomBack navigation={navigation} />),
+          headerLeft: false,
           headerTintColor: "#4E35AE",
           gestureEnabled: false
         }}
