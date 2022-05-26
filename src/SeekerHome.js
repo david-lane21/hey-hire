@@ -537,14 +537,15 @@ function SeekerHome({ navigation }) {
               flex: 1,
               flexDirection: "row",
               justifyContent: "center",
+              alignItems: 'center',
               marginTop: 5,
             }}
           >
             <Image
-              source={require("../assets/ic_graduation.png")}
-              style={{ width: 15, height: 15 }}
+              source={require("../assets/ic_educate_w.png")}
+              style={{ width: 12, height: 12, resizeMode: 'contain' }}
             />
-            <Text style={{ color: "#fff" }}>
+            <Text style={{ marginLeft: 10, color: "#fff" }}>
               {user.education}
             </Text>
           </View>
@@ -568,10 +569,10 @@ function SeekerHome({ navigation }) {
               }}
             >
               <Image
-                source={require("../assets/ic_location.png")}
-                style={{ width: 15, height: 15 }}
+                source={require("../assets/location_white.png")}
+                style={{ width: 12, height: 12, resizeMode: 'contain' }}
               />
-              <Text style={{ color: "#fff", marginLeft: 5 }}>
+              <Text style={{ color: "#fff", marginLeft: 10 }}>
                 {user.city}, {user.state}, {user.country}
               </Text>
             </View>

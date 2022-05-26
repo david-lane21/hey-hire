@@ -3,13 +3,15 @@ import {
   StyleSheet,
   View,
   TouchableOpacity,
-  Alert
+  Alert,
+  Image
 } from "react-native";
 import {
-    DrawerContentScrollView,
-    DrawerItemList,
-    DrawerItem,
-  } from '@react-navigation/drawer';  
+  DrawerContentScrollView,
+  DrawerItem,
+} from '@react-navigation/drawer';
+import { DrawerActions } from '@react-navigation/native';
+import { Drawer } from 'react-native-paper';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import { useDispatch } from "react-redux";
@@ -17,7 +19,7 @@ import { useDispatch } from "react-redux";
 const CustomDrawer = (props) => {
 
   const dispatch = useDispatch();
-  
+
   function _onLogout() {
     Alert.alert("ApployMe", `Are you sure you want to logout now?`, [
       {
@@ -31,18 +33,71 @@ const CustomDrawer = (props) => {
   }
 
   return (
-    <DrawerContentScrollView {...props} contentContainerStyle={{flex: 1}}>
-      <View style={styles.mainContainer}>
-        <View style={styles.subContainer_1}>
-          <DrawerItemList {...props} />
-          <DrawerItem label="Help" onPress={() => alert('Help')} />
-          <DrawerItem label="Logout" onPress={() => _onLogout()} />
+      <DrawerContentScrollView {...props} contentContainerStyle={{flex: 1}}>
+        <View style={styles.mainContainer}>
+          <View style={styles.subContainer_1}>
+            <DrawerItem
+              icon={() => (
+                <Image
+                  source={require('../../assets/ic_home_menu.png')}
+                  style={styles.iconStyle}
+                />
+              )}
+              label="Home"
+              onPress={() => props.navigation.dispatch(DrawerActions.closeDrawer())}
+            />
+            <DrawerItem
+              icon={() => (
+                <Image
+                  source={require('../../assets/ic_edit_menu.png')}
+                  style={styles.iconStyle}
+                />
+              )}
+              label="Edit Profile"
+              onPress={() => props.navigation.jumpTo('EditProfile')}
+            />
+            <DrawerItem
+              icon={() => (
+                <Image
+                  source={require('../../assets/ic_help_menu.png')}
+                  style={styles.iconStyle}
+                />
+              )}
+              label="Help"
+              onPress={() => alert('Help')}
+            />
+            <DrawerItem
+              icon={() => (
+                <Image
+                  source={require('../../assets/ic_about_menu.png')}
+                  style={styles.iconStyle}
+                />
+              )}
+              label="About"
+              onPress={() => alert('Help')}
+            />
+            <Drawer.Section style={styles.bottomContainer}>
+              <DrawerItem
+                icon={() => (
+                  <Image
+                    source={require('../../assets/ic_logout_sideMenu.png')}
+                    style={styles.iconStyle}
+                  />
+                )}
+                label="Logout"
+                onPress={() => _onLogout()}
+              />
+              <Image
+                source={require('../../assets/headerImage.png')}
+                style={{ width: wp('30%'), height: hp('8%'), resizeMode: 'contain', alignSelf: 'center' }}
+              />
+            </Drawer.Section>
+          </View>
+          <View style={{flex: 2}}>
+            <TouchableOpacity style={styles.subContainer_2} onPress={() => props.navigation.dispatch(DrawerActions.closeDrawer())} />
+          </View>
         </View>
-        <View style={{flex: 2}}>
-          <TouchableOpacity style={styles.subContainer_2} onPress={() => props.navigation.toggleDrawer()} />
-        </View>
-      </View>
-    </DrawerContentScrollView>
+      </DrawerContentScrollView>
   );
 };
 
@@ -64,6 +119,18 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     height: '100%'
+  },
+  bottomContainer: {
+    position: 'absolute',
+    bottom: hp('5%'),
+    left: 0,
+    width: '100%',
+  },
+  iconStyle: {
+    marginRight: -wp('5%'),
+    width: hp('2.5%'),
+    height: hp('2.5%'),
+    resizeMode: 'contain'
   }
 });
 export default CustomDrawer;

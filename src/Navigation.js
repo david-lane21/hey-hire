@@ -584,19 +584,17 @@ export function MyDrawer({navigation}) {
     >
       <Drawer.Screen
         name="Home"
-        component={AppNavigation} 
+        component={AppNavigation}
         options={{
           headerShown: false,
           gestureEnabled: false
-
         }}/>
       <Drawer.Screen 
-        name="Edit Profile"
+        name="EditProfile"
         component={EditProfileNavigation}
         options={{
           headerShown: false,
           gestureEnabled: false
-
         }}
       />
     </Drawer.Navigator>
