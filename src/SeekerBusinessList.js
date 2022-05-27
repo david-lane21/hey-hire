@@ -10,7 +10,7 @@ import {
   RefreshControl,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import { postFormData } from "./utils/network.js";
 import { getUser } from "./utils/utils.js";
 import { useIsFocused } from "@react-navigation/native";
@@ -212,8 +212,8 @@ function SeekerBusinessList({ navigation }) {
             style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
           >
             <Image
-              source={require("../assets/title_header.png")}
-              style={{ width: 120, height: 25 }}
+              source={require("../assets/heyHire_white.png")}
+              style={{ width: wp('25%'), height: hp('4%'), resizeMode: 'contain' }}
             />
           </View>
           <View style={{ position: "absolute", left: 5 }}>

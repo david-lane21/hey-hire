@@ -711,7 +711,7 @@ function SeekerEditProfile({ navigation, route }) {
             style={{
               color: "#4834A6",
               fontSize: hp("2.1%"),
-              fontWeight: "600",
+              fontFamily: 'VisbyBold'
             }}
           >
             {strings.EDIT_YOUR_PROFILE}
@@ -1054,7 +1054,7 @@ function SeekerEditProfile({ navigation, route }) {
                   source={require("../assets/ic_star.png")}
                   style={{ width: 15, height: 15 }}
                 />
-                <Text style={{ paddingLeft: 10, fontSize: 18 }}>
+                <Text style={styles.subHeadingText}>
                   {strings.BIO}
                 </Text>
               </View>
@@ -1113,11 +1113,7 @@ function SeekerEditProfile({ navigation, route }) {
                 style={{ width: 15, height: 15 }}
               />
               <Text
-                style={{
-                  fontSize: 18,
-                  paddingLeft: 10,
-                  marginVertical: 5,
-                }}
+                style={styles.subHeadingText}
               >
                 {strings.JOB_CATEGORIES}
               </Text>
@@ -1139,6 +1135,7 @@ function SeekerEditProfile({ navigation, route }) {
                 fontSize: 13,
                 paddingLeft: 20,
                 marginVertical: 5,
+                fontFamily: 'VisbySemibold'
               }}
             >
               Tap to select categories
@@ -1178,7 +1175,7 @@ function SeekerEditProfile({ navigation, route }) {
                   source={require("../assets/ic_star.png")}
                   style={{ width: 15, height: 15 }}
                 />
-                <Text style={{ paddingLeft: 10, fontSize: 18 }}>
+                <Text style={styles.subHeadingText}>
                   {strings.SKILLS}
                 </Text>
               </View>
@@ -1189,7 +1186,7 @@ function SeekerEditProfile({ navigation, route }) {
                   marginBottom: 5,
                 }}
               >
-                <Text style={{ paddingLeft: 10, fontSize: 13 }}>
+                <Text style={{ paddingLeft: 10, fontSize: 13, fontFamily: 'VisbySemibold' }}>
                   Enter Skill and Press SPACE to add to list.
                 </Text>
               </View>
@@ -1295,13 +1292,7 @@ function SeekerEditProfile({ navigation, route }) {
                   source={require("../assets/ic_star.png")}
                   style={{ width: 15, height: 15 }}
                 />
-                <Text
-                  style={{
-                    fontSize: 18,
-                    paddingLeft: 10,
-                    marginBottom: 5,
-                  }}
-                >
+                <Text style={styles.subHeadingText}>
                   {strings.LEVEL_OF_EDUCATION}
                 </Text>
               </View>
@@ -1337,13 +1328,7 @@ function SeekerEditProfile({ navigation, route }) {
                 source={require("../assets/ic_star.png")}
                 style={{ width: 15, height: 15 }}
               />
-              <Text
-                style={{
-                  fontSize: 18,
-                  paddingLeft: 10,
-                  marginBottom: 5,
-                }}
-              >
+              <Text style={styles.subHeadingText}>
                 {strings.NAME_OF_INSTITUTION}
               </Text>
             </View>
@@ -1380,13 +1365,7 @@ function SeekerEditProfile({ navigation, route }) {
                 source={require("../assets/ic_star.png")}
                 style={{ width: 15, height: 15 }}
               />
-              <Text
-                style={{
-                  fontSize: 18,
-                  paddingLeft: 10,
-                  marginBottom: 5,
-                }}
-              >
+              <Text style={styles.subHeadingText}>
                 {strings.CERTIFICATIONS}
                 {/* {strings.OPTIONAL} */}
               </Text>
@@ -1454,7 +1433,7 @@ function SeekerEditProfile({ navigation, route }) {
                         </TouchableOpacity>
                       </View>
                       <View style={{ width: "60%" }}>
-                        <Text style={{ color: "#4834A6", fontSize: 18 }}>
+                        <Text style={styles.subHeadingText}>
                           {strings.ADD_YOUR_LANGUAGES}
                         </Text>
                       </View>
@@ -1518,7 +1497,7 @@ function SeekerEditProfile({ navigation, route }) {
                           onHideUnderlay={separators.unhighlight}
                         >
                           <View style={{ backgroundColor: "white" }}>
-                            <View
+                            <TouchableOpacity
                               style={{
                                 flex: 1,
                                 flexDirection: "row",
@@ -1527,37 +1506,23 @@ function SeekerEditProfile({ navigation, route }) {
                                 borderBottomWidth: 1,
                                 borderBottomColor: "#eee",
                               }}
+                              onPress={() => {
+                                if (isLangSelected(item)) {
+                                  removeFromLangs(item);
+                                } else {
+                                  addToLangs(item);
+                                }
+                              }}  
                             >
-                              {isLangSelected(item) ? (
-                                <TouchableOpacity
-                                  onPress={() => removeFromLangs(item)}
-                                >
-                                  <Image
-                                    source={require("../assets/ic_selected.png")}
-                                    style={{
-                                      width: 17,
-                                      height: 17,
-                                      marginRight: 10,
-                                      marginLeft: 20,
-                                    }}
-                                  />
-                                </TouchableOpacity>
-                              ) : (
-                                <TouchableOpacity
-                                  onPress={() => addToLangs(item)}
-                                >
-                                  <Image
-                                    source={require("../assets/ic_add_blue.png")}
-                                    style={{
-                                      width: 17,
-                                      height: 17,
-                                      marginRight: 10,
-                                      marginLeft: 20,
-                                    }}
-                                  />
-                                </TouchableOpacity>
-                              )}
-
+                              <Image
+                                source={isLangSelected(item) ? require("../assets/ic_selected.png") : require("../assets/ic_add_blue.png")}
+                                style={{
+                                  width: 17,
+                                  height: 17,
+                                  marginRight: 10,
+                                  marginLeft: 20,
+                                }}
+                              />
                               <Text
                                 style={{
                                   fontSize: 20,
@@ -1566,7 +1531,7 @@ function SeekerEditProfile({ navigation, route }) {
                               >
                                 {item}
                               </Text>
-                            </View>
+                            </TouchableOpacity>
                           </View>
                         </View>
                       )}
@@ -1587,13 +1552,7 @@ function SeekerEditProfile({ navigation, route }) {
                 source={require("../assets/ic_star.png")}
                 style={{ width: 15, height: 15 }}
               />
-              <Text
-                style={{
-                  fontSize: 18,
-                  paddingLeft: 10,
-                  marginBottom: 5,
-                }}
-              >
+              <Text style={styles.subHeadingText}>
                 {strings.SPOKEN_LANGUAGE}
               </Text>
             </View>
@@ -1626,13 +1585,7 @@ function SeekerEditProfile({ navigation, route }) {
                   source={require("../assets/ic_star.png")}
                   style={{ width: 15, height: 15 }}
                 />
-                <Text
-                  style={{
-                    fontSize: 18,
-                    paddingLeft: 10,
-                    marginBottom: 5,
-                  }}
-                >
+                <Text style={styles.subHeadingText}>
                   {strings.AVAILABILITY}
                 </Text>
               </View>
@@ -1671,7 +1624,7 @@ function SeekerEditProfile({ navigation, route }) {
                     style={{ width: 25, height: 25, marginRight: 5 }}
                   />
                 )}
-                <Text style={{ paddingLeft: 5, color: "#3482FF" }}>
+                <Text style={styles.checkBoxText}>
                   {strings.ARE_YOU_ELEGIBLE}
                 </Text>
               </TouchableOpacity>
@@ -1693,7 +1646,7 @@ function SeekerEditProfile({ navigation, route }) {
                     style={{ width: 25, height: 25, marginRight: 5 }}
                   />
                 )}
-                <Text style={{ paddingLeft: 5, color: "#3482FF" }}>
+                <Text style={styles.checkBoxText}>
                   {strings.ARE_YOU_AT_LEAST}
                 </Text>
               </TouchableOpacity>
@@ -1716,7 +1669,7 @@ function SeekerEditProfile({ navigation, route }) {
                   />
                 )}
                 <View style={{ flex: 1 }}>
-                  <Text style={{ paddingLeft: 5, color: "#3482FF" }}>
+                  <Text style={styles.checkBoxText}>
                     {strings.HAVE_YOU_EVER_BEEN_CONVICTED}
                   </Text>
                 </View>
@@ -1740,7 +1693,7 @@ function SeekerEditProfile({ navigation, route }) {
                   />
                 )}
                 <View style={{ flex: 1 }}>
-                  <Text style={{ paddingLeft: 5, color: "#3482FF" }}>
+                  <Text style={styles.checkBoxText}>
                     {strings.ARE_VACCINATED} {strings.OPTIONAL}
                   </Text>
                 </View>
@@ -1763,7 +1716,7 @@ function SeekerEditProfile({ navigation, route }) {
                 source={require("../assets/ic_business.png")}
                 style={{ width: 20, height: 20, marginRight: 5 }}
               />
-              <Text style={{ fontSize: 18 }}>
+              <Text style={{ fontSize: 18, fontFamily: 'VisbySemibold' }}>
                 {strings.PAST_POSTIONS} {strings.OPTIONAL}
               </Text>
             </View>
@@ -1817,7 +1770,7 @@ function SeekerEditProfile({ navigation, route }) {
                 }}
                 onPress={() => onPressAddPast()}
               >
-                <Text style={{ color: "#4E35AE", fontSize: 16, fontWeight: 'bold' }}>
+                <Text style={{ color: "#4E35AE", fontSize: 16, fontFamily: 'VisbyBold' }}>
                   + {strings.ADD_PAST_POSTION}
                 </Text>
               </TouchableOpacity>
@@ -2118,7 +2071,29 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingVertical: 15,
     alignItems: "center",
+  },
+  profileImageContainer: {
+    width: wp('25%'),
+    height: wp('25%'),
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: wp('20%'),
+    borderColor: '#4834A6',
+    borderWidth: 1,
+    backgroundColor: 'white'
+  },
+  subHeadingText: {
+    paddingLeft: 10,
+    fontSize: 18,
+    fontFamily: 'VisbySemibold',
+  },
+  checkBoxText: {
+    paddingLeft: 5,
+    color: "#3482FF",
+    fontFamily: 'VisbySemibold',
+    fontSize: 13
   }
+
 });
 
 const pickerSelectStyles = StyleSheet.create({

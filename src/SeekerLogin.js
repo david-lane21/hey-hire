@@ -341,7 +341,7 @@ function SeekerLogin({ navigation }) {
           keyboardShouldPersistTaps='always' keyboardDismissMode='on-drag'     >
 
 
-          <View style={{ height: window.height - (isIphoneX ? 200 : 135), justifyContent: 'center' }}>
+          <View style={{ height: window.height - (isIphoneX ? 200 : 135), marginTop: hp('10%') }}>
 
             <View
               style={{
@@ -424,11 +424,11 @@ function SeekerLogin({ navigation }) {
                 </SafeAreaView>
               </Modal>
 
-              <Text style={{ color: '#000000', fontSize: hp('2.8%'), fontWeight: 'bold' }}>{strings.MY_PHONE_NO}</Text>
+              <Text style={{ color: '#000000', fontSize: hp('3%'), fontFamily: 'VisbyBold' }}>{strings.MY_PHONE_NO}</Text>
               <View
                 style={{
                   flexDirection: "row",
-                  marginTop: 5
+                  marginTop: hp('5%')
 
                 }}
               >
@@ -437,11 +437,11 @@ function SeekerLogin({ navigation }) {
                   style={styles.code}
                   onPress={() => setModalVisible(true)}
                 >
-                  <Text style={{ color: "#000000", fontSize: hp('2%'), fontWeight: '600' }}>+{phCode}</Text>
+                  <Text style={{ color: "#000000", fontSize: hp('3%'), fontFamily: 'VisbySemibold' }}>+{phCode}</Text>
                 </TouchableOpacity>
 
                 <TextInput
-                  style={[styles.code2,{width: '85%', marginLeft: 5}]}
+                  style={styles.code2}
                   onChangeText={(text) => {
                     setOtpSent(false);
                     setPhone(text);
@@ -502,7 +502,7 @@ function SeekerLogin({ navigation }) {
             <View
               style={{
                 alignItems: "center",
-                marginHorizontal: "5%",
+                marginHorizontal: "8%",
                 marginVertical: 5,
               }}
             >
@@ -547,19 +547,21 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     color: "#000000",
     width: "15%",
-    // height: 50,
     alignItems: 'center',
     justifyContent: 'center'
   },
   code2: {
     flexDirection: "row",
+    fontFamily: 'VisbySemibold',
+    fontSize: hp('3%'),
     borderBottomColor: "#000000",
     borderBottomWidth: 2,
     padding: 10,
     color: "#000000",
-    width: "72%",
-    height: 50,
-    marginLeft: "5%",
+    width: "78%",
+    height: hp('5%'),
+    marginLeft: wp("5%"),
+    paddingLeft: wp('5%')
   },
   code3: {
     flexDirection: "row",
@@ -607,7 +609,7 @@ const styles = StyleSheet.create({
     fontSize: hp('1.2%'),
     color: '#727272',
     textAlign: 'center',
-    fontWeight: '600',
+    fontFamily: 'VisbySemibold',
     marginTop: hp('4%'),
     marginBottom: hp('5%')
   }

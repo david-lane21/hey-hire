@@ -442,7 +442,7 @@ function SeekerAvailableJobs({ route, navigation }) {
                 >
                   {profile.company && (
                     <Text
-                      style={{ color: "#fff", fontSize: 22, textAlign: "center", fontWeight: 'bold' }}
+                      style={{ color: "#fff", fontSize: hp('3.0%'), textAlign: "center", fontFamily: 'VisbyBold' }}
                     >
                       {profile.company.name}
                     </Text>
@@ -463,11 +463,12 @@ function SeekerAvailableJobs({ route, navigation }) {
                       width: 12,
                       height: 12,
                       marginTop: 10,
+                      marginRight: 5,
                       resizeMode: 'contain'
                     }}
                   />
                   {profile.address && (
-                    <Text style={{ color: "#fff", marginTop: 10, fontSize: 13, fontWeight: '600' }}>
+                    <Text style={{ color: "#fff", marginTop: 10, fontSize: hp('1.7%'), fontFamily: 'VisbySemibold' }}>
                       {profile.address.address}
                     </Text>
                   )}

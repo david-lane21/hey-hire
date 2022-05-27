@@ -432,20 +432,6 @@ function SeekerHome({ navigation }) {
     loadDate();
   }
 
-  function _onLogout() {
-    Alert.alert("ApployMe", `Are you sure you want to logout now?`, [
-      {
-        text: "Logout",
-        onPress: () => {
-          // removeUser();
-          // signOut();
-          dispatch({type:'UserData/setState',payload: {token: null, profile: {}}})
-        },
-      },
-      { text: "Cancel", onPress: () => console.log("OK Pressed") },
-    ]);
-  }
-
   function goToCurrentLocation(){
     map.animateToRegion(
       {
@@ -527,7 +513,7 @@ function SeekerHome({ navigation }) {
           </View>
 
           <View style={{ flex: 1, alignItems: "center" }}>
-            <Text style={{ color: "#fff", fontSize: 22 }}>
+            <Text style={{ color: "#fff", fontSize: 22, fontFamily: 'VisbyBold' }}>
               {user.first_name} {user.last_name}
             </Text>
           </View>
@@ -545,7 +531,7 @@ function SeekerHome({ navigation }) {
               source={require("../assets/ic_educate_w.png")}
               style={{ width: 12, height: 12, resizeMode: 'contain' }}
             />
-            <Text style={{ marginLeft: 10, color: "#fff" }}>
+            <Text style={{ marginLeft: 10, color: "#fff", fontSize: 13, fontFamily: 'VisbySemibold' }}>
               {user.education}
             </Text>
           </View>
@@ -572,7 +558,7 @@ function SeekerHome({ navigation }) {
                 source={require("../assets/location_white.png")}
                 style={{ width: 12, height: 12, resizeMode: 'contain' }}
               />
-              <Text style={{ color: "#fff", marginLeft: 10 }}>
+              <Text style={{ color: "#fff", marginLeft: 10, fontSize: 13, fontFamily: 'VisbySemibold' }}>
                 {user.city}, {user.state}, {user.country}
               </Text>
             </View>
@@ -599,7 +585,7 @@ function SeekerHome({ navigation }) {
                 source={require("../assets/ic_star_white.png")}
                 style={{ width: 14, height: 12, marginLeft: 8 }}
               />
-              <Text style={{ color: "#fff", fontSize: 18, marginLeft: 8 }}>
+              <Text style={{ color: "#fff", fontSize: 18, marginLeft: 8, fontFamily: 'VisbySemibold' }}>
                 {strings.BIO}
               </Text>
             </View>
@@ -611,7 +597,8 @@ function SeekerHome({ navigation }) {
                 paddingLeft: 30,
                 paddingTop: 10,
                 paddingRight: 10,
-                lineHeight: 17
+                lineHeight: 17,
+                fontFamily: 'VisbyRegular'
               }}
             >
               {user.note}
@@ -640,7 +627,7 @@ function SeekerHome({ navigation }) {
                 source={require("../assets/ic_position_white.png")}
                 style={{ width: 14, height: 12, marginLeft: 8 }}
               />
-              <Text style={{ color: "#fff", fontSize: 18, marginLeft: 8 }}>
+              <Text style={{ color: "#fff", fontSize: 18, marginLeft: 8, fontFamily: 'VisbySemibold' }}>
                 {strings.PAST_POSTIONS}
               </Text>
             </View>

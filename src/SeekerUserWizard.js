@@ -44,7 +44,7 @@ function SeekerUserWizard({ navigation }) {
   return (
     <ImageBackground style={styles.container} source={require('../assets/userWizard_bg.png')}>
       <SafeAreaView style={styles.container}>
-        <Text style={[styles.termsText, { marginBottom: hp('4%')} ]}>
+        <Text style={[styles.termsText, { marginBottom: hp('4%'), fontFamily: 'VisbySemibold'} ]}>
           {strings.USER_WIZARD_TEXT}
           <Text style={styles.underlineText} onPress={termsOnPress}>{strings.TERMS}</Text>
           {strings.USER_WIZARD_TEXT_2}
@@ -73,6 +73,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp('10%'),
   },
   underlineText: {
-    textDecorationLine: 'underline'
+    textDecorationLine: 'underline',
+    fontFamily: 'VisbyBold'
   }
 });

@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: hp('2.4%'),
-    fontWeight: 'bold'
+    fontFamily: 'VisbyExtrabold',
   }
 });
 export default RoundButton;

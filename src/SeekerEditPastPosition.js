@@ -321,7 +321,7 @@ function SeekerEditPastPosition({ route, navigation }) {
                 onConfirm={(i) => hideFrom(i)}
                 onCancel={(i) => hideFrom(i)}
                 maximumDate={new Date()}
-
+                display="spinner"
               />
 
               <DateTimePickerModal
@@ -330,7 +330,7 @@ function SeekerEditPastPosition({ route, navigation }) {
                 onConfirm={(i) => hideTo(i)}
                 onCancel={(i) => hideTo(i)}
                 maximumDate={new Date()}
-
+                display="spinner"
               />
             </View>
           </View>

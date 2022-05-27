@@ -310,7 +310,7 @@ function SeekerJobDetail({ route, navigation }) {
           </View>
 
           <View style={{ flex: 1, alignItems: "center", marginHorizontal: 20, marginBottom: 10 }}>
-            <Text style={{ color: "#fff", fontSize: 22, textAlign: "center", fontWeight: 'bold' }}>
+            <Text style={{ color: "#fff", fontSize: hp('3.5%'), textAlign: "center", fontFamily: 'VisbyBold' }}>
               {job.title}
             </Text>
           </View>
@@ -320,16 +320,16 @@ function SeekerJobDetail({ route, navigation }) {
               source={require('../assets/ic_calendar_w.png')}
               style={{ width: 9, height: 9, resizeMode: 'contain' }}
             />
-            <Text style={{ color: "#fff", marginLeft: 5, fontSize: 11 }}>
+            <Text style={{ color: "#fff", marginLeft: 5, fontSize: hp('1.7%'), fontFamily: 'VisbySemibold' }}>
               {strings.START_DATE}:
             </Text>
-            <Text style={{ color: "#fff", marginLeft: 5, fontSize: 11 }}>
+            <Text style={{ color: "#fff", marginLeft: 5, fontSize: hp('1.7%'), fontFamily: 'VisbySemibold' }}>
               {moment(job.start_date).format("MM/DD/YYYY")}
             </Text>
           </View>
 
           <View style={{ flex: 1, alignItems: "center", marginVertical: 2 }}>
-            <Text style={{ color: "#fff", fontSize: 11, fontWeight: 'bold' }}>
+            <Text style={{ color: "#fff", fontSize: hp('1.7%'), fontFamily: 'VisbyBold' }}>
               {business.company.name}
             </Text>
           </View>
@@ -344,9 +344,9 @@ function SeekerJobDetail({ route, navigation }) {
                 marginVertical: 2
               }}
             >
-              <Text style={{ color: "#fff", fontSize: 11 }}>{strings.APPLIED_ON}: </Text>
+              <Text style={{ color: "#fff", fontSize: hp('1.7%'), fontFamily: 'VisbySemibold' }}>{strings.APPLIED_ON}: </Text>
 
-              <Text style={{ color: "#fff", fontSize: 11 }}>
+              <Text style={{ color: "#fff", fontSize: hp('1.7%'), fontFamily: 'VisbySemibold' }}>
                 {moment(job.application.applied_at).format("MM/DD/YYYY")}
               </Text>
             </View>
@@ -362,9 +362,9 @@ function SeekerJobDetail({ route, navigation }) {
                 marginVertical: 2
               }}
             >
-              <Text style={{ color: "#fff" }}>{strings.VIEWED_ON}: </Text>
+              <Text style={{ color: "#fff", fontSize: hp('1.7%'), fontFamily: 'VisbySemibold' }}>{strings.VIEWED_ON}: </Text>
 
-              <Text style={{ color: "#fff", fontSize: 14 }}>
+              <Text style={{ color: "#fff", fontSize: hp('1.7%'), fontFamily: 'VisbySemibold' }}>
                 {moment(job.application.viewed_at).format("MM/DD/YYYY")}
               </Text>
             </View>
@@ -387,7 +387,7 @@ function SeekerJobDetail({ route, navigation }) {
                 source={require("../assets/location_white.png")}
                 style={{ width: 12, height: 12, resizeMode: 'contain' }}
               />
-              <Text style={{ color: "#fff", marginLeft: 5, fontSize: 11 }}>
+              <Text style={{ color: "#fff", marginLeft: 5, fontSize: hp('1.6%'), fontFamily: 'VisbySemibold' }}>
                 {business.address.address}
               </Text>
             </View>
@@ -489,8 +489,7 @@ function SeekerJobDetail({ route, navigation }) {
                     <Text
                       style={{
                         fontSize: 14,
-                        // marginLeft: 10,
-                        fontWeight: "bold",
+                        fontFamily: 'VisbyBold',
                         color: '#594A9E'
                       }}
                     >
@@ -698,16 +697,16 @@ const styles = StyleSheet.create({
     resizeMode: 'contain'
   },
   headingText: {
-    fontSize: hp('2.6%'),
+    fontSize: hp('2.5%'),
     marginLeft: 10,
-    fontWeight: "bold",
-    color: '#594A9E'
+    color: '#594A9E',
+    fontFamily: 'VisbyBold'
   },
   subText: {
     marginBottom: hp('2.5%'),
     marginTop: 2,
-    fontSize: hp('1.8%'),
+    fontSize: hp('1.6%'),
     color: '#3D3B4E',
-    fontWeight: '600'
+    fontFamily: 'VisbySemibold'
   }
 });

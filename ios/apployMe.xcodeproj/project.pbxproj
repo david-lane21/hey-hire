@@ -12,14 +12,43 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		1791DBDBB793AFEEE4C20979 /* libPods-apployMe.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 92ED153007A633FD8511F8AC /* libPods-apployMe.a */; };
+		2AD639AF4F764F2F843FD7DC /* Lato-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 317EE14091D94CB3AFF9DB26 /* Lato-Light.ttf */; };
+		3758820CC3C14AE0BE0E7F60 /* Lato-HairlineItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 50E9D30724344088AAD46F66 /* Lato-HairlineItalic.ttf */; };
 		468EB0A02566770E006DD7F5 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 468EB09F2566770E006DD7F5 /* assets */; };
+		4D208DA882E8430CA98CD34A /* VisbyBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 0165214D09B14614B241BC90 /* VisbyBold.otf */; };
+		4D4D5A85C8C5418C80192913 /* Lato-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 91D80AD7E43341D5918FBF89 /* Lato-BoldItalic.ttf */; };
+		651BF96174CF45659900EC2D /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EC6D1C20F369459BB6CF9245 /* Lato-Regular.ttf */; };
+		6EC5A6368D51463896A8BDDB /* source-sans-pro.semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6DEE59C2F58F4C63BB26563F /* source-sans-pro.semibold.ttf */; };
+		7A1AD7E1922E4FEABA9988FC /* Lato-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0009B37B87AE463B86C9C176 /* Lato-Black.ttf */; };
+		7D58D5A84E0140228E4C5626 /* Lato-Hairline.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8F5FEF7A5DDC406EBD056023 /* Lato-Hairline.ttf */; };
 		8487DEA6253D69270020AB9E /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8487DEA5253D69260020AB9E /* SplashScreen.storyboard */; };
 		9C01183D25D6410900E87B6B /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9C01183C25D6410900E87B6B /* Storyboard.storyboard */; };
 		9C7D487525B19B7E004B35C1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9C7D487425B19B7D004B35C1 /* GoogleService-Info.plist */; };
 		9CC0BD9B25D17DD100045A77 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CC0BD9A25D17DD100045A77 /* File.swift */; };
+		AB9AFA122331405F8EB5D2DA /* Lato-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D6BDA8418A02486A98C54C35 /* Lato-Bold.ttf */; };
+		AF871DEB0E1342FAB3B2A450 /* Lato-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5D15D943DC2E4F2AB1BD89D6 /* Lato-BlackItalic.ttf */; };
+		BA66B3467464436E88F70390 /* source-sans-pro.regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9CB30166EA884214862BDF63 /* source-sans-pro.regular.ttf */; };
+		CAC9833CEB2A4FF9B4A502AC /* Lato-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 63FB9E4E11C64EC2AFEC5ADF /* Lato-LightItalic.ttf */; };
+		FA1CC4FD822642F08E397C3F /* Lato-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F79DE93251D44C60A280A7C8 /* Lato-Italic.ttf */; };
+		43CF2A0A7E5240279B6F0A8C /* VisbyBold Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 35002696BB77491A8A87CF10 /* VisbyBold Italic.otf */; };
+		4B9315C5E0944043AD66964A /* VisbyExtrabold Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = BFCF645693144F5EB1FA37C2 /* VisbyExtrabold Italic.otf */; };
+		554E83C0B7EE439E84577DD9 /* VisbyExtrabold.otf in Resources */ = {isa = PBXBuildFile; fileRef = FB279FF144984FC4ADBB3F1E /* VisbyExtrabold.otf */; };
+		6729CDDD38D84D2FB47BBEAB /* VisbyHeavy Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 056D8F546E834E0FAAD3D685 /* VisbyHeavy Italic.otf */; };
+		18A09EC4B7724D66A9CA6D60 /* VisbyHeavy.otf in Resources */ = {isa = PBXBuildFile; fileRef = 407B5EC6E4AD41FBBB35CD10 /* VisbyHeavy.otf */; };
+		5446033E1DBA4710913848D7 /* VisbyItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = F9988AA1A8804C089CF580F3 /* VisbyItalic.otf */; };
+		0E61DE66DCE447A2BC93DB80 /* VisbyLight Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = ADC10EE6FF6841C3ADAAFB37 /* VisbyLight Italic.otf */; };
+		B3055C1596D54E7797E9DF26 /* VisbyLight.otf in Resources */ = {isa = PBXBuildFile; fileRef = 9A3795842E1A405DAE1D0CC4 /* VisbyLight.otf */; };
+		481E5F3B4DC04B69A223ADDB /* VisbyMedium Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = EE73F808CCDC4286B26D44C8 /* VisbyMedium Italic.otf */; };
+		6AA3E3C02EA2474893E2B861 /* VisbyRegular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4F6A613923924191935B8204 /* VisbyRegular.otf */; };
+		4B08EA51F28A4A99B29DB645 /* VisbySemibold Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 462F8CAC2B3242178E4853FC /* VisbySemibold Italic.otf */; };
+		7B53F991D2934CE8AEAF72A3 /* VisbySemibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 288920E449F14A6B869C6D4D /* VisbySemibold.otf */; };
+		043CC38928A54645A726ABCD /* VisbyThin Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 14AE59FFB33C4E9EBCCB02DA /* VisbyThin Italic.otf */; };
+		83CC5588B892476C84D204FC /* VisbyThin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 487366F377CB493E945582CC /* VisbyThin.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0009B37B87AE463B86C9C176 /* Lato-Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Lato-Black.ttf"; path = "../assets/fonts/Lato-Black.ttf"; sourceTree = "<group>"; };
+		0165214D09B14614B241BC90 /* VisbyBold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = VisbyBold.otf; path = ../assets/fonts/VisbyBold.otf; sourceTree = "<group>"; };
 		0731D3B524204D62009CAE85 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Expo.plist; path = apployMe/Supporting/Expo.plist; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* apployme.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = apployme.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = apployMe/AppDelegate.h; sourceTree = "<group>"; };
@@ -27,7 +56,13 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = apployMe/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = apployMe/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = apployMe/main.m; sourceTree = "<group>"; };
+		1B3EBE7816914FA5B72E1658 /* Fontspring-DEMO-visbycf-medium.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Fontspring-DEMO-visbycf-medium.otf"; path = "../assets/fonts/Fontspring-DEMO-visbycf-medium.otf"; sourceTree = "<group>"; };
+		1E404648B50046CDBBEB55E0 /* Fontspring-DEMO-visbycf-regular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Fontspring-DEMO-visbycf-regular.otf"; path = "../assets/fonts/Fontspring-DEMO-visbycf-regular.otf"; sourceTree = "<group>"; };
+		1F1792679AD1407A90278635 /* Fontspring-DEMO-visbycf-heavy.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Fontspring-DEMO-visbycf-heavy.otf"; path = "../assets/fonts/Fontspring-DEMO-visbycf-heavy.otf"; sourceTree = "<group>"; };
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		308F5E9C64B84A429B0B45F6 /* Fontspring-DEMO-visbycf-thinoblique.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Fontspring-DEMO-visbycf-thinoblique.otf"; path = "../assets/fonts/Fontspring-DEMO-visbycf-thinoblique.otf"; sourceTree = "<group>"; };
+		317EE14091D94CB3AFF9DB26 /* Lato-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Lato-Light.ttf"; path = "../assets/fonts/Lato-Light.ttf"; sourceTree = "<group>"; };
+		3ABD7783494F458D90C9F87C /* Fontspring-DEMO-visbycf-heavyoblique.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Fontspring-DEMO-visbycf-heavyoblique.otf"; path = "../assets/fonts/Fontspring-DEMO-visbycf-heavyoblique.otf"; sourceTree = "<group>"; };
 		468EAEBF2566751B006DD7F5 /* package.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = package.json; sourceTree = "<group>"; };
 		468EAEC12566751B006DD7F5 /* patch.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = patch.json; sourceTree = "<group>"; };
 		468EAEC52566751B006DD7F5 /* arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = arrow.png; sourceTree = "<group>"; };
@@ -267,18 +302,55 @@
 		468EAFBD2566751C006DD7F5 /* tabbar_notification_active@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tabbar_notification_active@3x.png"; sourceTree = "<group>"; };
 		468EAFBE2566751C006DD7F5 /* ic_profile_light.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_profile_light.png; sourceTree = "<group>"; };
 		468EB09F2566770E006DD7F5 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = "<group>"; };
+		4B1D4930EE5D45A5B1AD85D0 /* Fontspring-DEMO-visbycf-bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Fontspring-DEMO-visbycf-bold.otf"; path = "../assets/fonts/Fontspring-DEMO-visbycf-bold.otf"; sourceTree = "<group>"; };
+		50E9D30724344088AAD46F66 /* Lato-HairlineItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Lato-HairlineItalic.ttf"; path = "../assets/fonts/Lato-HairlineItalic.ttf"; sourceTree = "<group>"; };
+		5B0C11B1EBEE4074B1CCB939 /* Fontspring-DEMO-visbycf-extraboldoblique.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Fontspring-DEMO-visbycf-extraboldoblique.otf"; path = "../assets/fonts/Fontspring-DEMO-visbycf-extraboldoblique.otf"; sourceTree = "<group>"; };
+		5D15D943DC2E4F2AB1BD89D6 /* Lato-BlackItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Lato-BlackItalic.ttf"; path = "../assets/fonts/Lato-BlackItalic.ttf"; sourceTree = "<group>"; };
 		62EDF93DAA77AB3B3396F9C2 /* Pods-apployMe.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-apployMe.release.xcconfig"; path = "Target Support Files/Pods-apployMe/Pods-apployMe.release.xcconfig"; sourceTree = "<group>"; };
+		63FB9E4E11C64EC2AFEC5ADF /* Lato-LightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Lato-LightItalic.ttf"; path = "../assets/fonts/Lato-LightItalic.ttf"; sourceTree = "<group>"; };
+		6DEE59C2F58F4C63BB26563F /* source-sans-pro.semibold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "source-sans-pro.semibold.ttf"; path = "../assets/fonts/source-sans-pro.semibold.ttf"; sourceTree = "<group>"; };
+		71DF5E51E5E641CC8C6A5D7D /* Visby-Cf-bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Visby-Cf-bold.otf"; path = "../assets/fonts/Visby-Cf-bold.otf"; sourceTree = "<group>"; };
 		79FE6199CD5AB43EB63B4CDE /* Pods-apployMe.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-apployMe.debug.xcconfig"; path = "Target Support Files/Pods-apployMe/Pods-apployMe.debug.xcconfig"; sourceTree = "<group>"; };
 		842BCDBA2539E10600D5F393 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		845EEFF3254291CA00323994 /* apployme.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = apployme.entitlements; path = apployMe/apployme.entitlements; sourceTree = "<group>"; };
 		8487DEA5253D69260020AB9E /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = apployMe/SplashScreen.storyboard; sourceTree = "<group>"; };
+		8F5FEF7A5DDC406EBD056023 /* Lato-Hairline.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Lato-Hairline.ttf"; path = "../assets/fonts/Lato-Hairline.ttf"; sourceTree = "<group>"; };
+		91D80AD7E43341D5918FBF89 /* Lato-BoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Lato-BoldItalic.ttf"; path = "../assets/fonts/Lato-BoldItalic.ttf"; sourceTree = "<group>"; };
 		92ED153007A633FD8511F8AC /* libPods-apployMe.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-apployMe.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C01183C25D6410900E87B6B /* Storyboard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Storyboard.storyboard; sourceTree = "<group>"; };
 		9C7D487425B19B7D004B35C1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		9CB30166EA884214862BDF63 /* source-sans-pro.regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "source-sans-pro.regular.ttf"; path = "../assets/fonts/source-sans-pro.regular.ttf"; sourceTree = "<group>"; };
 		9CC0BD9925D17DD100045A77 /* apployMe-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "apployMe-Bridging-Header.h"; sourceTree = "<group>"; };
 		9CC0BD9A25D17DD100045A77 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
+		9DCB58B2FAB44C3D89D00048 /* Fontspring-DEMO-visbycf-regularoblique.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Fontspring-DEMO-visbycf-regularoblique.otf"; path = "../assets/fonts/Fontspring-DEMO-visbycf-regularoblique.otf"; sourceTree = "<group>"; };
+		A89255D1F5E8469EBA11E805 /* Fontspring-DEMO-visbycf-light.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Fontspring-DEMO-visbycf-light.otf"; path = "../assets/fonts/Fontspring-DEMO-visbycf-light.otf"; sourceTree = "<group>"; };
+		B74B9EFFCA374B3D9574D8F8 /* Fontspring-DEMO-visbycf-mediumoblique.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Fontspring-DEMO-visbycf-mediumoblique.otf"; path = "../assets/fonts/Fontspring-DEMO-visbycf-mediumoblique.otf"; sourceTree = "<group>"; };
+		CDF942D5C9EA4A0A94F58765 /* Fontspring-DEMO-visbycf-demibold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Fontspring-DEMO-visbycf-demibold.otf"; path = "../assets/fonts/Fontspring-DEMO-visbycf-demibold.otf"; sourceTree = "<group>"; };
+		D564C677F24D49FDB84435C2 /* Fontspring-DEMO-visbycf-extrabold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Fontspring-DEMO-visbycf-extrabold.otf"; path = "../assets/fonts/Fontspring-DEMO-visbycf-extrabold.otf"; sourceTree = "<group>"; };
+		D6BDA8418A02486A98C54C35 /* Lato-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Lato-Bold.ttf"; path = "../assets/fonts/Lato-Bold.ttf"; sourceTree = "<group>"; };
+		E1FED205EDB04ED7A09F1721 /* Fontspring-DEMO-visbycf-thin.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Fontspring-DEMO-visbycf-thin.otf"; path = "../assets/fonts/Fontspring-DEMO-visbycf-thin.otf"; sourceTree = "<group>"; };
+		E5206B73F4C1487E937EBA09 /* VisbyDemibold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = VisbyDemibold.otf; path = ../assets/fonts/VisbyDemibold.otf; sourceTree = "<group>"; };
+		E882C11DCF544EBFA340AB27 /* Fontspring-DEMO-visbycf-demiboldoblique.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Fontspring-DEMO-visbycf-demiboldoblique.otf"; path = "../assets/fonts/Fontspring-DEMO-visbycf-demiboldoblique.otf"; sourceTree = "<group>"; };
+		EC6D1C20F369459BB6CF9245 /* Lato-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Lato-Regular.ttf"; path = "../assets/fonts/Lato-Regular.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
+		F5D989DAF4614430A910675A /* Fontspring-DEMO-visbycf-lightoblique.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Fontspring-DEMO-visbycf-lightoblique.otf"; path = "../assets/fonts/Fontspring-DEMO-visbycf-lightoblique.otf"; sourceTree = "<group>"; };
+		F79DE93251D44C60A280A7C8 /* Lato-Italic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Lato-Italic.ttf"; path = "../assets/fonts/Lato-Italic.ttf"; sourceTree = "<group>"; };
+		FA54DEEB0FD34B8285E01951 /* Fontspring-DEMO-visbycf-boldoblique.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Fontspring-DEMO-visbycf-boldoblique.otf"; path = "../assets/fonts/Fontspring-DEMO-visbycf-boldoblique.otf"; sourceTree = "<group>"; };
+		35002696BB77491A8A87CF10 /* VisbyBold Italic.otf */ = {isa = PBXFileReference; name = "VisbyBold Italic.otf"; path = "../assets/fonts/VisbyBold Italic.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		BFCF645693144F5EB1FA37C2 /* VisbyExtrabold Italic.otf */ = {isa = PBXFileReference; name = "VisbyExtrabold Italic.otf"; path = "../assets/fonts/VisbyExtrabold Italic.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		FB279FF144984FC4ADBB3F1E /* VisbyExtrabold.otf */ = {isa = PBXFileReference; name = "VisbyExtrabold.otf"; path = "../assets/fonts/VisbyExtrabold.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		056D8F546E834E0FAAD3D685 /* VisbyHeavy Italic.otf */ = {isa = PBXFileReference; name = "VisbyHeavy Italic.otf"; path = "../assets/fonts/VisbyHeavy Italic.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		407B5EC6E4AD41FBBB35CD10 /* VisbyHeavy.otf */ = {isa = PBXFileReference; name = "VisbyHeavy.otf"; path = "../assets/fonts/VisbyHeavy.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		F9988AA1A8804C089CF580F3 /* VisbyItalic.otf */ = {isa = PBXFileReference; name = "VisbyItalic.otf"; path = "../assets/fonts/VisbyItalic.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		ADC10EE6FF6841C3ADAAFB37 /* VisbyLight Italic.otf */ = {isa = PBXFileReference; name = "VisbyLight Italic.otf"; path = "../assets/fonts/VisbyLight Italic.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		9A3795842E1A405DAE1D0CC4 /* VisbyLight.otf */ = {isa = PBXFileReference; name = "VisbyLight.otf"; path = "../assets/fonts/VisbyLight.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		EE73F808CCDC4286B26D44C8 /* VisbyMedium Italic.otf */ = {isa = PBXFileReference; name = "VisbyMedium Italic.otf"; path = "../assets/fonts/VisbyMedium Italic.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		4F6A613923924191935B8204 /* VisbyRegular.otf */ = {isa = PBXFileReference; name = "VisbyRegular.otf"; path = "../assets/fonts/VisbyRegular.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		462F8CAC2B3242178E4853FC /* VisbySemibold Italic.otf */ = {isa = PBXFileReference; name = "VisbySemibold Italic.otf"; path = "../assets/fonts/VisbySemibold Italic.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		288920E449F14A6B869C6D4D /* VisbySemibold.otf */ = {isa = PBXFileReference; name = "VisbySemibold.otf"; path = "../assets/fonts/VisbySemibold.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		14AE59FFB33C4E9EBCCB02DA /* VisbyThin Italic.otf */ = {isa = PBXFileReference; name = "VisbyThin Italic.otf"; path = "../assets/fonts/VisbyThin Italic.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		487366F377CB493E945582CC /* VisbyThin.otf */ = {isa = PBXFileReference; name = "VisbyThin.otf"; path = "../assets/fonts/VisbyThin.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -309,6 +381,58 @@
 				9C01183C25D6410900E87B6B /* Storyboard.storyboard */,
 			);
 			name = apployMe;
+			sourceTree = "<group>";
+		};
+		1960C15E72E4418FAC2148FA /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				4B1D4930EE5D45A5B1AD85D0 /* Fontspring-DEMO-visbycf-bold.otf */,
+				FA54DEEB0FD34B8285E01951 /* Fontspring-DEMO-visbycf-boldoblique.otf */,
+				CDF942D5C9EA4A0A94F58765 /* Fontspring-DEMO-visbycf-demibold.otf */,
+				E882C11DCF544EBFA340AB27 /* Fontspring-DEMO-visbycf-demiboldoblique.otf */,
+				D564C677F24D49FDB84435C2 /* Fontspring-DEMO-visbycf-extrabold.otf */,
+				5B0C11B1EBEE4074B1CCB939 /* Fontspring-DEMO-visbycf-extraboldoblique.otf */,
+				1F1792679AD1407A90278635 /* Fontspring-DEMO-visbycf-heavy.otf */,
+				3ABD7783494F458D90C9F87C /* Fontspring-DEMO-visbycf-heavyoblique.otf */,
+				A89255D1F5E8469EBA11E805 /* Fontspring-DEMO-visbycf-light.otf */,
+				F5D989DAF4614430A910675A /* Fontspring-DEMO-visbycf-lightoblique.otf */,
+				1B3EBE7816914FA5B72E1658 /* Fontspring-DEMO-visbycf-medium.otf */,
+				B74B9EFFCA374B3D9574D8F8 /* Fontspring-DEMO-visbycf-mediumoblique.otf */,
+				1E404648B50046CDBBEB55E0 /* Fontspring-DEMO-visbycf-regular.otf */,
+				9DCB58B2FAB44C3D89D00048 /* Fontspring-DEMO-visbycf-regularoblique.otf */,
+				E1FED205EDB04ED7A09F1721 /* Fontspring-DEMO-visbycf-thin.otf */,
+				308F5E9C64B84A429B0B45F6 /* Fontspring-DEMO-visbycf-thinoblique.otf */,
+				0009B37B87AE463B86C9C176 /* Lato-Black.ttf */,
+				5D15D943DC2E4F2AB1BD89D6 /* Lato-BlackItalic.ttf */,
+				D6BDA8418A02486A98C54C35 /* Lato-Bold.ttf */,
+				91D80AD7E43341D5918FBF89 /* Lato-BoldItalic.ttf */,
+				8F5FEF7A5DDC406EBD056023 /* Lato-Hairline.ttf */,
+				50E9D30724344088AAD46F66 /* Lato-HairlineItalic.ttf */,
+				F79DE93251D44C60A280A7C8 /* Lato-Italic.ttf */,
+				317EE14091D94CB3AFF9DB26 /* Lato-Light.ttf */,
+				63FB9E4E11C64EC2AFEC5ADF /* Lato-LightItalic.ttf */,
+				EC6D1C20F369459BB6CF9245 /* Lato-Regular.ttf */,
+				9CB30166EA884214862BDF63 /* source-sans-pro.regular.ttf */,
+				6DEE59C2F58F4C63BB26563F /* source-sans-pro.semibold.ttf */,
+				71DF5E51E5E641CC8C6A5D7D /* Visby-Cf-bold.otf */,
+				0165214D09B14614B241BC90 /* VisbyBold.otf */,
+				E5206B73F4C1487E937EBA09 /* VisbyDemibold.otf */,
+				35002696BB77491A8A87CF10 /* VisbyBold Italic.otf */,
+				BFCF645693144F5EB1FA37C2 /* VisbyExtrabold Italic.otf */,
+				FB279FF144984FC4ADBB3F1E /* VisbyExtrabold.otf */,
+				056D8F546E834E0FAAD3D685 /* VisbyHeavy Italic.otf */,
+				407B5EC6E4AD41FBBB35CD10 /* VisbyHeavy.otf */,
+				F9988AA1A8804C089CF580F3 /* VisbyItalic.otf */,
+				ADC10EE6FF6841C3ADAAFB37 /* VisbyLight Italic.otf */,
+				9A3795842E1A405DAE1D0CC4 /* VisbyLight.otf */,
+				EE73F808CCDC4286B26D44C8 /* VisbyMedium Italic.otf */,
+				4F6A613923924191935B8204 /* VisbyRegular.otf */,
+				462F8CAC2B3242178E4853FC /* VisbySemibold Italic.otf */,
+				288920E449F14A6B869C6D4D /* VisbySemibold.otf */,
+				14AE59FFB33C4E9EBCCB02DA /* VisbyThin Italic.otf */,
+				487366F377CB493E945582CC /* VisbyThin.otf */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
@@ -755,6 +879,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				72E5486571395D51695C2A02 /* Pods */,
+				1960C15E72E4418FAC2148FA /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -864,6 +989,33 @@
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				9C01183D25D6410900E87B6B /* Storyboard.storyboard in Resources */,
 				9C7D487525B19B7E004B35C1 /* GoogleService-Info.plist in Resources */,
+				7A1AD7E1922E4FEABA9988FC /* Lato-Black.ttf in Resources */,
+				AF871DEB0E1342FAB3B2A450 /* Lato-BlackItalic.ttf in Resources */,
+				AB9AFA122331405F8EB5D2DA /* Lato-Bold.ttf in Resources */,
+				4D4D5A85C8C5418C80192913 /* Lato-BoldItalic.ttf in Resources */,
+				7D58D5A84E0140228E4C5626 /* Lato-Hairline.ttf in Resources */,
+				3758820CC3C14AE0BE0E7F60 /* Lato-HairlineItalic.ttf in Resources */,
+				FA1CC4FD822642F08E397C3F /* Lato-Italic.ttf in Resources */,
+				2AD639AF4F764F2F843FD7DC /* Lato-Light.ttf in Resources */,
+				CAC9833CEB2A4FF9B4A502AC /* Lato-LightItalic.ttf in Resources */,
+				651BF96174CF45659900EC2D /* Lato-Regular.ttf in Resources */,
+				BA66B3467464436E88F70390 /* source-sans-pro.regular.ttf in Resources */,
+				6EC5A6368D51463896A8BDDB /* source-sans-pro.semibold.ttf in Resources */,
+				4D208DA882E8430CA98CD34A /* VisbyBold.otf in Resources */,
+				43CF2A0A7E5240279B6F0A8C /* VisbyBold Italic.otf in Resources */,
+				4B9315C5E0944043AD66964A /* VisbyExtrabold Italic.otf in Resources */,
+				554E83C0B7EE439E84577DD9 /* VisbyExtrabold.otf in Resources */,
+				6729CDDD38D84D2FB47BBEAB /* VisbyHeavy Italic.otf in Resources */,
+				18A09EC4B7724D66A9CA6D60 /* VisbyHeavy.otf in Resources */,
+				5446033E1DBA4710913848D7 /* VisbyItalic.otf in Resources */,
+				0E61DE66DCE447A2BC93DB80 /* VisbyLight Italic.otf in Resources */,
+				B3055C1596D54E7797E9DF26 /* VisbyLight.otf in Resources */,
+				481E5F3B4DC04B69A223ADDB /* VisbyMedium Italic.otf in Resources */,
+				6AA3E3C02EA2474893E2B861 /* VisbyRegular.otf in Resources */,
+				4B08EA51F28A4A99B29DB645 /* VisbySemibold Italic.otf in Resources */,
+				7B53F991D2934CE8AEAF72A3 /* VisbySemibold.otf in Resources */,
+				043CC38928A54645A726ABCD /* VisbyThin Italic.otf in Resources */,
+				83CC5588B892476C84D204FC /* VisbyThin.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

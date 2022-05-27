@@ -28,7 +28,6 @@ import parsePhoneNumber from 'libphonenumber-js'
 import examples from 'libphonenumber-js/examples.mobile.json'
 import { getExampleNumber } from 'libphonenumber-js';
 import Loader from './components/Loader';
-import { heightPercentageToDP } from 'react-native-responsive-screen'
 const isIphoneX = DeviceInfo.hasNotch();
 function SeekerSignup({ navigation, route }) {
   const scrollViewRef = useRef();
@@ -51,7 +50,7 @@ function SeekerSignup({ navigation, route }) {
   const [inputs, setInputs] = useState([])
   const [nextFocusDisabled, setNextFocusDisabled] = useState(false)
   const [previousFocusDisabled, setPreviousFocusDisabled] = useState(false)
-  
+
   const [phoneMaxLength, setPhoneMaxLength] = useState(20);
   const [phCountryCode, setPhCountryCode] = useState("US");
   const [keyboardHeight, setKeyboardHeight] = useState(301);
@@ -69,11 +68,12 @@ function SeekerSignup({ navigation, route }) {
       if (status !== 'granted') {
         setError('Permission to access location was denied')
       }
+      /*
       const status1 = await ImagePicker.requestCameraRollPermissionsAsync();
       if (status1.status !== 'granted') {
         alert('Sorry, we need camera roll permissions to make this work!')
       }
-
+*/
       Location.getLastKnownPositionAsync().then((loc) => {
         setAddressField(loc)
         setLocation(loc)
@@ -325,6 +325,7 @@ function SeekerSignup({ navigation, route }) {
       <View
           style={{
             flex: 1,
+            marginTop: '5%',
             justifyContent: "center",
             alignItems: "center",
           }}
@@ -333,7 +334,7 @@ function SeekerSignup({ navigation, route }) {
             style={{
               color: "#4834A6",
               fontSize: hp("2.1%"),
-              fontWeight: "600",
+              fontFamily: 'VisbyExtrabold',
             }}
           >
             {strings.REGISTRATION}
@@ -342,7 +343,7 @@ function SeekerSignup({ navigation, route }) {
 
         <Loader loading={loading} />
 
-        <View style={{ flex: 1, alignItems: 'center', padding: 20, marginBottom: heightPercentageToDP(5) }} />
+        <View style={{ flex: 1, alignItems: 'center', paddingHorizontal: 20, marginBottom: hp('5%') }} />
 
         <View style={styles.inputField}>
           <Image
@@ -523,6 +524,9 @@ function SeekerSignup({ navigation, route }) {
             textContentType='username'
             keyboardType={'email-address'}
             autoCompleteType={'email'}
+            autoCapitalize='none'
+            returnKeyType='done'
+            onSubmitEditing={() => createAccount()}
             onFocus={() => {
               handleFocus(7)
             }}
@@ -609,10 +613,11 @@ const styles = StyleSheet.create({
 
   },
   terms: {
-    marginTop: heightPercentageToDP(3),
-    color: '#A9A9A9',
+    marginTop: hp('3%'),
+    color: '#727272',
     textAlign: 'center',
-    textDecorationLine: 'underline'
+    textDecorationLine: 'underline',
+    fontFamily: 'VisbyRegular'
     //textDecorationStyle: 'under'
 
   },

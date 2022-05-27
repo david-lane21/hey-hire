@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AwesomeAlert from 'react-native-awesome-alerts';
+import Toast from 'react-native-toast-message';
 import Tags from "react-native-tags";
 import {
   widthPercentageToDP as wp,
@@ -71,6 +72,7 @@ function SeekerFinishRegistration({ navigation, route }) {
   const [multiline, setMultiline] = useState(false);
   const [categoriesList, setCategoriesList] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
+  const [bioLimitWarning, setBioLimitWarning] = useState(false);
   const dispatch = useDispatch();
 
   const BIO_PLACEHOLDER = `Example: Greetings, my name is Benjamin, I am 20 years old. I am currently studying my degree at UT, TX.
@@ -105,7 +107,7 @@ function SeekerFinishRegistration({ navigation, route }) {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       base64: true,
-      allowsEditing: false,
+      allowsEditing: true,
       aspect: [4, 3],
       quality: 0.1,
     });
@@ -159,6 +161,15 @@ function SeekerFinishRegistration({ navigation, route }) {
       .filter((i) => i != "");
     langList = langList.filter((i) => i !== item).join(", ");
     setlangs(langList);
+  }
+
+  function notifyMessage(msg) {
+    Toast.show({
+      type: 'error',
+      text1: msg,
+      position: 'top',
+      visibilityTime: 4000
+    });
   }
 
   function addToLangs(item) {
@@ -274,7 +285,8 @@ function SeekerFinishRegistration({ navigation, route }) {
         console.log("error while updating profile", JSON.stringify(error));
       }
     } else{
-      setError(strings.PLEASE_FILL_MISSING)
+      notifyMessage(strings.PLEASE_FILL_MISSING);
+      setError(strings.PLEASE_FILL_MISSING);
     }
   }
 
@@ -289,9 +301,22 @@ function SeekerFinishRegistration({ navigation, route }) {
       Alert.alert("Error...", "Please enter Bio")
       return false
     }
-
-    if (bio && bio.length < 200) {
-      Alert.alert("Error...", "Please enter atleast 200 characters in your Bio")
+    console.log('bioLimitWarning', bioLimitWarning);
+    if (bio && bio.length < 120 && !bioLimitWarning) {
+      Alert.alert("", "The more you say about yourself, the more people will want to interview. Do you want to add more information?", [
+        {
+          text: "Skip",
+          onPress: async () => {
+            await setBioLimitWarning(true);
+            // handleUpdate();
+          },
+          style: "cancel",
+        },
+        {
+          text: "Continue",
+          onPress: () => {handleFocus(7)},
+        },
+      ]);
       return false
     }
 
@@ -505,7 +530,7 @@ function SeekerFinishRegistration({ navigation, route }) {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#fff" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
       <KeyboardAwareScrollView
         extraScrollHeight={Platform.OS === "ios" ? -60 : 0}
       >
@@ -520,7 +545,7 @@ function SeekerFinishRegistration({ navigation, route }) {
             style={{
               color: "#4834A6",
               fontSize: hp("2.1%"),
-              fontWeight: "600",
+              fontFamily: 'VisbyBold',
             }}
           >
             {strings.REGISTRATION}
@@ -548,17 +573,17 @@ function SeekerFinishRegistration({ navigation, route }) {
         )}
 
         <View style={{ flex: 1, alignItems: "center", padding: 20 }}>
-          <View style={{ width: 150, height: 100, alignSelf: "center" }}>
+          <View style={{ width: wp('35%'), height: wp('25%'), alignSelf: "center", justifyContent: 'center', alignItems: 'center'}}>
             {image == null ? (
+              <View style={styles.profileImageContainer}>
               <Image
-                source={require("../assets/img_place.png")}
+                source={require("../assets/ic_user_dark.png")}
                 style={{
-                  height: 100,
-                  width: 100,
-                  borderRadius: 50,
-                  alignSelf: "center",
+                  height: wp('20%'),
+                  width: wp('20%'),
                 }}
               />
+              </View>
             ) : (
               <Image
                 source={{ uri: image }}
@@ -597,7 +622,7 @@ function SeekerFinishRegistration({ navigation, route }) {
                 source={require("../assets/ic_star.png")}
                 style={{ width: 15, height: 15 }}
               />
-              <Text style={{ paddingLeft: 10, fontSize: 18 }}>
+              <Text style={styles.subHeadingText}>
                 {strings.BIO}
               </Text>
             </View>
@@ -655,13 +680,7 @@ function SeekerFinishRegistration({ navigation, route }) {
               source={require("../assets/ic_star.png")}
               style={{ width: 15, height: 15 }}
             />
-            <Text
-              style={{
-                fontSize: 18,
-                paddingLeft: 10,
-                marginVertical: 5,
-              }}
-            >
+            <Text style={styles.subHeadingText}>
               {strings.JOB_CATEGORIES}
             </Text>
             <TouchableOpacity
@@ -682,6 +701,7 @@ function SeekerFinishRegistration({ navigation, route }) {
                 fontSize: 13,
                 paddingLeft: 20,
                 marginVertical: 5,
+                fontFamily: 'VisbySemibold'
               }}
           >
             Tap to select categories
@@ -722,7 +742,7 @@ function SeekerFinishRegistration({ navigation, route }) {
                 source={require("../assets/ic_star.png")}
                 style={{ width: 15, height: 15 }}
               />
-              <Text style={{ paddingLeft: 10, fontSize: 18 }}>
+              <Text style={styles.subHeadingText}>
                 {strings.SKILLS}
               </Text>
             </View>
@@ -733,7 +753,7 @@ function SeekerFinishRegistration({ navigation, route }) {
                 marginBottom: 5,
               }}
             >
-              <Text style={{ paddingLeft: 10, fontSize: 13 }}>
+              <Text style={{ paddingLeft: 10, fontSize: 13, fontFamily: 'VisbySemibold' }}>
                 Enter Skill and Press SPACE to add to list.
               </Text>
             </View>
@@ -778,13 +798,7 @@ function SeekerFinishRegistration({ navigation, route }) {
                 source={require("../assets/ic_star.png")}
                 style={{ width: 15, height: 15 }}
               />
-              <Text
-                style={{
-                  fontSize: 18,
-                  paddingLeft: 10,
-                  marginBottom: 5,
-                }}
-              >
+              <Text style={styles.subHeadingText}>
                 {strings.LEVEL_OF_EDUCATION}
               </Text>
             </View>
@@ -820,13 +834,7 @@ function SeekerFinishRegistration({ navigation, route }) {
               source={require("../assets/ic_star.png")}
               style={{ width: 15, height: 15 }}
             />
-            <Text
-              style={{
-                fontSize: 18,
-                paddingLeft: 10,
-                marginBottom: 5,
-              }}
-            >
+            <Text style={styles.subHeadingText}>
               {strings.NAME_OF_INSTITUTION}
             </Text>
           </View>
@@ -863,13 +871,7 @@ function SeekerFinishRegistration({ navigation, route }) {
               source={require("../assets/ic_star.png")}
               style={{ width: 15, height: 15 }}
             />
-            <Text
-              style={{
-                fontSize: 18,
-                paddingLeft: 10,
-                marginBottom: 5,
-              }}
-            >
+            <Text style={styles.subHeadingText}>
               {strings.CERTIFICATIONS}
               {/* {strings.OPTIONAL} */}
             </Text>
@@ -1001,7 +1003,7 @@ function SeekerFinishRegistration({ navigation, route }) {
                         onHideUnderlay={separators.unhighlight}
                       >
                         <View style={{ backgroundColor: "white" }}>
-                          <View
+                          <TouchableOpacity
                             style={{
                               flex: 1,
                               flexDirection: "row",
@@ -1010,37 +1012,23 @@ function SeekerFinishRegistration({ navigation, route }) {
                               borderBottomWidth: 1,
                               borderBottomColor: "#eee",
                             }}
+                            onPress={() => {
+                              if (isLangSelected(item)) {
+                                removeFromLangs(item);
+                              } else {
+                                addToLangs(item);
+                              }
+                            }}
                           >
-                            {isLangSelected(item) ? (
-                              <TouchableOpacity
-                                onPress={() => removeFromLangs(item)}
-                              >
-                                <Image
-                                  source={require("../assets/ic_selected.png")}
-                                  style={{
-                                    width: 17,
-                                    height: 17,
-                                    marginRight: 10,
-                                    marginLeft: 20,
-                                  }}
-                                />
-                              </TouchableOpacity>
-                            ) : (
-                              <TouchableOpacity
-                                onPress={() => addToLangs(item)}
-                              >
-                                <Image
-                                  source={require("../assets/ic_add_blue.png")}
-                                  style={{
-                                    width: 17,
-                                    height: 17,
-                                    marginRight: 10,
-                                    marginLeft: 20,
-                                  }}
-                                />
-                              </TouchableOpacity>
-                            )}
-
+                            <Image
+                              source={isLangSelected(item) ? require("../assets/ic_selected.png") : require("../assets/ic_add_blue.png")}
+                              style={{
+                                width: 17,
+                                height: 17,
+                                marginRight: 10,
+                                marginLeft: 20,
+                              }}
+                            />
                             <Text
                               style={{
                                 fontSize: 20,
@@ -1049,7 +1037,7 @@ function SeekerFinishRegistration({ navigation, route }) {
                             >
                               {item}
                             </Text>
-                          </View>
+                          </TouchableOpacity>
                         </View>
                       </View>
                     )}
@@ -1070,13 +1058,7 @@ function SeekerFinishRegistration({ navigation, route }) {
               source={require("../assets/ic_star.png")}
               style={{ width: 15, height: 15 }}
             />
-            <Text
-              style={{
-                fontSize: 18,
-                paddingLeft: 10,
-                marginBottom: 5,
-              }}
-            >
+            <Text style={styles.subHeadingText}>
               {strings.SPOKEN_LANGUAGE}
             </Text>
           </View>
@@ -1109,13 +1091,7 @@ function SeekerFinishRegistration({ navigation, route }) {
                 source={require("../assets/ic_star.png")}
                 style={{ width: 15, height: 15 }}
               />
-              <Text
-                style={{
-                  fontSize: 18,
-                  paddingLeft: 10,
-                  marginBottom: 5,
-                }}
-              >
+              <Text style={styles.subHeadingText}>
                 {strings.AVAILABILITY}
               </Text>
             </View>
@@ -1155,7 +1131,7 @@ function SeekerFinishRegistration({ navigation, route }) {
                     style={{ width: 25, height: 25, marginRight: 5 }}
                   />
                 )}
-                <Text style={{ paddingLeft: 5, color: "#3482FF" }}>
+                <Text style={styles.checkBoxText}>
                   {strings.ARE_YOU_ELEGIBLE}
                 </Text>
               </TouchableOpacity>
@@ -1177,7 +1153,7 @@ function SeekerFinishRegistration({ navigation, route }) {
                     style={{ width: 25, height: 25, marginRight: 5 }}
                   />
                 )}
-                <Text style={{ paddingLeft: 5, color: "#3482FF" }}>
+                <Text style={styles.checkBoxText}>
                   {strings.ARE_YOU_AT_LEAST}
                 </Text>
               </TouchableOpacity>
@@ -1200,7 +1176,7 @@ function SeekerFinishRegistration({ navigation, route }) {
                   />
                 )}
                 <View style={{ flex: 1 }}>
-                  <Text style={{ paddingLeft: 5, color: "#3482FF" }}>
+                  <Text style={styles.checkBoxText}>
                     {strings.HAVE_YOU_EVER_BEEN_CONVICTED}
                   </Text>
                 </View>
@@ -1224,7 +1200,7 @@ function SeekerFinishRegistration({ navigation, route }) {
                   />
                 )}
                 <View style={{ flex: 1 }}>
-                  <Text style={{ paddingLeft: 5, color: "#3482FF" }}>
+                  <Text style={styles.checkBoxText}>
                     {strings.ARE_VACCINATED} {strings.OPTIONAL}
                   </Text>
                 </View>
@@ -1247,7 +1223,7 @@ function SeekerFinishRegistration({ navigation, route }) {
               source={require("../assets/ic_business.png")}
               style={{ width: 20, height: 20, marginRight: 5 }}
             />
-            <Text style={{ fontSize: 18 }}>
+            <Text style={{ fontSize: 18, fontFamily: 'VisbySemibold' }}>
               {strings.PAST_POSTIONS} {strings.OPTIONAL}
             </Text>
           </View>
@@ -1302,7 +1278,7 @@ function SeekerFinishRegistration({ navigation, route }) {
                 }}
                 onPress={() => onPressAddPast()}
               >
-                <Text style={{ color: "#4E35AE", fontSize: 16, fontWeight: 'bold' }}>
+                <Text style={{ color: "#4E35AE", fontSize: 16, fontFamily: 'VisbyBold' }}>
                   + {strings.ADD_PAST_POSTION}
                 </Text>
               </TouchableOpacity>
@@ -1334,11 +1310,6 @@ function SeekerFinishRegistration({ navigation, route }) {
           alignItems: 'center'
         }}
       >
-        {error ? (
-          <Text style={{ color: "red", paddingHorizontal: 20, paddingBottom: 20, backgroundColor: "#fff" }}>
-            {error}
-          </Text>
-        ) : null}
         <TouchableOpacity
           style={{
             flex: 1,
@@ -1376,7 +1347,15 @@ function SeekerFinishRegistration({ navigation, route }) {
           setShowAwsomeAlert(false)
         }}
       />
-    </View>
+      {error ? (
+        <Toast
+          position='top'
+          type='error'
+          text1={error}
+          visibilityTime={5000}
+        />
+      ) : null}
+    </SafeAreaView>
   );
 }
 
@@ -1531,6 +1510,28 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingVertical: 15,
     alignItems: "center",
+  },
+  profileImageContainer: {
+    width: wp('25%'),
+    height: wp('25%'),
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: wp('20%'),
+    borderColor: '#4834A6',
+    borderWidth: 1,
+    backgroundColor: 'white'
+  },
+  subHeadingText: {
+    paddingLeft: 10,
+    fontSize: 18,
+    fontFamily: 'VisbySemibold',
+    marginBottom: 5,
+  },
+  checkBoxText: {
+    paddingLeft: 5,
+    color: "#3482FF",
+    fontFamily: 'VisbySemibold',
+    fontSize: 13
   }
 });
 

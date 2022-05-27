@@ -7091,6 +7091,11 @@ react-native-tags@^2.2.1:
   resolved "https://registry.yarnpkg.com/react-native-tags/-/react-native-tags-2.2.1.tgz#6cf56fce2f49759c1a3cef61456fc3af49a8a6ea"
   integrity sha512-a8ICis9+2c0ttg/Vaq48+AUOqpKQlkvQgz0JXFdUWIIsBr/cWoDWzh4F3Ib4+uT39s1bLhwiNjeZVt/ATDlaIg==
 
+react-native-toast-message@^2.1.5:
+  version "2.1.5"
+  resolved "https://registry.yarnpkg.com/react-native-toast-message/-/react-native-toast-message-2.1.5.tgz#550acb9c6c0f1ee49c6b57b65a56d34e297eb723"
+  integrity sha512-mk3rELtBEhrhWBCN6CTaw0gypgL9ZNauX3xx1LUs4uee9vc0pVsghrKxO57vroUCcNL2hDeZSLJWdQNMCkGeaQ==
+
 react-native-unimodules@~0.14.5:
   version "0.14.10"
   resolved "https://registry.yarnpkg.com/react-native-unimodules/-/react-native-unimodules-0.14.10.tgz#c9f9c607ab71497621451e0ccfa7a81074c53136"
