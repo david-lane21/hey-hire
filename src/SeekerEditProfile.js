@@ -722,38 +722,20 @@ function SeekerEditProfile({ navigation, route }) {
 
         <View style={{ flex: 1, width: "100%" }}>
           <View style={{ flex: 1, alignItems: "center", padding: 20 }}>
-            <View style={{ width: 150, height: 100, alignSelf: "center" }}>
+            <View style={{ width: wp('35%'), height: wp('25%'), alignSelf: "center", justifyContent: 'center', alignItems: 'center'}}>
               {image == null ? (
-                <View>
-                  {!image ? (
-                    <Image
-                      source={require("../assets/img_place.png")}
-                      style={{
-                        height: 100,
-                        width: 100,
-                        borderRadius: 50,
-                        alignSelf: "center",
-                      }}
-                    />
-                  ) : (
-                    <Image
-                      source={{
-                        uri: image
-                      }}
-                      style={{
-                        width: 100,
-                        height: 100,
-                        borderRadius: 50,
-                        alignSelf: "center",
-                      }}
-                    />
-                  )}
+                <View style={styles.profileImageContainer}>
+                <Image
+                  source={require("../assets/ic_user_dark.png")}
+                  style={{
+                    height: wp('20%'),
+                    width: wp('20%'),
+                  }}
+                />
                 </View>
               ) : (
                 <Image
-                  source={{
-                    uri: image + "?random_number=" + new Date().getTime(),
-                  }}
+                  source={{ uri: image }}
                   style={{
                     width: 100,
                     height: 100,
@@ -1748,11 +1730,11 @@ function SeekerEditProfile({ navigation, route }) {
                       />
                     </TouchableOpacity>
                     <View style={{ width: "90%" }}>
-                      <Text style={{ color: "#B1B4C7", fontSize: 14 }}>
+                      <Text style={{ color: "#B1B4C7", fontSize: 14, fontFamily: 'VisbySemibold', marginBottom: 5 }}>
                         {dateFormat(p.start_date)} - {dateFormat(p.end_date)}
                       </Text>
-                      <Text style={{ fontSize: 14, width: "70%", fontWeight: '600' }}>
-                        {p.position}, {p.employer}  <Text style={{fontWeight: '200'}}>{p.location}{" "}</Text>
+                      <Text style={{ fontSize: 14, width: "70%", fontFamily: 'VisbyBold' }}>
+                        {p.position}, {p.employer}  <Text style={{fontFamily: 'VisbyRegular'}}>{p.location}{" "}</Text>
                       </Text>
                       <Text>
                         
@@ -1831,6 +1813,7 @@ function SeekerEditProfile({ navigation, route }) {
                   fontSize: 12,
                   marginBottom: 40,
                   marginTop: 10,
+                  fontFamily: 'VisbySemibold'
                 }}
               >
                 Connecting Your Instagram account will add at least 20 posts to
@@ -1890,7 +1873,7 @@ function SeekerEditProfile({ navigation, route }) {
           }}
           onPress={() => updateProfile()}
         >
-          <Text style={{ color: "#fff", textAlign: "center", fontSize: 18 }}>
+          <Text style={{ color: "#fff", textAlign: "center", fontSize: 18, fontFamily: 'VisbyBold' }}>
             {strings.UPDATE_PROFILE}
           </Text>
         </TouchableOpacity>

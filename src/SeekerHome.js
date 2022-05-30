@@ -17,6 +17,7 @@ import {
 import { getUser, removeUser, setUser } from "./utils/utils.js";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import { getRequest, postFormData } from "./utils/network.js";
+import AwesomeAlert from 'react-native-awesome-alerts';
 import { LinearGradient } from "expo-linear-gradient";
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import * as Location from "expo-location";
@@ -53,6 +54,7 @@ function SeekerHome({ navigation }) {
   const { signOut } = React.useContext(AuthContext);
   const [latitude, setLatitude] = useState(32.7767);
   const [longitude, setLongitude] = useState(-96.797);
+  const [welcomMessage, setWelcomeMessage] = useState(false);
 
   const userData = useSelector(state => state.UserData)
 
@@ -67,6 +69,10 @@ function SeekerHome({ navigation }) {
   useEffect(() => {
     console.log('isFocused', isFocused);
     if (isFocused) {
+      if (userData.showWelocmeMessage) {
+        setWelcomeMessage(true);
+        dispatch({type: 'UserData/setState',payload: { showWelocmeMessage: false }});
+      }
       setTimeout(() => {
         loadDate();
       }, 500);
@@ -657,6 +663,7 @@ function SeekerHome({ navigation }) {
                           color: "#fff",
                           fontSize: 13,
                           paddingBottom: 3,
+                          fontFamily: 'VisbySemibold'
                         }}
                       >
                         {dateFormat(position.start_date)} -{" "}
@@ -666,6 +673,7 @@ function SeekerHome({ navigation }) {
                           color: "#fff",
                           fontSize: 14,
                           paddingBottom: 3,
+                          fontFamily: 'VisbySemibold'
                         }}
                       >
                         {dateFormat(position.end_date)}
@@ -685,7 +693,7 @@ function SeekerHome({ navigation }) {
                           color: "#fff",
                           fontSize: 13,
                           paddingBottom: 3,
-                          fontWeight: '600'
+                          fontFamily: 'VisbyBold'
                         }}
                       >
                         {position.position} -{" "}
@@ -695,7 +703,7 @@ function SeekerHome({ navigation }) {
                           color: "#fff",
                           fontSize: 13,
                           paddingBottom: 3,
-                          fontWeight: '600'
+                          fontFamily: 'VisbyBold'
                         }}
                       >
                         {position.employer} -{" "}
@@ -705,7 +713,7 @@ function SeekerHome({ navigation }) {
                           color: "#fff",
                           fontSize: 13,
                           paddingBottom: 3,
-                          fontWeight: '200'
+                          fontFamily: 'VisbyRegular'
                         }}
                       >
                         {position.location}
@@ -937,6 +945,27 @@ function SeekerHome({ navigation }) {
               </TouchableHighlight>
             </ScrollView>
           </View>
+          <AwesomeAlert
+            show={welcomMessage}
+            showProgress={false}
+            title="Information"
+            message={strings.WELCOME_TO_HEYHIRE}
+            closeOnTouchOutside={true}
+            closeOnHardwareBackPress={false}
+            showCancelButton={false}
+            showConfirmButton={true}
+            cancelText="No, cancel"
+            confirmText="Ok"
+            confirmButtonColor="#594A9E"
+            messageStyle={{textAlign: 'center'}}
+            confirmButtonStyle={{width: wp('20%'), justifyContent:'center', alignItems: 'center'}}
+            onCancelPressed={() => {
+              setWelcomeMessage(false)
+            }}
+            onConfirmPressed={() => {
+              setWelcomeMessage(false)
+            }}
+          />
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>

@@ -3,7 +3,8 @@ import { reducerActions as reducers } from "./reducers";
 const initialState = {
     profile: {},
     token: null,
-    profileImage: null
+    profileImage: null,
+    showWelocmeMessage: false,
 }
 
 export const UserData = {

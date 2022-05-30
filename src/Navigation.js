@@ -36,6 +36,7 @@ import SeekerBusinessList from './SeekerBusinessList';
 import CustomHeader from "./components/CustomHeader.js";
 import CustomBack from "./components/CustomBack.js";
 import CustomDrawer from "./components/CustomDrawer";
+import SeekerAbout from "./SeekerAbout";
 
 const Stack = createStackNavigator();
 const Stack2 = createStackNavigator();
@@ -595,6 +596,22 @@ export function MyDrawer({navigation}) {
         options={{
           headerShown: false,
           gestureEnabled: false
+        }}
+      />
+      <Drawer.Screen 
+        name="SeekerAbout"
+        component={SeekerAbout}
+        options={{
+          headerShown: true,
+          headerBackTitleVisible: false,
+          headerTitle: () => (<CustomHeader />),
+          headerStyle: {
+            backgroundColor: "#fff",
+          },
+          headerLeft: () => (<CustomBack navigation={navigation} />),
+          headerTintColor: "#4E35AE",
+          gestureEnabled: false
+
         }}
       />
     </Drawer.Navigator>

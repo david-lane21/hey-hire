@@ -278,7 +278,7 @@ function SeekerFinishRegistration({ navigation, route }) {
             setUser(_user);
           }
         });
-        dispatch({type: 'UserData/setState',payload: {profile: json.data, token: route.params.token, profileImage: image}});
+        dispatch({type: 'UserData/setState',payload: {profile: json.data, token: route.params.token, profileImage: image, showWelocmeMessage: true }});
       } catch (error) {
         setLoading(false);
         Alert.alert("Error", JSON.stringify(error));
@@ -308,7 +308,6 @@ function SeekerFinishRegistration({ navigation, route }) {
           text: "Skip",
           onPress: async () => {
             await setBioLimitWarning(true);
-            // handleUpdate();
           },
           style: "cancel",
         },

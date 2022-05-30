@@ -171,7 +171,7 @@ function SeekerLogin({ navigation }) {
       const json = await res.json()
       if(json.message == 'User found'){
         setOtpSent(true)
-      } else {
+      } else if (json.errors && json.errors.phone_number && json.errors.phone_number[0] == "User not found.") {
         const _body = {
           phone_number: tempNumber
         };
@@ -181,6 +181,8 @@ function SeekerLogin({ navigation }) {
           setRegistrationOptSent(true);
           setOtpSent(true);
         }
+      } else {
+        Alert.alert("Error", "Invalid Phone number. Please enter a valid phone number to continue.");
       }
     } catch (error) {
       console.log('error', JSON.stringify(error))
@@ -261,40 +263,12 @@ function SeekerLogin({ navigation }) {
       return "(" + match[1] + ") " + match[2] + "-" + match[3];
     }
     return str;
-
-
   }
 
   function onContentSizeChange(contentWidth, contentHeight) {
     // Save the content height in state
     setContentHeight(contentHeight);
   };
-
-  // function _updatePhone(text){
-  //   if(text.length > 3){
-  //     let areaCode = text.substring(0, 3).replace(/[^0-9]/g, '')
-  //     let ph = text.substring(3).replace(/[^0-9]/g, '')
-  //     setPhone(areaCode + ' ' + ph)
-  //   }else{
-  //     setPhone(text)
-  //   }
-
-  // }
-
-  function gotoPrivacyPolicy() {
-    Linking.openURL('https://app.apployme.com/privacy_policy')
-  }
-
-  function gotoTermService() {
-    Linking.openURL('https://app.apployme.com/terms_of_service')
-
-  }
-
-
-  function gotoForgotPassword() {
-    const baseURL = getBaseURL('employee_forgot_password');
-    navigation.navigate('ForgotPassword', { url: baseURL });
-  }
 
   function handleFocus(index) {
     setActiveInputIndex(index);
@@ -327,15 +301,6 @@ function SeekerLogin({ navigation }) {
 
     <View style={styles.container}>
       <SafeAreaView style={{ flex: 1 }}>
-        {/*<View style={{ flexDirection: 'row', position: 'absolute', top: 0, left: 0, bottom: 0 }}>
-          <Image
-            style={{ width: '100%', height: (window.height), borderBottomLeftRadius: 8, borderBottomRightRadius: 8, opacity: 1 }}
-            source={require('../assets/home-bg.png')}
-            resizeMode={'cover'}
-          />
-
-        </View>*/}
-
         <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={true} scrollEnabled={contentHeight + 50 > window.height}
           onContentSizeChange={onContentSizeChange}
           keyboardShouldPersistTaps='always' keyboardDismissMode='on-drag'     >

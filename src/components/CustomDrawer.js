@@ -74,7 +74,7 @@ const CustomDrawer = (props) => {
                 />
               )}
               label="About"
-              onPress={() => alert('Help')}
+              onPress={() => props.navigation.navigate('SeekerAbout')}
             />
             <Drawer.Section style={styles.bottomContainer}>
               <DrawerItem
@@ -89,7 +89,7 @@ const CustomDrawer = (props) => {
               />
               <Image
                 source={require('../../assets/headerImage.png')}
-                style={{ width: wp('30%'), height: hp('8%'), resizeMode: 'contain', alignSelf: 'center' }}
+                style={{ width: wp('35%'), height: hp('10%'), resizeMode: 'contain', alignSelf: 'center' }}
               />
             </Drawer.Section>
           </View>
