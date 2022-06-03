@@ -16,7 +16,7 @@ import {
   StatusBar,
   SafeAreaView
 } from "react-native";
-import { StackActions } from '@react-navigation/native';
+import InstagramLogin from 'react-native-instagram-login';
 import AwesomeAlert from 'react-native-awesome-alerts';
 import Tags from "react-native-tags";
 import {
@@ -33,7 +33,7 @@ import {
   setInstagram,
   getRequest,
   putJSON,
-  putFormData,
+  deleteJSON,
 } from "./utils/network.js";
 import RNPickerSelect from "react-native-picker-select";
 import { useIsFocused } from "@react-navigation/native";
@@ -91,14 +91,14 @@ function SeekerEditProfile({ navigation, route }) {
   const [availability, setAvailability] = useState(tempProfile.availability);
   const [positions, setPositions] = useState(tempProfile.past_positions || []);
   const [isInstagramConnect, setIsInstagramConnect] = useState(
-    tempProfile.instagram_connected || false
+    tempProfile.instagram_token || null
   );
+  const [instaToken, setInstaToken] = useState('');
   const [covid_vaccinated, setCovid_vaccinated] = useState(
     tempProfile.covid_vaccinated
   );
 
   const [instaModalShow, setInstaModalShow] = useState(false);
-  const [isVaccinated, setIsVaccinated] = useState(false);
 
   const [activeInputIndex, setActiveInputIndex] = useState(0);
   const [inputs, setInputs] = useState([]);
@@ -361,7 +361,7 @@ function SeekerEditProfile({ navigation, route }) {
         convictions: convictions || false,
         covid_vaccinated: covid_vaccinated || false,
         skill: skills.toString(),
-        instagram_connected: isInstagramConnect,
+        // instagram_connected: isInstagramConnect,
         preferred_business_categories: categoriesList
           .filter((item) => item.selected)
           .map((item) => item.id)
@@ -372,7 +372,6 @@ function SeekerEditProfile({ navigation, route }) {
       const json = await res.json();
       setLoading(false);
       dispatch({ type: "UserData/setState", payload: { profile: json.data } });
-      // await navigation.dispatch(StackActions.replace('SeekerHome'));
       navigation.goBack();
     } catch (error) {
       setLoading(false);
@@ -487,13 +486,30 @@ function SeekerEditProfile({ navigation, route }) {
         {
           text: "OK",
           onPress: () => {
-            setInstaModalShow(true);
+            // setInstaModalShow(true);
+            disconnectInstagram();
           },
         },
       ]);
     } else {
-      setInstaModalShow(true);
+      this.instagramLogin.show();
+      // setInstaModalShow(true);
     }
+  }
+
+  function disconnectInstagram() {
+    deleteJSON(`/job-seeker/instagram-token/${userData.profile.id}`, userData.token)
+    .then((res) => {
+      return res.json();
+    })
+    .then(async (json) => {
+      console.log('delete -> json', json);
+      await setIsInstagramConnect(false);
+      dispatch({ type: "UserData/setState", payload: { profile: json.data } });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   }
 
   function onPressAddPast() {
@@ -504,22 +520,40 @@ function SeekerEditProfile({ navigation, route }) {
   }
 
   function onCloseInstagramConnect() {
-    setInstaModalShow(false);
-    let form = new FormData();
-    form.append("user_token", user.user_token);
-    form.append("user_id", user.user_id);
+    // setInstaModalShow(false);
+    const body = {
+      instagram_token: instaToken
+    };
     postFormData("user_profile", form)
       .then((res) => {
         console.log("Prifile data", res);
         return res.json();
       })
       .then((json) => {
-        console.log("Profile data", json);
+        console.log("onCloseInstagramConnect -> Profile data", json);
         setIsInstagramConnect(json.data.instagram_connected);
       })
       .catch((err) => {
         console.log(err);
       });
+  }
+
+  function setIgToken (data) {
+    const body = {
+      instagram_token: data.access_token
+    };
+    postJSON(`/job-seeker/instagram-token/`, body, userData.token)
+    .then((res) => {
+      return res.json();
+    })
+    .then(async (json) => {
+      await setIsInstagramConnect(true);
+      setInstaToken(data.access_token);
+      dispatch({ type: "UserData/setState", payload: { profile: json.data } });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   }
 
   function addToCategoreis(item) {
@@ -1826,14 +1860,14 @@ function SeekerEditProfile({ navigation, route }) {
         </View>
         {/* </ScrollView> */}
 
-        <InstagramLoginPopup
+        {/*<InstagramLoginPopup
           userId={user ? user.user_id : ""}
           visible={instaModalShow}
           onClose={() => {
             onCloseInstagramConnect();
           }}
           isConnected={isInstagramConnect}
-        />
+        />*/}
       </KeyboardAwareScrollView>
 
       <KeyboardAccessoryNavigation
@@ -1898,6 +1932,16 @@ function SeekerEditProfile({ navigation, route }) {
           onConfirmPressed={() => {
             setShowAwsomeAlert(false)
           }}
+        />
+        <InstagramLogin
+          ref={ref => (this.instagramLogin = ref)}
+          appId='5144112875660329'
+          appSecret='2d7d8aac9160e372e7262095cfced817'
+          redirectUrl='https://devapi.heyhire.net/api/v1/instagram/auth'
+          incognito={false}
+          scopes={['user_profile', 'user_media']}
+          onLoginSuccess={setIgToken}
+          onLoginFailure={(data) => console.log(data)}
         />
     </SafeAreaView>
   );

@@ -180,6 +180,8 @@ function SeekerLogin({ navigation }) {
         if ( _json.message == "Registration Code Sent" ) {
           setRegistrationOptSent(true);
           setOtpSent(true);
+        } else {
+          Alert.alert("Error", "Invalid Phone number. Please enter a valid phone number to continue.");
         }
       } else {
         Alert.alert("Error", "Invalid Phone number. Please enter a valid phone number to continue.");
@@ -394,7 +396,6 @@ function SeekerLogin({ navigation }) {
                 style={{
                   flexDirection: "row",
                   marginTop: hp('5%')
-
                 }}
               >
 
@@ -516,15 +517,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   code2: {
-    flexDirection: "row",
     fontFamily: 'VisbySemibold',
     fontSize: hp('3%'),
     borderBottomColor: "#000000",
     borderBottomWidth: 2,
-    padding: 10,
     color: "#000000",
     width: "78%",
-    height: hp('5%'),
+    height: hp('6%'),
     marginLeft: wp("5%"),
     paddingLeft: wp('5%')
   },
