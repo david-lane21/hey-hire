@@ -18,19 +18,19 @@ import {
 } from "react-native-responsive-screen";
 import { getUser, setUser } from "./utils/utils.js";
 import { postFormData, getRequest, postJSON } from "./utils/network.js";
+import InstagramLogin from 'react-native-instagram-login';
 import { LinearGradient } from "expo-linear-gradient";
 import ConfirmationAlert from "./components/ConfirmationAlert";
 import AlertPopup from "./components/AlertPopup";
 import { strings } from "./translation/config";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useIsFocused } from "@react-navigation/native";
 import moment from "moment";
-import InstagramLoginPopup from "./components/InstagramLogin.js";
 import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
-import { connect } from 'react-redux';
 
 function SeekerJobDetail({ route, navigation }) {
   const isFocused = useIsFocused();
+  const dispatch = useDispatch();
 
   const tempJob = Object.assign({}, route.params.job, {});
   const [user, setUser1] = useState({});
@@ -39,7 +39,6 @@ function SeekerJobDetail({ route, navigation }) {
   const [modal1, setModal1] = useState(false);
   const [modal2, setModal2] = useState(false);
   const [refresh, setRefresh] = useState(false);
-  const [instaModalShow, setInstaModalShow] = useState(false);
   const userData = useSelector(state => state.UserData)
 
   useEffect(() => {
@@ -73,6 +72,22 @@ function SeekerJobDetail({ route, navigation }) {
     });
   }
 
+  function setIgToken (data) {
+    const body = {
+      instagram_token: data.access_token
+    };
+    postJSON(`/job-seeker/instagram-token/`, body, userData.token)
+    .then((res) => {
+      return res.json();
+    })
+    .then(async (json) => {
+      dispatch({ type: "UserData/setState", payload: { profile: json.data } });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }
+
   function handleOpenURL(event) {
     let businessId = event.url.split("/").filter(Boolean).pop();
     console.log("Hand", event.url, businessId);
@@ -86,37 +101,6 @@ function SeekerJobDetail({ route, navigation }) {
 
   function handlePostCV() {
     setModal1(true);
-  }
-
-  function onCloseInstagramConnect() {
-    console.log(user);
-    setInstaModalShow(false);
-
-    getUser().then((u) => {
-      let u2 = JSON.parse(u);
-      console.log("Local user", u2);
-      setUser1(u2);
-      let form = new FormData();
-      form.append("user_token", u2.user_token);
-      form.append("user_id", u2.user_id);
-      console.log("profile data", form);
-      postFormData("user_profile", form)
-        .then((res) => {
-          console.log("Prifile data", res);
-          return res.json();
-        })
-        .then((json) => {
-          console.log("Profile data", json);
-          var tempUserData = u2;
-          tempUserData.instagram_connected = json.data.instagram_connected;
-          console.log("tem", tempUserData);
-          setUser1(tempUserData);
-          setUser(tempUserData);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    });
   }
 
   async function onSendCV() {
@@ -488,28 +472,24 @@ function SeekerJobDetail({ route, navigation }) {
                   />*/}
                     <Text
                       style={{
-                        fontSize: 14,
-                        fontFamily: 'VisbyBold',
-                        color: '#594A9E'
+                        fontSize: hp('2.0%'),
+                        color: '#594A9E',
+                        fontFamily: 'VisbyBold'
                       }}
                     >
                       {"Instagram required"}
                     </Text>
                   </View>
 
-                  <Text
-                    style={{ marginBottom: 30, marginTop: 10, fontSize: 13, color: '#3D3B4E' }}
-                  >
+                  <Text style={[styles.subText, { marginTop: 10 }]}>
                     {business.name}{" "}
                     {
                       "is requesting that you connect your Instagram account to your profile to apply for this position."
                     }
                   </Text>
-                  {user && user.profile && !user.profile.instagram_connected ? (
+                  {userData && userData.profile && !userData.profile.instagram_token ? (
                     <View>
-                      <Text
-                        style={{ marginBottom: 20, marginTop: 5, fontSize: 13, color: '#3D3B4E' }}
-                      >
+                      <Text style={styles.subText}>
                         {"Please connect your Instagram"}
                       </Text>
                       <ImageBackground
@@ -528,7 +508,7 @@ function SeekerJobDetail({ route, navigation }) {
                             // justifyContent: 'center'
                           }}
                           onPress={() => {
-                            setInstaModalShow(true);
+                            this.instagramLogin.show();
                           }}
                         >
                           <AntDesign
@@ -675,13 +655,16 @@ function SeekerJobDetail({ route, navigation }) {
             business={business}
             onClose={() => setModal2(false)}
           />
-          {/*<InstagramLoginPopup
-            userId={userData.profile.id}
-            visible={instaModalShow}
-            onClose={() => {
-              onCloseInstagramConnect();
-            }}
-          />*/}
+          <InstagramLogin
+            ref={ref => (this.instagramLogin = ref)}
+            appId='5144112875660329'
+            appSecret='2d7d8aac9160e372e7262095cfced817'
+            redirectUrl='https://devapi.heyhire.net/api/v1/instagram/auth'
+            incognito={false}
+            scopes={['user_profile', 'user_media']}
+            onLoginSuccess={setIgToken}
+            onLoginFailure={(data) => console.log(data)}
+          />
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>
