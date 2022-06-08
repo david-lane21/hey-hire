@@ -73,6 +73,7 @@ function SeekerScanQrCode({ navigation }) {
       <ImageBackground
         source={require("../assets/overlay_QR.png")}
         style={{  width: window.width,height:window.height,backgroundColor:'transparent ',  }}
+        resizeMode='contain'
       >
          <Image
           source={require("../assets/WhiteCrossIcon.png")}

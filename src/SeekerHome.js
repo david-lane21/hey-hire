@@ -506,6 +506,7 @@ function SeekerHome({ navigation }) {
               justifyContent: 'center',
               alignItems: 'center'
             }}
+            resizeMode='contain'
           >
             <Image
               source={{ uri: userData.profileImage }}
@@ -787,6 +788,7 @@ function SeekerHome({ navigation }) {
                       <ImageBackground
                         source={mkrImage(mkr)}
                         style={{ width: 45, height: 45,justifyContent:'center',alignItems:'center' }}
+                        resizeMode='contain'
                       >{mkr.avatar_image ? (
                         <Image
                           source={{ uri: mkr.avatar_image }}

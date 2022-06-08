@@ -280,15 +280,20 @@ function SeekerJobDetail({ route, navigation }) {
             <ImageBackground
               source={require("../assets/buisness_image_container.png")}
               style={{
-                width: 136,
-                height: 136,
-                paddingTop: 17,
-                paddingLeft: 17,
+                width: wp('35%'),
+                height: wp('35%'),
+                justifyContent: 'center',
+                alignItems: 'center'
               }}
+              resizeMode='contain'
             >
               <Image
                 source={{ uri: business.avatar_image }}
-                style={{ width: 100, height: 100, borderRadius: 50 }}
+                style={{
+                  width: wp('30%'),
+                  height: wp('30%'),
+                  borderRadius: wp('30%'),
+                }}
               />
             </ImageBackground>
           </View>
