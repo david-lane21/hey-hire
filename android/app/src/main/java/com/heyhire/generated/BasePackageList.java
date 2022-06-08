@@ -1,4 +1,4 @@
-package com.apployme.generated;
+package com.heyhire.generated;
 
 import java.util.Arrays;
 import java.util.List;

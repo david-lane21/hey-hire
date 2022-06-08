@@ -127,11 +127,11 @@ android {
 
 
     defaultConfig {
-        applicationId 'com.apployme'
+        applicationId 'com.heyhire'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 26
-        versionName "2.2.4"
+        versionCode 1
+        versionName "1.0.0"
     }
     splits {
         abi {
@@ -187,6 +187,8 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.facebook.react:react-native:+"  // From node_modules
+    implementation platform('com.google.firebase:firebase-bom:30.1.0')
+    implementation 'com.google.firebase:firebase-analytics'
     addUnimodulesDependencies()
 
     if (enableHermes) {
