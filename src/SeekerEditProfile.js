@@ -1098,6 +1098,7 @@ function SeekerEditProfile({ navigation, route }) {
                 <TextInput
                   style={{ width: "100%", color: "#666" }}
                   onChangeText={(text) => setBio(text)}
+                  textAlignVertical='top'
                   placeholder={BIO_PLACEHOLDER}
                   value={bio}
                   multiline={true}

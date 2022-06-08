@@ -19,7 +19,7 @@ import {
   Keyboard,
   PermissionsAndroid
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import * as Location from "expo-location";
 import { countries } from "./utils/consts.js";
@@ -301,184 +301,189 @@ function SeekerLogin({ navigation }) {
 
   return (
 
-    <View style={styles.container}>
-      <SafeAreaView style={{ flex: 1 }}>
-        <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={true} scrollEnabled={contentHeight + 50 > window.height}
-          onContentSizeChange={onContentSizeChange}
-          keyboardShouldPersistTaps='always' keyboardDismissMode='on-drag'     >
+    <SafeAreaView style={{ flex: 1 }}>
+      <KeyboardAwareScrollView
+        style={styles.container}
+        enableOnAndroid={true}
+        extraScrollHeight={hp('15%')} // {Platform.OS === "ios" ? 50 : 50}
+        // extraHeight={hp('5%')} // {Platform.OS === "ios" ? 140 : 140}
+      >
+        <View
+          style={{
+            flex: 1,
+            //height: window.height - (isIphoneX ? hp('12%') : hp('10%')),
+            marginTop: hp('10%'),
+          }}
+        >
 
+          <View
+            style={{
+              marginHorizontal: "5%",
+              marginBottom: 5
+            }}
+          >
+            <Modal
+              animationType="slide"
+              transparent={false}
+              visible={modalVisible}
+              onRequestClose={() => {
+                setModalVisible(false)
+              }}
+            >
+              <SafeAreaView>
+                <View style={{ marginTop: 22, marginHorizontal: "5%" }}>
+                  <View
+                    style={{
+                      justifyContent: "flex-end",
+                      alignItems: 'flex-end',
+                    }}
+                  >
 
-          <View style={{ height: window.height - (isIphoneX ? 200 : 135), marginTop: hp('10%') }}>
+                    <View style={{ marginRight: 20, paddingVertical: 5 }}>
+                      <TouchableOpacity
+                        onPress={() => setModalVisible(false)}
+                      >
+                        <Text style={{ color: "#4834A6", fontSize: 18 }}>
+                          {strings.DONE}
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                  <View>
+                    <FlatList
+                      data={countries}
+                      keyExtractor={(item) => item.code}
+                      renderItem={({ item, index, separators }) => (
+                        <TouchableHighlight
+                          key={index}
+                          onPress={() => _onPress(item)}
+                          onShowUnderlay={separators.highlight}
+                          onHideUnderlay={separators.unhighlight}
+                        >
+                          <View style={{ backgroundColor: "white" }}>
+                            <View
+                              style={{
+                                flex: 1,
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                                padding: 10,
+                                borderBottomWidth: 1,
+                                borderBottomColor: "#eee",
+                              }}
+                            >
+                              <Text
+                                style={{
+                                  fontSize: 20,
+                                  color: "#222",
+                                }}
+                              >
+                                {item.name}
+                              </Text>
+                              <Text
+                                style={{
+                                  fontSize: 20,
+                                  color: "#666",
+                                }}
+                              >
+                                +{item.dial_code}
+                              </Text>
+                            </View>
+                          </View>
+                        </TouchableHighlight>
+                      )}
+                    />
+                  </View>
+                </View>
+              </SafeAreaView>
+            </Modal>
 
+            <Text style={{ color: '#000000', fontSize: hp('3%'), fontFamily: 'VisbyBold' }}>{strings.MY_PHONE_NO}</Text>
+            <View
+              style={{
+                flexDirection: "row",
+                marginTop: hp('5%')
+              }}
+            >
+
+              <TouchableOpacity
+                style={styles.code}
+                onPress={() => setModalVisible(true)}
+              >
+                <Text style={{ color: "#000000", fontSize: hp('3%'), fontFamily: 'VisbySemibold' }}>+{phCode}</Text>
+              </TouchableOpacity>
+
+              <TextInput
+                style={styles.code2}
+                onChangeText={(text) => {
+                  setOtpSent(false);
+                  setPhone(text);
+                }}
+                placeholder={strings.PHONE}
+                value={formatPhone(phone)}
+                textContentType="telephoneNumber"
+                autoCompleteType={"tel"}
+                keyboardType={"phone-pad"}
+                placeholderTextColor={'#000000'}
+                cursorColor={'#000000'}
+                selectionColor={'#000000'}
+                onFocus={() => {
+                  handleFocus(0);
+                }}
+                ref={(ref) => {
+                  handleRef(0, ref);
+                }}
+              />
+            </View>
+          </View>
+          
+        {otpSent ? 
+          <>
             <View
               style={{
                 marginHorizontal: "5%",
-                marginBottom: 5
+                marginVertical: 10,
+
               }}
             >
-              <Modal
-                animationType="slide"
-                transparent={false}
-                visible={modalVisible}
-                onRequestClose={() => {
-                  setModalVisible(false)
+              <Text style={{ color: '#000000', fontSize: 16, marginBottom: 5 }}>{strings.CODE}</Text>
+              <OTPInputView
+                style={{width: '100%', height: 50, alignSelf: 'center'}}
+                pinCount={6}
+                codeInputFieldStyle={styles.inputFieldStyle}
+                codeInputHighlightStyle={styles.inputHighlightStyle}
+                onCodeFilled = {(code) => {
+                  setOtp(code)
                 }}
-              >
-                <SafeAreaView>
-                  <View style={{ marginTop: 22, marginHorizontal: "5%" }}>
-                    <View
-                      style={{
-                        justifyContent: "flex-end",
-                        alignItems: 'flex-end',
-                      }}
-                    >
-
-                      <View style={{ marginRight: 20, paddingVertical: 5 }}>
-                        <TouchableOpacity
-                          onPress={() => setModalVisible(false)}
-                        >
-                          <Text style={{ color: "#4834A6", fontSize: 18 }}>
-                            {strings.DONE}
-                          </Text>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                    <View>
-                      <FlatList
-                        data={countries}
-                        keyExtractor={(item) => item.code}
-                        renderItem={({ item, index, separators }) => (
-                          <TouchableHighlight
-                            key={index}
-                            onPress={() => _onPress(item)}
-                            onShowUnderlay={separators.highlight}
-                            onHideUnderlay={separators.unhighlight}
-                          >
-                            <View style={{ backgroundColor: "white" }}>
-                              <View
-                                style={{
-                                  flex: 1,
-                                  flexDirection: "row",
-                                  justifyContent: "space-between",
-                                  padding: 10,
-                                  borderBottomWidth: 1,
-                                  borderBottomColor: "#eee",
-                                }}
-                              >
-                                <Text
-                                  style={{
-                                    fontSize: 20,
-                                    color: "#222",
-                                  }}
-                                >
-                                  {item.name}
-                                </Text>
-                                <Text
-                                  style={{
-                                    fontSize: 20,
-                                    color: "#666",
-                                  }}
-                                >
-                                  +{item.dial_code}
-                                </Text>
-                              </View>
-                            </View>
-                          </TouchableHighlight>
-                        )}
-                      />
-                    </View>
-                  </View>
-                </SafeAreaView>
-              </Modal>
-
-              <Text style={{ color: '#000000', fontSize: hp('3%'), fontFamily: 'VisbyBold' }}>{strings.MY_PHONE_NO}</Text>
-              <View
-                style={{
-                  flexDirection: "row",
-                  marginTop: hp('5%')
-                }}
-              >
-
-                <TouchableOpacity
-                  style={styles.code}
-                  onPress={() => setModalVisible(true)}
-                >
-                  <Text style={{ color: "#000000", fontSize: hp('3%'), fontFamily: 'VisbySemibold' }}>+{phCode}</Text>
-                </TouchableOpacity>
-
-                <TextInput
-                  style={styles.code2}
-                  onChangeText={(text) => {
-                    setOtpSent(false);
-                    setPhone(text);
-                  }}
-                  placeholder={strings.PHONE}
-                  value={formatPhone(phone)}
-                  textContentType="telephoneNumber"
-                  autoCompleteType={"tel"}
-                  keyboardType={"phone-pad"}
-                  placeholderTextColor={'#000000'}
-                  cursorColor={'#000000'}
-                  selectionColor={'#000000'}
-                  onFocus={() => {
-                    handleFocus(0);
-                  }}
-                  ref={(ref) => {
-                    handleRef(0, ref);
-                  }}
-                />
-              </View>
+                placeholderTextColor='#000000'
+                selectionColor='#000000'
+            />
             </View>
-            
-          {otpSent ? 
-            <>
-              <View
-                style={{
-                  marginHorizontal: "5%",
-                  marginVertical: 10,
-
-                }}
-              >
-                <Text style={{ color: '#000000', fontSize: 16, marginBottom: 5 }}>{strings.CODE}</Text>
-                <OTPInputView
-                  style={{width: '100%', height: 50, alignSelf: 'center'}}
-                  pinCount={6}
-                  codeInputFieldStyle={styles.inputFieldStyle}
-                  codeInputHighlightStyle={styles.inputHighlightStyle}
-                  onCodeFilled = {(code) => {
-                    setOtp(code)
-                  }}
-                  placeholderTextColor='#000000'
-                  selectionColor='#000000'
-              />
-              </View>
 
 
-              <View
-                style={{
-                  alignItems: "center",
-                  marginHorizontal: "5%",
-                  marginVertical: 5,
-
-                }}
-              >
-              < RoundButton backgroundColor='#594A9E' text={strings.VERIFY_OTP} textColor="#FFFFFF" onPress={() => verifyOtp()} />
-              </View>
-            </> :
             <View
               style={{
                 alignItems: "center",
-                marginHorizontal: "8%",
+                marginHorizontal: "5%",
                 marginVertical: 5,
+
               }}
             >
-              <Text style={styles.verificationText}>{strings.VERIFICATION_CODE_TEXT}</Text>
-              <RoundButton backgroundColor='#594A9E' text={strings.CONTINUE} textColor="#FFFFFF" onPress={() => getOtp()} />
+            < RoundButton backgroundColor='#594A9E' text={strings.VERIFY_OTP} textColor="#FFFFFF" onPress={() => verifyOtp()} />
             </View>
-          }
+          </> :
+          <View
+            style={{
+              alignItems: "center",
+              marginHorizontal: "8%",
+              marginVertical: 5,
+            }}
+          >
+            <Text style={styles.verificationText}>{strings.VERIFICATION_CODE_TEXT}</Text>
+            <RoundButton backgroundColor='#594A9E' text={strings.CONTINUE} textColor="#FFFFFF" onPress={() => getOtp()} />
           </View>
-        </ScrollView>
-      </SafeAreaView>
+        }
+        </View>
+      </KeyboardAwareScrollView>
 
       <KeyboardAccessoryNavigation
         androidAdjustResize={Platform.OS == "android"}
@@ -491,7 +496,7 @@ function SeekerLogin({ navigation }) {
         // avoidKeyboard={true}
         style={Platform.OS == "android" ? { top: 0 } : { top: 0 }}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 

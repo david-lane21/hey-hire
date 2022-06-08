@@ -648,6 +648,7 @@ function SeekerFinishRegistration({ navigation, route }) {
             >
               <TextInput
                 style={{ width: "100%", color: "#666" }}
+                textAlignVertical='top'
                 onChangeText={(text) => setBio(text)}
                 placeholder={BIO_PLACEHOLDER}
                 value={bio}
@@ -1544,5 +1545,6 @@ const pickerSelectStyles = StyleSheet.create({
   inputAndroid: {
     minWidth: "95%",
     paddingBottom: 13,
+    color: '#000000'
   },
 });
