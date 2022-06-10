@@ -196,15 +196,15 @@ function SeekerAppliedJobs({ navigation }) {
         onPress={() => {
           if (isViewed.length > 0) {
             let tempJob = isApplied.length > 0 ? isApplied[0] : item.job;
-            tempJob.viewed_on = isViewed[0].viewed_on;
+            tempJob.viewed_at = isViewed[0].viewed_at;
             navigation.navigate("SeekerAppliedJobs0", {
               screen: "SeekerJobDetail",
-              params: { job: tempJob, callBack: (job) => addWishlist(item) },
+              params: { job: tempJob, callBack: (job) => addWishlist(item), no_UpdatePage: true },
             });
           } else {
             navigation.navigate("SeekerAppliedJobs0", {
               screen: "SeekerJobDetail",
-              params: { job: isApplied.length > 0 ? isApplied[0].job : item.job, callBack: (job) => addWishlist(item) },
+              params: { job: isApplied.length > 0 ? isApplied[0].job : item.job, callBack: (job) => addWishlist(item), no_UpdatePage: true },
             });
           }
         }}

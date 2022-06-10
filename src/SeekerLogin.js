@@ -415,8 +415,10 @@ function SeekerLogin({ navigation }) {
               <TextInput
                 style={styles.code2}
                 onChangeText={(text) => {
-                  setOtpSent(false);
-                  setPhone(text);
+                  if(text.length < 15) {
+                    setOtpSent(false);
+                    setPhone(text);
+                  }
                 }}
                 placeholder={strings.PHONE}
                 value={formatPhone(phone)}

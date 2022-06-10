@@ -143,7 +143,7 @@ function SeekerAvailableJobs({ route, navigation }) {
     let tempJob = job;
     tempJob.business = profile;
     if (route.name == "SeekerHomeAvailableJobs") {
-      navigation.navigate("SeekerHomeJobDetail", { job: tempJob, callBack: (job) => addWishlist(job) });
+      navigation.navigate("SeekerHomeJobDetail", { job: tempJob, callBack: (job) => addWishlist(job), updateCallBack: () => loadJobs() });
     } else {
       navigation.navigate("SeekerAppliedJobs0", {
         screen: "SeekerJobDetail",
@@ -260,13 +260,13 @@ function SeekerAvailableJobs({ route, navigation }) {
                 >
                   {item.title}
                 </Text>
-                {item.application && item.application.applied_at ? (
+                {item.application && item.application.status == "applied" ? (
                   <Image
                     source={require("../assets/ic_applied.png")}
                     style={{ width: wp('16%'), height: hp('1.8%'), marginLeft: 5, borderRadius: 4 }}
                   />
                 ) : null}
-                {item.application && item.application.viewed_at ? (
+                {item.application && item.application.status == "viewed" ? (
                   <View style={{ width: 35 }}>
                     <Image
                       source={require("../assets/ic-viewed.png")}
@@ -310,7 +310,7 @@ function SeekerAvailableJobs({ route, navigation }) {
               justifyContent: "flex-end",
             }}
           >
-            {!item.application ? (
+            {!item.application || (item.application && item.application.status !== "applied") ? (
               <TouchableOpacity onPress={() => addWishlist(item)}>
                 <View style={{ width: 40 }}>
                   {item.like == "1" ? (

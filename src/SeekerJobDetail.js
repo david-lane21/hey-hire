@@ -113,7 +113,12 @@ function SeekerJobDetail({ route, navigation }) {
       setModal2(true);
       const tempJob = Object.assign({}, job, { application: {status: "applied", applied_at: new Date()} });
       setJob(tempJob);
-      route.params.callBack(route.params.job);
+      if(!route.params.no_UpdatePage) {
+        route.params.updateCallBack();
+      }
+      if (job.like == "1") {
+        route.params.callBack(route.params.job);
+      }
     } catch (error) {
       console.log('error', error);
     }
@@ -142,13 +147,16 @@ function SeekerJobDetail({ route, navigation }) {
             })
             .then((json) => {
               console.log("onCancelCV -> json", json);
-             // if (json.status_code === 200) {
-               if (json.data.status == "canceled") {
-                Alert.alert("Successful", json.msg);
-
+               if (json.data && json.data.status == "canceled") {
+                if(!route.params.no_UpdatePage) {
+                  route.params.updateCallBack();
+                }
+                Alert.alert("Success", "Your Application is canceled Successfully.");
                 navigation.goBack();
+              } else if (json.errors && json.errors.job_id) {
+                Alert.alert("Error", json.errors.job_id[0]);
               } else {
-                Alert.alert("Error", json.msg);
+                Alert.alert("Error", "Something went wrong. Please try again later.");
               }
             })
             .catch((err) => {
@@ -341,7 +349,7 @@ function SeekerJobDetail({ route, navigation }) {
             </View>
           )}
 
-          {job.application && job.application.viewed_at && (
+          {job.application && job.application.status == "viewed" && (
             <View
               style={{
                 flex: 1,

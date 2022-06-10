@@ -278,7 +278,6 @@ function SeekerHome({ navigation }) {
       return res.json();
     })
     .then((json) => {
-      setImage(json.data.thumb_url);
       dispatch({type: 'UserData/setState',payload: {profileImage: json.data.thumb_url}});
     }).catch((error) => {
       console.log('Get Profile Image error', JSON.stringify(error));
