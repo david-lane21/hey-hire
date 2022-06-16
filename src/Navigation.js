@@ -66,7 +66,7 @@ export function Navigation(props) {
 
   React.useEffect(() => {
     const unsubscribe = messaging().onMessage(async (message) => {
-        console.log(message);
+        console.log('Notifications Test -> Notifications Test', message);
         PushNotificationIOS.addNotificationRequest({
           id: 'notificationWithSound',
           title: message?.notification?.title,

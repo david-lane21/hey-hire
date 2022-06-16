@@ -35,6 +35,7 @@ import CommonUtils from './utils/CommonUtils';
 import GeolocationNew from '@react-native-community/geolocation';
 import OTPInputView from "@twotalltotems/react-native-otp-input";
 import { useDispatch, useSelector } from "react-redux";
+import notification from './SeekerPushNotifications';
 
 const isIphoneX = DeviceInfo.hasNotch();
 const window = Dimensions.get("window");
@@ -191,6 +192,22 @@ function SeekerLogin({ navigation }) {
     } 
   }
 
+  async function sendDeviceTokentoServer(token) {
+    try {
+      let fireBaseToken = CommonUtils.deviceToken;
+      console.log('Firebase token', fireBaseToken);
+      const body = {
+        token: fireBaseToken
+    };
+    const res = await postJSON("/job-seeker/auth/push-token",body, token);
+    console.log('sendDeviceTokentoServer -> res', res);
+    const json = await res.json()
+    console.log('sendDeviceTokentoServer -> json', json);
+    } catch (error) {
+      console.log('sendDeviceTokentoServer -> error', error);
+    }
+  }
+
   async function verifyOtp() {
     try {
       const tempNumber = phone.replace("(", "").replace(")", "").replace(" ", "").replace("-", "");
@@ -217,7 +234,9 @@ function SeekerLogin({ navigation }) {
           // setUser(json.user);
           // setToken(json.token);
           // signIn(json.token);
-          dispatch({type: 'UserData/setState',payload: {profile: json.user, token: json.token}})
+          // sendDeviceTokentoServer(json.token);
+          notification(json.token);
+          dispatch({type: 'UserData/setState',payload: {profile: json.user, token: json.token}});
         }
         else{
         navigation.navigate("SeekerSignup",{token: json.token})

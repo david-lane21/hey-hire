@@ -91,12 +91,12 @@ export default function App() {
 
   
 
-  // React.useEffect(() => {
-  //   // if(Platform.OS=="ios"){
-  //     CommonUtils.deviceTokenSet();
-  // // }
+  React.useEffect(() => {
+    // if(Platform.OS=="ios"){
+      CommonUtils.deviceTokenSet();
+    // }
 
-  // // I18nManager.allowRTL(true);
+  // I18nManager.allowRTL(true);
 
   //   getUser().then((u) => {
   //     var userData = JSON.parse(u);
@@ -107,7 +107,7 @@ export default function App() {
   //     }
   //     setIsLoading(false);
   //   });
-  // }, []);
+  }, []);
 
   useEffect(() => {
    
@@ -121,7 +121,7 @@ export default function App() {
     setTimeout(async () => {
       await SplashScreen.hideAsync();
       if (Constants.platform.ios) {
-        PushNotificationIOS.requestPermissions();
+        // PushNotificationIOS.requestPermissions();
       }
     }, Platform.OS=="android"?1000: 2000);
 

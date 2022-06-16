@@ -18,6 +18,7 @@ class CommonUtil {
     }
     const token = await messaging().getToken(undefined, "*");
     this.deviceToken = token;
+    console.log('deviceTokenSet -> deviceToken', this.deviceToken);
   };
   
   getDeviceToken = async () => {

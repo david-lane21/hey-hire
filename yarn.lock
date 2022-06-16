@@ -7070,6 +7070,11 @@ react-native-print@^0.6.0:
   resolved "https://registry.yarnpkg.com/react-native-print/-/react-native-print-0.6.0.tgz#11286c45db5109262123ed6261f61e867cef1a89"
   integrity sha512-lWGI5JoB/crLRlukuB7FMmfjSOwC8Cia9JHVEFjpnQWGtnRSLY+oRYwgFLzll7XPi7LqUNohFKT+jsRMA/1bRg==
 
+react-native-push-notification@7.3.1:
+  version "7.3.1"
+  resolved "https://registry.yarnpkg.com/react-native-push-notification/-/react-native-push-notification-7.3.1.tgz#1495feacd25169b998446dcf7b448a197ae5dca0"
+  integrity sha512-5kSKPvDU23uZRmzgKTsGhbwGNvB2tidu1VnInBHP53ZD0VEPSBl5fbpuTfHH98ED+Gp1SCcT2/e6bJWkIspKvg==
+
 react-native-qrcode-svg@^6.0.6:
   version "6.1.2"
   resolved "https://registry.yarnpkg.com/react-native-qrcode-svg/-/react-native-qrcode-svg-6.1.2.tgz#a7cb6c10199ab01418a7f7700ce17a6a014f544e"

@@ -14,11 +14,29 @@ import { DrawerActions } from '@react-navigation/native';
 import { Drawer } from 'react-native-paper';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+
+import CommonUtils from '../utils/CommonUtils';
+import { deleteJSON } from "../utils/network";
+
 
 const CustomDrawer = (props) => {
 
   const dispatch = useDispatch();
+  const userData = useSelector((state) => state.UserData);
+
+  async function deleteDeviceTokentoServer() {
+    deleteJSON(`/job-seeker/auth/push-token/${CommonUtils.deviceToken}`, userData.token)
+    .then((res) => {
+      return res.json();
+    })
+    .then((json) => {
+      console.log('deleteDeviceTokentoServer -> json', json);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }
 
   function _onLogout() {
     Alert.alert("ApployMe", `Are you sure you want to logout now?`, [
