@@ -32,6 +32,8 @@ import { strings } from "./translation/config";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import DeviceInfo from "react-native-device-info";
 import { Alert } from "react-native";
+import notification from './SeekerPushNotifications';
+
 const isIphoneX = DeviceInfo.hasNotch();
 function SeekerFinishRegistration({ navigation, route }) {
   const scrollViewRef = useRef();
@@ -279,6 +281,7 @@ function SeekerFinishRegistration({ navigation, route }) {
           }
         });
         dispatch({type: 'UserData/setState',payload: {profile: json.data, token: route.params.token, profileImage: image, showWelocmeMessage: true }});
+        notification(route.params.token);
       } catch (error) {
         setLoading(false);
         Alert.alert("Error", JSON.stringify(error));

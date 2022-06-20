@@ -43,7 +43,8 @@ const CustomDrawer = (props) => {
       {
         text: "Logout",
         onPress: () => {
-          dispatch({type:'UserData/setState',payload: {token: null, profile: {}}})
+          dispatch({type:'UserData/setState',payload: {token: null, profile: {}}});
+          deleteDeviceTokentoServer();
         },
       },
       { text: "Cancel", onPress: () => console.log("OK Pressed") },
