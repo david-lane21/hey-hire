@@ -312,15 +312,15 @@ function SeekerJobDetail({ route, navigation }) {
             </Text>
           </View>
 
-          <View style={{ flex: 1, flexDirection: 'row', alignItems: "center", justifyContent: 'center', marginHorizontal: 20, marginVertical: 2 }}>
+          <View style={[styles.statusRowContainer, {marginHorizontal: 20}]}>
             <Image
               source={require('../assets/ic_calendar_w.png')}
               style={{ width: 9, height: 9, resizeMode: 'contain' }}
             />
-            <Text style={{ color: "#fff", marginLeft: 5, fontSize: hp('1.7%'), fontFamily: 'VisbySemibold' }}>
+            <Text style={[styles.statusRowText, {marginLeft: 5}]}>
               {strings.START_DATE}:
             </Text>
-            <Text style={{ color: "#fff", marginLeft: 5, fontSize: hp('1.7%'), fontFamily: 'VisbySemibold' }}>
+            <Text style={[styles.statusRowText, {marginLeft: 5}]}>
               {moment(job.start_date).format("MM/DD/YYYY")}
             </Text>
           </View>
@@ -331,37 +331,10 @@ function SeekerJobDetail({ route, navigation }) {
             </Text>
           </View>
 
-          {job.application && (
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                marginVertical: 2
-              }}
-            >
-              <Text style={{ color: "#fff", fontSize: hp('1.7%'), fontFamily: 'VisbySemibold' }}>{strings.APPLIED_ON}: </Text>
-
-              <Text style={{ color: "#fff", fontSize: hp('1.7%'), fontFamily: 'VisbySemibold' }}>
-                {moment(job.application.applied_at).format("MM/DD/YYYY")}
-              </Text>
-            </View>
-          )}
-
           {job.application && job.application.status == "viewed" && (
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                marginVertical: 2
-              }}
-            >
-              <Text style={{ color: "#fff", fontSize: hp('1.7%'), fontFamily: 'VisbySemibold' }}>{strings.VIEWED_ON}: </Text>
-
-              <Text style={{ color: "#fff", fontSize: hp('1.7%'), fontFamily: 'VisbySemibold' }}>
+            <View style={styles.statusRowContainer}>
+              <Text style={styles.statusRowText}>{strings.VIEWED_ON}: </Text>
+              <Text style={styles.statusRowText}>
                 {moment(job.application.viewed_at).format("MM/DD/YYYY")}
               </Text>
             </View>
@@ -390,18 +363,49 @@ function SeekerJobDetail({ route, navigation }) {
             </View>
           </View>
 
+          {job.application && (
+            <View style={{marginTop: hp('3%'), marginBottom: hp('5%')}}>
+              <View style={styles.statusRowContainer}>
+                <Text style={styles.statusRowText}>Application Status:</Text>
+              </View>
+              <View style={styles.statusRowContainer}>
+                <Image
+                  source={require('../assets/ic_calendar_w.png')}
+                  style={{ width: 9, height: 9, resizeMode: 'contain' }}
+                />
+                <Text style={[styles.statusRowText, {marginLeft: 5}]}>{strings.APPLIED_ON}: </Text>
+                <Text style={styles.statusRowText}>
+                  {moment(job.application.applied_at).format("MM/DD/YYYY")}
+                </Text>
+              </View>
+              {job.application && job.application.viewed_at && (
+                <View style={styles.statusRowContainer}>
+                  <Image
+                    source={require('../assets/ic_view_white.png')}
+                    style={{ width: 12, height: 12, resizeMode: 'contain' }}
+                  />
+                  <Text style={[styles.statusRowText, {marginLeft: 5}]}>{strings.VIEWED_ON}: </Text>
+                  <Text style={styles.statusRowText}>
+                    {moment(job.application.viewed_at).format("MM/DD/YYYY")}
+                  </Text>
+                </View>
+              )}
+            </View>
+          )}
 
-          {business.website && (<View
-            style={{
-              flex: 1,
-              padding: 20,
-              borderBottomWidth: 1,
-              borderBottomColor: "#715FCB",
-            }}
-          >
-            <Text style={{ color: "#fff", fontSize: 11, fontWeight: 'bold', textAlign: 'left' }}>{business.website}</Text>
-          </View>)}
 
+          {job.description && (
+            <View
+              style={{
+                flex: 1,
+                padding: 20,
+                borderBottomWidth: 1,
+                borderBottomColor: "#715FCB",
+              }}
+            >
+              <Text style={{ color: "#fff", fontSize: hp('1.5%'), fontFamily: 'VisbyBold', lineHeight: hp('1.6%'), textAlign: 'left' }}>{job.description}</Text>
+            </View>
+          )}
 
           <View
             style={{
@@ -581,7 +585,7 @@ function SeekerJobDetail({ route, navigation }) {
                 <TouchableOpacity
                   style={{
                     width: "100%",
-                    backgroundColor: "#ff0",
+                    backgroundColor: "#F1B257",
                     paddingTop: 12,
                     paddingBottom: 12,
                     borderRadius: 50,
@@ -703,6 +707,18 @@ const styles = StyleSheet.create({
     marginTop: 2,
     fontSize: hp('1.6%'),
     color: '#3D3B4E',
+    fontFamily: 'VisbySemibold'
+  },
+  statusRowContainer: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginVertical: 2
+  },
+  statusRowText: {
+    color: "#fff",
+    fontSize: hp('1.7%'),
     fontFamily: 'VisbySemibold'
   }
 });

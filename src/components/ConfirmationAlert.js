@@ -55,7 +55,7 @@ export default function ConfirmationAlert({ visible,business, job,onClose,onSend
             >
               <Image
                source={{uri: business.avatar_image}}
-                style={{ height: 70, width: 70, borderRadius: 50 }}
+                style={{ height: 70, width: 70, borderRadius: 50, borderWidth: 1, borderColor: 'white' }}
               />
             </View>
             <LinearGradient
@@ -70,8 +70,8 @@ export default function ConfirmationAlert({ visible,business, job,onClose,onSend
                   marginHorizontal:20
                 }}
               >
-                <Text style={[{ textAlign: "center", color: "#fff" }]}>
-                  {strings.YOU_ARE_ABOUT_TO} <Text style={{fontWeight: 'bold' ,color:'#fff'}}>{job.title}</Text> {strings.POSTION_AT} <Text  style={{fontWeight: 'bold', color:'#fff'}}>{business.company.name}</Text>
+                <Text style={[{ textAlign: "center", color: "#fff", fontFamily: 'VisbyRegular' }]}>
+                  {strings.YOU_ARE_ABOUT_TO} <Text style={{fontFamily: 'VisbyBold' ,color:'#fff'}}>{job.title}</Text> {strings.POSTION_AT} <Text  style={{fontFamily: 'VisbyBold', color:'#fff'}}>{business.company.name}</Text>
                 </Text>
               </View>
               <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 20}}>
@@ -103,7 +103,7 @@ export default function ConfirmationAlert({ visible,business, job,onClose,onSend
                         textAlign: "center",
                         color: "#4E35AE",
                         fontSize: 16,
-                        fontWeight: "bold",
+                        fontFamily: 'VisbyExtrabold'
                       },
                     ]}
                   >
@@ -128,9 +128,12 @@ export default function ConfirmationAlert({ visible,business, job,onClose,onSend
                   onPress={onClose}
                 >
                   <Text
-                    style={[
-                      { textAlign: "center", color: "#fff", fontSize: 16 },
-                    ]}
+                    style={{
+                      textAlign: "center",
+                      color: "#fff",
+                      fontSize: 16,
+                      fontFamily: 'VisbyRegular'
+                    }}
                   >
                     {strings.CANCEL}
                   </Text>
