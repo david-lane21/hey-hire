@@ -59,7 +59,7 @@ function SeekerFinishRegistration({ navigation, route }) {
   const [sixteen, setSixteen] = useState(false);
 
   const [institution, setInstitution] = useState("");
-  const [certificate, setCertificate] = useState("");
+  const [certificate, setCertificate] = useState([]);
   const [convictions, setConvictions] = useState(false);
   const [availability, setAvailability] = useState("");
   const [positions, setPositions] = useState([]);
@@ -249,7 +249,7 @@ function SeekerFinishRegistration({ navigation, route }) {
           availability: availability,
           education: institution,
           education_level: eduLevel,
-          certificate: certificate,
+          certifications: certificate.toString(),
           language: langs,
           eligible: eligible || false,
           sixteen: sixteen || false,
@@ -761,7 +761,7 @@ function SeekerFinishRegistration({ navigation, route }) {
               </Text>
             </View>
             <Tags
-              // initialText="Enter Skills with comma seperator"
+              initialText=""
               textInputProps={{
                 placeholder: strings.ENTER_SKILL,
                 placeholderTextColor: 'black'
@@ -863,50 +863,69 @@ function SeekerFinishRegistration({ navigation, route }) {
         </View>
 
         <View style={{ flex: 1 }}>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginLeft: 20,
-            }}
-          >
-            <Image
-              source={require("../assets/ic_star.png")}
-              style={{ width: 15, height: 15 }}
-            />
-            <Text style={styles.subHeadingText}>
-              {strings.CERTIFICATIONS}
-              {/* {strings.OPTIONAL} */}
-            </Text>
-            <TouchableOpacity onPress={() => {
-              setAwsomeAlertMessage(strings.CERTIFICATE_INFO_MESSAGE);
-              setShowAwsomeAlert(true);
+          <View style={{ flex: 1, padding: 20 }}>
+            <View
+              style={{
+                flex: 1,
+                flexDirection: "row",
+                alignItems: "center",
+                marginBottom: 5,
               }}
-              style={{ width: 15, height: 15, position: 'absolute', right: 20 }}
             >
+              <Image
+                source={require("../assets/ic_star.png")}
+                style={{ width: 15, height: 15 }}
+              />
+              <Text style={styles.subHeadingText}>
+                {strings.CERTIFICATIONS}
+              </Text>
+              <TouchableOpacity onPress={() => {
+                setAwsomeAlertMessage(strings.CERTIFICATE_INFO_MESSAGE);
+                setShowAwsomeAlert(true);
+                }}
+                style={{ width: 15, height: 15, position: 'absolute', right: 20 }}
+              >
               <Image
                 source={require("../assets/circle_info.png")}
                 style={{ width: 15, height: 15 }}
               />
             </TouchableOpacity>
-          </View>
-          <View style={styles.inputField}>
-            <Image
-              source={require("../assets/ic_certificate.png")}
-              style={{ width: 17, height: 17, marginRight: 5 }}
-            />
-            <TextInput
-              style={{ width: "90%", color: "#000" }}
-              onChangeText={(text) => setCertificate(text)}
-              placeholder={strings.CERTIFICATE_PLACEHOLDER}
-              value={certificate}
-              textContentType="none"
-              onFocus={() => {
-                handleFocus(9);
+            </View>
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                marginBottom: 5,
               }}
-              ref={(ref) => {
-                handleRef(9, ref);
+            >
+              <Text style={{ paddingLeft: 10, fontSize: 13, fontFamily: 'VisbySemibold' }}>
+                Enter Certificate and Press SPACE to add to list.
+              </Text>
+            </View>
+            <Tags
+              initialText=""
+              textInputProps={{
+                placeholder: strings.CERTIFICATE_PLACEHOLDER,
+                placeholderTextColor: 'black'
               }}
+              inputContainerStyle={[{borderRadius: 5, borderWidth: 0.3, borderColor: 'grey', backgroundColor: 'white'}, styles.shadowContainer]}
+              inputStyle={{color: 'grey'}}
+              initialTags={certificate}
+              onChangeTags={tags => setCertificate(tags)}
+              onTagPress={(index, tagLabel, event, deleted) =>
+                console.log(index, tagLabel, event, deleted ? "deleted" : "not deleted")
+              }
+              containerStyle={{ justifyContent: "center" }}
+              renderTag={({ tag, index, onPress, deleteTagOnPress, readonly }) => (
+                <TouchableOpacity style={styles.skilsListContainer} key={`${tag}-${index}`} onPress={onPress}>
+                  <Text style={{color: '#F3F4FA', fontSize: 12}}>{tag}</Text>
+                  <View
+                    style={{marginLeft: 10}}
+                  >
+                    <Text style={{color: '#F3F4FA'}}>x</Text>
+                  </View>
+                </TouchableOpacity>
+              )}
             />
           </View>
         </View>

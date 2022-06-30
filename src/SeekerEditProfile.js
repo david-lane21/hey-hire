@@ -86,7 +86,7 @@ function SeekerEditProfile({ navigation, route }) {
   const [sixteen, setSixteen] = useState(tempProfile.sixteen);
 
   const [institution, setInstitution] = useState(tempProfile.education);
-  const [certificate, setCertificate] = useState(tempProfile.certificate);
+  const [certificate, setCertificate] = useState(tempProfile.certifications ? tempProfile.certifications.split(',') : []);
   const [convictions, setConvictions] = useState(tempProfile.convictions);
   const [availability, setAvailability] = useState(tempProfile.availability);
   const [positions, setPositions] = useState(tempProfile.past_positions || []);
@@ -354,7 +354,7 @@ function SeekerEditProfile({ navigation, route }) {
         availability: availability,
         education: institution,
         education_level: eduLevel,
-        certificate: certificate,
+        certifications: certificate.toString(),
         language: langs,
         eligible: eligible || false,
         sixteen: sixteen || false,
@@ -444,7 +444,7 @@ function SeekerEditProfile({ navigation, route }) {
     setEligible(tempProfile.eligible);
     setSixteen(tempProfile.sixteen);
     setInstitution(tempProfile.education);
-    setCertificate(tempProfile.certificate);
+    setCertificate(tempProfile.certifications);
     setConvictions(tempProfile.convictions);
     setAvailability(tempProfile.availability);  
   }
@@ -1208,7 +1208,7 @@ function SeekerEditProfile({ navigation, route }) {
                 </Text>
               </View>
               <Tags
-                // initialText="Enter Skills with comma seperator"
+                initialText=""
                 textInputProps={{
                   placeholder: strings.ENTER_SKILL,
                   placeholderTextColor: 'black'
@@ -1232,67 +1232,6 @@ function SeekerEditProfile({ navigation, route }) {
                   </TouchableOpacity>
                 )}
               />
-              {/*<View
-                style={{
-                  flex: 1,
-                  alignItems: "flex-start",
-                  backgroundColor: "#fff",
-                  borderColor: "#eee",
-                  paddingTop: 13,
-                  paddingLeft: 13,
-                  marginBottom: 15,
-                  borderWidth: 1,
-                  borderRadius: 10,
-                  shadowColor: "#bbb",
-                  shadowOffset: {
-                    width: 0,
-                    height: 3,
-                  },
-                  shadowOpacity: 0.23,
-                  shadowRadius: 2.62,
-                  elevation: 4,
-                }}
-              >
-                <FlatList
-                    data={skills}
-                    keyExtractor={(item) => item}
-                    renderItem={renderSkill}
-                  />
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: "row",
-                    flexWrap: "wrap",
-                  }}
-                >
-                  {skills &&
-                    skills.map((item, index) => {
-                      return renderSkill({ item, index });
-                    })}
-                </View>
-
-                <View
-                  style={{
-                    borderColor: "#eee",
-                    marginBottom: 5,
-                    paddingHorizontal: 5,
-                    margin: 5,
-                    borderWidth: 1,
-                    borderRadius: 10,
-                  }}
-                >
-                  <TextInput
-                    style={{ width: "100%", color: "#000" }}
-                    placeholder={strings.ENTER_SKILL}
-                    textContentType="none"
-                    onSubmitEditing={() => addSkill()}
-                    returnKeyType={"done"}
-                    onEndEditing={() => addSkill()}
-                    value={skill}
-                    onChangeText={(text) => onChangeSkill(text)}
-                  />
-                </View>
-              </View>*/}
             </View>
           </View>
 
@@ -1371,50 +1310,69 @@ function SeekerEditProfile({ navigation, route }) {
           </View>
 
           <View style={{ flex: 1 }}>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginLeft: 20,
-              }}
-            >
-              <Image
-                source={require("../assets/ic_star.png")}
-                style={{ width: 15, height: 15 }}
-              />
-              <Text style={styles.subHeadingText}>
-                {strings.CERTIFICATIONS}
-                {/* {strings.OPTIONAL} */}
-              </Text>
-              <TouchableOpacity onPress={() => {
-                setAwsomeAlertMessage(strings.CERTIFICATE_INFO_MESSAGE);
-                setShowAwsomeAlert(true);
+            <View style={{ flex: 1, padding: 20 }}>
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginBottom: 5,
                 }}
-                style={{ width: 15, height: 15, position: 'absolute', right: 20 }}
               >
+                <Image
+                  source={require("../assets/ic_star.png")}
+                  style={{ width: 15, height: 15 }}
+                />
+                <Text style={styles.subHeadingText}>
+                  {strings.CERTIFICATIONS}
+                </Text>
+                <TouchableOpacity onPress={() => {
+                  setAwsomeAlertMessage(strings.CERTIFICATE_INFO_MESSAGE);
+                  setShowAwsomeAlert(true);
+                  }}
+                  style={{ width: 15, height: 15, position: 'absolute', right: 20 }}
+                >
                 <Image
                   source={require("../assets/circle_info.png")}
                   style={{ width: 15, height: 15 }}
                 />
               </TouchableOpacity>
-            </View>
-            <View style={styles.inputField}>
-              <Image
-                source={require("../assets/ic_certificate.png")}
-                style={{ width: 17, height: 17, marginRight: 5 }}
-              />
-              <TextInput
-                style={{ width: "90%", color: "#000" }}
-                onChangeText={(text) => setCertificate(text)}
-                placeholder={strings.CERTIFICATE_PLACEHOLDER}
-                value={certificate}
-                textContentType="none"
-                onFocus={() => {
-                  handleFocus(9);
+              </View>
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  marginBottom: 5,
                 }}
-                ref={(ref) => {
-                  handleRef(9, ref);
+              >
+                <Text style={{ paddingLeft: 10, fontSize: 13, fontFamily: 'VisbySemibold' }}>
+                  Enter Certificate and Press SPACE to add to list.
+                </Text>
+              </View>
+              <Tags
+                initialText=""
+                textInputProps={{
+                  placeholder: strings.CERTIFICATE_PLACEHOLDER,
+                  placeholderTextColor: 'black'
                 }}
+                inputContainerStyle={[{borderRadius: 5, borderWidth: 0.3, borderColor: 'grey', backgroundColor: 'white'}, styles.shadowContainer]}
+                inputStyle={{color: 'grey'}}
+                initialTags={certificate}
+                onChangeTags={tags => setCertificate(tags)}
+                onTagPress={(index, tagLabel, event, deleted) =>
+                  console.log(index, tagLabel, event, deleted ? "deleted" : "not deleted")
+                }
+                containerStyle={{ justifyContent: "center" }}
+                renderTag={({ tag, index, onPress, deleteTagOnPress, readonly }) => (
+                  <TouchableOpacity style={styles.skilsListContainer} key={`${tag}-${index}`} onPress={onPress}>
+                    <Text style={{color: '#F3F4FA', fontSize: 12}}>{tag}</Text>
+                    <View
+                      style={{marginLeft: 10}}
+                    >
+                      <Text style={{color: '#F3F4FA'}}>x</Text>
+                    </View>
+                  </TouchableOpacity>
+                )}
               />
             </View>
           </View>
