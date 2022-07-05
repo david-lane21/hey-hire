@@ -428,7 +428,7 @@ function SeekerAvailableJobs({ route, navigation }) {
                     resizeMode= 'contain'
                   >
                     <Image
-                      source={{ uri: profile.avatar_image }}
+                      source={{ uri: profile.brand && profile.brand.photo ? profile.brand.photo.thumb_url : null }}
                       style={{
                       width: wp('30%'),
                       height: wp('30%'),

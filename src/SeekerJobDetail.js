@@ -296,7 +296,7 @@ function SeekerJobDetail({ route, navigation }) {
               resizeMode='contain'
             >
               <Image
-                source={{ uri: business.avatar_image }}
+                source={{ uri:  business.brand && business.brand.photo ? business.brand.photo.thumb_url : null }}
                 style={{
                   width: wp('30%'),
                   height: wp('30%'),

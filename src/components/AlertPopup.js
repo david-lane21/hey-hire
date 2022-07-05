@@ -53,7 +53,7 @@ export default function AlertPopup({ visible,business, job, onClose }) {
               }}
             >
               <Image
-                source={{ uri: business.avatar_image }}
+                source={{ uri: business.brand && business.brand.photo ? business.brand.photo.tiny_url : null  }}
                 style={{ height: 70, width: 70, borderRadius: 50 }}
               />
             </View>

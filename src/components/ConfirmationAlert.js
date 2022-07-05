@@ -54,8 +54,8 @@ export default function ConfirmationAlert({ visible,business, job,onClose,onSend
               }}
             >
               <Image
-               source={{uri: business.avatar_image}}
-                style={{ height: 70, width: 70, borderRadius: 50, borderWidth: 1, borderColor: 'white' }}
+               source={{ uri: business.brand && business.brand.photo ? business.brand.photo.tiny_url : null }}
+                style={{ height: 70, width: 70, borderRadius: 50 }}
               />
             </View>
             <LinearGradient
