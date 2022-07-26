@@ -233,7 +233,7 @@ function SeekerAppliedJobs({ navigation }) {
         >
           <View style={{ width: "17%" }}>
             <Image
-              source={{ uri: item.job.business.avatar_image }}
+              source={{ uri: item.job.business && item.job.business.avatar_image ? item.job.business.avatar_image : null }}
               style={{
                 width: wp('10%'),
                 height: wp('10%'),
@@ -276,7 +276,7 @@ function SeekerAppliedJobs({ navigation }) {
                   numberOfLines={1}
                   ellipsizeMode="middle"
                 >
-                  {item.job.business.name}{" "}
+                  {item.job.business && item.job.business.name ? item.job.business.name : ""}{" "}
                   <Text
                     style={{
                       fontSize: 14,
@@ -292,7 +292,7 @@ function SeekerAppliedJobs({ navigation }) {
               </View>
 
               <Text style={{ fontSize: 12, color: "#888", marginTop: 2.5 }} numberOfLines={1} ellipsizeMode="tail">
-                {item.job.business.address.address}
+                {item.job.business && item.job.business.address ? item.job.business.address.address : ""}
               </Text>
             </View>
           </View>
