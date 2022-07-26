@@ -397,7 +397,7 @@ function SeekerEditProfile({ navigation, route }) {
         tempUser.availability !== availability ||
         tempUser.education !== institution ||
         tempUser.education_level !== eduLevel ||
-        tempUser.certificate !== certificate ||
+        certificate.toString() !== "" && tempUser.certifications !== certificate.toString() ||
         tempUser.language !== langs ||
         tempUser.eligible !== eligible ||
         tempUser.sixteen !== sixteen ||
