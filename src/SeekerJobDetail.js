@@ -178,14 +178,17 @@ function SeekerJobDetail({ route, navigation }) {
 
     var dayDiff = currentDate.diff(appliedDate, "days");
     if (dayDiff > 4) {
-      postFormData("nudge_job", form)
+      const body = {
+        job_position_id: job.id
+      };
+  
+      postJSON("/job-seeker/nudge", body, userData.token)
         .then((res) => {
           return res.json();
         })
         .then((json) => {
-          console.log(json);
-          if (json.status_code == 200) {
-            Alert.alert("", json.msg);
+          if (json?.message) {
+            Alert.alert("", json.message);
           }
         })
         .catch((err) => {
@@ -293,7 +296,7 @@ function SeekerJobDetail({ route, navigation }) {
               resizeMode='contain'
             >
               <Image
-                source={{ uri:  business.brand && business.brand.photo ? business.brand.photo.thumb_url : null }}
+                source={{ uri: business?.brand?.photo ? business?.brand?.photo?.thumb_url : null }}
                 style={{
                   width: wp('30%'),
                   height: wp('30%'),
@@ -324,7 +327,7 @@ function SeekerJobDetail({ route, navigation }) {
 
           <View style={{ flex: 1, alignItems: "center", marginVertical: 2 }}>
             <Text style={{ color: "#fff", fontSize: hp('1.7%'), fontFamily: 'VisbyBold' }}>
-              {business.company.name}
+              {business?.company?.name}
             </Text>
           </View>
 
@@ -355,7 +358,7 @@ function SeekerJobDetail({ route, navigation }) {
                 style={{ width: 12, height: 12, resizeMode: 'contain' }}
               />
               <Text style={{ color: "#fff", marginLeft: 5, fontSize: hp('1.6%'), fontFamily: 'VisbySemibold' }}>
-                {business.address.address}
+                {business?.address?.address}
               </Text>
             </View>
           </View>
@@ -480,10 +483,6 @@ function SeekerJobDetail({ route, navigation }) {
                       alignItems: "center",
                     }}
                   >
-                    {/*<Image
-                      source={require("../assets/instagram-brands.png")}
-                      style={{ width: 20, height: 20, tintColor: "#4834A6" }}
-                  />*/}
                     <Text
                       style={{
                         fontSize: hp('2.0%'),
@@ -496,7 +495,7 @@ function SeekerJobDetail({ route, navigation }) {
                   </View>
 
                   <Text style={[styles.subText, { marginTop: 10 }]}>
-                    {business.name}{" "}
+                    {business?.name}{" "}
                     {
                       "is requesting that you connect your Instagram account to your profile to apply for this position."
                     }
