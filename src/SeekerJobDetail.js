@@ -39,7 +39,7 @@ function SeekerJobDetail({ route, navigation }) {
   const [modal1, setModal1] = useState(false);
   const [modal2, setModal2] = useState(false);
   const [refresh, setRefresh] = useState(false);
-  const userData = useSelector(state => state.UserData)
+  const userData = useSelector(state => state.UserData);
 
   useEffect(() => {
     Linking.addEventListener("url", handleOpenURL);
@@ -81,7 +81,9 @@ function SeekerJobDetail({ route, navigation }) {
       return res.json();
     })
     .then(async (json) => {
-      dispatch({ type: "UserData/setState", payload: { profile: json.data } });
+      const response = await getRequest(`/job-seeker/profile/${userData.profile.id}`,userData.token);
+      const _profile = await response.json();
+      dispatch({type: 'UserData/setState',payload: { profile: _profile.data }});
     })
     .catch((err) => {
       console.log(err);
@@ -176,11 +178,6 @@ function SeekerJobDetail({ route, navigation }) {
 
     var dayDiff = currentDate.diff(appliedDate, "days");
     if (dayDiff > 4) {
-      //let form = new FormData();
-      //form.append("user_token", user.user_token);
-      //form.append("user_id", user.user_id);
-      //form.append("job_id", job.id);
-
       postFormData("nudge_job", form)
         .then((res) => {
           return res.json();
@@ -640,7 +637,7 @@ function SeekerJobDetail({ route, navigation }) {
                   style={{
                     width: "100%",
                     backgroundColor:
-                      job.instagram_required && !user.profile.instagram_connected
+                      job.instagram_required && !userData?.profile?.instagram_token
                         ? "#a8a4a6"
                         : "#4834A6",
                     paddingTop: 12,
@@ -648,7 +645,7 @@ function SeekerJobDetail({ route, navigation }) {
                     borderRadius: 50,
                   }}
                   onPress={tempJob && tempJob.application !== null ? tempJob.application.status === "applied" ? () => onCancelCV() : () => handlePostCV() : () => handlePostCV()}
-                  disabled={job.instagram_required && !user.profile.instagram_connected}
+                  disabled={job.instagram_required && !userData?.profile?.instagram_token}
                 >
                   <Text
                     style={{ textAlign: "center", fontSize: 18, color: "#fff" }}

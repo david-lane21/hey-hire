@@ -90,16 +90,9 @@ function SeekerEditProfile({ navigation, route }) {
   const [convictions, setConvictions] = useState(tempProfile.convictions);
   const [availability, setAvailability] = useState(tempProfile.availability);
   const [positions, setPositions] = useState(tempProfile.past_positions || []);
-  const [isInstagramConnect, setIsInstagramConnect] = useState(
-    tempProfile.instagram_token || null
-  );
-  const [instaToken, setInstaToken] = useState('');
   const [covid_vaccinated, setCovid_vaccinated] = useState(
     tempProfile.covid_vaccinated
   );
-
-  const [instaModalShow, setInstaModalShow] = useState(false);
-
   const [activeInputIndex, setActiveInputIndex] = useState(0);
   const [inputs, setInputs] = useState([]);
   const [nextFocusDisabled, setNextFocusDisabled] = useState(false);
@@ -361,7 +354,6 @@ function SeekerEditProfile({ navigation, route }) {
         convictions: convictions || false,
         covid_vaccinated: covid_vaccinated || false,
         skill: skills.toString(),
-        // instagram_connected: isInstagramConnect,
         preferred_business_categories: categoriesList
           .filter((item) => item.selected)
           .map((item) => item.id)
@@ -476,7 +468,7 @@ function SeekerEditProfile({ navigation, route }) {
   }
 
   function handleInstaConnect() {
-    if (isInstagramConnect) {
+    if (userData?.profile?.instagram_token) {
       Alert.alert("", "Are you sure you want to disconnect from instagram?", [
         {
           text: "Cancel",
@@ -486,14 +478,12 @@ function SeekerEditProfile({ navigation, route }) {
         {
           text: "OK",
           onPress: () => {
-            // setInstaModalShow(true);
             disconnectInstagram();
           },
         },
       ]);
     } else {
       this.instagramLogin.show();
-      // setInstaModalShow(true);
     }
   }
 
@@ -503,8 +493,6 @@ function SeekerEditProfile({ navigation, route }) {
       return res.json();
     })
     .then(async (json) => {
-      console.log('delete -> json', json);
-      await setIsInstagramConnect(false);
       dispatch({ type: "UserData/setState", payload: { profile: json.data } });
     })
     .catch((err) => {
@@ -519,25 +507,6 @@ function SeekerEditProfile({ navigation, route }) {
     });
   }
 
-  function onCloseInstagramConnect() {
-    // setInstaModalShow(false);
-    const body = {
-      instagram_token: instaToken
-    };
-    postFormData("user_profile", form)
-      .then((res) => {
-        console.log("Prifile data", res);
-        return res.json();
-      })
-      .then((json) => {
-        console.log("onCloseInstagramConnect -> Profile data", json);
-        setIsInstagramConnect(json.data.instagram_connected);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-
   function setIgToken (data) {
     const body = {
       instagram_token: data.access_token
@@ -547,9 +516,9 @@ function SeekerEditProfile({ navigation, route }) {
       return res.json();
     })
     .then(async (json) => {
-      await setIsInstagramConnect(true);
-      setInstaToken(data.access_token);
-      dispatch({ type: "UserData/setState", payload: { profile: json.data } });
+      const response = await getRequest(`/job-seeker/profile/${userData.profile.id}`,userData.token);
+      const _profile = await response.json();
+      dispatch({type: 'UserData/setState',payload: { profile: _profile.data }});
     })
     .catch((err) => {
       console.log(err);
@@ -1783,13 +1752,13 @@ function SeekerEditProfile({ navigation, route }) {
                       fontWeight: "bold",
                     }}
                   >
-                    {isInstagramConnect
+                    {userData?.profile?.instagram_token
                       ? strings.INSTRAGRAM_CONNECTED
                       : strings.CONNECT_YOUR_INSTAGRAM}
                   </Text>
                   <MaterialCommunityIcons
                     name={
-                      isInstagramConnect
+                      userData?.profile?.instagram_token
                         ? "check-circle-outline"
                         : "checkbox-blank-circle-outline"
                     }
@@ -1819,14 +1788,6 @@ function SeekerEditProfile({ navigation, route }) {
         </View>
         {/* </ScrollView> */}
 
-        {/*<InstagramLoginPopup
-          userId={user ? user.user_id : ""}
-          visible={instaModalShow}
-          onClose={() => {
-            onCloseInstagramConnect();
-          }}
-          isConnected={isInstagramConnect}
-        />*/}
       </KeyboardAwareScrollView>
 
       <KeyboardAccessoryNavigation
