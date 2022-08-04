@@ -21,6 +21,7 @@ const CustomHeader = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width: wp('100%'),
     justifyContent:'center',
     alignItems: 'center',
   },

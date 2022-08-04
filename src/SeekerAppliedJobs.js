@@ -332,6 +332,7 @@ function SeekerAppliedJobs({ navigation }) {
       <SafeAreaView>
         <View
           style={{
+            width: wp('100%'),
             flexDirection: "row",
             alignItems: "center",
             borderBottomWidth: 1,
@@ -342,26 +343,27 @@ function SeekerAppliedJobs({ navigation }) {
             justifyContent: 'space-between',
           }}
         >
-          <TouchableOpacity onPress={() => onPressApplied(!isApplied)}>
-          <Image
+          <TouchableOpacity onPress={() => onPressApplied(!isApplied)} style={{ width: wp('33%') }}>
+            <Image
               source={isFavourite ? require("../assets/tick-icon-dull.png") :  require("../assets/tick-icon.png")}
               style={{ alignSelf: 'flex-start', height:20, width: 40 }}
               resizeMode="contain"
             />
           </TouchableOpacity>
+          <View style={{ width: wp('33%'), justifyContent: 'center', alignItems: 'center' }}>
             <Image
               source={require("../assets/heyhireFullWhite.png")}
               resizeMode="contain"
               style={{ width: 100, height: 25 }}
             />
-            <TouchableOpacity onPress={() => onPressHeart(!isFavourite)}>
-          
-             <Image
+          </View>
+          <TouchableOpacity onPress={() => onPressHeart(!isFavourite)} style={{ width: wp('33%') }}>
+            <Image
               source={isFavourite ? require("../assets/filled-heart-white-icon.png") : require("../assets/heart-icon-with-border.png")}
               style={{ alignSelf: 'flex-end', height:20, width: 40 }}
               resizeMode="contain"
             />
-            </TouchableOpacity>
+          </TouchableOpacity>
         </View>
 
         <ScrollView

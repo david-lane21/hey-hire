@@ -9,20 +9,19 @@ import {
   ImageBackground,
   RefreshControl,
   Dimensions,
-  Platform,
   FlatList
 } from "react-native";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import Toast from 'react-native-toast-message';
 import { useSelector } from "react-redux";
 import { getUser } from "./utils/utils.js";
-import { postFormData, getRequest, postJSON, deleteJSON } from "./utils/network.js";
+import { getRequest, postJSON, deleteJSON } from "./utils/network.js";
 import { LinearGradient } from "expo-linear-gradient";
 import { useIsFocused } from "@react-navigation/native";
 const window = Dimensions.get("window");
-import Header from "./components/Header";
 import { strings } from "./translation/config";
 import CommonUtils from "./utils/CommonUtils";
 
@@ -127,6 +126,15 @@ function SeekerAvailableJobs({ route, navigation }) {
     return false;
   }
 
+  function notifyMessage(msg) {
+    Toast.show({
+      type: 'success',
+      text1: msg,
+      position: 'top',
+      visibilityTime: 4000
+    });
+  }
+
   function setCurrentJobsList() {
     let favoriteJobs = jobs.filter(item => item.like);
     if(!toggleJobsList) {
@@ -174,6 +182,7 @@ function SeekerAvailableJobs({ route, navigation }) {
             }
             return item;
           });
+          notifyMessage("Job Added to Favorites");
           setJobs((jobs) => [...findJob]);
         }
       })
@@ -195,6 +204,7 @@ function SeekerAvailableJobs({ route, navigation }) {
             }
             return item;
           });
+          notifyMessage("Job removed from Favorites");
           setJobs((jobs) => [...findJob]);
       })
       .catch((err) => {
@@ -239,11 +249,11 @@ function SeekerAvailableJobs({ route, navigation }) {
         >
           <View style={{ width: "17%" }}>
             <Image
-              source={{ uri: profile.avatar_image }}
+              source={{ uri: profile?.brand?.photo?.thumb_url }}
               style={{
                 width: wp('10%'),
                 height: wp('10%'),
-                backgroundColor: "#444",
+                backgroundColor: "#999",
                 borderRadius: wp('10%'),
                 borderWidth: 1,
                 borderColor: "#888",
@@ -286,7 +296,7 @@ function SeekerAvailableJobs({ route, navigation }) {
                   numberOfLines={1}
                   ellipsizeMode='middle'
                 >
-                  {profile.company.name}{" "}
+                  {profile?.name}{" "}
                   <Text
                     style={{
                       fontSize: 14,
@@ -338,6 +348,7 @@ function SeekerAvailableJobs({ route, navigation }) {
       <SafeAreaView>
         <View
           style={{
+            width: wp('100%'),
             backgroundColor: "#4E35AE",
             flexDirection: "row",
             alignItems: "center",
@@ -347,7 +358,7 @@ function SeekerAvailableJobs({ route, navigation }) {
             paddingTop: 20,
           }}
         >
-          <View style={{ width: "33.3%" }}>
+          <View style={{ width: wp("33.3%") }}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Image
                 source={require("../assets/ic_back_w.png")}
@@ -355,7 +366,7 @@ function SeekerAvailableJobs({ route, navigation }) {
               />
             </TouchableOpacity>
           </View>
-          <View style={{ width: "33.3%" }}>
+          <View style={{ width: wp("33.3%"), justifyContent: 'center', alignItems: 'center' }}>
             <Image
               source={require("../assets/heyhireFullWhite.png")}
               style={{ width: 120, height: 25, resizeMode: 'contain' }}
@@ -363,7 +374,7 @@ function SeekerAvailableJobs({ route, navigation }) {
           </View>
           <View
             style={{
-              width: "33.3%",
+              width: wp("33.3%"),
               alignItems: "flex-end",
               paddingRight: 15,
             }}
@@ -428,7 +439,7 @@ function SeekerAvailableJobs({ route, navigation }) {
                     resizeMode= 'contain'
                   >
                     <Image
-                      source={{ uri: profile.brand && profile.brand.photo ? profile.brand.photo.thumb_url : null }}
+                      source={{ uri: profile?.brand?.photo?.thumb_url }}
                       style={{
                       width: wp('30%'),
                       height: wp('30%'),
@@ -445,11 +456,11 @@ function SeekerAvailableJobs({ route, navigation }) {
                     marginHorizontal: 20,
                   }}
                 >
-                  {profile.company && (
+                  {profile?.company && (
                     <Text
                       style={{ color: "#fff", fontSize: hp('3.0%'), textAlign: "center", fontFamily: 'VisbyBold' }}
                     >
-                      {profile.company.name}
+                      {profile?.company?.name}
                     </Text>
                   )}
                 </View>
@@ -472,9 +483,9 @@ function SeekerAvailableJobs({ route, navigation }) {
                       resizeMode: 'contain'
                     }}
                   />
-                  {profile.address && (
+                  {profile?.address && (
                     <Text style={{ color: "#fff", marginTop: 10, fontSize: hp('1.7%'), fontFamily: 'VisbySemibold' }}>
-                      {profile.address.address}
+                      {profile?.address?.address}
                     </Text>
                   )}
                 </View>
@@ -506,7 +517,7 @@ function SeekerAvailableJobs({ route, navigation }) {
                       fontWeight: '600'
                     }}
                   >
-                    {profile.website}
+                    {profile?.brand?.description}
                   </Text>
                 </View>
               </LinearGradient>
@@ -555,6 +566,10 @@ function SeekerAvailableJobs({ route, navigation }) {
             </View>
           )}
         </ScrollView>
+        <Toast
+          position='top'
+          type='success'
+        />
       </SafeAreaView>
     </LinearGradient>
     // </LinearGradient>

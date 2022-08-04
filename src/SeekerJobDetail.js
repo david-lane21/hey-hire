@@ -209,6 +209,7 @@ function SeekerJobDetail({ route, navigation }) {
         <View
           style={{
             // backgroundColor: '#4E35AE',
+            width: wp('100%'),
             flexDirection: "row",
             alignItems: "center",
             borderBottomWidth: 1,
@@ -225,7 +226,7 @@ function SeekerJobDetail({ route, navigation }) {
               />
             </TouchableOpacity>
           </View>
-          <View style={{ width: "33.3%" }}>
+          <View style={{ width: "33.3%", justifyContent: 'center', alignItems: 'center' }}>
             <Image
               source={require("../assets/heyhireFullWhite.png")}
               style={{ width: 120, height: 25, resizeMode: 'contain' }}
@@ -403,7 +404,7 @@ function SeekerJobDetail({ route, navigation }) {
                 borderBottomColor: "#715FCB",
               }}
             >
-              <Text style={{ color: "#fff", fontSize: hp('1.5%'), fontFamily: 'VisbyBold', lineHeight: hp('1.6%'), textAlign: 'left' }}>{job.description}</Text>
+              <Text style={{ color: "#fff", fontSize: hp('1.5%'), fontFamily: 'VisbyRegular', lineHeight: hp('1.9%'), textAlign: 'left' }}>{job.description}</Text>
             </View>
           )}
 
@@ -700,10 +701,11 @@ const styles = StyleSheet.create({
   },
   subText: {
     marginBottom: hp('2.5%'),
-    marginTop: 2,
+    lineHeight: hp('1.9%'),
+    marginTop: hp('1%'),
     fontSize: hp('1.6%'),
     color: '#3D3B4E',
-    fontFamily: 'VisbySemibold'
+    fontFamily: 'VisbyRegular'
   },
   statusRowContainer: {
     flex: 1,

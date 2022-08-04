@@ -9,14 +9,13 @@ import {
   ScrollView,
   RefreshControl,
   Linking,
-  Alert,
   ImageBackground,
   PermissionsAndroid,
-  StatusBar
 } from "react-native";
-import { getUser, removeUser, setUser } from "./utils/utils.js";
+import { getUser, setUser } from "./utils/utils.js";
+import Toast from 'react-native-toast-message';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-import { getRequest, postFormData } from "./utils/network.js";
+import { getRequest } from "./utils/network.js";
 import AwesomeAlert from 'react-native-awesome-alerts';
 import { LinearGradient } from "expo-linear-gradient";
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
@@ -25,7 +24,6 @@ import { useIsFocused } from "@react-navigation/native";
 import GeolocationNew from "@react-native-community/geolocation";
 import { DrawerActions } from '@react-navigation/native';
 
-import Header from "./components/Header";
 import { strings } from "./translation/config";
 import NavigationService from "./utils/NavigationService";
 import { AuthContext } from "./navigation/context";
@@ -51,7 +49,6 @@ function SeekerHome({ navigation }) {
     longitudeDelta: 0.0421,
   });
   const [refresh, setRefresh] = useState(false);
-  const { signOut } = React.useContext(AuthContext);
   const [latitude, setLatitude] = useState(32.7767);
   const [longitude, setLongitude] = useState(-96.797);
   const [welcomMessage, setWelcomeMessage] = useState(false);
@@ -74,10 +71,23 @@ function SeekerHome({ navigation }) {
         dispatch({type: 'UserData/setState',payload: { showWelocmeMessage: false }});
       }
       setTimeout(() => {
+        if(userData?.profileUpdated) {
+          notifyMessage("Profile Updated Successfully!");
+          dispatch({type: 'UserData/setState',payload: { profileUpdated: false }});
+        }
         loadDate();
       }, 500);
     }
   }, [isFocused]);
+
+  function notifyMessage(msg) {
+    Toast.show({
+      type: 'success',
+      text1: msg,
+      position: 'top',
+      visibilityTime: 4000
+    });
+  }
 
   useEffect(() => {
     Linking.addEventListener("url", handleOpenURL);
@@ -451,12 +461,10 @@ function SeekerHome({ navigation }) {
 
   return (
     <LinearGradient style={{ flex: 1 }} colors={["#4E35AE", "#775ED7"]}>
-      {/*<StatusBar barStyle="light-content" />*/}
       <SafeAreaView>
         <View
           style={{
-            // backgroundColor: '#4E35AE',
-            // flex: 1,
+            width: wp('100%'),
             flexDirection: "row",
             alignItems: "center",
             borderBottomWidth: 1,
@@ -465,13 +473,13 @@ function SeekerHome({ navigation }) {
             paddingTop: 20,
           }}
         >
-          <View style={{ flex: 1, alignItems: "center" }}>
+          <View style={{ width: wp('100%'), alignItems: "center", justifyContent: 'center' }}>
             <Image
               source={require("../assets/heyHire_white.png")}
               style={{ width: wp('25%'), height: hp('4%'), resizeMode: 'contain' }}
             />
           </View>
-          <View style={{ position: "absolute", left: 5, bottom: 6}}>
+          <View style={{ position: "absolute", left: 5, bottom: 15 }}>
             <TouchableOpacity
               onPress={() => {
                 _onPressMenuBar()
@@ -788,9 +796,9 @@ function SeekerHome({ navigation }) {
                         source={mkrImage(mkr)}
                         style={{ width: 45, height: 45,justifyContent:'center',alignItems:'center' }}
                         resizeMode='contain'
-                      >{mkr.avatar_image ? (
+                      >{mkr?.brand?.photo?.tiny_url ? (
                         <Image
-                          source={{ uri: mkr.avatar_image }}
+                          source={{ uri: mkr?.brand?.photo?.tiny_url }}
                           style={{
                             width: 20,
                             height: 20,
@@ -880,9 +888,9 @@ function SeekerHome({ navigation }) {
                           padding: 10,
                         }}
                       >
-                        {biz.avatar_image ? (
+                        {biz?.brand?.photo?.tiny_url ? (
                           <Image
-                            source={{ uri: biz.avatar_image }}
+                            source={{ uri: biz?.brand?.photo?.tiny_url }}
                             style={{
                               width: 50,
                               height: 50,
@@ -968,6 +976,10 @@ function SeekerHome({ navigation }) {
             }}
           />
         </ScrollView>
+        <Toast
+          position='top'
+          type='success'
+        />
       </SafeAreaView>
     </LinearGradient>
   );

@@ -5,6 +5,7 @@ const initialState = {
     token: null,
     profileImage: null,
     showWelocmeMessage: false,
+    profileUpdated: false,
 }
 
 export const UserData = {

@@ -6,14 +6,14 @@ import {
   Image,
   RefreshControl,
   FlatList,
-  Alert
+  Alert,
+  ScrollView
 } from 'react-native'
 
 import { getRequest } from './utils/network.js';
 import {getUser} from './utils/utils.js';
 import { useIsFocused } from "@react-navigation/native";
 import {strings} from './translation/config';
-import moment from 'moment';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
 function SeekerNotifications({navigation}){
@@ -148,15 +148,18 @@ function SeekerNotifications({navigation}){
           {strings.NOTIFICATIONS + " " + notifications.length}
         </Text>
       </View>
-      <FlatList
-        style={{backgroundColor:'#fff', marginBottom: hp('16%'), marginTop: hp('2%')}}
-        data={notifications}
-        keyExtractor={(item) => item.id}
-        renderItem={(item)=>renderItem(item)}
+      <ScrollView
         refreshControl={
           <RefreshControl refreshing={refresh} onRefresh={()=>{loadData()}} />
         }
-      />
+      >
+        <FlatList
+          style={{backgroundColor:'#fff', marginBottom: hp('16%'), marginTop: hp('2%')}}
+          data={notifications}
+          keyExtractor={(item) => item.id}
+          renderItem={(item)=>renderItem(item)}
+        />
+      </ScrollView>
     </SafeAreaView>
   )
 }

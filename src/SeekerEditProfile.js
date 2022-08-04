@@ -17,6 +17,7 @@ import {
   SafeAreaView
 } from "react-native";
 import InstagramLogin from 'react-native-instagram-login';
+import Toast from 'react-native-toast-message';
 import AwesomeAlert from 'react-native-awesome-alerts';
 import Tags from "react-native-tags";
 import {
@@ -184,6 +185,15 @@ function SeekerEditProfile({ navigation, route }) {
     }
   };
 
+  function notifyMessage(msg) {
+    Toast.show({
+      type: 'success',
+      text1: msg,
+      position: 'top',
+      visibilityTime: 4000
+    });
+  }
+
   function uploadImage(image) {
     const body = {
       image: "data:image/png;base64," + image
@@ -195,6 +205,7 @@ function SeekerEditProfile({ navigation, route }) {
     })
     .then((json1) => {
       dispatch({type: 'UserData/setState',payload: {profileImage: json1.data.thumb_url}});
+      notifyMessage("Profile Image Updated Successfully");
       setLoading(false);
     })
     .catch((err1) => {
@@ -363,7 +374,7 @@ function SeekerEditProfile({ navigation, route }) {
       const res = await putJSON(`/job-seeker/profile/${userData.profile.id}`, body, userData.token);
       const json = await res.json();
       setLoading(false);
-      dispatch({ type: "UserData/setState", payload: { profile: json.data } });
+      dispatch({ type: "UserData/setState", payload: { profile: json.data, profileUpdated: true } });
       navigation.goBack();
     } catch (error) {
       setLoading(false);
@@ -1862,6 +1873,10 @@ function SeekerEditProfile({ navigation, route }) {
           scopes={['user_profile', 'user_media']}
           onLoginSuccess={setIgToken}
           onLoginFailure={(data) => console.log(data)}
+        />
+        <Toast
+          position='top'
+          type='success'
         />
     </SafeAreaView>
   );
