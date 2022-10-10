@@ -76,7 +76,7 @@ function SeekerHome({ navigation }) {
           dispatch({type: 'UserData/setState',payload: { profileUpdated: false }});
         }
         loadDate();
-      }, 500);
+      }, 1000);
     }
   }, [isFocused]);
 
@@ -141,7 +141,7 @@ function SeekerHome({ navigation }) {
                     },
                     500
                   );
-                  // setLocation(loc.coords);
+                  setLocation(loc.coords);
                   setLatitude(loc.coords.latitude);
                   setLongitude(loc.coords.longitude);
                   CommonUtils.setLocation(
@@ -171,7 +171,7 @@ function SeekerHome({ navigation }) {
                     },
                     500
                   );
-                  // setLocation(loc.coords);
+                  setLocation(loc.coords);
                   setLatitude(latitude);
                   setLongitude(longitude);
                   CommonUtils.setLocation(latitude, longitude);
@@ -229,7 +229,7 @@ function SeekerHome({ navigation }) {
               },
               500
             );
-            // setLocation(loc.coords);
+            setLocation(loc.coords);
             setLatitude(loc.coords.latitude);
             setLongitude(loc.coords.longitude);
             CommonUtils.setLocation(loc.coords.latitude, loc.coords.longitude);
@@ -255,7 +255,7 @@ function SeekerHome({ navigation }) {
               },
               500
             );
-            // setLocation(loc.coords);
+            setLocation(loc.coords);
             setLatitude(latitude);
             setLongitude(longitude);
             CommonUtils.setLocation(latitude, longitude);
@@ -297,8 +297,8 @@ function SeekerHome({ navigation }) {
   async function getHiringLocations(){
     try {
       setUser(userData)
-      const res = await getRequest(`/job-seeker/location/list?lng=-97.75640900&lat=30.26627100`,userData?.token)
-      const json = await res.json()
+      const res = await getRequest(`/job-seeker/location/list?lng=${longitude}&lat=${latitude}`,userData?.token); //lng=-97.75640900&lat=30.26627100
+      const json = await res.json();
       if(json.data?.length > 0){
         let bizList = json.data.filter(
           (b) =>
@@ -778,7 +778,7 @@ function SeekerHome({ navigation }) {
                     <Marker
                       draggable={false}
                       key={mkr.id}
-                      title={mkr.company.name}
+                      title={mkr?.address?.name}
                       ref={(r) => {
                         this[`markerRef${mkr.id}`] = r;
                       }}
@@ -909,7 +909,7 @@ function SeekerHome({ navigation }) {
                           numberOfLines={1}
                           ellipsizeMode="tail"
                         >
-                          {biz.company.name}
+                          {biz?.address?.name}
                         </Text>
                         <Text style={{ flex: 1, fontSize: 10, color: "#444" }}>
                           {(parseFloat(biz.distance_in_km) * 0.621).toFixed(2)} {strings.MILES}
