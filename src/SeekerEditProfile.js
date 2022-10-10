@@ -29,12 +29,13 @@ import Constants from "expo-constants";
 import { educationLevels, countries, languages } from "./utils/consts.js";
 import { getUser, setUser } from "./utils/utils.js";
 import {
-  postFormData,
   postJSON,
   setInstagram,
   getRequest,
   putJSON,
   deleteJSON,
+  autocompleteLocation,
+  getLatLong
 } from "./utils/network.js";
 import RNPickerSelect from "react-native-picker-select";
 import { useIsFocused } from "@react-navigation/native";
@@ -85,6 +86,8 @@ function SeekerEditProfile({ navigation, route }) {
   const [langs, setlangs] = useState(tempProfile.language || "");
   const [eligible, setEligible] = useState(tempProfile.eligible);
   const [sixteen, setSixteen] = useState(tempProfile.sixteen);
+  const [latitude, setLatitude] = useState(tempProfile.latitude);
+  const [longitude, setLongitude] = useState(tempProfile.longitude);
 
   const [institution, setInstitution] = useState(tempProfile.education);
   const [certificate, setCertificate] = useState(tempProfile.certifications ? tempProfile.certifications.split(',') : []);
@@ -142,7 +145,33 @@ function SeekerEditProfile({ navigation, route }) {
           });
       }
     })();
+    if (!latitude || !longitude) {
+      setLatLong();
+    }
   }, []);
+
+  function setLatLong() {
+    autocompleteLocation(address + country)
+    .then((res) => {
+      if (res?.predictions[0]?.description) {
+        getLatLong(res?.predictions[0]?.description)
+        .then(async (res) => {
+          if (res?.results) {
+            const body = {
+              longitude: res?.results[0]?.geometry?.location?.lng,
+              latitude: res?.results[0]?.geometry?.location?.lat,
+            };
+            const coord = await putJSON(`/profile/edit/${userData.profile.id}`, body, userData.token);
+            setLatitude(res?.results[0]?.geometry?.location?.lat);
+            setLongitude(res?.results[0]?.geometry?.location?.lng);
+          }
+        })
+      }
+    })
+    .catch((error) => {
+      console.log('setLatLong -> error', error);
+    })
+  }
 
   function getJobCategories() {
     getRequest("/job-seeker/business-category", userData.token)

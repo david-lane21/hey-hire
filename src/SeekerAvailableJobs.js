@@ -512,6 +512,7 @@ function SeekerAvailableJobs({ route, navigation }) {
                     style={{
                       color: "#fff",
                       textAlign: "center",
+                      paddingHorizontal: 20,
                       textAlign: "left",
                       fontSize: 13.5,
                       fontWeight: '600'
