@@ -456,11 +456,11 @@ function SeekerAvailableJobs({ route, navigation }) {
                     marginHorizontal: 20,
                   }}
                 >
-                  {profile?.company && (
+                  {profile?.address && (
                     <Text
                       style={{ color: "#fff", fontSize: hp('3.0%'), textAlign: "center", fontFamily: 'VisbyBold' }}
                     >
-                      {profile?.company?.name}
+                      {profile?.address?.name}
                     </Text>
                   )}
                 </View>

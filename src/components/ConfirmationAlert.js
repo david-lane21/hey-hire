@@ -54,7 +54,7 @@ export default function ConfirmationAlert({ visible,business, job,onClose,onSend
               }}
             >
               <Image
-               source={{ uri: business.brand && business.brand.photo ? business.brand.photo.tiny_url : null }}
+               source={{ uri: business?.brand && business?.brand?.photo ? business?.brand?.photo?.tiny_url : null }}
                 style={{ height: 70, width: 70, borderRadius: 50 }}
               />
             </View>
@@ -71,7 +71,7 @@ export default function ConfirmationAlert({ visible,business, job,onClose,onSend
                 }}
               >
                 <Text style={[{ textAlign: "center", color: "#fff", fontFamily: 'VisbyRegular' }]}>
-                  {strings.YOU_ARE_ABOUT_TO} <Text style={{fontFamily: 'VisbyBold' ,color:'#fff'}}>{job.title}</Text> {strings.POSTION_AT} <Text  style={{fontFamily: 'VisbyBold', color:'#fff'}}>{business.company.name}</Text>
+                  {strings.YOU_ARE_ABOUT_TO} <Text style={{fontFamily: 'VisbyBold' ,color:'#fff'}}>{job?.title}</Text> {strings.POSTION_AT} <Text  style={{fontFamily: 'VisbyBold', color:'#fff'}}>{job?.location?.name}</Text>
                 </Text>
               </View>
               <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 20}}>

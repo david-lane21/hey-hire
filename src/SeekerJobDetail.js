@@ -148,8 +148,7 @@ function SeekerJobDetail({ route, navigation }) {
               return res.json();
             })
             .then((json) => {
-              console.log("onCancelCV -> json", json);
-               if (json.data && json.data.status == "canceled") {
+               if (json?.data && json?.data?.status == "canceled") {
                 if(!route.params.no_UpdatePage) {
                   route.params.updateCallBack();
                 }
@@ -328,11 +327,11 @@ function SeekerJobDetail({ route, navigation }) {
 
           <View style={{ flex: 1, alignItems: "center", marginVertical: 2 }}>
             <Text style={{ color: "#fff", fontSize: hp('1.7%'), fontFamily: 'VisbyBold' }}>
-              {business?.company?.name}
+              {job?.location?.name}
             </Text>
           </View>
 
-          {job.application && job.application.status == "viewed" && (
+          {job?.application && job?.application?.status == "viewed" && (
             <View style={styles.statusRowContainer}>
               <Text style={styles.statusRowText}>{strings.VIEWED_ON}: </Text>
               <Text style={styles.statusRowText}>
@@ -395,7 +394,7 @@ function SeekerJobDetail({ route, navigation }) {
           )}
 
 
-          {job.description && (
+          {business?.brand?.description && (
             <View
               style={{
                 flex: 1,
@@ -404,7 +403,7 @@ function SeekerJobDetail({ route, navigation }) {
                 borderBottomColor: "#715FCB",
               }}
             >
-              <Text style={{ color: "#fff", fontSize: hp('1.5%'), fontFamily: 'VisbyRegular', lineHeight: hp('1.9%'), textAlign: 'left' }}>{job.description}</Text>
+              <Text style={{ color: "#fff", fontSize: hp('1.5%'), fontFamily: 'VisbyRegular', lineHeight: hp('1.9%'), textAlign: 'left' }}>{business?.brand?.description}</Text>
             </View>
           )}
 
@@ -570,7 +569,7 @@ function SeekerJobDetail({ route, navigation }) {
                 </View>
               ) : null}
             </View>
-            {job.application && job.application.status == "applied" ? (
+            {job?.application && job?.application?.status == "applied" ? (
               <View
                 style={{
                   flex: 1,
@@ -644,13 +643,13 @@ function SeekerJobDetail({ route, navigation }) {
                     paddingBottom: 12,
                     borderRadius: 50,
                   }}
-                  onPress={tempJob && tempJob.application !== null ? tempJob.application.status === "applied" ? () => onCancelCV() : () => handlePostCV() : () => handlePostCV()}
+                  onPress={tempJob && tempJob?.application !== null ? tempJob?.application?.status === "applied" ? () => onCancelCV() : () => handlePostCV() : () => handlePostCV()}
                   disabled={job.instagram_required && !userData?.profile?.instagram_token}
                 >
                   <Text
                     style={{ textAlign: "center", fontSize: 18, color: "#fff" }}
                   >
-                    {tempJob && tempJob.application !== null ? tempJob.application.status === "applied" ? strings.CANCEL_APPLICATION : strings.SEND_APPLICATION  : strings.SEND_APPLICATION}
+                    {tempJob && tempJob?.application !== null ? tempJob?.application?.status === "applied" ? strings.CANCEL_APPLICATION : strings.SEND_APPLICATION  : strings.SEND_APPLICATION}
                   </Text>
                 </TouchableOpacity>
               </View>

@@ -37,7 +37,7 @@ function SeekerBusinessList({ navigation }) {
       setFilteredJobs(businesses.slice(0, limit));
     } else {
       let jobs = businesses.filter((j) =>
-        j?.brand?.name.toLowerCase().includes(text)
+        j?.address?.name.toLowerCase().includes(text)
       );
       setFilteredJobs(jobs);
     }
@@ -99,6 +99,7 @@ function SeekerBusinessList({ navigation }) {
       parseFloat(item?.address?.lng),
       "K"
     );
+    console.log('list -> item', item);
     return (
       <TouchableOpacity
         key={item.id}
@@ -154,7 +155,7 @@ function SeekerBusinessList({ navigation }) {
                 }}
                 numberOfLines={1}
               >
-                {item?.brand?.name}
+                {item?.name}
               </Text>
               <View style={{ flexDirection: "row", marginTop: 2.5,width:'75%' }}>
                 <Text

@@ -53,7 +53,7 @@ export default function AlertPopup({ visible,business, job, onClose }) {
               }}
             >
               <Image
-                source={{ uri: business.brand && business.brand.photo ? business.brand.photo.tiny_url : null  }}
+                source={{ uri: business?.brand && business?.brand?.photo ? business?.brand?.photo?.tiny_url : null  }}
                 style={{ height: 70, width: 70, borderRadius: 50 }}
               />
             </View>
@@ -86,7 +86,7 @@ export default function AlertPopup({ visible,business, job, onClose }) {
                     marginTop: 20,
                   }}
                 >
-                  {strings.YOUR_APPLICATION_HAS_BEEN_SEND} <Text style={{fontFamily: 'VisbyBold'}}>{business.company.name}</Text>
+                  {strings.YOUR_APPLICATION_HAS_BEEN_SEND} <Text style={{fontFamily: 'VisbyBold'}}>{job?.location?.name}</Text>
                 </Text>
                 <Text
                   style={{
