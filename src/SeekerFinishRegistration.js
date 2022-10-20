@@ -24,7 +24,13 @@ import * as ImagePicker from "expo-image-picker";
 import Constants from "expo-constants";
 import { educationLevels, countries, languages } from "./utils/consts.js";
 import { getUser, setUser,removeUser } from "./utils/utils.js";
-import { getRequest, putJSON, postJSON } from "./utils/network.js";
+import {
+  getRequest,
+  putJSON,
+  postJSON,
+  autocompleteLocation,
+  getLatLong
+} from "./utils/network.js";
 import RNPickerSelect from "react-native-picker-select";
 import { useIsFocused } from "@react-navigation/native";
 import { KeyboardAccessoryNavigation } from "react-native-keyboard-accessory";
@@ -47,6 +53,8 @@ function SeekerFinishRegistration({ navigation, route }) {
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [filteredLangs, setFilteredLangs] = useState(languages);
+  const [latitude, setLatitude] = useState(null);
+  const [longitude, setLongitude] = useState(null);
 
   const [image, setImage] = useState(null);
 
@@ -90,6 +98,7 @@ function SeekerFinishRegistration({ navigation, route }) {
         }
       }
       getJobCategories();
+      setLatLong();
     })();
   }, []);
 
@@ -103,6 +112,24 @@ function SeekerFinishRegistration({ navigation, route }) {
         const jsonCategories = json.data;
         setCategoriesList(jsonCategories);
       });
+  };
+
+  const setLatLong = () => {
+    autocompleteLocation(route.params.profile.address + " " +  country)
+    .then((response) => {
+      if (response?.predictions[0]?.description) {
+        getLatLong(response?.predictions[0]?.description)
+        .then(async (res) => {
+          if (res?.results) {
+            setLatitude(res?.results[0]?.geometry?.location?.lat);
+            setLongitude(res?.results[0]?.geometry?.location?.lng);
+          }
+        })
+      }
+    })
+    .catch((error) => {
+      console.log('setLatLong -> error', error);
+    })
   }
 
   const pickImage = async () => {
@@ -252,6 +279,8 @@ function SeekerFinishRegistration({ navigation, route }) {
           certifications: certificate.toString(),
           language: langs,
           eligible: eligible || false,
+          longitude: longitude,
+          latitude: latitude,
           sixteen: sixteen || false,
           convictions: convictions || false,
           covid_vaccinated: covid_vaccinated || false,
@@ -261,7 +290,7 @@ function SeekerFinishRegistration({ navigation, route }) {
             .map((item) => item.id)
             .toString(),
         };
-        console.log('body', body);
+
         setLoading(true);
         const res = await putJSON(`/job-seeker/profile/${route.params.user.id}`, body, route.params.token);
         const json = await res.json();

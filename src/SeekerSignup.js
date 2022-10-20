@@ -102,13 +102,10 @@ function SeekerSignup({ navigation, route }) {
 
 
   async function setAddressField(location) {
-
-
     const loc = {
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude
+      latitude: location?.coords?.latitude,
+      longitude: location?.coords?.longitude
     };
-    console.log('setAddressField', loc);
     setTimeout(() => {
       Location.reverseGeocodeAsync(loc).then((addressObject) => {
         console.log(addressObject);
@@ -133,7 +130,6 @@ function SeekerSignup({ navigation, route }) {
         console.log('setAddressField error', error);
       })
     }, 1000)
-
   }
 
   function formatPhone(str) {

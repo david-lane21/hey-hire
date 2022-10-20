@@ -86,8 +86,8 @@ function SeekerEditProfile({ navigation, route }) {
   const [langs, setlangs] = useState(tempProfile.language || "");
   const [eligible, setEligible] = useState(tempProfile.eligible);
   const [sixteen, setSixteen] = useState(tempProfile.sixteen);
-  const [latitude, setLatitude] = useState(tempProfile.latitude);
-  const [longitude, setLongitude] = useState(tempProfile.longitude);
+  const [latitude, setLatitude] = useState(tempProfile?.latitude);
+  const [longitude, setLongitude] = useState(tempProfile?.longitude);
 
   const [institution, setInstitution] = useState(tempProfile.education);
   const [certificate, setCertificate] = useState(tempProfile.certifications ? tempProfile.certifications.split(',') : []);
@@ -151,10 +151,10 @@ function SeekerEditProfile({ navigation, route }) {
   }, []);
 
   function setLatLong() {
-    autocompleteLocation(address + country)
-    .then((res) => {
-      if (res?.predictions[0]?.description) {
-        getLatLong(res?.predictions[0]?.description)
+    autocompleteLocation(address + " " + country)
+    .then((response) => {
+      if (response?.predictions[0]?.description) {
+        getLatLong(response?.predictions[0]?.description)
         .then(async (res) => {
           if (res?.results) {
             const body = {
@@ -416,27 +416,27 @@ function SeekerEditProfile({ navigation, route }) {
   async function navigateBack() {
     const tempUser = userData.profile;
     if (
-        tempUser.first_name !== firstName ||
-        tempUser.last_name !== lastName ||
-        tempUser.address !== address ||
-        tempUser.zip_code !== zipcode ||
-        tempUser.state !== state ||
-        tempUser.city !== city ||
-        tempUser.phone !== phone ||
-        tempUser.email !== email ||
-        tempUser.note !== bio ||
-        tempUser.country !== country ||
-        tempUser.availability !== availability ||
-        tempUser.education !== institution ||
-        tempUser.education_level !== eduLevel ||
-        certificate.toString() !== "" && tempUser.certifications !== certificate.toString() ||
-        tempUser.language !== langs ||
-        tempUser.eligible !== eligible ||
-        tempUser.sixteen !== sixteen ||
-        tempUser.convictions !== convictions ||
-        tempUser.covid_vaccinated !== covid_vaccinated ||
-        skills.toString() !== "" && tempUser.skill !== skills.toString() ||
-        tempUser.preferred_business_categories !== categoriesList.filter((item) => item.selected).map((item) => item.id).toString()
+        tempUser?.first_name !== firstName ||
+        tempUser?.last_name !== lastName ||
+        tempUser?.address !== address ||
+        tempUser?.zip_code !== zipcode ||
+        tempUser?.state !== state ||
+        tempUser?.city !== city ||
+        tempUser?.phone !== phone ||
+        tempUser?.email !== email ||
+        tempUser?.note !== bio ||
+        tempUser?.country !== country ||
+        tempUser?.availability !== availability ||
+        tempUser?.education !== institution ||
+        tempUser?.education_level !== eduLevel ||
+        certificate?.toString() !== "" && tempUser?.certifications !== certificate?.toString() ||
+        tempUser?.language !== langs ||
+        tempUser?.eligible !== eligible ||
+        tempUser?.sixteen !== sixteen ||
+        tempUser?.convictions !== convictions ||
+        tempUser?.covid_vaccinated !== covid_vaccinated ||
+        skills?.toString() !== "" && tempUser?.skill !== skills?.toString() ||
+        tempUser?.preferred_business_categories !== categoriesList?.filter((item) => item?.selected)?.map((item) => item?.id).toString()
       ) {
         Alert.alert("", "You have some unsaved changes. Do you want to update changes", [
           {
