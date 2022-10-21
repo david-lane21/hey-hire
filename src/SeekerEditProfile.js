@@ -161,7 +161,9 @@ function SeekerEditProfile({ navigation, route }) {
               longitude: res?.results[0]?.geometry?.location?.lng,
               latitude: res?.results[0]?.geometry?.location?.lat,
             };
-            const coord = await putJSON(`/profile/edit/${userData.profile.id}`, body, userData.token);
+            const coord = await putJSON(`/job-seeker/profile/${userData.profile.id}`, body, userData.token);
+            const json = await coord.json();
+            dispatch({ type: "UserData/setState", payload: { profile: json.data } });
             setLatitude(res?.results[0]?.geometry?.location?.lat);
             setLongitude(res?.results[0]?.geometry?.location?.lng);
           }
@@ -402,6 +404,9 @@ function SeekerEditProfile({ navigation, route }) {
       setLoading(true);
       const res = await putJSON(`/job-seeker/profile/${userData.profile.id}`, body, userData.token);
       const json = await res.json();
+      if (tempProfile?.address !== address || tempProfile?.country !== country) {
+        setLatLong();
+      }
       setLoading(false);
       dispatch({ type: "UserData/setState", payload: { profile: json.data, profileUpdated: true } });
       navigation.goBack();
