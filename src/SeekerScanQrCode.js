@@ -12,6 +12,8 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { useIsFocused } from "@react-navigation/native";
+import { getRequest } from './utils/network';
+import NavigationService from "./utils/NavigationService";
 import {strings} from './translation/config';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import DeviceInfo from 'react-native-device-info';
@@ -38,14 +40,27 @@ function SeekerScanQrCode({ navigation }) {
 
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
+    let qrUuId = data.split("/").filter(Boolean).pop();
+    if (qrUuId) {
+      checkUuid(qrUuId);
+    }
+  };
 
-    // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-    let businessId = data.split("/").filter(Boolean).pop();
-    console.log(businessId / 33469);
-    navigation.navigate("SeekerHome", {
-      screen: "SeekerHomeAvailableJobs",
-      params: { biz_id: businessId / 33469 },
-    });
+  const checkUuid = async (uuid) => {
+    try {
+      const res = await getRequest(`/business/qr-code-uuid/${uuid}`,'');
+      const json = await res.json()
+      if (json?.data?.entity_type == "job-position") {
+        NavigationService.navigate("SeekerHomeJobDetail", { job: {id: json?.data?.entity_id} });
+      } else if (json?.data?.entity_type == "location") {
+        NavigationService.navigate(
+          "SeekerHomeAvailableJobs",
+          { biz_id: json.data.entity_id }
+        );
+      }
+    } catch (error) {
+      console.log('error while getting user profile',JSON.stringify(error))
+    }  
   };
 
   if (hasPermission === null) {

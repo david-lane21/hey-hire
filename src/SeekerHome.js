@@ -52,6 +52,7 @@ function SeekerHome({ navigation }) {
   const [latitude, setLatitude] = useState(32.7767);
   const [longitude, setLongitude] = useState(-96.797);
   const [welcomMessage, setWelcomeMessage] = useState(false);
+  const [loadingLocations, setLoadingLocations] = useState(false);
 
   const userData = useSelector(state => state.UserData)
 
@@ -296,6 +297,7 @@ function SeekerHome({ navigation }) {
 
   async function getHiringLocations(){
     try {
+      setLoadingLocations(true);
       setUser(userData)
       const res = await getRequest(`/job-seeker/location/list?lng=${longitude}&lat=${latitude}`,userData?.token); //lng=-97.75640900&lat=30.26627100
       const json = await res.json();
@@ -323,25 +325,34 @@ function SeekerHome({ navigation }) {
         setBusinesses(bizList);
         dispatch({type: 'BuisnessDeails/setState',payload: {buisness: bizList}})
       }
+      setLoadingLocations(false);
     } catch (error) {
+      setLoadingLocations(false);
       console.log('error while getting businesses')
     }
   }
 
-  function handleOpenURL(event) {
-    let businessId = event.url.split("/").filter(Boolean).pop();
-    const calBusinessId = parseInt(businessId / 33469);
-    console.log("Hand", event.url, calBusinessId > 0);
-    if (calBusinessId > 1) {
-      NavigationService.navigate("SeekerHomeAvailableJobs", {
-        biz_id: businessId / 33469,
-      });
-    } else {
-      if (typeof businessId == "number") {
-        NavigationService.navigate("SeekerHomeAvailableJobs", {
-          biz_id: businessId,
-        });
+  const checkUuid = async (uuid) => {
+    try {
+      const res = await getRequest(`/business/qr-code-uuid/${uuid}`,'');
+      const json = await res.json()
+      if (json?.data?.entity_type == "job-position") {
+        NavigationService.navigate("SeekerHomeJobDetail", { job: {id: json?.data?.entity_id} });
+      } else if (json?.data?.entity_type == "location") {
+        NavigationService.navigate(
+          "SeekerHomeAvailableJobs",
+          { biz_id: json.data.entity_id }
+        );
       }
+    } catch (error) {
+      console.log('error while calling qr api',JSON.stringify(error))
+    }
+  }
+
+  function handleOpenURL(event) {
+    let qrUuid = event.url.split("/").filter(Boolean).pop();
+    if (qrUuid) {
+      checkUuid(qrUuid);
     }
   }
 
@@ -359,7 +370,9 @@ function SeekerHome({ navigation }) {
               console.log("Prifile data", json);
               await dispatch({type: 'UserData/setState',payload: {profile: json.data}});
               getProfileImage();
-              getHiringLocations();
+              if (!loadingLocations) {
+                getHiringLocations();
+              }
               setRefresh(false);
             })
             .catch((err) => {

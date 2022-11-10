@@ -72,7 +72,8 @@ function SeekerAvailableJobs({ route, navigation }) {
               "This business is currently not hiring. But don't worry, there are many more businesses to work at on our network! Keep hunting!"
             );
           } else {
-            await setJobs(json.data.positions);
+            const filterJobs = json.data.positions.filter(item => !item.archived_at)
+            await setJobs(filterJobs);
             await loadFavoriteJobs();
           }
       } else {

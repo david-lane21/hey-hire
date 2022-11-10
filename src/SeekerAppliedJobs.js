@@ -64,8 +64,7 @@ function SeekerAppliedJobs({ navigation }) {
     getUser().then((u) => {
       let u2 = JSON.parse(u);
       setUser(u2);
-
-      getRequest("/job-seeker/job-position/list", u2.token)
+      getRequest("/job-seeker/job-position/list", u2?.token)
         .then((res) => {
           return res.json();
         })
@@ -75,23 +74,23 @@ function SeekerAppliedJobs({ navigation }) {
             setFilteredJobs([]);
           } else {
             setMessage(null);
-            let jobsList = json.data.map((job) => {
+            let jobsList = json?.data?.map((job) => {
               let tempJob = job;
-              buisnessList.buisness.map((buisness) => {
+              buisnessList?.buisness?.map((buisness) => {
                 if (job.job.location.id == buisness.id) {
                   tempJob.job.business = buisness;
-                  buisness.positions.map((position) => {
+                  buisness?.positions?.map((position) => {
                     if(position.id == job.job.id) {
-                      tempJob.job.application = position.application;
+                      tempJob.job.application = position?.application;
                     }
                   });
                 }
               });
               return tempJob;
             });
-            let _appliedJobs = jobsList.filter((job) => job.status == "applied");
-            let _viewedJobs = jobsList.filter((job) => job.status == "viewed");
-            let _favouriteJobs = jobsList.filter((job) => {
+            let _appliedJobs = jobsList?.filter((job) => job?.status == "applied");
+            let _viewedJobs = jobsList?.filter((job) => job?.status == "viewed");
+            let _favouriteJobs = jobsList?.filter((job) => {
               if (job.status == "favorite") {
                 job.job.like = 1;
                 return job;
@@ -122,7 +121,7 @@ function SeekerAppliedJobs({ navigation }) {
       })
       .then((json) => {
         if (json.data && json.data.job_id) {
-          let findJob = filteredJobs.map((item) => {
+          let findJob = filteredJobs?.map((item) => {
             if (item.job.id == job.job.id) {
               if (job.job.like == 1) {
                 item.job.like = 0;
@@ -178,7 +177,7 @@ function SeekerAppliedJobs({ navigation }) {
     }
   }
 
-  const list = filteredJobs.map((item) => {
+  const list = filteredJobs?.map((item) => {
     // console.log(item)
     const isLiked = likedJobs.filter((item1) => item.job.id == item1.job.id);
     const isApplied = appliedJobs.filter((item1) => item.job.id == item1.job.id);
@@ -233,7 +232,7 @@ function SeekerAppliedJobs({ navigation }) {
         >
           <View style={{ width: "17%" }}>
             <Image
-              source={{ uri: item.job.business && item.job.business.avatar_image ? item.job.business.avatar_image : null }}
+              source={{ uri: item?.job?.business?.brand?.photo?.tiny_url }}
               style={{
                 width: wp('10%'),
                 height: wp('10%'),

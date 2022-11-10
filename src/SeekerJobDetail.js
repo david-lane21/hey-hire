@@ -32,7 +32,7 @@ function SeekerJobDetail({ route, navigation }) {
   const isFocused = useIsFocused();
   const dispatch = useDispatch();
 
-  const tempJob = Object.assign({}, route.params.job, {});
+  const tempJob = Object.assign({}, route?.params?.job, {});
   const [user, setUser1] = useState({});
   const [business, setBusiness] = useState(tempJob.business);
   const [job, setJob] = useState(tempJob);
@@ -54,7 +54,7 @@ function SeekerJobDetail({ route, navigation }) {
     getUser().then((u) => {
       let u2 = JSON.parse(u);
       setUser1(u2);
-      getRequest(`/job-seeker/job-position/${route.params.job.id}`, userData.token)
+      getRequest(`/job-seeker/job-position/${route?.params?.job.id}`, userData.token)
         .then((res) => {
           return res.json();
         })
@@ -115,11 +115,11 @@ function SeekerJobDetail({ route, navigation }) {
       setModal2(true);
       const tempJob = Object.assign({}, job, { application: {status: "applied", applied_at: new Date()} });
       setJob(tempJob);
-      if(!route.params.no_UpdatePage) {
-        route.params.updateCallBack();
+      if(!route?.params?.no_UpdatePage) {
+        route?.params?.updateCallBack();
       }
       if (job.like == "1") {
-        route.params.callBack(route.params.job);
+        route?.params?.callBack(route?.params?.job);
       }
     } catch (error) {
       console.log('error', error);
@@ -149,8 +149,8 @@ function SeekerJobDetail({ route, navigation }) {
             })
             .then((json) => {
                if (json?.data && json?.data?.status == "canceled") {
-                if(!route.params.no_UpdatePage) {
-                  route.params.updateCallBack();
+                if(!route?.params?.no_UpdatePage) {
+                  route?.params?.updateCallBack();
                 }
                 Alert.alert("Success", "Your Application is canceled Successfully.");
                 navigation.goBack();
@@ -242,10 +242,10 @@ function SeekerJobDetail({ route, navigation }) {
                   style={{ width: 20, height: 20 }}
                 />
               </TouchableOpacity>
-              {!job.application ? (
+              {!job.application && route?.params?.callBack ? (
                 <TouchableOpacity
                   onPress={() => {
-                    route.params.callBack(route.params.job);
+                    route?.params?.callBack(route?.params?.job);
                     if (job.like && job.like == 1) {
                       setJob(
                         Object.assign({}, job, {like: 0})
@@ -470,8 +470,8 @@ function SeekerJobDetail({ route, navigation }) {
                 </Text>
               </View>
               <Text style={styles.subText}>
-                {job.required_certifications
-                  ? job.required_certifications.map((item) => item + "\n")
+                {job?.certifications
+                  ? job.certifications.map((item) => item + "\n")
                   : ""}
               </Text>
               {job.instagram_required ? (
