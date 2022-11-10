@@ -4,19 +4,18 @@ import {
   View, 
   Text,
   Image,
-  TouchableOpacity,
-  ScrollView,
   RefreshControl,
   FlatList,
-  Alert
+  Alert,
+  ScrollView
 } from 'react-native'
-import { LinearGradient } from "expo-linear-gradient";
 
-import {postFormData} from './utils/network.js'
+import { getRequest } from './utils/network.js';
 import {getUser} from './utils/utils.js';
 import { useIsFocused } from "@react-navigation/native";
 import {strings} from './translation/config';
-import moment from 'moment';
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+
 function SeekerNotifications({navigation}){
   const isFocused = useIsFocused();
 
@@ -26,7 +25,6 @@ function SeekerNotifications({navigation}){
   const [refresh,setRefresh] = useState(false);
 
   useEffect(() => {
-    // console.log(isFocused)
     if (isFocused){
       loadData()
     }
@@ -38,42 +36,31 @@ function SeekerNotifications({navigation}){
       let u2 = JSON.parse(u)
       // console.log(u2)
       setUser(u2)
-
-      let form = new FormData();
-      form.append('user_token', u2.user_token)
-      form.append('user_id', u2.user_id)
-      form.append('type',u2.user_type)
-
-      postFormData('all_recieved_cv_list', form)
+      getRequest('/job-seeker/notification', u2.token)
       .then(res => {
-
         return res.json()
       })
       .then(json => {
-        console.log('+++++++++++++++++++')
-        console.log(json)
-        console.log('+++++++++++++++++++')
         if(json.data){
-        sortNotification(json.data);
+          sortNotification(json.data);
         }else{
           Alert.alert("",json.msg || json)
         }
         setRefresh(false);
-
-     
       })
       .catch(err => {
-        console.log(err)
+        setRefresh(false);
+        console.log(err);
       })
     })
   }
 
   function sortNotification(data) {
-    let tempNotifications = data.sort((a, b) => {
+    let tempNotifications = data;/*.sort((a, b) => {
       let dateA = new Date(a.created_date);
       let dateB = new Date(b.created_date);
       return dateB - dateA;
-    });
+    });*/
     setNotification(tempNotifications);  
   }
 
@@ -100,76 +87,80 @@ function SeekerNotifications({navigation}){
         marginHorizontal:20
       }}>
         <View style={{flex:1}}>
-          <Image source={{uri:item.item.business_avatar}} style={{width:40,height:40,borderRadius:20,marginRight:10}} />
+          <Image
+            source={{uri: item.item.photo ? item.item.photo.tiny_url : null}}
+            style={{width: wp('10%'), height:wp('10%'), borderRadius: wp('5%'), marginRight:10, backgroundColor: '#999'}}
+          />
         </View>
-        <View style={{flex:8,marginHorizontal:20}}>
-        <Text style={{fontWeight:'bold',fontSize:16}}>{item.item.position_name}</Text>
-        <Text style={{marginRight:10}}>{item.item.message}</Text>
-        <Text style={{ fontSize: 12, textAlign: 'right' ,fontWeight:'bold'}}>{moment.utc(item.item.created_date).fromNow()}</Text>
-
+        <View style={{flex:8,marginHorizontal:wp('5%')}}>
+          <Text style={{fontFamily:'VisbyBold',fontSize:16, paddingBottom: hp('1%')}}>{item.item.title}</Text>
+          <Text style={{marginRight:10, fontFamily: 'VisbyLight', color: '#444'}}>{item.item.message}</Text>
+          {/*<Text style={{ fontSize: 12, textAlign: 'right' ,fontWeight:'bold'}}>{moment.utc(item.item.created_date).fromNow()}</Text>*/}
         </View>
-        
       </View>
     )
   }
 
   return(
-    // <ScrollView style={{flex: 1, backgroundColor: '#fff'}}>
-    //   <SafeAreaView style={{flex: 1}}>
-    //     <View style={{flex: 1, alignItems: 'center'}}>
-    //       <Text  style={{color: '#6F5EC0', fontSize: 16, fontWeight: 'bold'}}>Notifications</Text>
-    //     </View>
-
-    //     <View style={{flex: 1, marginTop: 30}}>
-    //       <Text  style={{color: '#999', fontSize: 13, paddingLeft: 20}}>Notifications</Text>
-    //     </View>
-
-    //     <View style={{flex: 1, marginTop: 200}}>
-    //       <Text  style={{color: '#999', fontSize: 13, textAlign: 'center'}}>No notification yet!</Text>
-    //     </View>
-    //   </SafeAreaView>
-    // </ScrollView>
-  //   <LinearGradient
-  //   colors={["#4E35AE", "#775ED7"]}
-  // >
-            <SafeAreaView style={{backgroundColor:'#4E35AE'}}>
-
-      <View style={{
-        flexDirection: 'row', 
-        alignItems: 'center', 
-        borderBottomWidth: 1, 
-        borderBottomColor: '#6652C2', 
-        paddingBottom: 10,
-        backgroundColor: '#4E35AE',
-        paddingTop:20
-        }}>
-          <View style={{width: '35%'}}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Text style={{paddingLeft: 10}}></Text>
-            </TouchableOpacity>
-          </View>
-          <View style={{width: '65%'}}>
-            <Text style={{ color: '#fff', fontSize: 18}}>{strings.NOTIFICATIONS}</Text>
-          </View>
-        </View>
-
-    <ScrollView style={{ backgroundColor: '#fff'}} refreshControl={
-        <RefreshControl refreshing={refresh} onRefresh={()=>{loadData()}}
+    <SafeAreaView style={{backgroundColor:'#fff'}}>
+      <View
+        style={{
+          alignItems: "center",
+          justifyContent: 'center',
+          alignContent: 'center',
+          backgroundColor: '#fff',
+        }}
+      >
+        <Image
+          resizeMode="contain"
+          source={require("../assets/headerImage.png")}
+          style={{ width: 100, alignSelf: "center", }}
         />
-       }>
-  
-       <FlatList
-                      style={{backgroundColor:'#fff',marginBottom:140,marginTop:20}}        
-       data={notifications}
-       keyExtractor={(item) => item.id}
-       renderItem={(item)=>renderItem(item)}
-      
-      />
-         
+        <Text
+          style={{
+            color: "#4834A6",
+            fontSize: 18,
+            fontWeight: "600",
+            textAlign: "center",
+            position: "absolute",
+            top: "75%",
+            left: "35%",
+            textTransform: 'uppercase'
+          }}
+        >
+          {strings.NOTIFICATIONS}
+        </Text>
+      </View>
+      <View
+        style={{
+          paddingHorizontal: wp('5%'),
+          paddingTop: hp('5%'),
+          justifyContent: 'center',
+          backgroundColor: '#fff'
+        }}
+      >
+        <Text
+          style={{
+            fontFamily: 'VisbyExtrabold',
+            color: '#666'
+          }}
+        >
+          {strings.NOTIFICATIONS + " " + notifications.length}
+        </Text>
+      </View>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refresh} onRefresh={()=>{loadData()}} />
+        }
+      >
+        <FlatList
+          style={{backgroundColor:'#fff', marginBottom: hp('16%'), marginTop: hp('2%')}}
+          data={notifications}
+          keyExtractor={(item) => item.id}
+          renderItem={(item)=>renderItem(item)}
+        />
       </ScrollView>
-
-      </SafeAreaView>
-      // </LinearGradient>
+    </SafeAreaView>
   )
 }
 

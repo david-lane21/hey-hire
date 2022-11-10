@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -7,28 +7,35 @@ import {
   FlatList,
   Text,
   TextInput,
-  ScrollView,
   TouchableOpacity,
   TouchableHighlight,
   Platform,
-  ActivityIndicator,
-  KeyboardAvoidingView,
   Alert,
   PermissionsAndroid,
   ImageBackground,
-  Switch,
+  StatusBar,
+  SafeAreaView
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import InstagramLogin from 'react-native-instagram-login';
+import Toast from 'react-native-toast-message';
+import AwesomeAlert from 'react-native-awesome-alerts';
+import Tags from "react-native-tags";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 import * as ImagePicker from "expo-image-picker";
 import Constants from "expo-constants";
 import { educationLevels, countries, languages } from "./utils/consts.js";
-import { getUser, setUser, getToken } from "./utils/utils.js";
+import { getUser, setUser } from "./utils/utils.js";
 import {
-  postFormData,
-  getWithParamRequest,
   postJSON,
   setInstagram,
   getRequest,
+  putJSON,
+  deleteJSON,
+  autocompleteLocation,
+  getLatLong
 } from "./utils/network.js";
 import RNPickerSelect from "react-native-picker-select";
 import { useIsFocused } from "@react-navigation/native";
@@ -37,19 +44,23 @@ import { strings } from "./translation/config";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import DeviceInfo from "react-native-device-info";
 import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
 import InstagramLoginPopup from "./components/InstagramLogin.js";
 import Loader from "./components/Loader";
+import { useSelector, useDispatch } from "react-redux";
 
 const isIphoneX = DeviceInfo.hasNotch();
 
 function SeekerEditProfile({ navigation, route }) {
-  const scrollViewRef = useRef();
 
   const isFocused = useIsFocused();
+  const dispatch = useDispatch();
+
+  const userData = useSelector((state) => state.UserData);
   const tempProfile = route.params.profile;
 
   const [modalVisible, setModalVisible] = useState(false);
+  const [showAwsomeAlert, setShowAwsomeAlert] = useState(false);
+  const [awsomeAlertMessage, setAwsomeAlertMessage] = useState('');
   const [modalVisible2, setModalVisible2] = useState(false);
   const [modalVisible3, setModalVisible3] = useState(false);
   const [error, setError] = useState("");
@@ -57,9 +68,7 @@ function SeekerEditProfile({ navigation, route }) {
   const [filteredLangs, setFilteredLangs] = useState(languages);
 
   const [user, setUser1] = useState({});
-  const [deviceToken, setDeviceToken] = useState("");
-  const [profile, setProfile] = useState(tempProfile);
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState(userData.profileImage);
 
   const [firstName, setFirstName] = useState(tempProfile.first_name);
   const [lastName, setLastName] = useState(tempProfile.last_name);
@@ -69,30 +78,25 @@ function SeekerEditProfile({ navigation, route }) {
   const [city, setCity] = useState(tempProfile.city);
   const [zipcode, setZipcode] = useState(tempProfile.zip_code);
   const [phCode, setPhCode] = useState("");
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState(tempProfile.phone);
   const [email, setEmail] = useState(tempProfile.email);
-  const [bio, setBio] = useState(tempProfile.bio);
-  const [skills, setSkills] = useState(tempProfile.skill);
+  const [bio, setBio] = useState(tempProfile.note);
+  const [skills, setSkills] = useState(tempProfile.skill ? tempProfile.skill.split(',') : []);
   const [eduLevel, setEduLevel] = useState(tempProfile.education_level);
   const [langs, setlangs] = useState(tempProfile.language || "");
   const [eligible, setEligible] = useState(tempProfile.eligible);
   const [sixteen, setSixteen] = useState(tempProfile.sixteen);
+  const [latitude, setLatitude] = useState(tempProfile?.latitude);
+  const [longitude, setLongitude] = useState(tempProfile?.longitude);
 
   const [institution, setInstitution] = useState(tempProfile.education);
-  const [certificate, setCertificate] = useState(tempProfile.certificate);
+  const [certificate, setCertificate] = useState(tempProfile.certifications ? tempProfile.certifications.split(',') : []);
   const [convictions, setConvictions] = useState(tempProfile.convictions);
   const [availability, setAvailability] = useState(tempProfile.availability);
-  const [positions, setPositions] = useState(tempProfile.position || []);
-  const [isInstagramConnect, setIsInstagramConnect] = useState(
-    tempProfile.instagram_connected || false
-  );
+  const [positions, setPositions] = useState(tempProfile.past_positions || []);
   const [covid_vaccinated, setCovid_vaccinated] = useState(
     tempProfile.covid_vaccinated
   );
-
-  const [instaModalShow, setInstaModalShow] = useState(false);
-  const [isVaccinated, setIsVaccinated] = useState(false);
-
   const [activeInputIndex, setActiveInputIndex] = useState(0);
   const [inputs, setInputs] = useState([]);
   const [nextFocusDisabled, setNextFocusDisabled] = useState(false);
@@ -100,20 +104,13 @@ function SeekerEditProfile({ navigation, route }) {
 
   const [loading, setLoading] = useState(false);
 
-  const [skill, setSkill] = useState("");
   const [categoriesList, setCategoriesList] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
 
   const BIO_PLACEHOLDER = `Example: Greetings, my name is Benjamin, I am 20 years old. I am currently studying my degree at UT, TX.
   I am a hard working overachiever. And I know I will only benefit your business goals and accomplishments. I have past experience working in the kitchen, as my past job was at Mario’s Pizza downtown. I am easy going, and will bring only good and positive vibes in to your business, I would gladly appreciate it you consider my submission and set an interview this following week! Thanks for reading and hope to see you soon!`;
 
   useEffect(() => {
-    const tempProfile = route.params.profile;
-    let p = tempProfile.phone.split(" ");
-    let p1 = p[0].replace(/\+/g, "");
-    let p2 = p[1] + " " + p[2];
-    setPhCode(p1);
-    setPhone(p2);
     (async () => {
       if (Constants.platform.ios) {
         try {
@@ -148,29 +145,58 @@ function SeekerEditProfile({ navigation, route }) {
           });
       }
     })();
+    if (!latitude || !longitude) {
+      setLatLong();
+    }
   }, []);
 
-  function getJobCategories() {
-    let form = new FormData();
+  function setLatLong() {
+    autocompleteLocation(address + " " + country)
+    .then((response) => {
+      if (response?.predictions[0]?.description) {
+        getLatLong(response?.predictions[0]?.description)
+        .then(async (res) => {
+          if (res?.results) {
+            const body = {
+              longitude: res?.results[0]?.geometry?.location?.lng,
+              latitude: res?.results[0]?.geometry?.location?.lat,
+            };
+            const coord = await putJSON(`/job-seeker/profile/${userData.profile.id}`, body, userData.token);
+            const json = await coord.json();
+            dispatch({ type: "UserData/setState", payload: { profile: json.data } });
+            setLatitude(res?.results[0]?.geometry?.location?.lat);
+            setLongitude(res?.results[0]?.geometry?.location?.lng);
+          }
+        })
+      }
+    })
+    .catch((error) => {
+      console.log('setLatLong -> error', error);
+    })
+  }
 
-    form.append("user_token", user.user_token);
-    form.append("user_id", user.user_id);
-    getRequest("get_categories")
+  function getJobCategories() {
+    getRequest("/job-seeker/business-category", userData.token)
       .then((res) => {
+        console.log("ressss while  getting jobs categories ", res);
         return res.json();
       })
       .then((json) => {
-        console.log("res", json);
         const jsonCategories = json.data;
-        let tempBusinessCategories = tempProfile.preferred_business_categories;
-        tempBusinessCategories.map((item) => {
-          jsonCategories.map((businessCategory) => {
-            if (businessCategory.category_id == item) {
-              businessCategory.selected = true;
-            }
+        let tempBusinessCategories = tempProfile.preferred_business_categories
+          ? tempProfile.preferred_business_categories.split(",")
+          : null;
+        if (tempBusinessCategories) {
+          tempBusinessCategories.map((item) => {
+            jsonCategories.map((businessCategory) => {
+              if (businessCategory.id == item) {
+                businessCategory.selected = true;
+              }
+            });
           });
-        });
-        console.log("JSON", jsonCategories);
+        }
+        const _selectedCategories = jsonCategories.filter(item => item.selected);
+        setSelectedCategories(_selectedCategories);    
         setCategoriesList(jsonCategories);
       });
   }
@@ -178,20 +204,51 @@ function SeekerEditProfile({ navigation, route }) {
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: false,
+      base64: true,
+      allowsEditing: true,
       aspect: [4, 3],
-      quality: 1,
+      quality: 0.1,
     });
 
     if (!result.cancelled) {
       setImage(result.uri);
+      uploadImage(result.base64);
     }
   };
+
+  function notifyMessage(msg) {
+    Toast.show({
+      type: 'success',
+      text1: msg,
+      position: 'top',
+      visibilityTime: 4000
+    });
+  }
+
+  function uploadImage(image) {
+    const body = {
+      image: "data:image/png;base64," + image
+    };
+    setLoading(true);
+    postJSON('/job-seeker/photo', body, userData.token)
+    .then((response) => {
+      return response.json();
+    })
+    .then((json1) => {
+      dispatch({type: 'UserData/setState',payload: {profileImage: json1.data.thumb_url}});
+      notifyMessage("Profile Image Updated Successfully");
+      setLoading(false);
+    })
+    .catch((err1) => {
+      setLoading(false);
+      console.log("Update Profile Image error", JSON.stringify(err1));
+    });
+  }
 
   function dateFormat(date) {
     if (date) {
       let d = date.split("-");
-      return `${d[1]}/${d[2]}/${d[0]}`;
+      return `${d[1]}/${d[0]}`;
     } else {
       return "";
     }
@@ -295,10 +352,7 @@ function SeekerEditProfile({ navigation, route }) {
   function loadDate() {
     getUser().then((u) => {
       let u2 = JSON.parse(u);
-
       setUser1(u2);
-      getToken().then((t) => setDeviceToken(t));
-      console.log(u2.user_token);
       getJobCategories();
     });
   }
@@ -320,119 +374,116 @@ function SeekerEditProfile({ navigation, route }) {
       });
   }
 
-  async function handleUpdate() {
-    let form = new FormData();
-    form.append("first_name", firstName);
-    form.append("last_name", lastName);
-    form.append("address", address);
-    form.append("email", email);
-    form.append("city", city);
-    form.append("bio", bio);
-    form.append("zip_code", zipcode);
-    form.append("state", state);
-    form.append("country", country);
-    form.append("phone", phCode + " " + phone);
-    form.append("user_type", "2");
-    form.append("user_token", user.user_token);
-    form.append("user_id", user.user_id);
-    form.append("device_tocken", deviceToken);
-    if (image) {
-      form.append("avatar_image", {
-        uri: image,
-        name: "avatar.jpg",
-        type: "image/jpeg",
-      });
+  async function updateProfile() {
+    try {
+      const body = {
+        first_name: firstName,
+        last_name: lastName,
+        address: address,
+        zip_code: zipcode,
+        state: state,
+        city: city,
+        email,
+        note: bio,
+        country,
+        availability: availability,
+        education: institution,
+        education_level: eduLevel,
+        certifications: certificate.toString(),
+        language: langs,
+        eligible: eligible || false,
+        sixteen: sixteen || false,
+        convictions: convictions || false,
+        covid_vaccinated: covid_vaccinated || false,
+        skill: skills.toString(),
+        preferred_business_categories: categoriesList
+          .filter((item) => item.selected)
+          .map((item) => item.id)
+          .toString(),
+      };
+      setLoading(true);
+      const res = await putJSON(`/job-seeker/profile/${userData.profile.id}`, body, userData.token);
+      const json = await res.json();
+      if (tempProfile?.address !== address || tempProfile?.country !== country) {
+        setLatLong();
+      }
+      setLoading(false);
+      dispatch({ type: "UserData/setState", payload: { profile: json.data, profileUpdated: true } });
+      navigation.goBack();
+    } catch (error) {
+      setLoading(false);
+      Alert.alert("Error", error);
+      console.log("error while updating profile", error);
     }
-
-    form.append("availability", availability);
-    form.append("education", institution);
-    form.append("education_level", eduLevel);
-    form.append("certificate", certificate);
-    form.append("language", langs);
-    form.append("eligible", eligible || false);
-    form.append("sixteen", sixteen || false);
-    form.append("convictions", convictions || false);
-    form.append("covid_vaccinated", covid_vaccinated || false);
-    form.append("skill", skills.toString());
-    form.append("instagram_connected", isInstagramConnect);
-    form.append(
-      "preferred_business_categories",
-      categoriesList
-        .filter((item) => item.selected)
-        .map((item) => item.category_id)
-        .toString()
-    );
-    console.log(form);
-    setLoading(true);
-    postFormData("update_user", form)
-      .then((res) => {
-        console.log(res);
-        if (res.status == 200) {
-          return res.json();
-        } else {
-          setLoading(false);
-          Alert.alert("Error", "Profile image is too large.");
-
-          return res.text();
-        }
-      })
-      .then((json) => {
-        console.log("update user", json);
-        if (json.status_code != "200") {
-          setError(json.msg);
-          setLoading(false);
-        } else {
-          setUser1(json.data);
-          update_cv(json.data.user_token);
-          // let tempUserData = json.data;
-          // tempUserData.avatar_image =
-          //   tempUserData.avatar_image +
-          //   "?random_number=" +
-          //   new Date().getTime();
-          var tempUserData = json.data;
-          tempUserData.instagram_connected = isInstagramConnect;
-          setUser(tempUserData);
-          // // navigation.goBack()
-          // navigation.navigate("Seeker");
-        }
-      })
-      .catch((err) => {
-        console.log(err, err.message);
-      });
   }
 
-  function update_cv(userToken) {
-    let form2 = {
-      user_token: userToken,
-      education_level: eduLevel,
-      sixteen: sixteen ? "1" : "0",
-      skill: skills.length == 0 ? "[]" : skills.toString(),
-      user_id: user.user_id,
-      eligible: eligible ? "1" : "0",
-      bio: bio,
-      certificate: certificate,
-      language: langs,
-      education: institution,
-      convictions: convictions ? "1" : "0",
-      post_list: positions,
-      availability: availability,
-    };
 
-    postJSON("update_cv", form2)
-      .then((response) => {
-        console.log(response);
-        return response.json();
-      })
-      .then((json1) => {
-        console.log("Update CV", json1);
-        // setUser(json1.data);
-        // navigation.goBack()
-        navigation.navigate("Seeker");
-        setLoading(false);
-      })
-      .catch((err1) => {
-        console.log("Update CV Error", err1, err1.message);
-      });
+  async function navigateBack() {
+    const tempUser = userData.profile;
+    if (
+        tempUser?.first_name !== firstName ||
+        tempUser?.last_name !== lastName ||
+        tempUser?.address !== address ||
+        tempUser?.zip_code !== zipcode ||
+        tempUser?.state !== state ||
+        tempUser?.city !== city ||
+        tempUser?.phone !== phone ||
+        tempUser?.email !== email ||
+        tempUser?.note !== bio ||
+        tempUser?.country !== country ||
+        tempUser?.availability !== availability ||
+        tempUser?.education !== institution ||
+        tempUser?.education_level !== eduLevel ||
+        certificate?.toString() !== "" && tempUser?.certifications !== certificate?.toString() ||
+        tempUser?.language !== langs ||
+        tempUser?.eligible !== eligible ||
+        tempUser?.sixteen !== sixteen ||
+        tempUser?.convictions !== convictions ||
+        tempUser?.covid_vaccinated !== covid_vaccinated ||
+        skills?.toString() !== "" && tempUser?.skill !== skills?.toString() ||
+        tempUser?.preferred_business_categories !== categoriesList?.filter((item) => item?.selected)?.map((item) => item?.id).toString()
+      ) {
+        Alert.alert("", "You have some unsaved changes. Do you want to update changes", [
+          {
+            text: "Don't Save",
+            onPress: async () => {
+              restoreState();
+              navigation.goBack();
+            },
+            style: "cancel",
+          },
+          {
+            text: "Update",
+            onPress: () => {
+              updateProfile();
+            },
+          },
+        ]);
+      } else {
+        navigation.goBack();
+      }
+  }
+
+  function restoreState() {
+    setFirstName(tempProfile.first_name);
+    setLastName(tempProfile.last_name);
+    setAddress(tempProfile.address);
+    setCountry(tempProfile.country);
+    setState(tempProfile.state);
+    setCity(tempProfile.city);
+    setZipcode(tempProfile.zip_code);
+    setPhone(tempProfile.phone);
+    setEmail(tempProfile.email);
+    setBio(tempProfile.note);
+    setSkills(tempProfile.skill ? tempProfile.skill.split(',') : []);
+    setEduLevel(tempProfile.education_level);
+    setlangs(tempProfile.language || "");
+    setEligible(tempProfile.eligible);
+    setSixteen(tempProfile.sixteen);
+    setInstitution(tempProfile.education);
+    setCertificate(tempProfile.certifications);
+    setConvictions(tempProfile.convictions);
+    setAvailability(tempProfile.availability);  
   }
 
   function handleFocus(index) {
@@ -455,213 +506,284 @@ function SeekerEditProfile({ navigation, route }) {
     setInputs(inputs);
   }
 
-  function addSkill() {
-    let tempSkills = skills;
-    if (skill && skill.trim() != "") {
-      tempSkills.push(skill);
-      setSkills(tempSkills);
-      setSkill("");
+  function refreshPosition(positions) {
+    if(positions) {
+      setPositions(positions)
     }
-  }
-
-  function deleteSkil(index) {
-    let tempSkills = skills;
-    skills.splice(index, 1);
-    setSkills((oldArray) => [...tempSkills]);
-  }
-
-  function refreshPosition(position) {
-    if (position) {
-      setPositions(position);
-    }
-  }
-
-  function onChangeSkill(text) {
-    console.log(text.indexOf(","));
-    let commaIndex = text.indexOf(",");
-    if (commaIndex > 0) {
-      let tempSkills = skills;
-      tempSkills.push(text.substring(0, commaIndex));
-      setSkills(tempSkills);
-      setSkill("");
-    } else {
-      setSkill(text);
-    }
-  }
-
-  function renderSkill(item) {
-    return (
-      <View
-        key={item.index.toString()}
-        style={{
-          borderWidth: 1,
-          borderColor: "#3482FF",
-          flexDirection: "row",
-          alignItems: "center",
-          paddingHorizontal: 2,
-          borderRadius: 4,
-          margin: 5,
-        }}
-      >
-        <Text
-          style={{
-            color: "#3482FF",
-            // borderWidth: 1,
-            // borderColor: "#3482FF",
-            padding: 3,
-            borderRadius: 3,
-            marginBottom: 3,
-            marginLeft: 3,
-          }}
-        >
-          {item.item}
-        </Text>
-        <TouchableOpacity
-          onPress={() => {
-            deleteSkil(item.index);
-          }}
-        >
-          <Image
-            source={require("../assets/ic_close_black.png")}
-            style={{ height: 15, width: 15 }}
-            resizeMode={"stretch"}
-          />
-        </TouchableOpacity>
-      </View>
-    );
   }
 
   function handleInstaConnect() {
-    if (isInstagramConnect) {
-      Alert.alert(
-        "",
-        "Are you sure you want to disconnect from instagram?",
-        [
-          {
-            text: "Cancel",
-            onPress: () => {},
-            style: "cancel",
+    if (userData?.profile?.instagram_token) {
+      Alert.alert("", "Are you sure you want to disconnect from instagram?", [
+        {
+          text: "Cancel",
+          onPress: () => {},
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: () => {
+            disconnectInstagram();
           },
-          {
-            text: "OK",
-            onPress: () => {
-              setInstaModalShow(true);
-            },
-          },
-        ]
-      );
+        },
+      ]);
     } else {
-      setInstaModalShow(true);
+      this.instagramLogin.show();
     }
   }
 
-  function onCloseInstagramConnect() {
-    setInstaModalShow(false);
-    let form = new FormData();
-    form.append("user_token", user.user_token);
-    form.append("user_id", user.user_id);
-    postFormData("user_profile", form)
-      .then((res) => {
-        console.log("Prifile data", res);
-        return res.json();
-      })
-      .then((json) => {
-        console.log("Profile data", json);
-        setIsInstagramConnect(json.data.instagram_connected);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  function disconnectInstagram() {
+    deleteJSON(`/job-seeker/instagram-token/${userData.profile.id}`, userData.token)
+    .then((res) => {
+      return res.json();
+    })
+    .then(async (json) => {
+      dispatch({ type: "UserData/setState", payload: { profile: json.data } });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }
+
+  function onPressAddPast() {
+    navigation.navigate("SeekerAddPastPosition", {
+      positions: positions,
+      onGoBack: refreshPosition,
+    });
+  }
+
+  function setIgToken (data) {
+    const body = {
+      instagram_token: data.access_token
+    };
+    postJSON(`/job-seeker/instagram-token/`, body, userData.token)
+    .then((res) => {
+      return res.json();
+    })
+    .then(async (json) => {
+      const response = await getRequest(`/job-seeker/profile/${userData.profile.id}`,userData.token);
+      const _profile = await response.json();
+      dispatch({type: 'UserData/setState',payload: { profile: _profile.data }});
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   }
 
   function addToCategoreis(item) {
     let listCategories = categoriesList;
     listCategories.map((i) => {
-      if (i.category_id == item.category_id) {
+      if (i.id === item.id) {
         i.selected = !i.selected;
       }
       return i;
     });
-    console.log(listCategories);
+    const _selectedCategories = listCategories.filter(item => item.selected);
+    setSelectedCategories(_selectedCategories);
     setCategoriesList([...listCategories]);
+  }
+
+  const categoriesModal = () => {
+    return(
+      <Modal
+      animationType="slide"
+      transparent={false}
+      visible={modalVisible3}
+      onRequestClose={() => {
+        // Alert.alert('Modal has been closed.');
+      }}
+    >
+      <SafeAreaView>
+        <View style={{ marginTop: 22, height: "89%" }}>
+          <View>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                paddingBottom: 20,
+                paddingTop: 20,
+              }}
+            >
+              <View style={{ width: "20%", marginLeft: 15 }}>
+                <TouchableOpacity
+                  onPress={() => setModalVisible3(false)}
+                >
+                  <Image
+                    source={require("../assets/ic_back.png")}
+                    style={{ width: 28, height: 22 }}
+                  />
+                </TouchableOpacity>
+              </View>
+              <View style={{ width: "60%" }}>
+                <Text
+                  style={{
+                    color: "#4834A6",
+                    fontSize: 18,
+                    textAlign: "center",
+                  }}
+                >
+                  {strings.JOB_CATEGORIES}
+                </Text>
+              </View>
+              <View style={{ width: "20%" }}>
+                <TouchableOpacity
+                  onPress={() => setModalVisible3(false)}
+                >
+                  <Text style={{ color: "#4834A6", fontSize: 18 }}>
+                    {strings.DONE}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <FlatList
+              data={categoriesList}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={({ item, index, separators }) => (
+                <View
+                  key={index}
+                  onPress={() => _onPress3(item)}
+                  onShowUnderlay={separators.highlight}
+                  onHideUnderlay={separators.unhighlight}
+                >
+                  <View style={{ backgroundColor: "white" }}>
+                    <TouchableOpacity
+                      style={{
+                        flex: 1,
+                        flexDirection: "row",
+                        alignItems: "center",
+                        padding: 10,
+                        borderBottomWidth: 1,
+                        borderBottomColor: "#eee",
+                      }}
+                      onPress={() => addToCategoreis(item)}
+                    >
+                      {item.selected ? (
+                        <View>
+                          <Image
+                            source={require("../assets/ic_selected.png")}
+                            style={{
+                              width: 17,
+                              height: 17,
+                              marginRight: 10,
+                              marginLeft: 20,
+                            }}
+                          />
+                        </View>
+                      ) : (
+                        <View>
+                          <Image
+                            source={require("../assets/ic_add_blue.png")}
+                            style={{
+                              width: 17,
+                              height: 17,
+                              marginRight: 10,
+                              marginLeft: 20,
+                            }}
+                          />
+                        </View>
+                      )}
+
+                      <Text
+                        style={{
+                          fontSize: 20,
+                          color: "#222",
+                        }}
+                      >
+                        {item.name}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              )}
+            />
+          </View>
+        </View>
+      </SafeAreaView>
+    </Modal>
+    );
   }
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-      <KeyboardAwareScrollView
-        extraScrollHeight={Platform.OS === "ios" ? -60 : 0}
-      >
-        <View
+      <StatusBar barStyle="dark-content" />
+
+      <View
           style={{
             flexDirection: "row",
             alignItems: "center",
+            borderBottomWidth: 0.15,
+            borderBottomColor: "#fff",
+            paddingBottom: 10,
             paddingTop: 20,
           }}
         >
-          <View style={{ width: "25%", marginLeft: 15 }}>
-            <TouchableOpacity onPress={() => navigation.navigate("Seeker")}>
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Image
+              source={require("../assets/headerImage.png")}
+              style={{ width: wp('25%'), height: hp('4%'), resizeMode: 'contain' }}
+            />
+          </View>
+          <View style={{ position: "absolute", left: 5, bottom: 6 }}>
+            <TouchableOpacity
+              onPress={async () => {
+                navigateBack();
+                //await navigation.dispatch(StackActions.replace('SeekerHome'));
+                //navigation.goBack();
+                //navigation.replace("Seeker", {
+                //  screen: "SeekerHome",
+                //});
+    
+              }}
+              style={{ padding: 5 }}>
               <Image
                 source={require("../assets/ic_back.png")}
-                style={{ width: 28, height: 22 }}
+                style={{ width: 20, height: 20, resizeMode: 'contain', alignSelf: 'center' }}
               />
             </TouchableOpacity>
           </View>
-          <View style={{ width: "65%" }}>
-            <Text style={{ color: "#4834A6", fontSize: 18 }}>
-              {strings.EDIT_YOUR_PROFILE}
-            </Text>
-          </View>
+        </View>
+
+      <KeyboardAwareScrollView
+        extraScrollHeight={Platform.OS === "ios" ? -60 : 0}
+      >
+
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Text
+            style={{
+              color: "#4834A6",
+              fontSize: hp("2.1%"),
+              fontFamily: 'VisbyBold'
+            }}
+          >
+            {strings.EDIT_YOUR_PROFILE}
+          </Text>
         </View>
 
         <Loader loading={loading} />
 
-        {/* <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : null}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 10 : 40}      
-      > */}
-        {/* <ScrollView
-          keyboardShouldPersistTaps="always"
-            showsVerticalScrollIndicator={false}
-            style={{ marginBottom: 40 }}   
-            ref={scrollViewRef}
-          > */}
         <View style={{ flex: 1, width: "100%" }}>
           <View style={{ flex: 1, alignItems: "center", padding: 20 }}>
-            <View style={{ width: 150, height: 150, alignSelf: "center" }}>
+            <View style={{ width: wp('35%'), height: wp('25%'), alignSelf: "center", justifyContent: 'center', alignItems: 'center'}}>
               {image == null ? (
-                <View>
-                  {user.avatar_image == "" ? (
-                    <Image
-                      source={require("../assets/img_place.png")}
-                      style={{
-                        height: 100,
-                        width: 100,
-                        borderRadius: 50,
-                        alignSelf: "center",
-                      }}
-                    />
-                  ) : (
-                    <Image
-                      source={{
-                        uri:
-                          user.avatar_image +
-                          "?random_number=" +
-                          new Date().getTime(),
-                      }}
-                      style={{
-                        width: 100,
-                        height: 100,
-                        borderRadius: 50,
-                        alignSelf: "center",
-                      }}
-                    />
-                  )}
+                <View style={styles.profileImageContainer}>
+                <Image
+                  source={require("../assets/ic_user_dark.png")}
+                  style={{
+                    height: wp('20%'),
+                    width: wp('20%'),
+                  }}
+                />
                 </View>
               ) : (
                 <Image
-                  source={{
-                    uri: image + "?random_number=" + new Date().getTime(),
-                  }}
+                  source={{ uri: image }}
                   style={{
                     width: 100,
                     height: 100,
@@ -822,6 +944,27 @@ function SeekerEditProfile({ navigation, route }) {
             />
           </View>
 
+          <View style={styles.inputField}>
+            <Image
+              source={require("../assets/ic_mail.png")}
+              style={{ height: 20, width: 20 }}
+            />
+            <TextInput
+              style={{ paddingLeft: 10, width: "100%", color: "#000" }}
+              onChangeText={(text) => setEmail(text)}
+              placeholder={strings.EMAIL}
+              value={email}
+              type="email"
+              textContentType="emailAddress"
+              onFocus={() => {
+                handleFocus(6);
+              }}
+              ref={(ref) => {
+                handleRef(6, ref);
+              }}
+            />
+          </View>
+
           <View style={{ flex: 1 }}>
             <Modal
               animationType="slide"
@@ -902,7 +1045,7 @@ function SeekerEditProfile({ navigation, route }) {
                 disabled
               >
                 <Image
-                  source={require("../assets/ic_phone.png")}
+                  source={require("../assets/ic_call.png")}
                   style={{ width: 20, height: 20, marginRight: 5 }}
                 />
                 <Text style={{}}>+{phCode}</Text>
@@ -920,32 +1063,11 @@ function SeekerEditProfile({ navigation, route }) {
             </View>
           </View>
 
-          <View style={{ flex: 1, marginLeft: 10 }}>
+          {/*<View style={{ flex: 1, marginLeft: 10 }}>
             <Text style={{ color: "#6E5FBD" }}>
               {strings.FOR_RECEIVING_INTERVIEW_CALLS}
             </Text>
-          </View>
-
-          <View style={styles.inputField}>
-            <Image
-              source={require("../assets/ic_mail.png")}
-              style={{ height: 20, width: 20 }}
-            />
-            <TextInput
-              style={{ paddingLeft: 10, width: "100%", color: "#000" }}
-              onChangeText={(text) => setEmail(text)}
-              placeholder={strings.EMAIL}
-              value={email}
-              type="email"
-              textContentType="emailAddress"
-              onFocus={() => {
-                handleFocus(6);
-              }}
-              ref={(ref) => {
-                handleRef(6, ref);
-              }}
-            />
-          </View>
+          </View>*/}
 
           <View style={{ flex: 1 }}>
             <View style={{ flex: 1, padding: 10, paddingHorizontal: 20 }}>
@@ -959,10 +1081,10 @@ function SeekerEditProfile({ navigation, route }) {
                 }}
               >
                 <Image
-                  source={require("../assets/icon_note.png")}
-                  style={{ width: 12, height: 12 }}
+                  source={require("../assets/ic_star.png")}
+                  style={{ width: 15, height: 15 }}
                 />
-                <Text style={{ paddingLeft: 10, fontSize: 18 }}>
+                <Text style={styles.subHeadingText}>
                   {strings.BIO}
                 </Text>
               </View>
@@ -972,6 +1094,7 @@ function SeekerEditProfile({ navigation, route }) {
                   borderColor: "#eee",
                   padding: 5,
                   marginBottom: 15,
+                  paddingLeft: 35,
 
                   // marginRight: 10,
                   borderWidth: 1,
@@ -989,6 +1112,7 @@ function SeekerEditProfile({ navigation, route }) {
                 <TextInput
                   style={{ width: "100%", color: "#666" }}
                   onChangeText={(text) => setBio(text)}
+                  textAlignVertical='top'
                   placeholder={BIO_PLACEHOLDER}
                   value={bio}
                   multiline={true}
@@ -1004,164 +1128,69 @@ function SeekerEditProfile({ navigation, route }) {
             </View>
           </View>
 
-          <View style={{ flex: 1 }}>
-            <Modal
-              animationType="slide"
-              transparent={false}
-              visible={modalVisible3}
-              onRequestClose={() => {
-                // Alert.alert('Modal has been closed.');
-              }}
-            >
-              <SafeAreaView>
-                <View style={{ marginTop: 22, height: "89%" }}>
-                  <View>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        paddingBottom: 20,
-                        paddingTop: 20,
-                      }}
-                    >
-                      <View style={{ width: "20%", marginLeft: 15 }}>
-                        <TouchableOpacity
-                          onPress={() => setModalVisible3(false)}
-                        >
-                          <Image
-                            source={require("../assets/ic_back.png")}
-                            style={{ width: 28, height: 22 }}
-                          />
-                        </TouchableOpacity>
-                      </View>
-                      <View style={{ width: "60%" }}>
-                        <Text
-                          style={{
-                            color: "#4834A6",
-                            fontSize: 18,
-                            textAlign: "center",
-                          }}
-                        >
-                          {strings.JOB_CATEGORIES}
-                        </Text>
-                      </View>
-                      <View style={{ width: "20%" }}>
-                        <TouchableOpacity
-                          onPress={() => setModalVisible3(false)}
-                        >
-                          <Text style={{ color: "#4834A6", fontSize: 18 }}>
-                            {strings.DONE}
-                          </Text>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-
-                    <FlatList
-                      data={categoriesList}
-                      keyExtractor={(item) => item.category_id.toString()}
-                      renderItem={({ item, index, separators }) => (
-                        <View
-                          key={index}
-                          onPress={() => _onPress3(item)}
-                          onShowUnderlay={separators.highlight}
-                          onHideUnderlay={separators.unhighlight}
-                        >
-                          <View style={{ backgroundColor: "white" }}>
-                            <TouchableOpacity
-                              style={{
-                                flex: 1,
-                                flexDirection: "row",
-                                alignItems: "center",
-                                padding: 10,
-                                borderBottomWidth: 1,
-                                borderBottomColor: "#eee",
-                              }}
-                              onPress={() => addToCategoreis(item)}
-                            >
-                              {item.selected ? (
-                                <View>
-                                  <Image
-                                    source={require("../assets/ic_selected.png")}
-                                    style={{
-                                      width: 17,
-                                      height: 17,
-                                      marginRight: 10,
-                                      marginLeft: 20,
-                                    }}
-                                  />
-                                </View>
-                              ) : (
-                                <View>
-                                  <Image
-                                    source={require("../assets/ic_add_blue.png")}
-                                    style={{
-                                      width: 17,
-                                      height: 17,
-                                      marginRight: 10,
-                                      marginLeft: 20,
-                                    }}
-                                  />
-                                </View>
-                              )}
-
-                              <Text
-                                style={{
-                                  fontSize: 20,
-                                  color: "#222",
-                                }}
-                              >
-                                {item.category_name}
-                              </Text>
-                            </TouchableOpacity>
-                          </View>
-                        </View>
-                      )}
-                    />
-                  </View>
-                </View>
-              </SafeAreaView>
-            </Modal>
-
-            <Text
+          <TouchableOpacity style={[styles.categoriesContainer, styles.shadowContainer]} onPress={() => setModalVisible3(true)}>
+            {categoriesModal()}
+            <View
               style={{
-                fontSize: 18,
-                paddingLeft: 20,
+                flex: 1,
+                flexDirection: "row",
+                alignItems: "center",
                 marginBottom: 5,
+                paddingLeft: 10,
               }}
             >
-              {strings.JOB_CATEGORIES}
-            </Text>
-            <TouchableOpacity
-              style={[styles.code]}
-              onPress={() => setModalVisible3(true)}
-            >
+              <Image
+                source={require("../assets/ic_star.png")}
+                style={{ width: 15, height: 15 }}
+              />
+              <Text
+                style={styles.subHeadingText}
+              >
+                {strings.JOB_CATEGORIES}
+              </Text>
               <TouchableOpacity
-                style={{ flexDirection: "row" }}
-                onPress={() => setModalVisible3(true)}
+              onPress={() => {
+                setAwsomeAlertMessage(strings.CATEGORIES_INFO_MESSAGE);
+                setShowAwsomeAlert(true);
+                }}
+                style={{ width: 15, height: 15, position: 'absolute', right: 10 }}
               >
                 <Image
-                  source={require("../assets/ic_file_number.png")}
-                  style={{ width: 17, height: 17, marginRight: 5 }}
+                  source={require("../assets/circle_info.png")}
+                  style={{ width: 15, height: 15 }}
                 />
-                <Text style={{ width: "95%", color: "#000" }}>
-                  {categoriesList?.filter((item) => item.selected).length > 0
-                    ? categoriesList
-                        .filter((item) => item.selected)
-                        .map((item) => item.category_name)
-                        .toString()
-                    : strings.SELECT_JOB_CATEGORIES}
-                </Text>
               </TouchableOpacity>
-            </TouchableOpacity>
-            <View style={[{ marginHorizontal: 20 }]}>
-              <Text style={{ fontSize: 12 }}>
-                Please select the business categories that most closely match
-                the job you're looking to apply to. When a business posts a new
-                job, we'll be able to notify you. You may choose as many
-                categories as you like!
-              </Text>
             </View>
-          </View>
+            <Text
+              style={{
+                fontSize: 13,
+                paddingLeft: 20,
+                marginVertical: 5,
+                fontFamily: 'VisbySemibold'
+              }}
+            >
+              Tap to select categories
+            </Text>
+            <FlatList
+              data={selectedCategories}
+              columnWrapperStyle={{ flexWrap: 'wrap', flex: 1, marginTop: 5 }}
+              renderItem={({item}) => (
+                <View
+                  style={styles.categoriesListContainer}>
+                    <Text style={{color: '#F3F4FA', fontSize: 12}}>{item.name}</Text>
+                    <TouchableOpacity
+                      style={{marginLeft: 10}}
+                      onPress={() => addToCategoreis(item)}
+                    >
+                      <Text style={{color: '#F3F4FA'}}>x</Text>
+                    </TouchableOpacity>
+                </View>
+              )}
+              //Setting the number of column
+              numColumns={4}
+              keyExtractor={(item, index) => index}
+            />
+          </TouchableOpacity>
 
           <View style={{ flex: 1 }}>
             <View style={{ flex: 1, padding: 20 }}>
@@ -1175,87 +1204,68 @@ function SeekerEditProfile({ navigation, route }) {
               >
                 <Image
                   source={require("../assets/ic_star.png")}
-                  style={{ width: 12, height: 12 }}
+                  style={{ width: 15, height: 15 }}
                 />
-                <Text style={{ paddingLeft: 10, fontSize: 18 }}>
+                <Text style={styles.subHeadingText}>
                   {strings.SKILLS}
                 </Text>
               </View>
               <View
                 style={{
                   flex: 1,
-                  alignItems: "flex-start",
-                  backgroundColor: "#fff",
-                  borderColor: "#eee",
-                  paddingTop: 13,
-                  paddingLeft: 13,
-                  marginBottom: 15,
-                  borderWidth: 1,
-                  borderRadius: 10,
-                  shadowColor: "#bbb",
-                  shadowOffset: {
-                    width: 0,
-                    height: 3,
-                  },
-                  shadowOpacity: 0.23,
-                  shadowRadius: 2.62,
-                  elevation: 4,
+                  justifyContent: "center",
+                  marginBottom: 5,
                 }}
               >
-                {/* <FlatList
-                    data={skills}
-                    keyExtractor={(item) => item}
-                    renderItem={renderSkill}
-                  /> */}
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: "row",
-                    flexWrap: "wrap",
-                  }}
-                >
-                  {skills &&
-                    skills.map((item, index) => {
-                      return renderSkill({ item, index });
-                    })}
-                </View>
-
-                <View
-                  style={{
-                    borderColor: "#eee",
-                    marginBottom: 5,
-                    paddingHorizontal: 5,
-                    margin: 5,
-                    borderWidth: 1,
-                    borderRadius: 10,
-                  }}
-                >
-                  <TextInput
-                    style={{ width: "100%", color: "#000" }}
-                    placeholder={strings.ENTER_SKILL}
-                    textContentType="none"
-                    onSubmitEditing={() => addSkill()}
-                    returnKeyType={"done"}
-                    onEndEditing={() => addSkill()}
-                    value={skill}
-                    onChangeText={(text) => onChangeSkill(text)}
-                  />
-                </View>
+                <Text style={{ paddingLeft: 10, fontSize: 13, fontFamily: 'VisbySemibold' }}>
+                  Enter Skill and Press SPACE to add to list.
+                </Text>
               </View>
+              <Tags
+                initialText=""
+                textInputProps={{
+                  placeholder: strings.ENTER_SKILL,
+                  placeholderTextColor: 'black'
+                }}
+                inputContainerStyle={[{borderRadius: 5, borderWidth: 0.3, borderColor: 'grey', backgroundColor: 'white'}, styles.shadowContainer]}
+                inputStyle={{color: 'grey'}}
+                initialTags={skills}
+                onChangeTags={tags => setSkills(tags)}
+                onTagPress={(index, tagLabel, event, deleted) =>
+                  console.log(index, tagLabel, event, deleted ? "deleted" : "not deleted")
+                }
+                containerStyle={{ justifyContent: "center" }}
+                renderTag={({ tag, index, onPress, deleteTagOnPress, readonly }) => (
+                  <TouchableOpacity style={styles.skilsListContainer} key={`${tag}-${index}`} onPress={onPress}>
+                    <Text style={{color: '#F3F4FA', fontSize: 12}}>{tag}</Text>
+                    <View
+                      style={{marginLeft: 10}}
+                    >
+                      <Text style={{color: '#F3F4FA'}}>x</Text>
+                    </View>
+                  </TouchableOpacity>
+                )}
+              />
             </View>
           </View>
 
           <View style={{ flex: 1 }}>
             <View>
-              <Text
+              <View
                 style={{
-                  fontSize: 18,
-                  paddingLeft: 20,
-                  marginBottom: 5,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginLeft: 20,
                 }}
               >
-                {strings.LEVEL_OF_EDUCATION}
-              </Text>
+                <Image
+                  source={require("../assets/ic_star.png")}
+                  style={{ width: 15, height: 15 }}
+                />
+                <Text style={styles.subHeadingText}>
+                  {strings.LEVEL_OF_EDUCATION}
+                </Text>
+              </View>
               <View style={styles.code3}>
                 <Image
                   source={require("../assets/ic_educate.png")}
@@ -1277,15 +1287,21 @@ function SeekerEditProfile({ navigation, route }) {
           </View>
 
           <View style={{ flex: 1 }}>
-            <Text
+            <View
               style={{
-                fontSize: 18,
-                paddingLeft: 20,
-                marginBottom: 5,
+                flexDirection: "row",
+                alignItems: "center",
+                marginLeft: 20,
               }}
             >
-              {strings.NAME_OF_INSTITUTION}
-            </Text>
+              <Image
+                source={require("../assets/ic_star.png")}
+                style={{ width: 15, height: 15 }}
+              />
+              <Text style={styles.subHeadingText}>
+                {strings.NAME_OF_INSTITUTION}
+              </Text>
+            </View>
             <View style={styles.inputField}>
               <Image
                 source={require("../assets/ic_educate.png")}
@@ -1308,32 +1324,69 @@ function SeekerEditProfile({ navigation, route }) {
           </View>
 
           <View style={{ flex: 1 }}>
-            <Text
-              style={{
-                fontSize: 18,
-                paddingLeft: 20,
-                marginBottom: 5,
-              }}
-            >
-              {strings.CERTIFICATION} {strings.OPTIONAL}
-            </Text>
-            <View style={styles.inputField}>
-              <Image
-                source={require("../assets/ic_certificate.png")}
-                style={{ width: 17, height: 17, marginRight: 5 }}
-              />
-              <TextInput
-                style={{ width: "90%", color: "#000" }}
-                onChangeText={(text) => setCertificate(text)}
-                placeholder={strings.CERTIFICATE_PLACEHOLDER}
-                value={certificate}
-                textContentType="none"
-                onFocus={() => {
-                  handleFocus(9);
+            <View style={{ flex: 1, padding: 20 }}>
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginBottom: 5,
                 }}
-                ref={(ref) => {
-                  handleRef(9, ref);
+              >
+                <Image
+                  source={require("../assets/ic_star.png")}
+                  style={{ width: 15, height: 15 }}
+                />
+                <Text style={styles.subHeadingText}>
+                  {strings.CERTIFICATIONS}
+                </Text>
+                <TouchableOpacity onPress={() => {
+                  setAwsomeAlertMessage(strings.CERTIFICATE_INFO_MESSAGE);
+                  setShowAwsomeAlert(true);
+                  }}
+                  style={{ width: 15, height: 15, position: 'absolute', right: 20 }}
+                >
+                <Image
+                  source={require("../assets/circle_info.png")}
+                  style={{ width: 15, height: 15 }}
+                />
+              </TouchableOpacity>
+              </View>
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  marginBottom: 5,
                 }}
+              >
+                <Text style={{ paddingLeft: 10, fontSize: 13, fontFamily: 'VisbySemibold' }}>
+                  Enter Certificate and Press SPACE to add to list.
+                </Text>
+              </View>
+              <Tags
+                initialText=""
+                textInputProps={{
+                  placeholder: strings.CERTIFICATE_PLACEHOLDER,
+                  placeholderTextColor: 'black'
+                }}
+                inputContainerStyle={[{borderRadius: 5, borderWidth: 0.3, borderColor: 'grey', backgroundColor: 'white'}, styles.shadowContainer]}
+                inputStyle={{color: 'grey'}}
+                initialTags={certificate}
+                onChangeTags={tags => setCertificate(tags)}
+                onTagPress={(index, tagLabel, event, deleted) =>
+                  console.log(index, tagLabel, event, deleted ? "deleted" : "not deleted")
+                }
+                containerStyle={{ justifyContent: "center" }}
+                renderTag={({ tag, index, onPress, deleteTagOnPress, readonly }) => (
+                  <TouchableOpacity style={styles.skilsListContainer} key={`${tag}-${index}`} onPress={onPress}>
+                    <Text style={{color: '#F3F4FA', fontSize: 12}}>{tag}</Text>
+                    <View
+                      style={{marginLeft: 10}}
+                    >
+                      <Text style={{color: '#F3F4FA'}}>x</Text>
+                    </View>
+                  </TouchableOpacity>
+                )}
               />
             </View>
           </View>
@@ -1369,7 +1422,7 @@ function SeekerEditProfile({ navigation, route }) {
                         </TouchableOpacity>
                       </View>
                       <View style={{ width: "60%" }}>
-                        <Text style={{ color: "#4834A6", fontSize: 18 }}>
+                        <Text style={styles.subHeadingText}>
                           {strings.ADD_YOUR_LANGUAGES}
                         </Text>
                       </View>
@@ -1433,7 +1486,7 @@ function SeekerEditProfile({ navigation, route }) {
                           onHideUnderlay={separators.unhighlight}
                         >
                           <View style={{ backgroundColor: "white" }}>
-                            <View
+                            <TouchableOpacity
                               style={{
                                 flex: 1,
                                 flexDirection: "row",
@@ -1442,37 +1495,23 @@ function SeekerEditProfile({ navigation, route }) {
                                 borderBottomWidth: 1,
                                 borderBottomColor: "#eee",
                               }}
+                              onPress={() => {
+                                if (isLangSelected(item)) {
+                                  removeFromLangs(item);
+                                } else {
+                                  addToLangs(item);
+                                }
+                              }}  
                             >
-                              {isLangSelected(item) ? (
-                                <TouchableOpacity
-                                  onPress={() => removeFromLangs(item)}
-                                >
-                                  <Image
-                                    source={require("../assets/ic_selected.png")}
-                                    style={{
-                                      width: 17,
-                                      height: 17,
-                                      marginRight: 10,
-                                      marginLeft: 20,
-                                    }}
-                                  />
-                                </TouchableOpacity>
-                              ) : (
-                                <TouchableOpacity
-                                  onPress={() => addToLangs(item)}
-                                >
-                                  <Image
-                                    source={require("../assets/ic_add_blue.png")}
-                                    style={{
-                                      width: 17,
-                                      height: 17,
-                                      marginRight: 10,
-                                      marginLeft: 20,
-                                    }}
-                                  />
-                                </TouchableOpacity>
-                              )}
-
+                              <Image
+                                source={isLangSelected(item) ? require("../assets/ic_selected.png") : require("../assets/ic_add_blue.png")}
+                                style={{
+                                  width: 17,
+                                  height: 17,
+                                  marginRight: 10,
+                                  marginLeft: 20,
+                                }}
+                              />
                               <Text
                                 style={{
                                   fontSize: 20,
@@ -1481,7 +1520,7 @@ function SeekerEditProfile({ navigation, route }) {
                               >
                                 {item}
                               </Text>
-                            </View>
+                            </TouchableOpacity>
                           </View>
                         </View>
                       )}
@@ -1491,15 +1530,21 @@ function SeekerEditProfile({ navigation, route }) {
               </SafeAreaView>
             </Modal>
 
-            <Text
+            <View
               style={{
-                fontSize: 18,
-                paddingLeft: 20,
-                marginBottom: 5,
+                flexDirection: "row",
+                alignItems: "center",
+                marginLeft: 20,
               }}
             >
-              {strings.LANGUAGE}
-            </Text>
+              <Image
+                source={require("../assets/ic_star.png")}
+                style={{ width: 15, height: 15 }}
+              />
+              <Text style={styles.subHeadingText}>
+                {strings.SPOKEN_LANGUAGE}
+              </Text>
+            </View>
             <TouchableOpacity
               style={styles.code}
               onPress={() => setModalVisible2(true)}
@@ -1518,15 +1563,21 @@ function SeekerEditProfile({ navigation, route }) {
 
           <View style={{ flex: 1 }}>
             <View>
-              <Text
+              <View
                 style={{
-                  fontSize: 18,
-                  paddingLeft: 20,
-                  marginBottom: 5,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginLeft: 20,
                 }}
               >
-                {strings.AVAILABILITY}
-              </Text>
+                <Image
+                  source={require("../assets/ic_star.png")}
+                  style={{ width: 15, height: 15 }}
+                />
+                <Text style={styles.subHeadingText}>
+                  {strings.AVAILABILITY}
+                </Text>
+              </View>
               <View style={styles.code3}>
                 <Image
                   source={require("../assets/ic_educate.png")}
@@ -1545,125 +1596,98 @@ function SeekerEditProfile({ navigation, route }) {
               </View>
             </View>
           </View>
-
-          <View style={{ flex: 1 }}>
-            <TouchableOpacity
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                paddingLeft: 20,
-                paddingTop: 15,
-                paddingBottom: 15,
-                alignItems: "center",
-              }}
-              onPress={() => toggleEligible()}
-            >
-              {eligible ? (
-                <Image
-                  source={require("../assets/checkbox_checked.png")}
-                  style={{ width: 25, height: 25, marginRight: 5 }}
-                />
-              ) : (
-                <Image
-                  source={require("../assets/checkbox_blank.png")}
-                  style={{ width: 25, height: 25, marginRight: 5 }}
-                />
-              )}
-              <Text style={{ paddingLeft: 5, color: "#3482FF" }}>
-                {strings.ARE_YOU_ELEGIBLE}
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={{ flex: 1 }}>
-            <TouchableOpacity
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                paddingLeft: 20,
-                paddingTop: 15,
-                paddingBottom: 15,
-                alignItems: "center",
-              }}
-              onPress={() => toggleSixteen()}
-            >
-              {sixteen ? (
-                <Image
-                  source={require("../assets/checkbox_checked.png")}
-                  style={{ width: 25, height: 25, marginRight: 5 }}
-                />
-              ) : (
-                <Image
-                  source={require("../assets/checkbox_blank.png")}
-                  style={{ width: 25, height: 25, marginRight: 5 }}
-                />
-              )}
-              <Text style={{ paddingLeft: 5, color: "#3482FF" }}>
-                {strings.ARE_YOU_AT_LEAST}
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={{ flex: 1 }}>
-            <TouchableOpacity
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                paddingLeft: 20,
-                paddingTop: 15,
-                paddingBottom: 15,
-                alignItems: "center",
-              }}
-              onPress={() => toggleConvictions()}
-            >
-              {convictions ? (
-                <Image
-                  source={require("../assets/checkbox_checked.png")}
-                  style={{ width: 25, height: 25, marginRight: 5 }}
-                />
-              ) : (
-                <Image
-                  source={require("../assets/checkbox_blank.png")}
-                  style={{ width: 25, height: 25, marginRight: 5 }}
-                />
-              )}
-              <View style={{ flex: 1 }}>
-                <Text style={{ paddingLeft: 5, color: "#3482FF" }}>
-                  {strings.HAVE_YOU_EVER_BEEN_CONVICTED}
+          <View style={[styles.checkBoxesContainer, styles.shadowContainer]}>
+            <View style={{ flex: 1 }}>
+              <TouchableOpacity
+                style={styles.checkBoxContainer}
+                onPress={() => toggleEligible()}
+              >
+                {eligible ? (
+                  <Image
+                    source={require("../assets/checkbox_checked.png")}
+                    style={{ width: 25, height: 25, marginRight: 5 }}
+                  />
+                ) : (
+                  <Image
+                    source={require("../assets/checkbox_blank.png")}
+                    style={{ width: 25, height: 25, marginRight: 5 }}
+                  />
+                )}
+                <Text style={styles.checkBoxText}>
+                  {strings.ARE_YOU_ELEGIBLE}
                 </Text>
-              </View>
-            </TouchableOpacity>
-          </View>
+              </TouchableOpacity>
+            </View>
 
-          <View style={{ flex: 1 }}>
-            <TouchableOpacity
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                paddingLeft: 20,
-                paddingTop: 15,
-                paddingBottom: 15,
-                alignItems: "center",
-              }}
-              onPress={() => toggleVaccinated()}
-            >
-              {covid_vaccinated ? (
-                <Image
-                  source={require("../assets/checkbox_checked.png")}
-                  style={{ width: 25, height: 25, marginRight: 5 }}
-                />
-              ) : (
-                <Image
-                  source={require("../assets/checkbox_blank.png")}
-                  style={{ width: 25, height: 25, marginRight: 5 }}
-                />
-              )}
-              <View style={{ flex: 1 }}>
-                <Text style={{ paddingLeft: 5, color: "#3482FF" }}>
-                  {strings.ARE_VACCINATED} {strings.OPTIONAL}
+            <View style={{ flex: 1 }}>
+              <TouchableOpacity
+                style={styles.checkBoxContainer}
+                onPress={() => toggleSixteen()}
+              >
+                {sixteen ? (
+                  <Image
+                    source={require("../assets/checkbox_checked.png")}
+                    style={{ width: 25, height: 25, marginRight: 5 }}
+                  />
+                ) : (
+                  <Image
+                    source={require("../assets/checkbox_blank.png")}
+                    style={{ width: 25, height: 25, marginRight: 5 }}
+                  />
+                )}
+                <Text style={styles.checkBoxText}>
+                  {strings.ARE_YOU_AT_LEAST}
                 </Text>
-              </View>
-            </TouchableOpacity>
+              </TouchableOpacity>
+            </View>
+
+            <View style={{ flex: 1 }}>
+              <TouchableOpacity
+                style={styles.checkBoxContainer}
+                onPress={() => toggleConvictions()}
+              >
+                {convictions ? (
+                  <Image
+                    source={require("../assets/checkbox_checked.png")}
+                    style={{ width: 25, height: 25, marginRight: 5 }}
+                  />
+                ) : (
+                  <Image
+                    source={require("../assets/checkbox_blank.png")}
+                    style={{ width: 25, height: 25, marginRight: 5 }}
+                  />
+                )}
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.checkBoxText}>
+                    {strings.HAVE_YOU_EVER_BEEN_CONVICTED}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+
+            <View style={{ flex: 1 }}>
+              <TouchableOpacity
+                style={styles.checkBoxContainer}
+                onPress={() => toggleVaccinated()}
+              >
+                {covid_vaccinated ? (
+                  <Image
+                    source={require("../assets/checkbox_checked.png")}
+                    style={{ width: 25, height: 25, marginRight: 5 }}
+                  />
+                ) : (
+                  <Image
+                    source={require("../assets/checkbox_blank.png")}
+                    style={{ width: 25, height: 25, marginRight: 5 }}
+                  />
+                )}
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.checkBoxText}>
+                    {strings.ARE_VACCINATED} {strings.OPTIONAL}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
           </View>
 
           <View style={{ flex: 1, marginBottom: 30 }}>
@@ -1678,10 +1702,10 @@ function SeekerEditProfile({ navigation, route }) {
               }}
             >
               <Image
-                source={require("../assets/ic_past_positions.png")}
+                source={require("../assets/ic_business.png")}
                 style={{ width: 20, height: 20, marginRight: 5 }}
               />
-              <Text style={{ fontSize: 18 }}>
+              <Text style={{ fontSize: 18, fontFamily: 'VisbySemibold' }}>
                 {strings.PAST_POSTIONS} {strings.OPTIONAL}
               </Text>
             </View>
@@ -1698,7 +1722,7 @@ function SeekerEditProfile({ navigation, route }) {
                     }}
                   >
                     <TouchableOpacity
-                      style={{ width: "10%", paddingRight: 20 }}
+                      style={{ width: "10%", paddingRight: 20, marginTop: 5 }}
                       onPress={() =>
                         navigation.navigate("SeekerEditPastPosition", {
                           position: p,
@@ -1709,15 +1733,18 @@ function SeekerEditProfile({ navigation, route }) {
                     >
                       <Image
                         source={require("../assets/ic_edit.png")}
-                        style={{ width: 20, height: 20, marginRight: 5 }}
+                        style={{ width: 16, height: 16, marginRight: 5, resizeMode: 'contain' }}
                       />
                     </TouchableOpacity>
                     <View style={{ width: "90%" }}>
-                      <Text style={{ color: "#999", fontSize: 12 }}>
-                        {dateFormat(p.from_date)} - {dateFormat(p.to_date)}
+                      <Text style={{ color: "#B1B4C7", fontSize: 14, fontFamily: 'VisbySemibold', marginBottom: 5 }}>
+                        {dateFormat(p.start_date)} - {dateFormat(p.end_date)}
                       </Text>
-                      <Text style={{ fontSize: 14, width: "90%" }}>
-                        {p.category}, {p.company_name}, {p.city_name}{" "}
+                      <Text style={{ fontSize: 14, width: "70%", fontFamily: 'VisbyBold' }}>
+                        {p.position}, {p.employer}  <Text style={{fontFamily: 'VisbyRegular'}}>{p.location}{" "}</Text>
+                      </Text>
+                      <Text>
+                        
                       </Text>
                     </View>
                   </View>
@@ -1730,13 +1757,9 @@ function SeekerEditProfile({ navigation, route }) {
                   marginTop: 20,
                   marginBottom: 50,
                 }}
-                onPress={() =>
-                  navigation.navigate("SeekerAddPastPosition", {
-                    onGoBack: refreshPosition,
-                  })
-                }
+                onPress={() => onPressAddPast()}
               >
-                <Text style={{ color: "#4E35AE", fontSize: 16 }}>
+                <Text style={{ color: "#4E35AE", fontSize: 16, fontFamily: 'VisbyBold' }}>
                   + {strings.ADD_PAST_POSTION}
                 </Text>
               </TouchableOpacity>
@@ -1774,13 +1797,13 @@ function SeekerEditProfile({ navigation, route }) {
                       fontWeight: "bold",
                     }}
                   >
-                    {isInstagramConnect
+                    {userData?.profile?.instagram_token
                       ? strings.INSTRAGRAM_CONNECTED
                       : strings.CONNECT_YOUR_INSTAGRAM}
                   </Text>
                   <MaterialCommunityIcons
                     name={
-                      isInstagramConnect
+                      userData?.profile?.instagram_token
                         ? "check-circle-outline"
                         : "checkbox-blank-circle-outline"
                     }
@@ -1797,6 +1820,7 @@ function SeekerEditProfile({ navigation, route }) {
                   fontSize: 12,
                   marginBottom: 40,
                   marginTop: 10,
+                  fontFamily: 'VisbySemibold'
                 }}
               >
                 Connecting Your Instagram account will add at least 20 posts to
@@ -1809,14 +1833,6 @@ function SeekerEditProfile({ navigation, route }) {
         </View>
         {/* </ScrollView> */}
 
-        <InstagramLoginPopup
-          userId={user.user_id}
-          visible={instaModalShow}
-          onClose={() => {
-            onCloseInstagramConnect();
-          }}
-          isConnected={isInstagramConnect}
-        />
       </KeyboardAwareScrollView>
 
       <KeyboardAccessoryNavigation
@@ -1849,17 +1865,53 @@ function SeekerEditProfile({ navigation, route }) {
         <TouchableOpacity
           style={{
             flex: 1,
+            marginHorizontal: 10,
             alignContent: "center",
             backgroundColor: "#5B42BB",
             padding: 15,
           }}
-          onPress={() => handleUpdate()}
+          onPress={() => updateProfile()}
         >
-          <Text style={{ color: "#fff", textAlign: "center", fontSize: 18 }}>
+          <Text style={{ color: "#fff", textAlign: "center", fontSize: 18, fontFamily: 'VisbyBold' }}>
             {strings.UPDATE_PROFILE}
           </Text>
         </TouchableOpacity>
       </View>
+      <AwesomeAlert
+          show={showAwsomeAlert}
+          showProgress={false}
+          title="Information"
+          message={awsomeAlertMessage}
+          closeOnTouchOutside={true}
+          closeOnHardwareBackPress={false}
+          showCancelButton={false}
+          showConfirmButton={true}
+          cancelText="No, cancel"
+          confirmText="Ok"
+          confirmButtonColor="#594A9E"
+          messageStyle={{textAlign: 'center'}}
+          confirmButtonStyle={{width: wp('20%'), justifyContent:'center', alignItems: 'center'}}
+          onCancelPressed={() => {
+            setShowAwsomeAlert(false)
+          }}
+          onConfirmPressed={() => {
+            setShowAwsomeAlert(false)
+          }}
+        />
+        <InstagramLogin
+          ref={ref => (this.instagramLogin = ref)}
+          appId='5144112875660329'
+          appSecret='2d7d8aac9160e372e7262095cfced817'
+          redirectUrl='https://devapi.heyhire.net/api/v1/instagram/auth'
+          incognito={false}
+          scopes={['user_profile', 'user_media']}
+          onLoginSuccess={setIgToken}
+          onLoginFailure={(data) => console.log(data)}
+        />
+        <Toast
+          position='top'
+          type='success'
+        />
     </SafeAreaView>
   );
 }
@@ -1956,6 +2008,88 @@ const styles = StyleSheet.create({
     // alignItems: 'center',
     // width: '25%',
   },
+  shadowContainer: {
+    shadowColor: "#000000",
+    shadowOffset: {
+      width: 3,
+      height: 3,
+    },
+    shadowOpacity: 0.23,
+    shadowRadius: 2.62,
+    elevation: 4,
+  },
+  categoriesContainer: {
+    flex: 1,
+    marginHorizontal: 10,
+    paddingVertical: 10,
+    borderRadius: 5,
+    borderWidth: 0.2,
+    borderColor: '#bbb',
+    justifyContent: 'center',
+    backgroundColor: 'white'
+  },
+  skilsListContainer: {
+    flex: 0,
+    flexDirection: 'row',
+    margin: 5,
+    paddingLeft: 20,
+    paddingRight: 10,
+    backgroundColor: '#4E35AE',
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 25
+  },
+  categoriesListContainer: {
+    flex: 0,
+    flexDirection: 'row',
+    margin: 5,
+    paddingLeft: 20,
+    paddingRight: 10,
+    backgroundColor: '#4E35AE',
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 25
+  },
+  checkBoxesContainer: {
+    flex: 1,
+    backgroundColor: 'white',
+    borderRadius: 5,
+    marginHorizontal: 10,
+    borderWidth: 0.2,
+    borderColor: 'grey',
+    paddingHorizontal: 10,
+    overflow: 'visible'
+  },
+  checkBoxContainer: {
+    flex: 1,
+    flexDirection: "row",
+    paddingVertical: 15,
+    alignItems: "center",
+  },
+  profileImageContainer: {
+    width: wp('25%'),
+    height: wp('25%'),
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: wp('20%'),
+    borderColor: '#4834A6',
+    borderWidth: 1,
+    backgroundColor: 'white'
+  },
+  subHeadingText: {
+    paddingLeft: 10,
+    fontSize: 18,
+    fontFamily: 'VisbySemibold',
+  },
+  checkBoxText: {
+    paddingLeft: 5,
+    color: "#3482FF",
+    fontFamily: 'VisbySemibold',
+    fontSize: 13
+  }
+
 });
 
 const pickerSelectStyles = StyleSheet.create({

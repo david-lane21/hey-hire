@@ -8,12 +8,15 @@ import {
   Platform,
   TouchableOpacity,
   ScrollView,
-  ActivityIndicator
+  ActivityIndicator,
+  Alert
 } from "react-native";
+import { useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { getUser, getToken, setUser } from "./utils/utils.js";
-import { postFormData } from "./utils/network.js";
+import { getUser, getToken } from "./utils/utils.js";
+import { postJSON } from "./utils/network.js";
 import { KeyboardAccessoryNavigation } from "react-native-keyboard-accessory";
 import {strings} from './translation/config';
 
@@ -25,15 +28,16 @@ function SeekerAddPastPosition({ route,navigation }) {
   const [position, setPosition] = useState("");
   const [company, setCompany] = useState("");
   const [city, setCity] = useState("");
-  const [from, setFrom] = useState(new Date());
+  const [from, setFrom] = useState(null);
   const [showFrom, setShowFrom] = useState(false);
-  const [to, setTo] = useState(new Date());
+  const [to, setTo] = useState(null);
   const [showTo, setShowTo] = useState(false);
   const [activeInputIndex, setActiveInputIndex] = useState(0);
   const [inputs, setInputs] = useState([]);
   const [nextFocusDisabled, setNextFocusDisabled] = useState(false);
   const [previousFocusDisabled, setPreviousFocusDisabled] = useState(false);
   const [loading, setLoading] = useState(false);
+  const userData = useSelector(state => state.UserData)
 
   function hideFrom(i) {
     if (i) setFrom(i);
@@ -61,46 +65,65 @@ function SeekerAddPastPosition({ route,navigation }) {
   }, []);
 
   const handleUpdate = () => {
-    if(position && from && company && city){
-
-    let form = new FormData();
-    form.append("post_list[0][category]", position);
-    form.append("post_list[0][from_date]", formatDate(from));
-    form.append("post_list[0][to_date]", formatDate(to));
-    form.append("post_list[0][company_name]", company);
-    form.append("post_list[0][city_name]", city);
-
-    form.append("user_type", "2");
-    // form.append('user_token', user.user_token)
-    form.append("user_id", user.user_id);
-    form.append("device_tocken", deviceToken);
+    if(validation() == true){
+    const body = {
+      position : position,
+      employer : company,
+      location : city,
+      start_date : formatDate(from),
+      end_date : formatDate(to)
+    };
+    console.log('handleUpdate -> body', body);
+    const token = route.params.token ? route.params.token : userData.token;
       setLoading(true);
-    postFormData("update_user", form)
+      postJSON("/job-seeker/past-position", body, token)
       .then((res) => {
         return res.json();
       })
       .then((json) => {
-        console.log(json)
-        if (json.status_code != "200") {
-          setError(json.msg);
+        if (!json.data || !json.data.id) {
+          setError(json.message);
         } else {
-          setUser(json.data);
-          // navigation.navigate("SeekerEditProfile", {
-          //   profile: json.data,
-          // });
+          let tempPositions = route.params.positions;
+          tempPositions.push(json.data);
           if(route.params && route.params.onGoBack){
-            route.params.onGoBack(json.data.position);
+            route.params.onGoBack(tempPositions);
           }
           setLoading(false);
-
-           navigation.goBack();
+          navigation.goBack();
         }
       })
       .catch((err) => {
+        setLoading(false);
         console.log(err);
       });
     }
   };
+
+  function validation() {
+    if (!position || isValidatePresence(position) == "") {
+      Alert.alert("Error...", "Enter a valid Position before continuing!")
+      return false
+    }
+    else if (!company || isValidatePresence(company) == "") {
+      Alert.alert("Error...", "Enter a valid Company name before continuing!")
+      return false
+    }
+    else if (!city || isValidatePresence(city) == "") {
+      Alert.alert("Error...", "Enter a valid Location before continuing!")
+      return false
+    }
+    else if(from >= new Date) {
+      Alert.alert("Error...", "Start date Must be less then current date")
+      return false
+    } else {
+      return true
+    }
+  }
+
+  function isValidatePresence(string) {
+    return string.trim();
+  }
 
   function handleFocus(index) {
     setActiveInputIndex(index);
@@ -169,7 +192,7 @@ function SeekerAddPastPosition({ route,navigation }) {
               </TouchableOpacity>
             </View>
             <View style={{ width: "70%" }}>
-              <Text style={{ color: "#4834A6", fontSize: 18 }}>
+              <Text style={{ color: "#4834A6", fontSize: hp('2%'), fontFamily: 'VisbySemibold' }}>
                 {strings.ADD_YOUR_PAST_POSITION}
               </Text>
             </View>
@@ -178,11 +201,11 @@ function SeekerAddPastPosition({ route,navigation }) {
 
         <View style={{ margin: 20 }}>
           <View style={{}}>
-            <Text>{strings.WHAT_WAS_YOUR_POSITION}</Text>
+            <Text style={styles.fieldsText}>{strings.WHAT_WAS_YOUR_POSITION}</Text>
             <View style={styles.inputField}>
               <Image
                 source={require("../assets/ic_description.png")}
-                style={{ width: 20, height: 20 }}
+                style={styles.icon}
               />
               <TextInput
                 style={{ width: "100%", paddingLeft: 10, color: "#000" }}
@@ -200,11 +223,11 @@ function SeekerAddPastPosition({ route,navigation }) {
           </View>
 
           <View style={{}}>
-            <Text>{strings.WHO_WAS_YOUR_EMPLOYER}</Text>
+            <Text style={styles.fieldsText}>{strings.WHO_WAS_YOUR_EMPLOYER}</Text>
             <View style={styles.inputField}>
               <Image
                 source={require("../assets/ic_business.png")}
-                style={{ width: 20, height: 20 }}
+                style={styles.icon}
               />
               <TextInput
                 style={{ width: "100%", paddingLeft: 10, color: "#000" }}
@@ -222,11 +245,11 @@ function SeekerAddPastPosition({ route,navigation }) {
           </View>
 
           <View style={{}}>
-            <Text>{strings.WHERE_WAS_YOUR_WORK_LOCATED}</Text>
+            <Text style={styles.fieldsText}>{strings.WHERE_WAS_YOUR_WORK_LOCATED}</Text>
             <View style={styles.inputField}>
               <Image
                 source={require("../assets/ic_location_small.png")}
-                style={{ width: 12, height: 15 }}
+                style={styles.icon}
               />
               <TextInput
                 style={{ width: "100%", paddingLeft: 10, color: "#000" }}
@@ -244,7 +267,7 @@ function SeekerAddPastPosition({ route,navigation }) {
           </View>
 
           <View style={{}}>
-            <Text>{strings.HOW_LONG_HAVE_YOU_BEEN_WORKING}</Text>
+            <Text style={styles.fieldsText}>{strings.HOW_LONG_HAVE_YOU_BEEN_WORKING}</Text>
             <View style={{ flexDirection: "row", width: "85%" }}>
             <TouchableOpacity
                   style={{ width:'55%' }}
@@ -253,10 +276,14 @@ function SeekerAddPastPosition({ route,navigation }) {
               <View style={styles.inputField}>
                 <Image
                   source={require("../assets/ic_calendar.png")}
-                  style={{ width: 20, height: 20 }}
+                  style={styles.icon}
                 />
                
-                  <Text style={{ paddingLeft:10,width: 120 }}>{formatDate(from)}</Text>
+                  {from ? (
+                    <Text style={{ paddingLeft:10,width: 120 }}>{formatDate(from)}</Text>
+                  ) : (
+                    <Text style={{ paddingLeft:10,width: 120, color: "#B1B4C7" }}>From Date</Text>
+                  )}
               </View>
               </TouchableOpacity>
 
@@ -268,10 +295,14 @@ function SeekerAddPastPosition({ route,navigation }) {
               <View style={styles.inputField}>
                 <Image
                   source={require("../assets/ic_calendar.png")}
-                  style={{ width: 20, height: 20 }}
+                  style={styles.icon}
                 />
                 
-                  <Text style={{ paddingLeft:10, width: 120 }}>{formatDate(to)}</Text>
+                  {to ? (
+                    <Text style={{ paddingLeft:10, width: 120 }}>{formatDate(to)}</Text>
+                  ) : (
+                    <Text style={{ paddingLeft:10, width: 120, color: "#B1B4C7" }}>To Date</Text>
+                  )}
                 
               </View>
               </TouchableOpacity>
@@ -287,7 +318,7 @@ function SeekerAddPastPosition({ route,navigation }) {
               }}
               onPress={() => handleUpdate()}
             >
-              <Text style={{ color: "#fff", fontSize: 18 }}>{strings.ADD_POSITION}</Text>
+              <Text style={{ color: "#fff", fontSize: hp('2.1%'), fontFamily: 'VisbyBold' }}>{strings.ADD_POSITION}</Text>
             </TouchableOpacity>
           </View>
 
@@ -297,7 +328,7 @@ function SeekerAddPastPosition({ route,navigation }) {
             onConfirm={(i) => hideFrom(i)}
             onCancel={(i) => hideFrom(i)}
             maximumDate={new Date()}
-
+            display="spinner"
           />
           <DateTimePickerModal
             isVisible={showTo}
@@ -305,6 +336,7 @@ function SeekerAddPastPosition({ route,navigation }) {
             onConfirm={(i) => hideTo(i)}
             onCancel={(i) => hideTo(i)}
             maximumDate={new Date()}
+            display="spinner"
           />
         </View>
       </View>
@@ -356,4 +388,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     height: 50,
   },
+  fieldsText: {
+    fontSize: hp('1.6%'),
+    fontFamily: 'VisbySemibold',
+    color: '#3D3B4E'
+  },
+  icon: {
+    width: hp('2.5%'),
+    height: hp('2.5%'),
+    resizeMode: 'contain'
+  }
 });

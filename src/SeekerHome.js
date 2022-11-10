@@ -9,24 +9,27 @@ import {
   ScrollView,
   RefreshControl,
   Linking,
-  Alert,
   ImageBackground,
   PermissionsAndroid,
 } from "react-native";
-import { getUser, removeUser, setUser } from "./utils/utils.js";
-import { postFormData } from "./utils/network.js";
+import { getUser, setUser } from "./utils/utils.js";
+import Toast from 'react-native-toast-message';
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import { getRequest } from "./utils/network.js";
+import AwesomeAlert from 'react-native-awesome-alerts';
 import { LinearGradient } from "expo-linear-gradient";
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import { useIsFocused } from "@react-navigation/native";
 import GeolocationNew from "@react-native-community/geolocation";
+import { DrawerActions } from '@react-navigation/native';
 
-import Header from "./components/Header";
 import { strings } from "./translation/config";
 import NavigationService from "./utils/NavigationService";
 import { AuthContext } from "./navigation/context";
 import CommonUtils from "./utils/CommonUtils.js";
 import { Platform } from "react-native";
+import { useSelector, useDispatch } from "react-redux";
 
 function SeekerHome({ navigation }) {
   const isFocused = useIsFocused();
@@ -34,8 +37,8 @@ function SeekerHome({ navigation }) {
   const [profile, setProfile] = useState({});
   const [positions, setPositions] = useState([]);
   const [location, setLocation] = useState({
-    latitude: 32.7767,
-    longitude: -96.797,
+    latitude: 30.26627100,//32.7767,
+    longitude: -97.75640900,//-96.797,
   });
   const [businesses, setBusinesses] = useState([]);
   const [selectedBusiness, setSelectedBusiness] = useState("");
@@ -46,17 +49,46 @@ function SeekerHome({ navigation }) {
     longitudeDelta: 0.0421,
   });
   const [refresh, setRefresh] = useState(false);
-  const { signOut } = React.useContext(AuthContext);
   const [latitude, setLatitude] = useState(32.7767);
   const [longitude, setLongitude] = useState(-96.797);
+  const [welcomMessage, setWelcomeMessage] = useState(false);
+  const [loadingLocations, setLoadingLocations] = useState(false);
+
+  const userData = useSelector(state => state.UserData)
+
+  const dispatch = useDispatch()
 
   useEffect(() => {
+    if(userData?.profile){
+    setUser1(userData.profile)
+    }
+  },[userData])
+
+  useEffect(() => {
+    console.log('isFocused', isFocused);
     if (isFocused) {
+      if (userData.showWelocmeMessage) {
+        setWelcomeMessage(true);
+        dispatch({type: 'UserData/setState',payload: { showWelocmeMessage: false }});
+      }
       setTimeout(() => {
+        if(userData?.profileUpdated) {
+          notifyMessage("Profile Updated Successfully!");
+          dispatch({type: 'UserData/setState',payload: { profileUpdated: false }});
+        }
         loadDate();
-      }, 500);
+      }, 1000);
     }
   }, [isFocused]);
+
+  function notifyMessage(msg) {
+    Toast.show({
+      type: 'success',
+      text1: msg,
+      position: 'top',
+      visibilityTime: 4000
+    });
+  }
 
   useEffect(() => {
     Linking.addEventListener("url", handleOpenURL);
@@ -110,7 +142,7 @@ function SeekerHome({ navigation }) {
                     },
                     500
                   );
-                  // setLocation(loc.coords);
+                  setLocation(loc.coords);
                   setLatitude(loc.coords.latitude);
                   setLongitude(loc.coords.longitude);
                   CommonUtils.setLocation(
@@ -140,7 +172,7 @@ function SeekerHome({ navigation }) {
                     },
                     500
                   );
-                  // setLocation(loc.coords);
+                  setLocation(loc.coords);
                   setLatitude(latitude);
                   setLongitude(longitude);
                   CommonUtils.setLocation(latitude, longitude);
@@ -164,7 +196,6 @@ function SeekerHome({ navigation }) {
           let loc = await Location.getLastKnownPositionAsync();
           setLatitude(loc.coords.latitude);
           setLongitude(loc.coords.longitude);
-          console.log(loc);
           map.animateToRegion(
             {
               latitude: loc.coords.latitude,
@@ -190,7 +221,6 @@ function SeekerHome({ navigation }) {
         } catch (error) {
           try {
             let loc = await Location.getCurrentPositionAsync();
-
             map.animateToRegion(
               {
                 latitude: loc.coords.latitude,
@@ -200,7 +230,7 @@ function SeekerHome({ navigation }) {
               },
               500
             );
-            // setLocation(loc.coords);
+            setLocation(loc.coords);
             setLatitude(loc.coords.latitude);
             setLongitude(loc.coords.longitude);
             CommonUtils.setLocation(loc.coords.latitude, loc.coords.longitude);
@@ -226,7 +256,7 @@ function SeekerHome({ navigation }) {
               },
               500
             );
-            // setLocation(loc.coords);
+            setLocation(loc.coords);
             setLatitude(latitude);
             setLongitude(longitude);
             CommonUtils.setLocation(latitude, longitude);
@@ -242,92 +272,116 @@ function SeekerHome({ navigation }) {
         }
       }
     })();
+    getProfileImage();
 
     return () => {
       Linking.removeEventListener("url", handleOpenURL);
     };
   }, [isFocused]);
 
-  function handleOpenURL(event) {
-    let businessId = event.url.split("/").filter(Boolean).pop();
-    const calBusinessId = parseInt(businessId / 33469);
-    console.log("Hand", event.url, calBusinessId > 0);
-    if (calBusinessId > 1) {
-      NavigationService.navigate("SeekerHomeAvailableJobs", {
-        biz_id: businessId / 33469,
-      });
-    } else {
-      if (typeof businessId == "number") {
-        NavigationService.navigate("SeekerHomeAvailableJobs", {
-          biz_id: businessId,
+  useEffect(() => {
+    getHiringLocations()
+  },[latitude,longitude])
+
+  function getProfileImage() {
+    getRequest("/job-seeker/photo", userData.token)
+    .then((res) => {
+      return res.json();
+    })
+    .then((json) => {
+      dispatch({type: 'UserData/setState',payload: {profileImage: json.data.thumb_url}});
+    }).catch((error) => {
+      console.log('Get Profile Image error', JSON.stringify(error));
+    });
+  }
+
+  async function getHiringLocations(){
+    try {
+      setLoadingLocations(true);
+      setUser(userData)
+      const res = await getRequest(`/job-seeker/location/list?lng=${longitude}&lat=${latitude}`,userData?.token); //lng=-97.75640900&lat=30.26627100
+      const json = await res.json();
+      if(json.data?.length > 0){
+        let bizList = json.data.filter(
+          (b) =>
+            parseFloat(b.address.lat) != NaN &&
+            parseFloat(b.address.lng) != NaN
+        );
+
+        bizList = bizList.map((b) => {
+          b.distance_in_km = CommonUtils.distance(
+            b.address.lat,
+            b.address.lng,
+            "K"
+          );
+          return b;
         });
+
+        bizList = bizList.filter((item) => item.distance_in_km < 20);
+
+        bizList = bizList.sort(
+          (a, b) => a.distance_in_km - b.distance_in_km
+        );
+        setBusinesses(bizList);
+        dispatch({type: 'BuisnessDeails/setState',payload: {buisness: bizList}})
       }
+      setLoadingLocations(false);
+    } catch (error) {
+      setLoadingLocations(false);
+      console.log('error while getting businesses')
+    }
+  }
+
+  const checkUuid = async (uuid) => {
+    try {
+      const res = await getRequest(`/business/qr-code-uuid/${uuid}`,'');
+      const json = await res.json()
+      if (json?.data?.entity_type == "job-position") {
+        NavigationService.navigate("SeekerHomeJobDetail", { job: {id: json?.data?.entity_id} });
+      } else if (json?.data?.entity_type == "location") {
+        NavigationService.navigate(
+          "SeekerHomeAvailableJobs",
+          { biz_id: json.data.entity_id }
+        );
+      }
+    } catch (error) {
+      console.log('error while calling qr api',JSON.stringify(error))
+    }
+  }
+
+  function handleOpenURL(event) {
+    let qrUuid = event.url.split("/").filter(Boolean).pop();
+    if (qrUuid) {
+      checkUuid(qrUuid);
     }
   }
 
   async function loadDate() {
-    try {
-      getUser().then((u) => {
-        let u2 = JSON.parse(u);
-        setUser1(u2);
-
-        let form = new FormData();
-        form.append("user_token", u2.user_token);
-        form.append("user_id", u2.user_id);
-
-        postFormData("user_profile", form)
-          .then((res) => {
-            console.log("Prifile data", res);
-            return res.json();
-          })
-          .then((json) => {
-            console.log("Prifile data", json);
-            var tempUpdateUser = Object.assign(u2, {
-              instagram_connected: json.data.instagram_connected,
+    if(!refresh) {
+      try {
+        getUser().then((u) => {
+          let u2 = JSON.parse(u);
+          getRequest(`/job-seeker/profile/${userData.profile.id}`, userData.token)
+            .then((res) => {
+              console.log("Prifile data", res);
+              return res.json();
+            })
+            .then(async (json) => {
+              console.log("Prifile data", json);
+              await dispatch({type: 'UserData/setState',payload: {profile: json.data}});
+              getProfileImage();
+              if (!loadingLocations) {
+                getHiringLocations();
+              }
+              setRefresh(false);
+            })
+            .catch((err) => {
+              console.log(err);
             });
-            console.log("Update user", tempUpdateUser);
-            setUser(tempUpdateUser);
-
-            json.data.avatar_image =
-              json.data.avatar_image + "?random_number=" + new Date().getTime();
-            setProfile(json.data);
-            sortPositions(json.data);
-            postFormData("get_all_business", form)
-              .then((json2) => {
-                return json2.json();
-              })
-              .then((json2) => {
-                let bizList = json2.data.filter(
-                  (b) =>
-                    parseFloat(b.latitude) &&
-                    parseFloat(b.longitude) &&
-                    b.is_active == 1
-                );
-                bizList = bizList.map((b) => {
-                  b.distance_in_km = CommonUtils.distance(
-                    b.latitude,
-                    b.longitude,
-                    "K"
-                  );
-                  return b;
-                });
-                bizList = bizList.filter((item) => item.distance_in_km < 20);
-
-                bizList = bizList.sort(
-                  (a, b) => a.distance_in_km - b.distance_in_km
-                );
-                console.log("Business list", bizList);
-
-                setBusinesses(bizList);
-                setRefresh(false);
-              });
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      });
-    } catch (error) {
-      console.log("Load data error", error);
+        });
+      } catch (error) {
+        console.log("Load data error", error);
+      }
     }
   }
 
@@ -352,9 +406,9 @@ function SeekerHome({ navigation }) {
         longitudeDelta: 0.0421,
       };
     } else {
-      let biz = businesses.find((b) => b.user_id == business);
-      let lat = parseFloat(biz.latitude);
-      let lng = parseFloat(biz.longitude);
+      let biz = businesses.find((b) => b.id == business);
+      let lat = parseFloat(biz.address.lat);
+      let lng = parseFloat(biz.address.lng);
       return {
         latitude: lat,
         longitude: lng,
@@ -367,19 +421,25 @@ function SeekerHome({ navigation }) {
   function dateFormat(date) {
     if (date) {
       let d = date.split("-");
-      return `${d[1]}/${d[2]}/${d[0]}`;
+      return `${d[1]}/${d[0]}`;
     } else {
       return "";
     }
   }
 
-  async function selectBiz(biz, idx) {
-    if (this[`markerRef${biz.user_id}`]) {
-      this[`markerRef${biz.user_id}`].showCallout();
-    }
-    await setSelectedBusiness(biz.user_id);
+  function _onPressMenuBar () {
+   // navigation.openDrawer();
+   navigation.dispatch(DrawerActions.openDrawer());
 
-    map.animateToRegion(currentLocation(biz.user_id), 500);
+  }
+
+  async function selectBiz(biz, idx) {
+    if (this[`markerRef${biz.id}`]) {
+      this[`markerRef${biz.id}`].showCallout();
+    }
+    await setSelectedBusiness(biz.id);
+
+    map.animateToRegion(currentLocation(biz.id), 500);
 
     _scrollView.scrollTo({ x: idx * 125, y: 0, animated: true });
   }
@@ -388,7 +448,7 @@ function SeekerHome({ navigation }) {
   const blackImg = require("../assets/ic_pin_black.png");
 
   function mkrImage(mkr) {
-    if (selectedBusiness === mkr.user_id) {
+    if (selectedBusiness === mkr.id) {
       return purpleImg;
     } else {
       return blackImg;
@@ -398,19 +458,6 @@ function SeekerHome({ navigation }) {
   function refreshData() {
     setRefresh(true);
     loadDate();
-  }
-
-  function _onLogout() {
-    Alert.alert("ApployMe", `Are you sure you want to logout now?`, [
-      {
-        text: "Logout",
-        onPress: () => {
-          removeUser();
-          signOut();
-        },
-      },
-      { text: "Cancel", onPress: () => console.log("OK Pressed") },
-    ]);
   }
 
   function goToCurrentLocation(){
@@ -430,8 +477,7 @@ function SeekerHome({ navigation }) {
       <SafeAreaView>
         <View
           style={{
-            // backgroundColor: '#4E35AE',
-            // flex: 1,
+            width: wp('100%'),
             flexDirection: "row",
             alignItems: "center",
             borderBottomWidth: 1,
@@ -440,53 +486,24 @@ function SeekerHome({ navigation }) {
             paddingTop: 20,
           }}
         >
-          <View style={{ flex: 1, alignItems: "center" }}>
+          <View style={{ width: wp('100%'), alignItems: "center", justifyContent: 'center' }}>
             <Image
-              source={require("../assets/title_header.png")}
-              style={{ width: 120, height: 25 }}
+              source={require("../assets/heyHire_white.png")}
+              style={{ width: wp('25%'), height: hp('4%'), resizeMode: 'contain' }}
             />
           </View>
-          <View style={{ position: "absolute", left: 5 }}>
+          <View style={{ position: "absolute", left: 5, bottom: 15 }}>
             <TouchableOpacity
               onPress={() => {
-                _onLogout();
+                _onPressMenuBar()
               }}
               style={{ padding: 5 }}
             >
-              <Text
-                style={{ paddingHorizontal: 10, color: "#fff", fontSize: 18 }}
-              >
-                {strings.LOGOUT}
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={{ position: "absolute", right: 5 }}>
-            <TouchableOpacity
-              onPress={() => {
-                if (profile) {
-                  navigation.navigate("SeekerLinks", {
-                    screen: "SeekerEditProfile",
-                    params: {
-                      profile: profile,
-                    },
-                  });
-                }
-              }}
-            >
-              <Text
-                style={{
-                  paddingRight: 10,
-                  textAlign: "right",
-                  color: "#fff",
-                  fontSize: 18,
-                }}
-              >
-                {strings.EDIT_PROFILE}
-              </Text>
+              <Image source={require("../assets/menubar.png")} style={{height: 20, width: 20, alignSelf: 'center'}}/>
             </TouchableOpacity>
           </View>
         </View>
+
         <ScrollView
           style={{ marginBottom: 50 }}
           refreshControl={
@@ -502,29 +519,28 @@ function SeekerHome({ navigation }) {
 
           <View style={{ flex: 1, alignItems: "center", padding: 20 }}>
           <ImageBackground
-                    source={require("../assets/img_ring.png")}
-                    style={{
-                      width: 136,
-                      height: 136,
-                      paddingTop: 17,
-                      paddingLeft: 16,
-                    }}
-                  >
+            source={require("../assets/dp_bg.png")}
+            style={{
+              width: wp('35%'),
+              height: wp('35%'),
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+            resizeMode='contain'
+          >
             <Image
-              source={{ uri: profile.avatar_image, cache: "force-cache" }}
+              source={{ uri: userData.profileImage }}
               style={{
-                width: 102,
-                height: 102,
-                borderRadius: 60,
-                borderWidth: 1,
-                borderColor: "#fff",
+                width: wp('30%'),
+                height: wp('30%'),
+                borderRadius: wp('30%'),
               }}
             />
             </ImageBackground>
           </View>
 
           <View style={{ flex: 1, alignItems: "center" }}>
-            <Text style={{ color: "#fff", fontSize: 22 }}>
+            <Text style={{ color: "#fff", fontSize: 22, fontFamily: 'VisbyBold' }}>
               {user.first_name} {user.last_name}
             </Text>
           </View>
@@ -533,16 +549,16 @@ function SeekerHome({ navigation }) {
             style={{
               flex: 1,
               flexDirection: "row",
-              alignItems: "center",
-              alignSelf: "center",
+              justifyContent: "center",
+              alignItems: 'center',
               marginTop: 5,
             }}
           >
             <Image
-              source={require("../assets/ic_graduation.png")}
-              style={{ width: 15, height: 15 }}
+              source={require("../assets/ic_educate_w.png")}
+              style={{ width: 12, height: 12, resizeMode: 'contain' }}
             />
-            <Text style={{ color: "#fff", marginLeft: 5 }}>
+            <Text style={{ marginLeft: 10, color: "#fff", fontSize: 13, fontFamily: 'VisbySemibold' }}>
               {user.education}
             </Text>
           </View>
@@ -566,10 +582,10 @@ function SeekerHome({ navigation }) {
               }}
             >
               <Image
-                source={require("../assets/ic_location.png")}
-                style={{ width: 15, height: 15 }}
+                source={require("../assets/location_white.png")}
+                style={{ width: 12, height: 12, resizeMode: 'contain' }}
               />
-              <Text style={{ color: "#fff", marginLeft: 5 }}>
+              <Text style={{ color: "#fff", marginLeft: 10, fontSize: 13, fontFamily: 'VisbySemibold' }}>
                 {user.city}, {user.state}, {user.country}
               </Text>
             </View>
@@ -596,7 +612,7 @@ function SeekerHome({ navigation }) {
                 source={require("../assets/ic_star_white.png")}
                 style={{ width: 14, height: 12, marginLeft: 8 }}
               />
-              <Text style={{ color: "#fff", fontSize: 18, marginLeft: 8 }}>
+              <Text style={{ color: "#fff", fontSize: 18, marginLeft: 8, fontFamily: 'VisbySemibold' }}>
                 {strings.BIO}
               </Text>
             </View>
@@ -608,9 +624,11 @@ function SeekerHome({ navigation }) {
                 paddingLeft: 30,
                 paddingTop: 10,
                 paddingRight: 10,
+                lineHeight: 17,
+                fontFamily: 'VisbyRegular'
               }}
             >
-              {user.bio}
+              {user.note}
             </Text>
           </View>
 
@@ -633,16 +651,16 @@ function SeekerHome({ navigation }) {
               }}
             >
               <Image
-                source={require("../assets/ic_past_positions_white.png")}
+                source={require("../assets/ic_position_white.png")}
                 style={{ width: 14, height: 12, marginLeft: 8 }}
               />
-              <Text style={{ color: "#fff", fontSize: 18, marginLeft: 8 }}>
+              <Text style={{ color: "#fff", fontSize: 18, marginLeft: 8, fontFamily: 'VisbySemibold' }}>
                 {strings.PAST_POSTIONS}
               </Text>
             </View>
 
-            {positions &&
-              positions.map((position) => {
+            {user.past_positions && user.past_positions.length > 0 &&
+              user.past_positions.map((position) => {
                 return (
                   <View
                     style={{
@@ -650,7 +668,7 @@ function SeekerHome({ navigation }) {
                       paddingLeft: 30,
                       paddingTop: 15,
                       paddingBottom: 5,
-                      width: "90%",
+                      width: "100%",
                     }}
                     key={position.post_id}
                   >
@@ -666,18 +684,20 @@ function SeekerHome({ navigation }) {
                           color: "#fff",
                           fontSize: 13,
                           paddingBottom: 3,
+                          fontFamily: 'VisbySemibold'
                         }}
                       >
-                        {dateFormat(position.from_date)} -{" "}
+                        {dateFormat(position.start_date)} -{" "}
                       </Text>
                       <Text
                         style={{
                           color: "#fff",
-                          fontSize: 13,
+                          fontSize: 14,
                           paddingBottom: 3,
+                          fontFamily: 'VisbySemibold'
                         }}
                       >
-                        {dateFormat(position.to_date)}
+                        {dateFormat(position.end_date)}
                       </Text>
                     </View>
                     <View
@@ -694,27 +714,30 @@ function SeekerHome({ navigation }) {
                           color: "#fff",
                           fontSize: 13,
                           paddingBottom: 3,
+                          fontFamily: 'VisbyBold'
                         }}
                       >
-                        {position.category} -{" "}
+                        {position.position} -{" "}
                       </Text>
                       <Text
                         style={{
                           color: "#fff",
                           fontSize: 13,
                           paddingBottom: 3,
+                          fontFamily: 'VisbyBold'
                         }}
                       >
-                        {position.company_name} -{" "}
+                        {position.employer} -{" "}
                       </Text>
                       <Text
                         style={{
                           color: "#fff",
                           fontSize: 13,
                           paddingBottom: 3,
+                          fontFamily: 'VisbyRegular'
                         }}
                       >
-                        {position.city_name}
+                        {position.location}
                       </Text>
                     </View>
                     <View
@@ -767,17 +790,17 @@ function SeekerHome({ navigation }) {
                   return (
                     <Marker
                       draggable={false}
-                      key={mkr.user_id}
-                      title={mkr.business_name}
+                      key={mkr.id}
+                      title={mkr?.address?.name}
                       ref={(r) => {
-                        this[`markerRef${mkr.user_id}`] = r;
+                        this[`markerRef${mkr.id}`] = r;
                       }}
                       coordinate={{
-                        latitude: parseFloat(mkr.latitude),
-                        longitude: parseFloat(mkr.longitude),
+                        latitude: parseFloat(mkr.address.lat),
+                        longitude: parseFloat(mkr.address.lng),
                       }}
                       onPress={async() =>{
-                        await setSelectedBusiness(mkr.user_id);
+                        await setSelectedBusiness(mkr.id);
                         _scrollView.scrollTo({ x: idx * 125, y: 0, animated: true });
                       }} 
 
@@ -785,9 +808,10 @@ function SeekerHome({ navigation }) {
                       <ImageBackground
                         source={mkrImage(mkr)}
                         style={{ width: 45, height: 45,justifyContent:'center',alignItems:'center' }}
-                      >{mkr.avatar_image ? (
+                        resizeMode='contain'
+                      >{mkr?.brand?.photo?.tiny_url ? (
                         <Image
-                          source={{ uri: mkr.avatar_image }}
+                          source={{ uri: mkr?.brand?.photo?.tiny_url }}
                           style={{
                             width: 20,
                             height: 20,
@@ -818,13 +842,13 @@ function SeekerHome({ navigation }) {
               style={{ flex: 1, position: "absolute", bottom: 5 }}
             >
               {businesses.map((biz, idx) => {
-                if (selectedBusiness === biz.user_id) {
+                if (selectedBusiness === biz.id) {
                   return (
                     <TouchableHighlight
-                      key={biz.user_id}
+                      key={biz.id}
                       onPress={() =>
                         navigation.navigate("SeekerHomeAvailableJobs", {
-                          biz_id: biz.user_id,
+                          biz_id: biz.id,
                         })
                       }
                       style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.001)" }}
@@ -860,7 +884,7 @@ function SeekerHome({ navigation }) {
                 } else {
                   return (
                     <TouchableHighlight
-                      key={biz.user_id}
+                      key={biz.id}
                       onPress={() => selectBiz(biz, idx)}
                       style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.001)" }}
                       underlayColor="rgba(0,0,0,0.001)"
@@ -877,9 +901,9 @@ function SeekerHome({ navigation }) {
                           padding: 10,
                         }}
                       >
-                        {biz.avatar_image ? (
+                        {biz?.brand?.photo?.tiny_url ? (
                           <Image
-                            source={{ uri: biz.avatar_image }}
+                            source={{ uri: biz?.brand?.photo?.tiny_url }}
                             style={{
                               width: 50,
                               height: 50,
@@ -898,10 +922,10 @@ function SeekerHome({ navigation }) {
                           numberOfLines={1}
                           ellipsizeMode="tail"
                         >
-                          {biz.business_name}
+                          {biz?.address?.name}
                         </Text>
                         <Text style={{ flex: 1, fontSize: 10, color: "#444" }}>
-                          {biz.distance_in_km} {strings.MILES}
+                          {(parseFloat(biz.distance_in_km) * 0.621).toFixed(2)} {strings.MILES}
                         </Text>
                       </View>
                     </TouchableHighlight>
@@ -943,7 +967,32 @@ function SeekerHome({ navigation }) {
               </TouchableHighlight>
             </ScrollView>
           </View>
+          <AwesomeAlert
+            show={welcomMessage}
+            showProgress={false}
+            title="Information"
+            message={strings.WELCOME_TO_HEYHIRE}
+            closeOnTouchOutside={true}
+            closeOnHardwareBackPress={false}
+            showCancelButton={false}
+            showConfirmButton={true}
+            cancelText="No, cancel"
+            confirmText="Ok"
+            confirmButtonColor="#594A9E"
+            messageStyle={{textAlign: 'center'}}
+            confirmButtonStyle={{width: wp('20%'), justifyContent:'center', alignItems: 'center'}}
+            onCancelPressed={() => {
+              setWelcomeMessage(false)
+            }}
+            onConfirmPressed={() => {
+              setWelcomeMessage(false)
+            }}
+          />
         </ScrollView>
+        <Toast
+          position='top'
+          type='success'
+        />
       </SafeAreaView>
     </LinearGradient>
   );

@@ -10,8 +10,13 @@ import {
   RefreshControl,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { useSelector } from "react-redux";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
-import { postFormData } from "./utils/network.js";
+import { postJSON, getRequest, deleteJSON } from "./utils/network.js";
 import { getUser } from "./utils/utils.js";
 import { useIsFocused } from "@react-navigation/native";
 import { strings } from "./translation/config";
@@ -20,13 +25,17 @@ function SeekerAppliedJobs({ navigation }) {
   const isFocused = useIsFocused();
   const [appliedJobs, setAppliedJobs] = useState([]);
   const [filteredJobs, setFilteredJobs] = useState([]);
+  const [allJobs, setAllJobs] = useState([]);
   const [likedJobs, setLikedJobs] = useState([]);
   const [viewed_jobs, setViewed_jobs] = useState([]);
-
   const [user, setUser] = useState({});
   const [search, setSearch] = useState("");
   const [message, setMessage] = useState(null);
   const [refresh, setRefresh] = useState(false);
+  const [isFavourite, setFavourite] = useState(false);
+  const [isApplied, setIsApplied] = useState(false);
+  const buisnessList = useSelector(state => state.BuisnessDeails);
+  const userData = useSelector(state => state.UserData);
 
   function searchJobs(txt) {
     setSearch(txt);
@@ -54,48 +63,43 @@ function SeekerAppliedJobs({ navigation }) {
 
     getUser().then((u) => {
       let u2 = JSON.parse(u);
-      // console.log(u2)
       setUser(u2);
-
-      let form = new FormData();
-      form.append("user_token", u2.user_token);
-      form.append("user_id", u2.user_id);
-
-      postFormData("sw_job_list", form)
+      getRequest("/job-seeker/job-position/list", u2?.token)
         .then((res) => {
           return res.json();
         })
         .then((json) => {
-          // console.log('+++++++++++++++++++')
-          console.log(json);
-          // console.log([...json.data,...json.liked_jobs])
-          // console.log('+++++++++++++++++++')
-          if (json.msg == "No Job Available!") {
-            setMessage(json.msg);
-            setAppliedJobs([]);
+          if (json.data && json.data.length == 0) {
+            setMessage("You haven't applied, liked or viewed any jobs yet.");
             setFilteredJobs([]);
           } else {
             setMessage(null);
-            setAppliedJobs(json.applied_jobs);
-            setViewed_jobs(json.viewed_jobs);
-            if (json.applied_jobs.length > 0) {
-              const likedJobs = [];
-              json.liked_jobs.map((item) => {
-                const tempApplied = json.applied_jobs.filter(
-                  (item1) => item1.id == item.id
-                );
-                if (tempApplied.length == 0) {
-                  likedJobs.push(item);
+            let jobsList = json?.data?.map((job) => {
+              let tempJob = job;
+              buisnessList?.buisness?.map((buisness) => {
+                if (job.job.location.id == buisness.id) {
+                  tempJob.job.business = buisness;
+                  buisness?.positions?.map((position) => {
+                    if(position.id == job.job.id) {
+                      tempJob.job.application = position?.application;
+                    }
+                  });
                 }
               });
-
-              setLikedJobs(likedJobs);
-              console.log(likedJobs);
-              setFilteredJobs([...json.applied_jobs, ...likedJobs]);
-            } else {
-              setLikedJobs(json.liked_jobs);
-              setFilteredJobs([...json.applied_jobs, ...json.liked_jobs]);
-            }
+              return tempJob;
+            });
+            let _appliedJobs = jobsList?.filter((job) => job?.status == "applied");
+            let _viewedJobs = jobsList?.filter((job) => job?.status == "viewed");
+            let _favouriteJobs = jobsList?.filter((job) => {
+              if (job.status == "favorite") {
+                job.job.like = 1;
+                return job;
+              } 
+            });
+            setAppliedJobs(_appliedJobs);
+            setViewed_jobs(_viewedJobs);
+            setLikedJobs(_favouriteJobs);
+            setFilteredJobs(jobsList);
           }
           setRefresh(false);
         })
@@ -107,75 +111,99 @@ function SeekerAppliedJobs({ navigation }) {
   }
 
   function addWishlist(job) {
-    let form = new FormData();
-    form.append("user_token", user.user_token);
-    form.append("user_id", user.user_id);
-    form.append("job_id", job.id);
-
-    let url = "add_like";
-    if (job.like == "1") {
-      url = "remove_like";
-    }
-    console.log(job.like);
-
-    postFormData(url, form)
+    if (!job.job.like) {
+      const body = {
+        job_id: job.job.id
+      }
+      postJSON("/job-seeker/favorite", body, userData.token)
       .then((res) => {
         return res.json();
       })
       .then((json) => {
-        // console.log('-----------')
-        console.log(json);
-        if (json.status_code == 200) {
-          let findJob = filteredJobs.map((item) => {
-            if (item.id == job.id) {
-              if (job.like == 0) {
-                item.like = 1;
+        if (json.data && json.data.job_id) {
+          let findJob = filteredJobs?.map((item) => {
+            if (item.job.id == job.job.id) {
+              if (job.job.like == 1) {
+                item.job.like = 0;
               } else {
-                item.like = 0;
+                item.job.like = 1;
               }
             }
             return item;
           });
-          setFilteredJobs((jobs) => [...findJob]);
+          setFilteredJobs((filteredJobs) => [...findJob]);
         }
-        // loadData();
-        // Alert.alert("", json.msg);
-        // console.log('+++++++++++')
       })
       .catch((err) => {
         console.log(err);
       });
+    } else {
+      deleteJSON(`/job-seeker/favorite/${job.job.id}`, userData.token)
+      .then((res) => {
+        return res.json();
+      })
+      .then((json) => {
+        console.log('delete -> json', json);
+          let findJob = filteredJobs.filter((item) => item.job.id !== job.job.id);
+          setFilteredJobs((filteredJobs) => [...findJob]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    }
   }
 
-  const list = filteredJobs.map((item) => {
+  function onPressHeart(isFav) {
+    if(!isApplied) {
+      if(isFav) {
+        setAllJobs(filteredJobs);
+        setFilteredJobs(likedJobs);  
+      } else {
+        setFilteredJobs(allJobs);
+      }
+      setFavourite(isFav);
+    }
+  }
+
+  function onPressApplied(applied) {
+    if (!isFavourite) {
+      if(applied) {
+        setAllJobs(filteredJobs);
+        setFilteredJobs(appliedJobs);  
+      } else {
+        setFilteredJobs(allJobs);
+      }
+      setIsApplied(applied);
+    }
+  }
+
+  const list = filteredJobs?.map((item) => {
     // console.log(item)
-    const isLiked = likedJobs.filter((item1) => item.id == item1.id);
-    const isApplied = appliedJobs.filter((item1) => item.id == item1.id);
-    const isViewed = viewed_jobs.filter((item1) => item.id == item1.id);
+    const isLiked = likedJobs.filter((item1) => item.job.id == item1.job.id);
+    const isApplied = appliedJobs.filter((item1) => item.job.id == item1.job.id);
+    const isViewed = viewed_jobs.filter((item1) => item.job.id == item1.job.id);
 
     const distance = CommonUtils.distance(
-      parseFloat(item.business.latitude),
-      parseFloat(item.business.longitude),
+      parseFloat(item.job.location.address.lat),
+      parseFloat(item.job.location.address.lng),
       "K"
     );
 
-    console.log("isViewed", isViewed, item.id);
-
     return (
       <TouchableOpacity
-        key={item.id + "" + item.like + "" + item.aplied}
+        key={item.job.id + "" + item.status}
         onPress={() => {
           if (isViewed.length > 0) {
-            let tempJob = isApplied.length > 0 ? isApplied[0] : item;
-            tempJob.viewed_on = isViewed[0].viewed_on;
+            let tempJob = isApplied.length > 0 ? isApplied[0] : item.job;
+            tempJob.viewed_at = isViewed[0].viewed_at;
             navigation.navigate("SeekerAppliedJobs0", {
               screen: "SeekerJobDetail",
-              params: { job: tempJob },
+              params: { job: tempJob, callBack: (job) => addWishlist(item), no_UpdatePage: true },
             });
           } else {
             navigation.navigate("SeekerAppliedJobs0", {
               screen: "SeekerJobDetail",
-              params: { job: isApplied.length > 0 ? isApplied[0] : item },
+              params: { job: isApplied.length > 0 ? isApplied[0].job : item.job, callBack: (job) => addWishlist(item), no_UpdatePage: true },
             });
           }
         }}
@@ -204,12 +232,12 @@ function SeekerAppliedJobs({ navigation }) {
         >
           <View style={{ width: "17%" }}>
             <Image
-              source={{ uri: item.business.avatar_image }}
+              source={{ uri: item?.job?.business?.brand?.photo?.tiny_url }}
               style={{
-                width: 40,
-                height: 40,
+                width: wp('10%'),
+                height: wp('10%'),
                 backgroundColor: "#444",
-                borderRadius: 40,
+                borderRadius: wp('10%'),
                 borderWidth: 1,
                 borderColor: "#888",
               }}
@@ -218,24 +246,23 @@ function SeekerAppliedJobs({ navigation }) {
           <View style={{ width: "65%", backgroundColor: "#F4F5FA" }}>
             <View style={{}}>
               <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Text style={{ fontSize: 18, fontWeight: "700" }}>
-                  {item.position}
+                <Text style={{ fontSize: 18, fontWeight: "bold", color: '#3D3B4E' }}>
+                  {item.job.title}
                 </Text>
-                {item.aplied == 1 ? (
+                {item.status == "applied" ? (
                   <Image
                     source={require("../assets/ic_applied.png")}
-                    style={{ width: 60, height: 15, marginLeft: 15 }}
+                    style={{ width: wp('16%'), height: hp('1.8%'), marginLeft: 5, borderRadius: 4 }}
                   />
                 ) : null}
-                 {isViewed.length > 0 && (
-              <View style={{ width: 35 }}>
-                <Image
-                  source={require("../assets/ic-viewed.png")}
-                  style={{ width: 60, height: 15,marginLeft:10 }}
-                  resizeMode={"stretch"}
-                />
-              </View>
-            )}
+                {isViewed.length > 0 && (
+                  <View style={{ width: 35 }}>
+                    <Image
+                      source={require("../assets/ic-viewed.png")}
+                      style={{ width: wp('16%'), height: hp('1.8%'), marginLeft: 5, borderRadius: 4 }}
+                    />
+                  </View>
+                )}
               </View>
               <View style={{ flexDirection: "row" }}>
                 <Text
@@ -245,15 +272,16 @@ function SeekerAppliedJobs({ navigation }) {
                     fontWeight: "600",
                     textAlignVertical: "center",
                   }}
-                  numberOfLines={2}
+                  numberOfLines={1}
+                  ellipsizeMode="middle"
                 >
-                  {item.business.business_name}{" "}
+                  {item.job.business && item.job.business.name ? item.job.business.name : ""}{" "}
                   <Text
                     style={{
                       fontSize: 14,
                       color: "#666",
                       textAlignVertical: "center",
-                      fontWeight: "500",
+                      fontWeight: "200",
                     }}
                   >
                     {" • "}
@@ -262,8 +290,8 @@ function SeekerAppliedJobs({ navigation }) {
                 </Text>
               </View>
 
-              <Text style={{ fontSize: 12, color: "#888", marginTop: 2.5 }}>
-                {item.business.address}
+              <Text style={{ fontSize: 12, color: "#888", marginTop: 2.5 }} numberOfLines={1} ellipsizeMode="tail">
+                {item.job.business && item.job.business.address ? item.job.business.address.address : ""}
               </Text>
             </View>
           </View>
@@ -275,20 +303,18 @@ function SeekerAppliedJobs({ navigation }) {
               justifyContent: "flex-end",
             }}
           >
-            {isLiked.length > 0 && item.like == 1 ? (
+            {isLiked.length > 0 && item.job.like == 1 ? (
               <TouchableOpacity onPress={() => addWishlist(item)}>
                 <View style={{ width: 40 }}>
-                  {item.like == "1" ? (
+                  {item.job.like == "1" ? (
                     <Image
-                      source={require("../assets/ic_heart_purple_header.png")}
-                      style={{ width: 30, height: 30 }}
-                      resizeMode={"stretch"}
+                      source={require("../assets/ic_filled_heart_icon.png")}
+                      style={{ width: 30, height: 30, resizeMode: 'contain' }}
                     />
                   ) : (
                     <Image
                       source={require("../assets/ic_heart_gray_header.png")}
-                      style={{ width: 30, height: 30 }}
-                      resizeMode={"stretch"}
+                      style={{ width: 30, height: 30, resizeMode: 'contain' }}
                     />
                   )}
                 </View>
@@ -305,6 +331,7 @@ function SeekerAppliedJobs({ navigation }) {
       <SafeAreaView>
         <View
           style={{
+            width: wp('100%'),
             flexDirection: "row",
             alignItems: "center",
             borderBottomWidth: 1,
@@ -312,16 +339,30 @@ function SeekerAppliedJobs({ navigation }) {
             paddingBottom: 10,
             backgroundColor: "#4E35AE",
             paddingTop: 20,
+            justifyContent: 'space-between',
           }}
         >
-          <View
-            style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-          >
+          <TouchableOpacity onPress={() => onPressApplied(!isApplied)} style={{ width: wp('33%') }}>
             <Image
-              source={require("../assets/title_header.png")}
-              style={{ width: 120, height: 25 }}
+              source={isFavourite ? require("../assets/tick-icon-dull.png") :  require("../assets/tick-icon.png")}
+              style={{ alignSelf: 'flex-start', height:20, width: 40 }}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+          <View style={{ width: wp('33%'), justifyContent: 'center', alignItems: 'center' }}>
+            <Image
+              source={require("../assets/heyhireFullWhite.png")}
+              resizeMode="contain"
+              style={{ width: 100, height: 25 }}
             />
           </View>
+          <TouchableOpacity onPress={() => onPressHeart(!isFavourite)} style={{ width: wp('33%') }}>
+            <Image
+              source={isFavourite ? require("../assets/filled-heart-white-icon.png") : require("../assets/heart-icon-with-border.png")}
+              style={{ alignSelf: 'flex-end', height:20, width: 40 }}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
         </View>
 
         <ScrollView

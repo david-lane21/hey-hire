@@ -28,14 +28,12 @@ export default function AlertPopup({ visible,business, job, onClose }) {
     >
       <TouchableWithoutFeedback onPress={onClose}>
         <View
-          style={[
-            {
-              flex: 1,
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: "rgba(0,0,0,0.4)",
-            },
-          ]}
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "rgba(0,0,0,0.4)",
+          }}
         >
           <View
             style={{
@@ -55,7 +53,7 @@ export default function AlertPopup({ visible,business, job, onClose }) {
               }}
             >
               <Image
-                source={{ uri: business.avatar_image }}
+                source={{ uri: business?.brand && business?.brand?.photo ? business?.brand?.photo?.tiny_url : null  }}
                 style={{ height: 70, width: 70, borderRadius: 50 }}
               />
             </View>
@@ -72,54 +70,54 @@ export default function AlertPopup({ visible,business, job, onClose }) {
                 }}
               >
                 <Text
-                  style={[
-                    { textAlign: "center", color: "rgba(255,255,255,0.8)" },
-                  ]}
+                  style={{
+                    textAlign: "center",
+                    color: "#fff",
+                    fontFamily: 'VisbyBold'
+                  }}
                 >
                   {strings.CONGRATULATIONS}
                 </Text>
 
                 <Text
-                  style={[
-                    {
-                      textAlign: "center",
-                      color: "rgba(255,255,255,0.8)",
-                      marginTop: 10,
-                    },
-                  ]}
+                  style={{
+                    textAlign: "center",
+                    color: "#fff",
+                    marginTop: 20,
+                  }}
                 >
-                  {strings.YOUR_APPLICATION_HAS_BEEN_SEND} {business.business_name}
+                  {strings.YOUR_APPLICATION_HAS_BEEN_SEND} <Text style={{fontFamily: 'VisbyBold'}}>{job?.location?.name}</Text>
                 </Text>
                 <Text
-                  style={[
-                    {
-                      textAlign: "center",
-                      color: "rgba(255,255,255,0.8)",
-                      marginTop: 10,
-                    },
-                  ]}
+                  style={{
+                    textAlign: "center",
+                    color: "#fff",
+                    marginTop: 30,
+                    paddingHorizontal: 20
+                  }}
                 >
                   {strings.WE_ARE_KEEPING}!{" "}
                 </Text>
               </View>
               <View style={{ marginVertical: 20, alignItems: "center" }}>
                 <TouchableOpacity
-                  style={[
-                    {
-                      width: "90%",
-                      borderRadius: 30,
-                      borderColor: "#fff",
-                      borderWidth: 0.5,
-                      paddingVertical: 10,
-                      marginTop: 10,
-                    },
-                  ]}
+                  style={{
+                    width: "90%",
+                    borderRadius: 30,
+                    borderColor: "#fff",
+                    borderWidth: 0.5,
+                    paddingVertical: 10,
+                    marginTop: 10,
+                  }}
                   onPress={onClose}
                 >
                   <Text
-                    style={[
-                      { textAlign: "center", color: "#fff", fontSize: 16 },
-                    ]}
+                    style={{
+                      textAlign: "center",
+                      color: "#fff",
+                      fontSize: 16,
+                      fontFamily: 'VisbyRegular'
+                    }}
                   >
                     {strings.THANKS}
                   </Text>

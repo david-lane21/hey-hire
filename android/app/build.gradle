@@ -76,7 +76,6 @@ import com.android.build.OutputFile
  */
 
 project.ext.react = [
-    entryFile: "index.js",
     enableHermes: false
 ]
 
@@ -124,17 +123,15 @@ def enableHermes = project.ext.react.get("enableHermes", false);
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     ndkVersion rootProject.ext.ndkVersion
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
+
+
 
     defaultConfig {
-        applicationId 'com.apployme'
+        applicationId 'com.heyhire'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 21
-        versionName "2.2.2"
+        versionCode 5
+        versionName "1.0.0"
     }
     splits {
         abi {
@@ -179,7 +176,8 @@ android {
             def abi = output.getFilter(OutputFile.ABI)
             if (abi != null) {  // null for the universal-debug, universal-release variants
                 output.versionCodeOverride =
-                        versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
+                        // versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
+                          defaultConfig.versionCode * 1000 + versionCodes.get(abi)
             }
 
         }
@@ -189,6 +187,8 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.facebook.react:react-native:+"  // From node_modules
+    implementation platform('com.google.firebase:firebase-bom:30.1.0')
+    implementation 'com.google.firebase:firebase-analytics'
     addUnimodulesDependencies()
 
     if (enableHermes) {

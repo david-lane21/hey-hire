@@ -1,11 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Image } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import messaging from '@react-native-firebase/messaging';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
+import { strings } from "./translation/config";
 import { getUser } from "./utils/utils.js";
 import HomeScreen from "./HomeScreen";
+import SeekerUserWizard from './SeekerUserWizard';
 import SeekerLogin from "./SeekerLogin";
 import SeekerForgotPassword from "./SeekerForgotPassword";
 import SeekerSignup from "./SeekerSignup";
@@ -25,17 +33,26 @@ import TestLinks from "./TestLinks";
 import SeekerEditPastPosition from "./SeekerEditPastPosition";
 import ForgotPassword from './ForgotPassword';
 import SeekerBusinessList from './SeekerBusinessList';
+import CustomHeader from "./components/CustomHeader.js";
+import CustomBack from "./components/CustomBack.js";
+import CustomDrawer from "./components/CustomDrawer";
+import SeekerAbout from "./SeekerAbout";
 
 const Stack = createStackNavigator();
 const Stack2 = createStackNavigator();
 const Stack3 = createStackNavigator();
+const EditProfileStack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const SeekerHomeStack = createStackNavigator();
 const AppNavigationStack = createStackNavigator();
 
 const AuthNavigationStack = createStackNavigator();
+const Drawer = createDrawerNavigator();
 
 import NavigationService from "./utils/NavigationService";
+import PushNotificationIOS from "@react-native-community/push-notification-ios";
+import { getRequest } from "./utils/network.js";
+import { useDispatch, useSelector } from "react-redux";
 // const currentUser = getUser()
 
 export function Navigation(props) {
@@ -46,6 +63,21 @@ export function Navigation(props) {
   // function handleOpenURL(event){
   //   console.log('Handle open url',props,event);
   // }
+
+  React.useEffect(() => {
+    const unsubscribe = messaging().onMessage(async (message) => {
+        console.log('Notifications Test -> Notifications Test', message);
+        PushNotificationIOS.addNotificationRequest({
+          id: 'notificationWithSound',
+          title: message?.notification?.title,
+          body: message?.notification?.body,
+          sound: 'customSound.wav',
+          badge: 1
+        })
+    })
+
+    return unsubscribe;
+  }, []);
 
   return (
     <NavigationContainer
@@ -75,6 +107,13 @@ export function Navigation(props) {
         <Stack.Screen
           name="HomeScreen"
           component={HomeScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="SeekerUserWizard"
+          component={SeekerUserWizard}
           options={{
             headerShown: false,
           }}
@@ -133,6 +172,24 @@ export default Navigation;
 
 
 export function AppNavigation({ navigation }) {
+
+  const userData = useSelector(state => state.UserData)
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    getUserProfile()
+  },[])
+
+  const getUserProfile = async () => {
+    try {
+    const res = await getRequest(`/job-seeker/profile/${userData.profile.id}`,userData.token)
+      const json = await res.json()
+      dispatch({type: 'UserData/setState',payload: {profile: json.data}})
+    } catch (error) {
+      console.log('error while getting user profile',JSON.stringify(error))
+    }
+  }
+
   return (
     <AppNavigationStack.Navigator initialRouteName={'Seeker'}>
       <AppNavigationStack.Screen
@@ -160,6 +217,40 @@ export function AppNavigation({ navigation }) {
   );
 }
 
+export function EditProfileNavigation({ navigation }) {
+  const userData = useSelector(state => state.UserData)
+
+  return (
+    <EditProfileStack.Navigator initialRouteName={'Edit Profile'}>
+      <EditProfileStack.Screen
+        name="SeekerEditProfile"
+        component={SeekerEditProfile}
+        options={{
+          headerShown: false,
+          headerBackTitleVisible: false,
+          //gestureEnabled: false
+        }}
+        initialParams={{ profile: userData.profile }}
+      />
+
+      <EditProfileStack.Screen
+        name="SeekerAddPastPosition"
+        component={SeekerAddPastPosition}
+        options={{
+          headerShown: false,
+        }}
+      />
+
+      <EditProfileStack.Screen
+        name="SeekerEditPastPosition"
+        component={SeekerEditPastPosition}
+        options={{
+          headerShown: false,
+        }}
+      />
+    </EditProfileStack.Navigator>
+  );
+}
 
 export function AuthNavigation({ navigation }) {
   return (
@@ -174,11 +265,23 @@ export function AuthNavigation({ navigation }) {
           }}
         /> */}
       <AuthNavigationStack.Screen
-        name="SeekerLogin"
-        component={SeekerLogin}
+        name="SeekerUserWizard"
+        component={SeekerUserWizard}
         options={{
           headerShown: false,
           gestureEnabled: false
+
+        }}
+      />
+      <AuthNavigationStack.Screen
+        name="SeekerLogin"
+        component={SeekerLogin}
+        options={{
+          headerShown: true,
+          gestureEnabled: false,
+          headerTitle: "",
+          headerBackTitleVisible: false,
+          headerLeft: () => (<CustomBack navigation={navigation} />)
 
         }}
       />
@@ -189,10 +292,11 @@ export function AuthNavigation({ navigation }) {
         options={{
           headerShown: true,
           headerBackTitleVisible: false,
-          headerTitle: "REGISTRATION",
+          headerTitle: () => (<CustomHeader title="REGISTRATION" />),
           headerStyle: {
             backgroundColor: "#fff",
           },
+          headerLeft: () => (<CustomBack navigation={navigation} />),
           headerTintColor: "#4E35AE",
           gestureEnabled: false
 
@@ -228,9 +332,15 @@ export function AuthNavigation({ navigation }) {
         name="SeekerFinishRegistration"
         component={SeekerFinishRegistration}
         options={{
-          headerShown: false,
+          headerShown: true,
+          headerBackTitleVisible: false,
+          headerTitle: () => (<CustomHeader title="REGISTRATION" />),
+          headerStyle: {
+            backgroundColor: "#fff",
+          },
+          headerLeft: false,
+          headerTintColor: "#4E35AE",
           gestureEnabled: false
-
         }}
       />
       <Stack2.Screen
@@ -240,6 +350,15 @@ export function AuthNavigation({ navigation }) {
           headerShown: false,
         }}
       />
+
+      <Stack2.Screen
+        name="SeekerEditPastPosition"
+        component={SeekerEditPastPosition}
+        options={{
+          headerShown: false,
+        }}
+      />
+
 
       <Stack.Screen
         name="ForgotPassword"
@@ -350,14 +469,30 @@ function SeekerLinks({ navigation }) {
         name="SeekerEditProfile"
         component={SeekerEditProfile}
         options={{
-          headerShown: false,
+          headerShown: true,
+          headerBackTitleVisible: false,
+          headerTitle: () => (<CustomHeader title="REGISTRATION" />),
+          headerStyle: {
+            backgroundColor: "#fff",
+          },
+          headerLeft: () => (<CustomBack navigation={navigation} />),
+          headerTintColor: "#4E35AE",
+          gestureEnabled: false
         }}
       />
       <Stack2.Screen
         name="SeekerFinishRegistration"
         component={SeekerFinishRegistration}
         options={{
-          headerShown: false,
+          headerShown: true,
+          headerBackTitleVisible: false,
+          headerTitle: () => (<CustomHeader title="REGISTRATION" />),
+          headerStyle: {
+            backgroundColor: "#fff",
+          },
+          headerLeft: () => (<CustomBack navigation={navigation} />),
+          headerTintColor: "#4E35AE",
+          gestureEnabled: false
         }}
       />
       <Stack2.Screen
@@ -434,6 +569,52 @@ function SeekerAppliedJobs0({ navigation }) {
         }}
       />
     </Stack2.Navigator>
+  );
+}
+
+export function MyDrawer({navigation}) {
+  const userData = useSelector(state => state.UserData)
+
+  return (
+    <Drawer.Navigator
+      drawerType={'front'}
+      initialRouteName="Home"
+      hideStatusBar={true}
+      drawerStyle={{flex: 1, width: '100%', height: hp('100%'), backgroundColor: 'transparent'}}
+      drawerContent={(props) => <CustomDrawer {...props} />}
+    >
+      <Drawer.Screen
+        name="Home"
+        component={AppNavigation}
+        options={{
+          headerShown: false,
+          gestureEnabled: false
+        }}/>
+      <Drawer.Screen 
+        name="EditProfile"
+        component={EditProfileNavigation}
+        options={{
+          headerShown: false,
+          gestureEnabled: false
+        }}
+      />
+      <Drawer.Screen 
+        name="SeekerAbout"
+        component={SeekerAbout}
+        options={{
+          headerShown: true,
+          headerBackTitleVisible: false,
+          headerTitle: () => (<CustomHeader />),
+          headerStyle: {
+            backgroundColor: "#fff",
+          },
+          headerLeft: () => (<CustomBack navigation={navigation} />),
+          headerTintColor: "#4E35AE",
+          gestureEnabled: false
+
+        }}
+      />
+    </Drawer.Navigator>
   );
 }
   

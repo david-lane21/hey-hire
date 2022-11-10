@@ -21,8 +21,8 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Location from "expo-location";
-import { countries } from "./utils/consts.js";
-import { postFormData, getBaseURL } from "./utils/network.js";
+import { countries } from "../../../utils/consts.js";
+import { postFormData, getBaseURL } from "../../../utils/network.js";
 import { setUser, setToken } from "./utils/utils.js";
 import { KeyboardAccessoryNavigation } from "react-native-keyboard-accessory";
 import { useIsFocused } from "@react-navigation/native";

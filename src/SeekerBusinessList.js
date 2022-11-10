@@ -10,8 +10,9 @@ import {
   RefreshControl,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-
-import { postFormData } from "./utils/network.js";
+import { useSelector } from "react-redux";
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import { getRequest } from "./utils/network.js";
 import { getUser } from "./utils/utils.js";
 import { useIsFocused } from "@react-navigation/native";
 import { strings } from "./translation/config";
@@ -26,6 +27,7 @@ function SeekerBusinessList({ navigation }) {
   const [message, setMessage] = useState(null);
   const [limit, setLimit] = useState(25);
   const [refresh, setRefresh] = useState(false);
+  const userData = useSelector(state => state.UserData)
 
   function searchJobs(txt) {
     setSearch(txt);
@@ -35,7 +37,7 @@ function SeekerBusinessList({ navigation }) {
       setFilteredJobs(businesses.slice(0, limit));
     } else {
       let jobs = businesses.filter((j) =>
-        j.business_name.toLowerCase().includes(text)
+        j?.address?.name.toLowerCase().includes(text)
       );
       setFilteredJobs(jobs);
     }
@@ -48,56 +50,42 @@ function SeekerBusinessList({ navigation }) {
     }
   }, [isFocused]);
 
-  function loadData() {
-    setRefresh(true);
+  async function loadData(){
+    try {
+      setRefresh(true);
+      const res = await getRequest(`/job-seeker/location/list?lng=-97.75640900&lat=30.26627100`,userData?.token)
+      const json = await res.json()
+      if(json?.data?.length > 0){
+        let bizList = json.data.filter(
+          (b) =>
+            parseFloat(b.address.lat) != NaN &&
+            parseFloat(b.address.lng) != NaN
+        );
 
-    getUser().then((u) => {
-      let u2 = JSON.parse(u);
-      // console.log(u2)
-      setUser(u2);
-
-      let form = new FormData();
-      form.append("user_token", u2.user_token);
-      form.append("user_id", u2.user_id);
-
-      postFormData("get_all_business", form)
-        .then((res) => {
-          return res.json();
-        })
-        .then((json) => {
-          // console.log('+++++++++++++++++++')
-          console.log(json);
-          // console.log([...json.data,...json.liked_jobs])
-          // console.log('+++++++++++++++++++')
-          if (json.msg == "No Job Available!") {
-            setMessage(json.msg);
-            setBusinesses([]);
-            setFilteredJobs([]);
-          } else {
-            setMessage(null);
-            let bizList = json.data;
-            bizList = bizList.map((b) => {
-              b.distance_in_km = CommonUtils.distance(
-                b.latitude,
-                b.longitude,
-                "K"
-              );
-              return b;
-            });
-
-            bizList = bizList.sort(
-              (a, b) => a.distance_in_km - b.distance_in_km
-            );
-
-            setBusinesses(bizList);
-            setFilteredJobs(bizList.slice(0, limit));
-          }
-          setRefresh(false);
-        })
-        .catch((err) => {
-          console.log(err);
+        bizList = bizList.map((b) => {
+          b.distance_in_km = CommonUtils.distance(
+            b.address.lat,
+            b.address.lng,
+            "K"
+          );
+          return b;
         });
-    });
+
+        bizList = bizList.sort(
+          (a, b) => a.distance_in_km - b.distance_in_km
+        );
+        setBusinesses(bizList);
+        setFilteredJobs(bizList.slice(0, limit));
+      } else {
+        setMessage("No Job Available!");
+        setBusinesses([]);
+        setFilteredJobs([]);
+      }
+      setRefresh(false);
+    } catch (error) {
+      setRefresh(false);
+      console.log('error while getting businesses')
+    }
   }
 
   function loadMore() {
@@ -107,16 +95,17 @@ function SeekerBusinessList({ navigation }) {
 
   const list = filteredJobs.map((item) => {
     const distance = CommonUtils.distance(
-      parseFloat(item.latitude),
-      parseFloat(item.longitude),
+      parseFloat(item?.address?.lat),
+      parseFloat(item?.address?.lng),
       "K"
     );
+    console.log('list -> item', item);
     return (
       <TouchableOpacity
-        key={item.user_id}
+        key={item.id}
         onPress={() =>
           navigation.navigate("SeekerHomeAvailableJobs", {
-            biz_id: item.user_id,
+            biz_id: item.id,
           })
         }
       >
@@ -144,7 +133,7 @@ function SeekerBusinessList({ navigation }) {
         >
           <View style={{ width: "17%" }}>
             <Image
-              source={{ uri: item.avatar_image }}
+              source={{ uri: item?.brand?.photo?.thumb_url }}
               style={{
                 width: 40,
                 height: 40,
@@ -166,7 +155,7 @@ function SeekerBusinessList({ navigation }) {
                 }}
                 numberOfLines={1}
               >
-                {item.business_name}
+                {item?.name}
               </Text>
               <View style={{ flexDirection: "row", marginTop: 2.5,width:'75%' }}>
                 <Text
@@ -176,7 +165,7 @@ function SeekerBusinessList({ navigation }) {
                     fontWeight: "600",
                     textAlignVertical: "center",
                   }}
-                >{item.address}</Text>
+                >{item?.address?.address}</Text>
                 <Text
                   style={{
                     fontSize: 12,
@@ -212,8 +201,8 @@ function SeekerBusinessList({ navigation }) {
             style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
           >
             <Image
-              source={require("../assets/title_header.png")}
-              style={{ width: 120, height: 25 }}
+              source={require("../assets/heyHire_white.png")}
+              style={{ width: wp('25%'), height: hp('4%'), resizeMode: 'contain' }}
             />
           </View>
           <View style={{ position: "absolute", left: 5 }}>
