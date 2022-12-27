@@ -15,6 +15,7 @@ import {Provider, useSelector} from 'react-redux';
 import store from './src/redux/store';
 import { PersistGate } from 'redux-persist/lib/integration/react';
 import { getPersistor } from '@rematch/persist';
+import { getRequest } from './src/utils/network';
 
 
 
@@ -152,25 +153,29 @@ export default function App() {
     console.log(token, 'token');
   }, []);
 
+  const checkUuid = async (uuid) => {
+    try {
+      const res = await getRequest(`/business/qr-code-uuid/${uuid}`,'');
+      const json = await res.json()
+      } catch (error) {
+        console.log('error while getting user profile',JSON.stringify(error))
+      }  
+  }
+
   function handleOpenURL(url) {
-    let businessId = url.split("/").filter(Boolean).pop();
-    const calBusinessId = parseInt(businessId / 33469);
-    console.log('App',calBusinessId)
-    if(calBusinessId>0){
-    NavigationService.navigate(
-      "SeekerHomeAvailableJobs",
-      { biz_id: businessId / 33469 }
-    );
-    }else{
-      NavigationService.navigate(
-        "SeekerHomeAvailableJobs",
-        { biz_id: businessId  }
-      );
+    console.log('handleOpenURL -> url', url);
+    let qrUuid = url.split("/").filter(Boolean).pop();
+    if (qrUuid) {
+      checkUuid(qrUuid);
     }
   }
 
   if (isLoading) {
     return null;
+  }
+
+  const deepLinkingConfig = {
+    prefixes: ['https://heyhire.app', 'heyhire.app://'],
   }
 
   return (
@@ -181,6 +186,7 @@ export default function App() {
             ref={(navigatorRef) => {
               NavigationService.setTopLevelNavigator(navigatorRef);
             }}
+            linking={deepLinkingConfig}
           >
             <RootStackScreen  url={url} />
           </NavigationContainer>

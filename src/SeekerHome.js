@@ -33,12 +33,13 @@ import { useSelector, useDispatch } from "react-redux";
 
 function SeekerHome({ navigation }) {
   const isFocused = useIsFocused();
+  const userData = useSelector(state => state.UserData);
   const [user, setUser1] = useState({});
   const [profile, setProfile] = useState({});
   const [positions, setPositions] = useState([]);
   const [location, setLocation] = useState({
-    latitude: 30.26627100,//32.7767,
-    longitude: -97.75640900,//-96.797,
+    latitude: 32.7767,
+    longitude: -96.797,
   });
   const [businesses, setBusinesses] = useState([]);
   const [selectedBusiness, setSelectedBusiness] = useState("");
@@ -52,9 +53,8 @@ function SeekerHome({ navigation }) {
   const [latitude, setLatitude] = useState(32.7767);
   const [longitude, setLongitude] = useState(-96.797);
   const [welcomMessage, setWelcomeMessage] = useState(false);
-  const [loadingLocations, setLoadingLocations] = useState(false);
 
-  const userData = useSelector(state => state.UserData)
+  const businessesList = useSelector(state => state.BuisnessDeails);
 
   const dispatch = useDispatch()
 
@@ -63,6 +63,12 @@ function SeekerHome({ navigation }) {
     setUser1(userData.profile)
     }
   },[userData])
+
+  useEffect(() => {
+    if (businessesList?.business?.length > 0) {
+      setBusinesses(businessesList?.buisness);
+    }
+  }, []);
 
   useEffect(() => {
     console.log('isFocused', isFocused);
@@ -85,6 +91,15 @@ function SeekerHome({ navigation }) {
     Toast.show({
       type: 'success',
       text1: msg,
+      position: 'top',
+      visibilityTime: 4000
+    });
+  }
+
+  function notifyErrorMessage(msg) {
+    Toast.show({
+      type: 'error',
+      text1: 'Invalid QR Code',
       position: 'top',
       visibilityTime: 4000
     });
@@ -297,7 +312,6 @@ function SeekerHome({ navigation }) {
 
   async function getHiringLocations(){
     try {
-      setLoadingLocations(true);
       setUser(userData)
       const res = await getRequest(`/job-seeker/location/list?lng=${longitude}&lat=${latitude}`,userData?.token); //lng=-97.75640900&lat=30.26627100
       const json = await res.json();
@@ -325,9 +339,7 @@ function SeekerHome({ navigation }) {
         setBusinesses(bizList);
         dispatch({type: 'BuisnessDeails/setState',payload: {buisness: bizList}})
       }
-      setLoadingLocations(false);
     } catch (error) {
-      setLoadingLocations(false);
       console.log('error while getting businesses')
     }
   }
@@ -338,13 +350,16 @@ function SeekerHome({ navigation }) {
       const json = await res.json()
       if (json?.data?.entity_type == "job-position") {
         NavigationService.navigate("SeekerHomeJobDetail", { job: {id: json?.data?.entity_id} });
-      } else if (json?.data?.entity_type == "location") {
+      } else if (json?.data?.entity_type == "Location" || json?.data?.entity_type == "location") {
         NavigationService.navigate(
           "SeekerHomeAvailableJobs",
-          { biz_id: json.data.entity_id }
+          { biz_id: json?.data?.entity_id }
         );
+      } else if (json?.message) {
+        notifyErrorMessage(json?.message);
       }
     } catch (error) {
+      notifyErrorMessage('Invalid QR Code');
       console.log('error while calling qr api',JSON.stringify(error))
     }
   }
@@ -370,9 +385,6 @@ function SeekerHome({ navigation }) {
               console.log("Prifile data", json);
               await dispatch({type: 'UserData/setState',payload: {profile: json.data}});
               getProfileImage();
-              if (!loadingLocations) {
-                getHiringLocations();
-              }
               setRefresh(false);
             })
             .catch((err) => {
@@ -406,7 +418,7 @@ function SeekerHome({ navigation }) {
         longitudeDelta: 0.0421,
       };
     } else {
-      let biz = businesses.find((b) => b.id == business);
+      let biz = businesses?.find((b) => b.id == business);
       let lat = parseFloat(biz.address.lat);
       let lng = parseFloat(biz.address.lng);
       return {
@@ -786,7 +798,7 @@ function SeekerHome({ navigation }) {
                   />
                 </Marker>
 
-                {businesses.map((mkr, idx) => {
+                {businesses?.map((mkr, idx) => {
                   return (
                     <Marker
                       draggable={false}
@@ -841,7 +853,7 @@ function SeekerHome({ navigation }) {
               showsHorizontalScrollIndicator={false}
               style={{ flex: 1, position: "absolute", bottom: 5 }}
             >
-              {businesses.map((biz, idx) => {
+              {businesses?.map((biz, idx) => {
                 if (selectedBusiness === biz.id) {
                   return (
                     <TouchableHighlight

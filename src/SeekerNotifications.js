@@ -9,6 +9,7 @@ import {
   Alert,
   ScrollView
 } from 'react-native'
+import moment from "moment";
 
 import { getRequest } from './utils/network.js';
 import {getUser} from './utils/utils.js';
@@ -56,11 +57,11 @@ function SeekerNotifications({navigation}){
   }
 
   function sortNotification(data) {
-    let tempNotifications = data;/*.sort((a, b) => {
-      let dateA = new Date(a.created_date);
-      let dateB = new Date(b.created_date);
+    let tempNotifications = data.sort((a, b) => {
+      let dateA = new Date(a?.created_at);
+      let dateB = new Date(b?.created_at);
       return dateB - dateA;
-    });*/
+    });
     setNotification(tempNotifications);  
   }
 
@@ -95,7 +96,7 @@ function SeekerNotifications({navigation}){
         <View style={{flex:8,marginHorizontal:wp('5%')}}>
           <Text style={{fontFamily:'VisbyBold',fontSize:16, paddingBottom: hp('1%')}}>{item.item.title}</Text>
           <Text style={{marginRight:10, fontFamily: 'VisbyLight', color: '#444'}}>{item.item.message}</Text>
-          {/*<Text style={{ fontSize: 12, textAlign: 'right' ,fontWeight:'bold'}}>{moment.utc(item.item.created_date).fromNow()}</Text>*/}
+          <Text style={{ fontSize: 12, textAlign: 'right' ,fontWeight:'bold'}}>{moment.utc(item.item.created_date).format('YYYY/MM/DD hh:mm')}</Text>
         </View>
       </View>
     )

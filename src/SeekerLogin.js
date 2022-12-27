@@ -6,58 +6,51 @@ import {
   StyleSheet,
   TextInput,
   SafeAreaView,
-  Image,
   TouchableOpacity,
   FlatList,
   TouchableHighlight,
-  ScrollView,
-  KeyboardAvoidingView,
   Alert,
   Dimensions,
-  Linking,
   Platform,
   Keyboard,
   PermissionsAndroid
 } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { Countdown } from 'react-native-element-timer';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import * as Location from "expo-location";
 import { countries } from "./utils/consts.js";
 import RoundButton from "./components/RoundButton";
-import { postFormData, getBaseURL, postJSON } from "./utils/network.js";
+import { postFormData, postJSON } from "./utils/network.js";
 import { setUser, setToken } from "./utils/utils.js";
 import { KeyboardAccessoryNavigation } from "react-native-keyboard-accessory";
 import { useIsFocused } from "@react-navigation/native";
 import { strings } from "./translation/config";
 import { AuthContext } from "./navigation/context";
-import DeviceInfo from 'react-native-device-info';
 import CommonUtils from './utils/CommonUtils';
 import GeolocationNew from '@react-native-community/geolocation';
 import OTPInputView from "@twotalltotems/react-native-otp-input";
 import { useDispatch, useSelector } from "react-redux";
 import notification from './SeekerPushNotifications';
 
-const isIphoneX = DeviceInfo.hasNotch();
-const window = Dimensions.get("window");
-
 function SeekerLogin({ navigation }) {
   const isFocused = useIsFocused();
 
   const [modalVisible, setModalVisible] = useState(false);
-  const [loginBotton, setLoginButton] = useState(false);
   const [phCode, setPhCode] = useState("1");
   const [phone, setPhone] = useState("");
   const [activeInputIndex, setActiveInputIndex] = useState(0);
   const [inputs, setInputs] = useState([]);
   const [nextFocusDisabled, setNextFocusDisabled] = useState(false);
   const [previousFocusDisabled, setPreviousFocusDisabled] = useState(false);
-  const [otp,setOtp] = useState()
+  const [otp,setOtp] = useState();
+  const [resendButton, setResendButton] = useState(false);
   const [otpSent,setOtpSent] = useState(false);
   const [registrationOptSent, setRegistrationOptSent] = useState(false);
   const { signIn } = React.useContext(AuthContext);
-
-  const [value, setValue] = useState("");
-  const [contentHeight, setContentHeight] = useState(0);
+  const [codeError, setCodeError] = useState(false);
+  
+  const timerRef = useRef(null);
 
   const dispatch = useDispatch()
 
@@ -169,7 +162,7 @@ function SeekerLogin({ navigation }) {
         phone_number: tempNumber
       }
       const res = await postJSON("/job-seeker/sms-login/initiate",body)
-      const json = await res.json()
+      const json = await res.json();
       if(json.message == 'User found'){
         setOtpSent(true)
       } else if (json.errors && json.errors.phone_number && json.errors.phone_number[0] == "User not found.") {
@@ -206,10 +199,10 @@ function SeekerLogin({ navigation }) {
           navigation.navigate("SeekerSignup", {
             contact: tempNumber
           });
-        }
-        else{
-          setRegistrationOptSent(false);
-          setOtpSent(false);
+        } else {
+          setCodeError(true);
+          //setRegistrationOptSent(false);
+          //setOtpSent(false);
         }
       } else {
         const res = await postJSON("/job-seeker/sms-login/finalize",body)
@@ -217,19 +210,17 @@ function SeekerLogin({ navigation }) {
         if(json.user && Object.keys(json.user).length > 0 && json.token){
           dispatch({type: 'UserData/setState',payload: {profile: json.user, token: json.token}});
           notification(json.token);
-        }
-        else{
-        navigation.navigate("SeekerSignup",{token: json.token})
+        } else {
+          setCodeError(true);
+          //navigation.navigate("SeekerSignup",{token: json.token})
         }
       }
     } catch (error) {
       console.log('error',error)
-    }
- 
+    } 
   }
 
   function handleResend(tempUserData) {
-    console.log(phCode + " " + formatPhone(phone))
     let form = new FormData();
     form.append("user_type", tempUserData.user_type);
     form.append("phone", phCode + " " + formatPhone(phone));
@@ -266,11 +257,6 @@ function SeekerLogin({ navigation }) {
     return str;
   }
 
-  function onContentSizeChange(contentWidth, contentHeight) {
-    // Save the content height in state
-    setContentHeight(contentHeight);
-  };
-
   function handleFocus(index) {
     setActiveInputIndex(index);
     setNextFocusDisabled(index === inputs.length - 1);
@@ -304,13 +290,11 @@ function SeekerLogin({ navigation }) {
       <KeyboardAwareScrollView
         style={styles.container}
         enableOnAndroid={true}
-        extraScrollHeight={hp('15%')} // {Platform.OS === "ios" ? 50 : 50}
-        // extraHeight={hp('5%')} // {Platform.OS === "ios" ? 140 : 140}
+        extraScrollHeight={hp('15%')}
       >
         <View
           style={{
             flex: 1,
-            //height: window.height - (isIphoneX ? hp('12%') : hp('10%')),
             marginTop: hp('10%'),
           }}
         >
@@ -448,12 +432,14 @@ function SeekerLogin({ navigation }) {
             >
               <Text style={{ color: '#000000', fontSize: 16, marginBottom: 5 }}>{strings.CODE}</Text>
               <OTPInputView
+                code={otp}
                 style={{width: '100%', height: 50, alignSelf: 'center'}}
                 pinCount={6}
                 codeInputFieldStyle={styles.inputFieldStyle}
                 codeInputHighlightStyle={styles.inputHighlightStyle}
                 onCodeFilled = {(code) => {
-                  setOtp(code)
+                  setOtp(code);
+                  setCodeError(false);
                 }}
                 placeholderTextColor='#000000'
                 selectionColor='#000000'
@@ -469,7 +455,31 @@ function SeekerLogin({ navigation }) {
 
               }}
             >
-            < RoundButton backgroundColor='#594A9E' text={strings.VERIFY_OTP} textColor="#FFFFFF" onPress={() => verifyOtp()} />
+              < RoundButton backgroundColor='#594A9E' text={strings.VERIFY_OTP} textColor="#FFFFFF" onPress={() => verifyOtp()} />
+              <View style={{flexDirection: 'row', width: '100%', alignItems: 'flex-start'}}>
+              <Text style={styles.timerText}>Try </Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    setResendButton(false);
+                    setOtp();
+                    getOtp();
+                    timerRef.current.start();
+                    setCodeError(false);
+                  }}
+                  disabled={!resendButton}
+                >
+                  <Text style={[styles.timerText, {fontWeight: '600', color: resendButton ? '#594A9E' : 'gray'}]}>Resend Code</Text>
+                </TouchableOpacity>
+                <Text style={styles.timerText}> in: </Text>
+                <Countdown
+                  ref={timerRef}
+                  initialSeconds={30}
+                  autoStart={true}
+                  textStyle={styles.timerText}
+                  onTimes={e => {}}
+                  onEnd={e => setResendButton(true)}
+                />
+              </View>
             </View>
           </> :
           <View
@@ -483,6 +493,9 @@ function SeekerLogin({ navigation }) {
             <RoundButton backgroundColor='#594A9E' text={strings.CONTINUE} textColor="#FFFFFF" onPress={() => getOtp()} />
           </View>
         }
+        {codeError && (
+          <Text style={styles.errorText}>Invalid code. Please try again.</Text>
+        )}
         </View>
       </KeyboardAwareScrollView>
 
@@ -494,7 +507,6 @@ function SeekerLogin({ navigation }) {
         onDone={_onButtonClick}
         nextDisabled={nextFocusDisabled}
         previousDisabled={previousFocusDisabled}
-        // avoidKeyboard={true}
         style={Platform.OS == "android" ? { top: 0 } : { top: 0 }}
       />
     </SafeAreaView>
@@ -507,7 +519,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF'
-    // alignItems: "center",
   },
   header: {
     flex: 1,
@@ -549,8 +560,6 @@ const styles = StyleSheet.create({
   },
   button: {
     width: '100%',
-    // flexDirection: 'column',
-    // height:70,
     alignItems: 'center',
     alignContent: 'center',
     padding: 10,
@@ -581,6 +590,18 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'VisbySemibold',
     marginTop: hp('4%'),
-    marginBottom: hp('5%')
-  }
+    marginBottom: hp('5%'),
+  },
+  timer: {
+    marginVertical: 10,
+},
+timerText: {
+  fontSize: hp('1.6%'),
+},
+errorText: {
+  paddingLeft: 20,
+  fontSize: hp('1.4%'),
+  color: 'red',
+  fontWeight: '400'
+},
 });

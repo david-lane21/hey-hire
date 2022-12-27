@@ -8,5 +8,4 @@ export const BuisnessDeails = {
     name: 'BuisnessDeails',
     state: initialState,
     reducers,
-    
 }
