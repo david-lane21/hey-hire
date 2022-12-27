@@ -48,18 +48,16 @@ function SeekerAvailableJobs({ route, navigation }) {
   }, [favoriteJobs])
 
   function loadDate() {
-    console.log(route.params.biz_id);
     setRefresh(true);
     getUser().then(async (u) => {
       let u2 = JSON.parse(u);
-      console.log('loadDate -> u2', u2)
       setUser(u2);
       await loadJobs();
     });
   }
 
   function loadJobs() {
-    getRequest(`/job-seeker/location/${route.params.biz_id}`, userData.token)
+    getRequest(`/job-seeker/location/${route?.params?.biz_id}`, userData?.token)
     .then((res) => {
       return res.json();
     })
@@ -82,7 +80,8 @@ function SeekerAvailableJobs({ route, navigation }) {
     })
     .catch((err) => {
       setRefresh(false);
-      console.log(err);
+      notifyErrorMessage('Invalid QR Code');
+      console.log('loadJobs -> err', err);
     });
   }
 
@@ -146,6 +145,15 @@ function SeekerAvailableJobs({ route, navigation }) {
       setToggleJobsList(false);
       setJobs(allJobsList);      
     }
+  }
+
+  function notifyErrorMessage(msg) {
+    Toast.show({
+      type: 'error',
+      text1: 'Invalid QR Code',
+      position: 'top',
+      visibilityTime: 4000
+    });
   }
 
   function getHired(job) {
@@ -214,7 +222,7 @@ function SeekerAvailableJobs({ route, navigation }) {
     }
   }
 
-  renderItem = ({item}) => {
+  const renderItem = ({item}) => {
     const distance = CommonUtils.distance(
       parseFloat(profile.address.lat),
       parseFloat(profile.address.lng),

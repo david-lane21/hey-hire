@@ -45,7 +45,7 @@ function SeekerAppliedJobs({ navigation }) {
       setFilteredJobs([...appliedJobs, ...likedJobs]);
     } else {
       let jobs = [...appliedJobs, ...likedJobs].filter((j) =>
-        j.position.toLowerCase().includes(text)
+        j?.job?.title.toLowerCase().includes(text)
       );
       setFilteredJobs(jobs);
     }

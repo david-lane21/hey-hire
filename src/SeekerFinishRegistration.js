@@ -705,7 +705,6 @@ function SeekerFinishRegistration({ navigation, route }) {
               flexDirection: "row",
               alignItems: "center",
               marginBottom: 5,
-              paddingLeft: 10,
             }}
           >
             <Image
@@ -1514,7 +1513,7 @@ const styles = StyleSheet.create({
   },
   categoriesContainer: {
     flex: 1,
-    marginHorizontal: 10,
+    marginHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 5,
     borderWidth: 0.2,

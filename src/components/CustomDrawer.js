@@ -39,7 +39,7 @@ const CustomDrawer = (props) => {
   }
 
   function _onLogout() {
-    Alert.alert("ApployMe", `Are you sure you want to logout now?`, [
+    Alert.alert("HeyHire", `Are you sure you want to logout now?`, [
       {
         text: "Logout",
         onPress: () => {

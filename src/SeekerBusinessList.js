@@ -99,7 +99,6 @@ function SeekerBusinessList({ navigation }) {
       parseFloat(item?.address?.lng),
       "K"
     );
-    console.log('list -> item', item);
     return (
       <TouchableOpacity
         key={item.id}

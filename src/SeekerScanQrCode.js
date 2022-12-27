@@ -12,6 +12,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { useIsFocused } from "@react-navigation/native";
+import Toast from 'react-native-toast-message';
 import { getRequest } from './utils/network';
 import NavigationService from "./utils/NavigationService";
 import {strings} from './translation/config';
@@ -49,19 +50,30 @@ function SeekerScanQrCode({ navigation }) {
   const checkUuid = async (uuid) => {
     try {
       const res = await getRequest(`/business/qr-code-uuid/${uuid}`,'');
-      const json = await res.json()
+      const json = await res.json();
       if (json?.data?.entity_type == "job-position") {
         NavigationService.navigate("SeekerHomeJobDetail", { job: {id: json?.data?.entity_id} });
-      } else if (json?.data?.entity_type == "location") {
+      } else if (json?.data?.entity_type == "location" || json?.data?.entity_type == "Location") {
         NavigationService.navigate(
           "SeekerHomeAvailableJobs",
           { biz_id: json.data.entity_id }
         );
+      } else if (json?.message) {
+        notifyMessage(json?.message);
       }
     } catch (error) {
-      console.log('error while getting user profile',JSON.stringify(error))
+      notifyMessage('Invalid QR Code');
     }  
   };
+
+  function notifyMessage(msg) {
+    Toast.show({
+      type: 'error',
+      text1: msg,
+      position: 'top',
+      visibilityTime: 5000
+    });
+  }
 
   if (hasPermission === null) {
     return <Text>{strings.REQUEST_CAMERA}</Text>;
@@ -125,6 +137,10 @@ function SeekerScanQrCode({ navigation }) {
         <Button title={strings.TAP_TO_SCAN_AGAIN}  onPress={() => setScanned(false)} />
         </View>
       )}
+        <Toast
+          position='top'
+          type='error'
+        />
       </SafeAreaView>
       </LinearGradient>
   );
